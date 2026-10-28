@@ -1,0 +1,22 @@
+import { StatusBar, StatusBarStyle } from 'expo-status-bar';
+import { SafeAreaView } from 'react-native-safe-area-context';
+
+interface Props {
+    backgroundColor: string;
+    style?: StatusBarStyle;
+}
+
+export default function SafeAreaStatusBar({ backgroundColor, style = 'auto' }: Props) {
+    return (
+        <SafeAreaView
+            edges={['top']}
+            style={{ backgroundColor }}
+        >
+            <StatusBar
+                style={style}
+                backgroundColor={backgroundColor}
+                translucent={true}
+            />
+        </SafeAreaView>
+    );
+}
