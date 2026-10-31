@@ -1,8 +1,10 @@
 import { Ionicons } from '@expo/vector-icons';
+import * as ImagePicker from 'expo-image-picker';
 import { useRouter } from 'expo-router';
 import React, { useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import { Image, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { mediaApi } from '../../api/media';
 import { userApi } from '../../api/user';
 import { ScreenWrapper } from '../../components/ScreenWrapper';
 import { StandardInput } from '../../components/UI/StandardInput';
@@ -24,6 +26,7 @@ export default function EditProfilePage(): React.JSX.Element {
     const router = useRouter();
     const { user, updateUser } = useAuthStore();
     const [isSubmitting, setIsSubmitting] = useState(false);
+    const [isUploading, setIsUploading] = useState(false);
 
     const { control, handleSubmit, formState: { errors } } = useForm<ProfileFormData>({
         defaultValues: {
@@ -71,8 +74,40 @@ export default function EditProfilePage(): React.JSX.Element {
         }
     };
 
-    const handleImageUpload = () => {
-        Toast.info("Image upload integration pending");
+    const handleImageUpload = async () => {
+        if (isUploading) return;
+
+        const permission = await ImagePicker.requestMediaLibraryPermissionsAsync();
+        if (!permission.granted) {
+            Toast.error('Photo library permission is required');
+            return;
+        }
+
+        const result = await ImagePicker.launchImageLibraryAsync({
+            mediaTypes: 'images',
+            allowsEditing: true,
+            aspect: [1, 1],
+            quality: 0.8,
+        });
+
+        if (result.canceled || result.assets.length === 0) return;
+
+        const asset = result.assets[0];
+        setIsUploading(true);
+        try {
+            const { url } = await mediaApi.upload({
+                uri: asset.uri,
+                name: asset.fileName ?? `profile-${Date.now()}.jpg`,
+                type: asset.mimeType ?? 'image/jpeg',
+            });
+            await userApi.updateMe({ profile_picture_url: url });
+            updateUser({ profilePictureUrl: url });
+            Toast.success('Profile photo updated');
+        } catch {
+            // Error toast is surfaced by the axios interceptor.
+        } finally {
+            setIsUploading(false);
+        }
     };
 
     return (
@@ -96,8 +131,8 @@ export default function EditProfilePage(): React.JSX.Element {
                             <Ionicons name="person" size={40} color={themeColors.primary} />
                         </View>
                     )}
-                    <TouchableOpacity style={styles.changePhotoButton} onPress={handleImageUpload}>
-                        <Text style={styles.changePhotoText}>Change Profile Photo</Text>
+                    <TouchableOpacity style={styles.changePhotoButton} onPress={handleImageUpload} disabled={isUploading}>
+                        <Text style={styles.changePhotoText}>{isUploading ? 'Uploading…' : 'Change Profile Photo'}</Text>
                     </TouchableOpacity>
                 </View>
 

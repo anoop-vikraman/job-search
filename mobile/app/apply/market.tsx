@@ -6,9 +6,8 @@ import { useRouter } from 'expo-router';
 import React, { useMemo, useState } from 'react';
 import { FlatList, Modal, Pressable, ScrollView, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import { ScreenWrapper } from '../../components/ScreenWrapper';
-import { FeatureFlags } from '../../constants/featureFlags';
-import { Tweak, useTweaksStore } from '../../store/useTweaksStore';
 import { useAuthStore } from '../../store/useAuthStore';
+import { useTweaksFeed } from '../../hooks/useTweaks';
 import TweakTile from '../../components/Tweak/TweakTile';
 import { palette } from '@tweak/theme';
 
@@ -16,9 +15,9 @@ import { palette } from '@tweak/theme';
 
 export default function MarketPage(): React.JSX.Element {
     const router = useRouter();
-    const { getAllTweaks } = useTweaksStore();
     const { user } = useAuthStore();
     const userId = user?.id || '';
+    const { data: feedTweaks = [] } = useTweaksFeed();
 
     // Search & Filter State
     const [searchQuery, setSearchQuery] = useState('');
@@ -31,7 +30,8 @@ export default function MarketPage(): React.JSX.Element {
     const [sortBy, setSortBy] = useState('newest');
 
     const marketTweaks = useMemo(() => {
-        let data = getAllTweaks(userId);
+        // Exclude the current user's own tweaks; only show active ones.
+        let data = feedTweaks.filter((t) => t.createdByUserId !== userId && t.status === 'active');
 
         // Search
         if (searchQuery.trim()) {
@@ -52,7 +52,7 @@ export default function MarketPage(): React.JSX.Element {
         });
 
         return data;
-    }, [getAllTweaks, searchQuery, filters, sortBy]);
+    }, [feedTweaks, userId, searchQuery, filters, sortBy]);
 
     const activeFilterCount = Object.values(filters).filter(v => v !== 'All').length + (sortBy !== 'newest' ? 1 : 0);
 

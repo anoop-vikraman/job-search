@@ -7,9 +7,9 @@ import React, { useState, useMemo } from 'react';
 import { FlatList, Image, Modal, ScrollView, Text, TextInput, TouchableOpacity, View, Pressable } from 'react-native';
 import { ScreenWrapper } from '../../components/ScreenWrapper';
 import TabButton from '../../components/UI/TabButton';
-import { FeatureFlags } from '../../constants/featureFlags';
-import { Tweak, useTweaksStore } from '../../store/useTweaksStore';
+import { Tweak } from '../../store/useTweaksStore';
 import { useAuthStore } from '../../store/useAuthStore';
+import { useMyTweaks } from '../../hooks/useTweaks';
 import { loadDraftIntoCreateStore } from '../../utils/draftLoader';
 import TweakTile from '../../components/Tweak/TweakTile';
 import { palette } from '@tweak/theme';
@@ -33,16 +33,23 @@ export default function TweaksListing(): React.JSX.Element {
     });
     const [sortBy, setSortBy] = useState('newest'); // 'newest' | 'oldest' | 'applied_at' | 'accepted_at'
 
-    const { getMyTweaks, getAppliedTweaks, getDrafts } = useTweaksStore();
     const { user } = useAuthStore();
     const userId = user?.id || '';
+
+    const { data: allMine = [] } = useMyTweaks();
+
+    // Derive the three views from the single "mine" source.
+    const myTweaks = useMemo(() => allMine.filter((t) => t.status !== 'draft'), [allMine]);
+    const draftTweaks = useMemo(() => allMine.filter((t) => t.status === 'draft'), [allMine]);
+    // No dedicated "applied as provider" endpoint in the contract yet.
+    const appliedTweaks = useMemo<Tweak[]>(() => [], []);
 
     const tweaksData = useMemo(() => {
         let data: Tweak[] = [];
         if (showDrafts) {
-            data = getDrafts(userId);
+            data = draftTweaks;
         } else {
-            data = activeTab === 'my' ? getMyTweaks(userId) : getAppliedTweaks(userId);
+            data = activeTab === 'my' ? myTweaks : appliedTweaks;
         }
 
         // 1. Filter by Search Query (Category Name)
@@ -79,7 +86,7 @@ export default function TweaksListing(): React.JSX.Element {
         });
 
         return data;
-    }, [activeTab, showDrafts, searchQuery, filters, sortBy, getMyTweaks, getAppliedTweaks, getDrafts]);
+    }, [activeTab, showDrafts, searchQuery, filters, sortBy, myTweaks, appliedTweaks, draftTweaks]);
 
     const handleTweakPress = (tweak: Tweak) => {
         if (tweak.status === 'draft') {
@@ -90,7 +97,7 @@ export default function TweaksListing(): React.JSX.Element {
         }
     };
 
-    const draftsCount = getDrafts(userId).length;
+    const draftsCount = draftTweaks.length;
     // Address shown on Created tab or in Drafts (both for onsite)
     const showAddress = !showDrafts && activeTab === 'my';
 
@@ -209,20 +216,19 @@ export default function TweaksListing(): React.JSX.Element {
                                 setActiveTab('my');
                                 if (sortBy === 'applied_at' || sortBy === 'accepted_at') setSortBy('newest');
                             }}
-                            count={getMyTweaks(userId).length}
+                            count={myTweaks.length}
                         />
                         <TabButton
                             label="Applied"
                             active={activeTab === 'applied'}
                             onPress={() => setActiveTab('applied')}
-                            count={getAppliedTweaks(userId).length}
+                            count={appliedTweaks.length}
                         />
                     </View>
                 )}
 
                 {/* List */}
-                {FeatureFlags.USE_LOCAL_STORAGE_FOR_TWEAKS ? (
-                    <FlatList
+                <FlatList
                         data={tweaksData}
                         keyExtractor={(item) => item.id}
                         showsVerticalScrollIndicator={false}
@@ -263,12 +269,6 @@ export default function TweaksListing(): React.JSX.Element {
                             </View>
                         }
                     />
-                ) : (
-                    <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-                        <Text style={{ fontSize: 20, fontWeight: '800', color: palette.slate900 }}>Apply for Tweaks</Text>
-                        <Text style={{ color: palette.slate500, marginTop: 8 }}>Coming Soon (API Integration)</Text>
-                    </View>
-                )}
                 {/* Filter Modal */}
                 <Modal
                     visible={isFilterModalVisible}

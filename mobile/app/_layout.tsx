@@ -1,4 +1,5 @@
 import SafeAreaStatusBar from "@/components/UI/SafeAreaStatusBar";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { Stack, useRouter, useSegments } from "expo-router";
 import React, { useEffect } from 'react';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
@@ -16,6 +17,16 @@ import GlobalFatalErrorModal from "@/components/UI/GlobalFatalErrorModal";
 import NoInternetBanner from "@/components/UI/NoInternetBanner";
 import ToastManager from "@/components/UI/ToastManager";
 import { useAuthStore } from "@/store/useAuthStore";
+
+// Module-level client so it persists across re-renders.
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      retry: 1,
+      refetchOnWindowFocus: false,
+    },
+  },
+});
 
 function AppContent() {
   const { isAuthenticated } = useAuthStore();
@@ -76,11 +87,13 @@ function AppContent() {
 export default function RootLayout(): React.JSX.Element {
   return (
     <GlobalErrorBoundary>
-      <ThemeProvider>
-        <SafeAreaProvider>
-          <AppContent />
-        </SafeAreaProvider>
-      </ThemeProvider>
+      <QueryClientProvider client={queryClient}>
+        <ThemeProvider>
+          <SafeAreaProvider>
+            <AppContent />
+          </SafeAreaProvider>
+        </ThemeProvider>
+      </QueryClientProvider>
     </GlobalErrorBoundary>
   );
 }

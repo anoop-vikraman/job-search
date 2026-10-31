@@ -3,20 +3,20 @@ import { useLocalSearchParams, useRouter, type Href } from 'expo-router';
 import React from 'react';
 import {
     FlatList,
-    Image,
     Text,
     TouchableOpacity,
     View,
 } from 'react-native';
 import { ScreenWrapper } from '@/components/ScreenWrapper';
-import { useTweaksStore } from '@/store/useTweaksStore';
+import { useTweak, useTweakApplicationsRaw } from '@/hooks/useTweaks';
+import { formatMinor } from '@/utils/money';
 import { palette } from '@tweak/theme';
 
 export default function TweakApplicants(): React.JSX.Element {
     const { id } = useLocalSearchParams();
     const router = useRouter();
-    const { getTweakById } = useTweaksStore();
-    const tweak = getTweakById(id as string);
+    const { data: tweak } = useTweak(id as string);
+    const { data: applicants = [] } = useTweakApplicationsRaw(id as string);
 
     if (!tweak) {
         return (
@@ -28,13 +28,16 @@ export default function TweakApplicants(): React.JSX.Element {
         );
     }
 
-    const applicants = tweak.applications || [];
-
-    const getStatusStyle = (status: string) => {
+    const getStatusStyle = (status: string): { bg: string; text: string } => {
         switch (status) {
-            case 'accepted': return { bg: palette.green100, text: palette.green700 };
-            case 'rejected': return { bg: palette.red100, text: palette.red700 };
-            default: return { bg: palette.slate100, text: palette.slate500 };
+            case 'accepted':
+            case 'completed':
+                return { bg: palette.green100, text: palette.green700 };
+            case 'rejected':
+            case 'withdrawn':
+                return { bg: palette.red100, text: palette.red700 };
+            default:
+                return { bg: palette.slate100, text: palette.slate500 };
         }
     };
 
@@ -58,7 +61,7 @@ export default function TweakApplicants(): React.JSX.Element {
 
             <FlatList
                 data={applicants}
-                keyExtractor={(item) => item.userId}
+                keyExtractor={(item) => item.id}
                 contentContainerStyle={{ padding: 16, paddingBottom: 100 }}
                 ListEmptyComponent={
                     <View style={{ alignItems: 'center', justifyContent: 'center', paddingTop: 100 }}>
@@ -73,9 +76,16 @@ export default function TweakApplicants(): React.JSX.Element {
                 }
                 renderItem={({ item }) => {
                     const statusStyle = getStatusStyle(item.status);
+                    const displayName = item.provider_user_id.slice(0, 8);
+                    const quoteLabel =
+                        item.quoted_price_minor != null
+                            ? formatMinor(item.quoted_price_minor)
+                            : tweak.price != null
+                              ? `₹${tweak.price}`
+                              : '—';
                     return (
                         <TouchableOpacity
-                            onPress={() => router.push(`/tweaks/${tweak.id}/applicants/${item.userId}` as Href)}
+                            onPress={() => router.push(`/tweaks/${tweak.id}/applicants/${item.id}` as Href)}
                             activeOpacity={0.7}
                             style={{
                                 backgroundColor: '#fff',
@@ -91,18 +101,14 @@ export default function TweakApplicants(): React.JSX.Element {
                         >
                             {/* Avatar */}
                             <View style={{ width: 56, height: 56, borderRadius: 28, backgroundColor: palette.slate100, alignItems: 'center', justifyContent: 'center' }}>
-                                {item.profilePictureUrl ? (
-                                    <Image source={{ uri: item.profilePictureUrl }} style={{ width: 56, height: 56, borderRadius: 28 }} />
-                                ) : (
-                                    <Text style={{ fontSize: 20, fontWeight: '700', color: palette.slate500 }}>
-                                        {item.userName.charAt(0)}
-                                    </Text>
-                                )}
+                                <Text style={{ fontSize: 20, fontWeight: '700', color: palette.slate500 }}>
+                                    {displayName.charAt(0).toUpperCase()}
+                                </Text>
                             </View>
 
                             <View style={{ flex: 1 }}>
                                 <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 4 }}>
-                                    <Text style={{ fontSize: 16, fontWeight: '700', color: palette.slate900 }}>{item.userName}</Text>
+                                    <Text style={{ fontSize: 16, fontWeight: '700', color: palette.slate900 }}>{displayName}</Text>
                                     <View style={{ backgroundColor: statusStyle.bg, paddingHorizontal: 8, paddingVertical: 2, borderRadius: 6 }}>
                                         <Text style={{ fontSize: 10, fontWeight: '800', color: statusStyle.text, textTransform: 'uppercase' }}>
                                             {item.status}
@@ -113,20 +119,15 @@ export default function TweakApplicants(): React.JSX.Element {
                                 <View style={{ flexDirection: 'row', alignItems: 'center', gap: 4, marginBottom: 8 }}>
                                     <Text style={{ fontSize: 13, color: palette.slate500 }}>Quote:</Text>
                                     <Text style={{ fontSize: 14, fontWeight: '700', color: palette.iosBlue }}>
-                                        ₹{item.quotedPrice || (tweak.pricingData?.price || tweak.price || '—')}
+                                        {quoteLabel}
                                     </Text>
                                 </View>
 
-                                <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 6 }}>
-                                    {item.userSkills.slice(0, 2).map((skill, idx) => (
-                                        <View key={idx} style={{ backgroundColor: palette.slate50, borderWidth: 1, borderColor: palette.slate200, paddingHorizontal: 6, paddingVertical: 1, borderRadius: 4 }}>
-                                            <Text style={{ fontSize: 10, color: palette.slate600 }}>{skill}</Text>
-                                        </View>
-                                    ))}
-                                    {item.userSkills.length > 2 && (
-                                        <Text style={{ fontSize: 10, color: palette.slate400 }}>+{item.userSkills.length - 2} more</Text>
-                                    )}
-                                </View>
+                                {item.why_prefer_message ? (
+                                    <Text numberOfLines={1} style={{ fontSize: 12, color: palette.slate500 }}>
+                                        {item.why_prefer_message}
+                                    </Text>
+                                ) : null}
                             </View>
 
                             <View style={{ width: 32, height: 32, borderRadius: 16, backgroundColor: palette.slate100, alignItems: 'center', justifyContent: 'center' }}>

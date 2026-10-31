@@ -14,8 +14,9 @@ import {
     View,
 } from 'react-native';
 import { ScreenWrapper } from '@/components/ScreenWrapper';
-import { useAuthStore } from '@/store/useAuthStore';
-import { Tweak, TweakApplication, useTweaksStore } from '@/store/useTweaksStore';
+import type { Tweak } from '@/store/useTweaksStore';
+import { useApplyToTweak, useTweak } from '@/hooks/useTweaks';
+import { toMinor } from '@/utils/money';
 import { ScheduleSlot } from '@/types/tweak';
 import { palette } from '@tweak/theme';
 
@@ -146,12 +147,11 @@ function SlotItem({
 export default function ApplyStep2(): React.JSX.Element {
     const { tweakId, whyMessage } = useLocalSearchParams<{ tweakId: string; whyMessage: string }>();
     const router = useRouter();
-    const { getTweakById, getAppliedTweaks, addApplication } = useTweaksStore();
-    const { user } = useAuthStore();
+    const { data: tweak } = useTweak(tweakId);
+    const applyMutation = useApplyToTweak();
 
-    const tweak = getTweakById(tweakId);
-    const userId = user?.id || '';
-    const appliedTweaks = getAppliedTweaks(userId);
+    // No "applied as provider" endpoint yet, so no cross-tweak conflict source.
+    const appliedTweaks: Tweak[] = [];
 
     const [selectedSlots, setSelectedSlots] = useState<string[]>([]);
     const [quotedPrice, setQuotedPrice] = useState('');
@@ -227,34 +227,35 @@ export default function ApplyStep2(): React.JSX.Element {
     const isQuoteModel = tweak.pricingModel === 'quote';
     const canApply = selectedSlots.length > 0 && (!isQuoteModel || quotedPrice.trim().length > 0);
 
-    const handleApply = () => {
+    const handleApply = async () => {
         if (!canApply || applying) return;
         setApplying(true);
 
-        const chosenSlots = slots.filter((s: BuiltSlot) => selectedSlots.includes(s.key)).map((s: BuiltSlot) => s.slotData);
-        const application: TweakApplication = {
-            userId,
-            userName: `${user?.firstName || ''} ${user?.lastName || ''}`.trim(),
-            profilePictureUrl: user?.profilePictureUrl,
-            userSkills: user?.skills || ['Painting', 'Plumbing', 'Cleaning'],
-            completedCategories: user?.completedCategories || ['Cleaning'],
-            whyPreferMessage: whyMessage || '',
-            quotedPrice: quotedPrice ? parseFloat(quotedPrice) : undefined,
-            selectedSlots: chosenSlots,
-            appliedAt: new Date().toISOString(),
-            status: 'pending',
-        };
+        const chosenSlots = slots
+            .filter((s: BuiltSlot) => selectedSlots.includes(s.key))
+            .map((s: BuiltSlot) => s.slotData);
+        const parsedQuote = quotedPrice ? parseFloat(quotedPrice) : NaN;
 
-        addApplication(tweakId, application);
-        setApplying(false);
-        Alert.alert(
-            'Application Sent! 🎉',
-            'Your application has been submitted successfully. The lister will review and get back to you.',
-            [{
-                text: 'View My Applications',
-                onPress: () => router.replace('/apply'),
-            }]
-        );
+        try {
+            await applyMutation.mutateAsync({
+                tweakId,
+                whyPreferMessage: whyMessage || undefined,
+                quotedPriceMinor: Number.isFinite(parsedQuote) ? toMinor(parsedQuote) : undefined,
+                selectedSlots: chosenSlots,
+            });
+            Alert.alert(
+                'Application Sent! 🎉',
+                'Your application has been submitted successfully. The lister will review and get back to you.',
+                [{
+                    text: 'View My Applications',
+                    onPress: () => router.replace('/apply'),
+                }]
+            );
+        } catch {
+            // Error toast is surfaced by the axios interceptor.
+        } finally {
+            setApplying(false);
+        }
     };
 
     return (

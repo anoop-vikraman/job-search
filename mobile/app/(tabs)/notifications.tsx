@@ -1,33 +1,32 @@
 import { Ionicons } from '@expo/vector-icons';
 import React from 'react';
-import { FlatList, Text, View } from 'react-native';
+import { FlatList, Text, TouchableOpacity, View } from 'react-native';
 
 import { ScreenWrapper } from '../../components/ScreenWrapper';
+import { useMarkAllRead, useMarkRead, useNotifications } from '../../hooks/useNotifications';
 import { palette } from '@tweak/theme';
 
-interface NotificationItem {
-    id: string;
-    title: string;
-    description: string;
-    time: string;
-    icon: keyof typeof Ionicons.glyphMap;
-    color: string;
-}
-
 export default function NotificationsPage(): React.JSX.Element {
-    // Populated from GET /api/v1/notifications once the backend exists.
-    const notifications: NotificationItem[] = [];
+    const { data: notifications = [] } = useNotifications();
+    const markAllRead = useMarkAllRead();
+    const markRead = useMarkRead();
 
     return (
         <ScreenWrapper>
             <View className="px-6 py-4 bg-white border-b border-gray-100 flex-row justify-between items-center">
                 <Text className="text-xl font-bold text-gray-900">Notifications</Text>
-                <Ionicons
-                    name="checkmark-done-circle-outline"
-                    size={24}
-                    color={palette.gray500}
+                <TouchableOpacity
+                    onPress={() => markAllRead.mutate()}
+                    disabled={markAllRead.isPending}
+                    accessibilityRole="button"
                     accessibilityLabel="Mark all as read"
-                />
+                >
+                    <Ionicons
+                        name="checkmark-done-circle-outline"
+                        size={24}
+                        color={palette.gray500}
+                    />
+                </TouchableOpacity>
             </View>
 
             <FlatList
@@ -44,19 +43,31 @@ export default function NotificationsPage(): React.JSX.Element {
                     </View>
                 }
                 renderItem={({ item }) => (
-                    <View className="flex-row items-start bg-white p-4 rounded-xl mb-3 border border-gray-100 shadow-sm">
+                    <TouchableOpacity
+                        activeOpacity={0.7}
+                        onPress={() => {
+                            if (!item.is_read) markRead.mutate(item.id);
+                        }}
+                        className="flex-row items-start bg-white p-4 rounded-xl mb-3 border border-gray-100 shadow-sm"
+                        style={{ opacity: item.is_read ? 0.6 : 1 }}
+                    >
                         <View
                             className="w-10 h-10 rounded-full items-center justify-center mr-3"
-                            style={{ backgroundColor: `${item.color}20` }}
+                            style={{ backgroundColor: `${palette.blue500}20` }}
                         >
-                            <Ionicons name={item.icon} size={20} color={item.color} />
+                            <Ionicons name="notifications-outline" size={20} color={palette.blue500} />
                         </View>
                         <View className="flex-1">
                             <Text className="font-bold text-gray-900 mb-1">{item.title}</Text>
-                            <Text className="text-gray-600 text-sm mb-1">{item.description}</Text>
-                            <Text className="text-gray-400 text-xs">{item.time}</Text>
+                            <Text className="text-gray-600 text-sm mb-1">{item.body}</Text>
+                            <Text className="text-gray-400 text-xs">
+                                {new Date(item.created_at).toLocaleString()}
+                            </Text>
                         </View>
-                    </View>
+                        {!item.is_read && (
+                            <View style={{ width: 8, height: 8, borderRadius: 4, backgroundColor: palette.blue500, marginTop: 4 }} />
+                        )}
+                    </TouchableOpacity>
                 )}
             />
         </ScreenWrapper>

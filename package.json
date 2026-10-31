@@ -3,15 +3,14 @@
   "private": true,
   "version": "1.0.0",
   "workspaces": [
-    "admin",
-    "mobile"
+    "admin"
   ],
   "scripts": {
     "dev:admin": "npm run dev --workspace=admin",
-    "dev:mobile": "npm run start --workspace=mobile",
+    "dev:mobile": "cd mobile && npm run start",
     "dev:backend": "cd backend && venv/bin/uvicorn app.main:app --reload --port 8000",
     "seed": "cd backend && venv/bin/python -m app.seeds.seed",
     "lint:admin": "npm run lint --workspace=admin",
-    "lint:mobile": "npm run lint --workspace=mobile"
+    "lint:mobile": "cd mobile && npm run lint"
   }
 }

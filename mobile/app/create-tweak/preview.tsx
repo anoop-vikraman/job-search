@@ -16,11 +16,9 @@ import CreateFlowHeader from '../../components/create-tweak/CreateFlowHeader';
 import { ScreenWrapper } from '../../components/ScreenWrapper';
 import CustomConfirmationModal from '../../components/UI/CustomConfirmationModal';
 import ImageGalleryModal from '../../components/UI/ImageGalleryModal';
-import { Toast } from '../../components/UI/ToastManager';
-import { FeatureFlags } from '../../constants/featureFlags';
 import { useCreateTweakStore } from '../../store/useCreateTweakStore';
-import { useAuthStore } from '../../store/useAuthStore';
-import { Tweak, useTweaksStore } from '../../store/useTweaksStore';
+import { useCreateTweak } from '../../hooks/useTweaks';
+import { buildCreateTweakRequest } from '../../utils/tweakAdapter';
 import { ScheduleSlot } from '../../types/tweak';
 import { palette } from '@tweak/theme';
 
@@ -49,8 +47,7 @@ export default function TweakPreview(): React.JSX.Element {
         tweakType
     } = useCreateTweakStore();
 
-    const { user } = useAuthStore();
-    const userId = user?.id || '';
+    const createTweak = useCreateTweak();
 
     const [showImageGallery, setShowImageGallery] = useState(false);
     const [selectedImageIndex, setSelectedImageIndex] = useState(0);
@@ -114,36 +111,36 @@ export default function TweakPreview(): React.JSX.Element {
         router.push('/create-tweak/edit');
     };
 
-    const handleSaveDraft = async () => {
-        if (FeatureFlags.USE_LOCAL_STORAGE_FOR_TWEAKS) {
-            const draftTweak: Tweak = {
-                id: Date.now().toString(),
-                title: category || 'Untitled Draft',
-                description: description || '',
-                category: category || '',
-                images: images || [],
-                audioUri: audioUri,
-                address: address,
-                skills: skills || [],
-                languages: languages || [],
-                schedulePreference: schedulePreference || '',
-                scheduleData: scheduleData,
-                pricingModel: pricingModel || '',
-                pricingData: pricingData,
-                tweakType: tweakType || '',
-                price: parseFloat(getTotalAmount()),
-                pricingType: pricingModel || 'fixed',
-                createdAt: new Date().toISOString(),
-                status: 'draft',
-                createdByUserId: userId,
-            };
+    const submitTweak = async (status: 'active' | 'draft'): Promise<boolean> => {
+        const body = buildCreateTweakRequest({
+            title: category || (status === 'draft' ? 'Untitled Draft' : 'Untitled'),
+            description: description || '',
+            category: category || 'General',
+            tweakType: tweakType || 'in_person',
+            status,
+            skills: skills || [],
+            languages: languages || [],
+            images: images || [],
+            schedulePreference: schedulePreference || null,
+            scheduleData: scheduleData,
+            pricingModel: pricingModel || 'quote',
+            pricingData: pricingData,
+            address: address,
+        });
 
-            addTweak(draftTweak);
+        try {
+            await createTweak.mutateAsync(body);
+            return true;
+        } catch {
+            // Error toast is surfaced by the axios interceptor.
+            return false;
         }
-        setShowDraftModal(true);
     };
 
-    const { addTweak } = useTweaksStore();
+    const handleSaveDraft = async () => {
+        const ok = await submitTweak('draft');
+        if (ok) setShowDraftModal(true);
+    };
 
     const getTotalAmount = () => {
         if (pricingModel === 'quote') return '0';
@@ -159,35 +156,9 @@ export default function TweakPreview(): React.JSX.Element {
         return '0';
     };
 
-    const handlePost = () => {
-        if (FeatureFlags.USE_LOCAL_STORAGE_FOR_TWEAKS) {
-            const newTweak: Tweak = {
-                id: Date.now().toString(),
-                title: category || 'Untitled',
-                description: description || '',
-                category: category || 'General',
-                images: images || [],
-                audioUri: audioUri,
-                address: address,
-                skills: skills || [],
-                languages: languages || [],
-                schedulePreference: schedulePreference || '',
-                scheduleData: scheduleData,
-                pricingModel: pricingModel || '',
-                pricingData: pricingData,
-                tweakType: tweakType || '',
-                price: parseFloat(getTotalAmount()),
-                pricingType: pricingModel || 'fixed',
-                createdAt: new Date().toISOString(),
-                status: 'active',
-                createdByUserId: userId,
-            };
-            addTweak(newTweak);
-            setShowSuccessModal(true);
-        } else {
-            // Remote persistence path: POST /api/v1/tweaks (pending backend).
-            Toast.error('Posting to the server is not available yet.');
-        }
+    const handlePost = async () => {
+        const ok = await submitTweak('active');
+        if (ok) setShowSuccessModal(true);
     };
 
     const getScheduleInfo = () => {
@@ -446,6 +417,7 @@ export default function TweakPreview(): React.JSX.Element {
                     <View className="mt-auto pt-4 flex-row gap-3">
                         <TouchableOpacity
                             onPress={handleSaveDraft}
+                            disabled={createTweak.isPending}
                             className="flex-1 bg-white border border-gray-300 py-4 rounded-xl flex-row items-center justify-center gap-1"
                         >
                             <Ionicons name="bookmark-outline" size={16} color={palette.gray700} />
@@ -462,6 +434,7 @@ export default function TweakPreview(): React.JSX.Element {
 
                         <TouchableOpacity
                             onPress={handlePost}
+                            disabled={createTweak.isPending}
                             style={{ backgroundColor: palette.iosBlue }}
                             className="flex-[1.8] py-4 rounded-xl flex-row items-center justify-center gap-1 shadow-md"
                         >

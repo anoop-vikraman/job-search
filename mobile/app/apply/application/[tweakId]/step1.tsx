@@ -11,15 +11,13 @@ import {
     View,
 } from 'react-native';
 import { ScreenWrapper } from '@/components/ScreenWrapper';
-import { useAuthStore } from '@/store/useAuthStore';
-import { TweakApplication, useTweaksStore } from '@/store/useTweaksStore';
+import { useTweak } from '@/hooks/useTweaks';
 import { palette } from '@tweak/theme';
 
 export default function ApplyStep1(): React.JSX.Element {
     const { tweakId } = useLocalSearchParams();
     const router = useRouter();
-    const { getTweakById } = useTweaksStore();
-    const tweak = getTweakById(tweakId as string);
+    const { data: tweak } = useTweak(tweakId as string);
 
     const [message, setMessage] = useState('');
 

@@ -4,25 +4,19 @@ import React from 'react';
 import { FlatList, Text, TouchableOpacity, View } from 'react-native';
 
 import { ScreenWrapper } from '../../components/ScreenWrapper';
+import { useRefunds } from '../../hooks/useRefunds';
+import { formatMinor } from '../../utils/money';
+import type { RefundStatus } from '../../types/api';
 import { palette } from '@tweak/theme';
-
-type RefundStatus = 'Pending' | 'Approved' | 'Rejected';
-
-interface Refund {
-    id: string;
-    tweakName: string;
-    amount: number;
-    status: RefundStatus;
-    dateRequested: string;
-}
 
 const getStatusColor = (status: RefundStatus): { bg: string; text: string } => {
     switch (status) {
-        case 'Approved':
+        case 'approved':
+        case 'processed':
             return { bg: 'bg-green-100', text: 'text-green-700' };
-        case 'Pending':
+        case 'requested':
             return { bg: 'bg-orange-100', text: 'text-orange-700' };
-        case 'Rejected':
+        case 'rejected':
             return { bg: 'bg-red-100', text: 'text-red-700' };
         default:
             return { bg: 'bg-gray-100', text: 'text-gray-700' };
@@ -32,8 +26,7 @@ const getStatusColor = (status: RefundStatus): { bg: string; text: string } => {
 export default function RefundsPage(): React.JSX.Element {
     const router = useRouter();
 
-    // Populated from GET /api/v1/refunds once the backend exists.
-    const refunds: Refund[] = [];
+    const { data: refunds = [] } = useRefunds();
 
     return (
         <ScreenWrapper>
@@ -70,16 +63,22 @@ export default function RefundsPage(): React.JSX.Element {
                     return (
                         <View className="bg-white rounded-2xl p-4 mb-3 shadow-sm border border-gray-100">
                             <View className="flex-row justify-between items-start mb-3">
-                                <Text className="font-bold text-gray-900 flex-1">{refund.tweakName}</Text>
+                                <Text className="font-bold text-gray-900 flex-1">
+                                    {refund.reason || `Refund ${refund.id.slice(0, 8)}`}
+                                </Text>
                                 <View className={`px-3 py-1 rounded-full ${colors.bg}`}>
-                                    <Text className={`text-xs font-semibold ${colors.text}`}>
+                                    <Text className={`text-xs font-semibold ${colors.text} capitalize`}>
                                         {refund.status}
                                     </Text>
                                 </View>
                             </View>
                             <View className="flex-row justify-between items-center">
-                                <Text className="text-gray-500 text-sm">{refund.dateRequested}</Text>
-                                <Text className="font-bold text-gray-900 text-lg">₹{refund.amount}</Text>
+                                <Text className="text-gray-500 text-sm">
+                                    {new Date(refund.created_at).toLocaleDateString()}
+                                </Text>
+                                <Text className="font-bold text-gray-900 text-lg">
+                                    {formatMinor(refund.amount_minor)}
+                                </Text>
                             </View>
                         </View>
                     );

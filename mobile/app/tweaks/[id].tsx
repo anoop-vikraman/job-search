@@ -14,7 +14,9 @@ import {
 } from 'react-native';
 import { ScreenWrapper } from '@/components/ScreenWrapper';
 import { useAuthStore } from '@/store/useAuthStore';
-import { useTweaksStore } from '@/store/useTweaksStore';
+import type { Tweak } from '@/store/useTweaksStore';
+import { useTweak, useUpdateTweak } from '@/hooks/useTweaks';
+import { useAddToWatchlist, useRemoveFromWatchlist, useWatchlist } from '@/hooks/useWatchlist';
 import { ScheduleSlot } from '@/types/tweak';
 import { palette } from '@tweak/theme';
 
@@ -42,7 +44,7 @@ function getSlotConflict(
     slotDate: string,
     slotStart: string,
     slotEnd: string,
-    appliedTweaks: ReturnType<typeof useTweaksStore.getState>['tweaks'],
+    appliedTweaks: Tweak[],
     currentTweakId: string,
 ): ConflictType {
     for (const applied of appliedTweaks) {
@@ -224,14 +226,18 @@ function ConflictSlotBadge({
 export default function TweakDetails(): React.JSX.Element {
     const { id } = useLocalSearchParams();
     const router = useRouter();
-    const { getTweakById, addToWatchlist, removeFromWatchlist, getAppliedTweaks } = useTweaksStore();
     const { user } = useAuthStore();
-    const tweak = getTweakById(id as string);
+    const { data: tweak } = useTweak(id as string);
+    const { data: watchlist = [] } = useWatchlist();
+    const addToWatchlist = useAddToWatchlist();
+    const removeFromWatchlist = useRemoveFromWatchlist();
+    const updateTweak = useUpdateTweak();
 
     const userId = user?.id || '';
     const userSkills = user?.skills || ['Painting', 'Plumbing', 'Cleaning']; // Hardcoded sample skills
 
-    const appliedTweaks = getAppliedTweaks(userId);
+    // No "applied as provider" endpoint yet, so no cross-tweak conflict source.
+    const appliedTweaks: Tweak[] = [];
 
     const [showFullDescription, setShowFullDescription] = useState(false);
     const [showMenuModal, setShowMenuModal] = useState(false);
@@ -242,7 +248,7 @@ export default function TweakDetails(): React.JSX.Element {
     const playerStatus = useAudioPlayerStatus(player);
     const [isPlaying, setIsPlaying] = useState(false);
 
-    const isWatchlisted = tweak?.watchlistedBy?.includes(userId) || false;
+    const isWatchlisted = tweak ? watchlist.some((w) => w.id === tweak.id) : false;
 
     useEffect(() => {
         if (playerStatus.didJustFinish) {
@@ -265,9 +271,9 @@ export default function TweakDetails(): React.JSX.Element {
     const toggleWatchlist = () => {
         if (!tweak) return;
         if (isWatchlisted) {
-            removeFromWatchlist(tweak.id, userId);
+            removeFromWatchlist.mutate(tweak.id);
         } else {
-            addToWatchlist(tweak.id, userId);
+            addToWatchlist.mutate(tweak.id);
         }
     };
 
@@ -696,7 +702,17 @@ export default function TweakDetails(): React.JSX.Element {
                                         <Text className="font-bold text-gray-700">Edit Tweak</Text>
                                     </TouchableOpacity>
                                     <TouchableOpacity
-                                        onPress={() => { /* Handle close */ }}
+                                        onPress={() => {
+                                            Alert.alert('Close Tweak', 'Close this tweak? It will no longer accept applications.', [
+                                                { text: 'Cancel', style: 'cancel' },
+                                                {
+                                                    text: 'Close',
+                                                    style: 'destructive',
+                                                    onPress: () => updateTweak.mutate({ id: tweak.id, data: { status: 'closed' } }),
+                                                },
+                                            ]);
+                                        }}
+                                        disabled={updateTweak.isPending}
                                         className="flex-1 bg-gray-900 py-4 rounded-xl flex-row items-center justify-center"
                                     >
                                         <Text className="font-bold text-white">Close Tweak</Text>
