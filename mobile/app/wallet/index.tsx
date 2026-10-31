@@ -3,7 +3,9 @@ import { useRouter } from 'expo-router';
 import React from 'react';
 import { ScrollView, Text, TouchableOpacity, View } from 'react-native';
 import { ScreenWrapper } from '../../components/ScreenWrapper';
-import { mockTransactions, mockWalletBalance } from '../../constants/mockProfileData';
+
+const transactions: { id: string; date: string; description: string; amount: number; type: 'credit' | 'debit' }[] = [];
+const walletBalance = 0;
 
 export default function WalletPage() {
     const router = useRouter();
@@ -23,14 +25,14 @@ export default function WalletPage() {
                 <View className="px-6 py-6">
                     <View className="bg-gradient-to-br from-green-500 to-green-600 rounded-3xl p-8 shadow-lg">
                         <Text className="text-white/80 text-sm mb-2">Total Balance</Text>
-                        <Text className="text-white font-bold text-5xl">₹{mockWalletBalance.toLocaleString()}</Text>
+                        <Text className="text-white font-bold text-5xl">₹{walletBalance.toLocaleString()}</Text>
                     </View>
                 </View>
 
                 {/* Transactions */}
                 <View className="px-6 pb-6">
                     <Text className="font-bold text-lg text-gray-900 mb-4">Transactions</Text>
-                    {mockTransactions.map((transaction) => (
+                    {transactions.map((transaction) => (
                         <View key={transaction.id} className="bg-white rounded-2xl p-4 mb-3 shadow-sm border border-gray-100">
                             <View className="flex-row justify-between items-start">
                                 <View className="flex-1">

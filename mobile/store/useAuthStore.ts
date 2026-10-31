@@ -2,8 +2,12 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { create } from 'zustand';
 import { createJSONStorage, persist } from 'zustand/middleware';
 
+import { authApi, LoginRequest, SignupRequest } from '../api/auth';
+import { userApi } from '../api/user';
+import { secureStorage } from '../utils/storage';
+
 interface ContactDetails {
-    email: string;
+    email?: string;
     mobileNumber: string;
     countryCode: string;
     alternateMobileNumber?: string;
@@ -15,93 +19,110 @@ export interface User {
     firstName: string;
     lastName: string;
     contactDetails: ContactDetails;
-    password?: string; // Storing for testing purposes
     profilePictureUrl?: string;
     bio?: string;
+    dateOfBirth?: string;
+    gender?: string;
     userType: string;
     isActive: boolean;
-    skills?: string[]; // Skills listed on user profile (for skill matching)
-    completedCategories?: string[]; // Categories of tweaks user has previously completed
-    rating?: number; // Overall user rating (1-5)
+    skills?: string[];
+    completedCategories?: string[];
+    rating?: number;
 }
 
 export interface AuthState {
     user: User | null;
-    allUsers: User[]; // Local database of registered users
     isAuthenticated: boolean;
 
-    // Actions
-    login: (mobileNumber: string, countryCode: string, password: string) => Promise<boolean>;
-    signup: (user: Partial<User>) => Promise<void>;
-    logout: () => void;
-    switchUser: (userId: string) => void;
+    login: (data: LoginRequest) => Promise<void>;
+    signup: (data: SignupRequest) => Promise<void>;
+    logout: () => Promise<void>;
+    loadCurrentUser: () => Promise<void>;
     updateUser: (data: Partial<User>) => void;
-    clearUsers: () => void;
+    setUser: (user: User) => void;
 }
+
+// Map a backend user payload to the in-app User shape.
+const toUser = (u: Awaited<ReturnType<typeof userApi.getMe>>): User => ({
+    id: u.id,
+    firstName: u.first_name,
+    lastName: u.last_name ?? '',
+    contactDetails: {
+        email: u.email,
+        mobileNumber: u.phone_number,
+        countryCode: u.country_code,
+    },
+    profilePictureUrl: u.profile_picture_url,
+    bio: u.bio,
+    dateOfBirth: u.date_of_birth,
+    gender: u.gender,
+    userType: 'user',
+    isActive: true,
+    skills: u.skills,
+    completedCategories: u.completed_categories,
+    rating: u.rating_avg,
+});
+
+const persistTokens = async (tokens: { access_token: string; refresh_token: string }) => {
+    await secureStorage.save('access_token', tokens.access_token);
+    await secureStorage.save('refresh_token', tokens.refresh_token);
+};
 
 export const useAuthStore = create<AuthState>()(
     persist(
         (set, get) => ({
             user: null,
-            allUsers: [],
             isAuthenticated: false,
 
-            login: async (mobileNumber, countryCode, password) => {
-                const user = get().allUsers.find(
-                    u => u.contactDetails.mobileNumber === mobileNumber && 
-                         u.contactDetails.countryCode === countryCode &&
-                         u.password === password
-                );
+            login: async (data) => {
+                const tokens = await authApi.login(data);
+                await persistTokens(tokens);
+                const profile = await userApi.getMe();
+                set({ user: toUser(profile), isAuthenticated: true });
+            },
 
-                if (user) {
-                    set({ user, isAuthenticated: true });
-                    return true;
+            signup: async (data) => {
+                const tokens = await authApi.signup(data);
+                await persistTokens(tokens);
+                const profile = await userApi.getMe();
+                set({ user: toUser(profile), isAuthenticated: true });
+            },
+
+            logout: async () => {
+                try {
+                    await authApi.logout();
+                } catch {
+                    // Even if the server call fails, clear local session.
                 }
-                return false;
-            },
-
-            signup: async (userData) => {
-                const newUser: User = {
-                    id: Math.random().toString(36).substring(7),
-                    firstName: userData.firstName || 'Guest',
-                    lastName: userData.lastName || '',
-                    contactDetails: userData.contactDetails!,
-                    password: userData.password,
-                    userType: 'provider',
-                    isActive: true,
-                    ...userData
-                };
-
-                set((state) => ({
-                    allUsers: [...state.allUsers, newUser]
-                }));
-            },
-
-            logout: () => {
+                await secureStorage.delete('access_token');
+                await secureStorage.delete('refresh_token');
                 set({ user: null, isAuthenticated: false });
             },
 
-            switchUser: (userId) => {
-                const user = get().allUsers.find(u => u.id === userId);
-                if (user) {
-                    set({ user, isAuthenticated: true });
+            loadCurrentUser: async () => {
+                const token = await secureStorage.get('access_token');
+                if (!token) {
+                    set({ user: null, isAuthenticated: false });
+                    return;
                 }
+                const profile = await userApi.getMe();
+                set({ user: toUser(profile), isAuthenticated: true });
             },
 
             updateUser: (data) => {
                 set((state) => {
                     if (!state.user) return state;
-                    const updatedUser = { ...state.user, ...data };
-                    const updatedUsers = state.allUsers.map(u => u.id === updatedUser.id ? updatedUser : u);
-                    return { user: updatedUser, allUsers: updatedUsers };
+                    return { user: { ...state.user, ...data } };
                 });
             },
 
-            clearUsers: () => set({ allUsers: [], user: null, isAuthenticated: false }),
+            setUser: (user) => set({ user, isAuthenticated: true }),
         }),
         {
             name: 'auth-storage',
             storage: createJSONStorage(() => AsyncStorage),
+            // Only cache non-sensitive profile data; tokens live in secure-store.
+            partialize: (state) => ({ user: state.user, isAuthenticated: state.isAuthenticated }),
         }
     )
 );

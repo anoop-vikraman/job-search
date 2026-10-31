@@ -78,15 +78,13 @@ export default function CreateTweakStep5() {
     };
 
     const handleSaveDraft = async () => {
-        // TODO: Implement draft save to AsyncStorage/MMKV
-        console.log('Saving draft...', params);
-        setShowDraftSaveModal(true);
+        // The draft is assembled and persisted from the preview screen,
+        // which has the full tweak state. Route there to save.
+        router.push('/create-tweak/preview');
     };
 
     const handleActivate = () => {
-        // TODO: Implement tweak activation (API call)
-        console.log('Activating tweak...', params);
-        setShowSuccessModal(true);
+        router.push('/create-tweak/preview');
     };
 
     const handleBack = () => {

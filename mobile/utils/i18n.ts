@@ -69,24 +69,10 @@ const initI18n = async () => {
 };
 
 const checkForUpdates = async (lang: string) => {
-    try {
-        // In a real app, calls: GET /locales/manifest.json
-        // Checks version vs stored version
-        // If new, GET /locales/{lang}.json
-        // Save to MMKV: storage.set(TRANSLATION_STORAGE_PREFIX + lang, JSON.stringify(data))
-        // And update live instance: i18n.addResourceBundle(...)
-        console.log(`Checking for language updates for: ${lang}...`);
-
-        // Mock implementations
-        /*
-        const response = await axios.get(`https://cdn.tweak.com/locales/${lang}.json`);
-        storage.set(TRANSLATION_STORAGE_PREFIX + lang, JSON.stringify(response.data));
-        i18n.addResourceBundle(lang, 'translation', response.data, true, true);
-        */
-
-    } catch (e) {
-        console.log('Language update failed', e);
-    }
+    // Placeholder for OTA translation updates:
+    //   GET /locales/manifest.json -> compare versions -> GET /locales/{lang}.json
+    //   -> persist and i18n.addResourceBundle(lang, 'translation', data, true, true)
+    // Intentionally a no-op until the locale CDN endpoint exists.
 };
 
 export const changeLanguage = (lang: string) => {

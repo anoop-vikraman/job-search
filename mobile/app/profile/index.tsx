@@ -1,4 +1,3 @@
-import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
 import React from 'react';
 import { ScrollView, Text, TouchableOpacity, View } from 'react-native';
@@ -11,12 +10,10 @@ import ProfileStats from '../../components/Profile/ProfileStats';
 import { ScreenWrapper } from '../../components/ScreenWrapper';
 import { useAuthStore } from '../../store/useAuthStore';
 import { useConfirmationStore } from '../../store/useConfirmationStore';
-import { themeColors } from '../../themes/colors';
-import { Toast } from '../../components/UI/ToastManager';
 
 export default function ProfilePage() {
     const router = useRouter();
-    const { logout, allUsers, switchUser, user } = useAuthStore();
+    const { logout } = useAuthStore();
     const confirm = useConfirmationStore(state => state.confirm);
 
     const handleLogout = () => {
@@ -25,8 +22,8 @@ export default function ProfilePage() {
             message: 'Are you sure you want to logout?',
             variant: 'danger',
             confirmLabel: 'Logout',
-            onConfirm: () => {
-                logout();
+            onConfirm: async () => {
+                await logout();
                 router.replace('/login');
             }
         });
@@ -61,49 +58,6 @@ export default function ProfilePage() {
                     >
                         <Text className="text-red-500 font-bold text-center text-lg">Log Out</Text>
                     </TouchableOpacity>
-
-                    {/* Developer Quick Switch */}
-                    <View className="bg-gray-50 rounded-2xl p-4 border border-gray-100">
-                        <View className="flex-row items-center mb-4 gap-2">
-                            <Ionicons name="construct-outline" size={18} color="#64748B" />
-                            <Text className="text-sm font-bold text-gray-500 uppercase tracking-wider">Quick Switch (Dev Mode)</Text>
-                        </View>
-                        
-                        {allUsers.length === 0 ? (
-                            <Text className="text-gray-400 italic text-center py-2">No other users registered yet</Text>
-                        ) : (
-                            <View className="gap-2">
-                                {allUsers.map((u) => (
-                                    <TouchableOpacity
-                                        key={u.id}
-                                        onPress={() => {
-                                            switchUser(u.id);
-                                            Toast.success(`Switched to ${u.firstName}`);
-                                        }}
-                                        className={`flex-row items-center justify-between p-3 rounded-xl border ${u.id === user?.id ? 'bg-primary/10 border-primary' : 'bg-white border-gray-200'}`}
-                                    >
-                                        <View className="flex-row items-center gap-3">
-                                            <View className="w-8 h-8 rounded-full bg-gray-200 items-center justify-center">
-                                                <Text className="font-bold text-gray-500">{u.firstName[0]}</Text>
-                                            </View>
-                                            <View>
-                                                <Text className={`font-bold ${u.id === user?.id ? 'text-primary' : 'text-gray-900'}`}>{u.firstName} {u.lastName}</Text>
-                                                <Text className="text-xs text-gray-500">{u.contactDetails.mobileNumber}</Text>
-                                            </View>
-                                        </View>
-                                        {u.id === user?.id && <Ionicons name="checkmark-circle" size={20} color={themeColors.primary} />}
-                                    </TouchableOpacity>
-                                ))}
-                            </View>
-                        )}
-                        
-                        <TouchableOpacity 
-                            onPress={() => router.push('/signup')}
-                            className="mt-4 p-2 items-center"
-                        >
-                            <Text className="text-primary font-semibold text-xs">+ Register Another Test User</Text>
-                        </TouchableOpacity>
-                    </View>
                 </View>
 
                 {/* Version */}

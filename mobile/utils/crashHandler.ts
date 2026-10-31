@@ -1,33 +1,24 @@
-import { setJSExceptionHandler, setNativeExceptionHandler } from 'react-native-exception-handler';
 import { useFatalErrorStore } from '../store/useFatalErrorStore';
 
-// Define the error handler function (Rendered UI or Alert)
-const handleError = (error: Error, isFatal: boolean) => {
-    if (isFatal) {
-        // Trigger the custom modal via global store
-        useFatalErrorStore.getState().showError(error);
+// Global JS error handler using React Native's built-in ErrorUtils.
+// (Replaces react-native-exception-handler, which is unmaintained and untested
+// on the New Architecture.)
 
-        // Optional: Keep the native alert as a secondary fallback if JS engine is dying
-        /*
-        Alert.alert(
-            'Unexpected Error Occurred',
-            `Error: ${error.message}`,
-            [{ text: 'Restart' }]
-        );
-        */
-    } else {
-        console.log(error); // Log non-fatal errors
-    }
+type ErrorUtilsType = {
+    getGlobalHandler: () => (error: Error, isFatal?: boolean) => void;
+    setGlobalHandler: (handler: (error: Error, isFatal?: boolean) => void) => void;
 };
 
-// JS Exceptions (Uncaught Promises / Syntax)
-setJSExceptionHandler((error, isFatal) => {
-    handleError(error, isFatal);
-}, true); // true = allow handler in dev mode too
+const errorUtils: ErrorUtilsType | undefined = (globalThis as any).ErrorUtils;
 
-// Native Crashes (Java/Kotlin/ObjC exceptions)
-setNativeExceptionHandler((errorString) => {
-    // This runs in a critical state where UI might not work well
-    // But on Android it tries to show a toast or log
-    console.error('Native Handling Error:', errorString);
-});
+if (errorUtils) {
+    const previousHandler = errorUtils.getGlobalHandler();
+
+    errorUtils.setGlobalHandler((error: Error, isFatal?: boolean) => {
+        if (isFatal) {
+            useFatalErrorStore.getState().showError(error);
+        }
+        // Preserve the default handler (red box in dev, native crash reporting in prod).
+        previousHandler?.(error, isFatal);
+    });
+}

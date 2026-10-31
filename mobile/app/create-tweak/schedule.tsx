@@ -26,21 +26,21 @@ export default function SchedulePage() {
     const [timeSlots, setTimeSlots] = useState<{ start: string, end: string }[]>([]);
 
     // State for 'deadline' mode
-    const [deadlineSlots, setDeadlineSlots] = useState<Array<{
+    const [deadlineSlots, setDeadlineSlots] = useState<{
         date: string;
         start: string;
         end: string;
         status: 'default' | 'modified';
-    }>>([]);
+    }[]>([]);
     const [activeDeadlineSlot, setActiveDeadlineSlot] = useState<number | null>(null);
 
     // State for 'few_days' mode
-    const [fewDaysSlots, setFewDaysSlots] = useState<Array<{
+    const [fewDaysSlots, setFewDaysSlots] = useState<{
         date: string;
         start: string;
         end: string;
         status: 'default' | 'modified';
-    }>>([]);
+    }[]>([]);
     const [activeFewDaysSlot, setActiveFewDaysSlot] = useState<number | null>(null);
     // State for tracking the currently visible month in the calendar (0-11 index)
     const [calMonth, setCalMonth] = useState(dayjs().month());

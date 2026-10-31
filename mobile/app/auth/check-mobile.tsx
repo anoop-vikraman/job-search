@@ -39,18 +39,17 @@ export default function CheckMobile() {
     const onSubmit = async (data: FormData) => {
         setIsLoading(true);
         try {
-            await authApi.generateOTP({
-                mobileNumber: data.mobile,
-                countryCode: countryCode,
-                requestType: flow === 'reset' ? 'FORGOT_PASSWORD' : 'SIGNUP'
+            await authApi.generateOtp({
+                country_code: countryCode,
+                phone_number: data.mobile,
+                request_type: flow === 'reset' ? 'FORGOT_PASSWORD' : 'SIGNUP'
             });
 
             router.push({
                 pathname: '/auth/otp',
-                params: { mobile: data.mobile, flow }
+                params: { mobile: data.mobile, countryCode, flow }
             });
         } catch (error) {
-            console.error('OTP Generation failed:', error);
             Toast.error("Failed to generate OTP. Please check your mobile number.");
         } finally {
             setIsLoading(false);
@@ -94,7 +93,7 @@ export default function CheckMobile() {
                     )}
                 />
 
-                <CustomButton onPress={handleSubmit(onSubmit)}>
+                <CustomButton onPress={handleSubmit(onSubmit)} loading={isLoading}>
                     {t('sendOtp')}
                 </CustomButton>
             </View>

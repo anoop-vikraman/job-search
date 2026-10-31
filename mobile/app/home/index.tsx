@@ -1,23 +1,20 @@
 import { useRouter } from 'expo-router';
-import React, { useState } from 'react';
+import React from 'react';
 import { ScrollView, Text, View } from 'react-native';
 import HomeHeader from '../../components/Home/HomeHeader';
 import PromoBanner from '../../components/Home/PromoBanner';
 import SecondaryPromo from '../../components/Home/SecondaryPromo';
 import ServiceGrid from '../../components/Home/ServiceGrid';
 import { ScreenWrapper } from '../../components/ScreenWrapper';
-
-// Mock Location Data
-// In a real app, use a Context or Hook to get this
-const MOCK_ADDRESS = "Sukumar, Gnra 3, Santhi Nagar...";
+import { useAppStore } from '../../store/useAppStore';
 
 export default function Home() {
     const router = useRouter();
-    const [address, setAddress] = useState(MOCK_ADDRESS);
+    const savedAddresses = useAppStore((state) => state.savedAddresses);
+    const address = savedAddresses[0]?.formattedAddress ?? 'Set your location';
 
     const handleLocationPress = () => {
-        // Open Location Modal or navigate to address selection
-        console.log("Location Pressed");
+        router.push('/create-tweak/select-location');
     };
 
     return (
@@ -47,5 +44,3 @@ export default function Home() {
         </ScreenWrapper>
     );
 }
-// Wait, nesting ScreenWrapper inside ScreenWrapper might be bad if both handle SafeArea.
-// Let's check ScreenWrapper implementation first.

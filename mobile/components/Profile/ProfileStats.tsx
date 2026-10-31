@@ -1,10 +1,11 @@
 import { Ionicons } from '@expo/vector-icons';
 import React from 'react';
 import { Text, View } from 'react-native';
-import { mockTweakStats } from '../../constants/mockProfileData';
+
+const stats = { tweaksCreated: 0, tweaksCompleted: 0, rating: 0, totalReviews: 0 };
 
 export default function ProfileStats() {
-    const { tweaksCreated, tweaksCompleted, rating, totalReviews } = mockTweakStats;
+    const { tweaksCreated, tweaksCompleted, rating, totalReviews } = stats;
 
     return (
         <View className="px-6 py-4">

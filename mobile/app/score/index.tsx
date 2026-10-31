@@ -3,12 +3,17 @@ import { useRouter } from 'expo-router';
 import React, { useState } from 'react';
 import { Modal, ScrollView, Text, TouchableOpacity, View } from 'react-native';
 import { ScreenWrapper } from '../../components/ScreenWrapper';
-import { mockReliabilityScore } from '../../constants/mockProfileData';
+
+const reliabilityScore = {
+    score: 0,
+    positiveActs: [] as { name: string; points: number }[],
+    negativeActs: [] as { name: string; points: number }[],
+};
 
 export default function ScorePage() {
     const router = useRouter();
     const [modalVisible, setModalVisible] = useState(false);
-    const { score, positiveActs, negativeActs } = mockReliabilityScore;
+    const { score, positiveActs, negativeActs } = reliabilityScore;
 
     return (
         <ScreenWrapper>

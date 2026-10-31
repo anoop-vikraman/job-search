@@ -1,11 +1,12 @@
 import { useRouter } from 'expo-router';
 import React from 'react';
 import { Text, TouchableOpacity, View } from 'react-native';
-import { mockProfileCompletion } from '../../constants/mockProfileData';
+
+const profileCompletion = { percentage: 0, nextStep: 'Complete your profile' };
 
 export default function ProfileCompletionCard() {
     const router = useRouter();
-    const { percentage, nextStep } = mockProfileCompletion;
+    const { percentage, nextStep } = profileCompletion;
 
     // Don't show if 100% complete
     if (percentage >= 100) return null;

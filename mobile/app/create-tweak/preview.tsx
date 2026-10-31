@@ -16,6 +16,7 @@ import CreateFlowHeader from '../../components/create-tweak/CreateFlowHeader';
 import { ScreenWrapper } from '../../components/ScreenWrapper';
 import CustomConfirmationModal from '../../components/UI/CustomConfirmationModal';
 import ImageGalleryModal from '../../components/UI/ImageGalleryModal';
+import { Toast } from '../../components/UI/ToastManager';
 import { FeatureFlags } from '../../constants/featureFlags';
 import { useCreateTweakStore } from '../../store/useCreateTweakStore';
 import { useAuthStore } from '../../store/useAuthStore';
@@ -178,9 +179,8 @@ export default function TweakPreview() {
             addTweak(newTweak);
             setShowSuccessModal(true);
         } else {
-            // API call would go here
-            console.log('Posting tweak...');
-            setShowSuccessModal(true);
+            // Remote persistence path: POST /api/v1/tweaks (pending backend).
+            Toast.error('Posting to the server is not available yet.');
         }
     };
 

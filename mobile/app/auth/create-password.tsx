@@ -89,10 +89,8 @@ export default function CreatePassword() {
     };
 
     const handleSurveyComplete = (source: string) => {
-        console.log('Survey Source:', source);
-        // TODO: Submit full signup data + source to backend
         setShowSurvey(false);
-        router.push('/home');
+        router.replace('/(tabs)');
     };
 
     return (
@@ -200,7 +198,7 @@ export default function CreatePassword() {
                             )}
                         />
 
-// Match Indicator Logic
+                        {/* Match Indicator Logic */}
                         {(confirmPassword.length > 0 || (password.length > 0 && errors.confirmPassword)) && (
                             <View className="flex-row items-center justify-end mt-2 px-1">
                                 <Text className="text-xs text-gray-500 mr-2">

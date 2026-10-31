@@ -3,6 +3,7 @@ import { Toast } from '@/components/UI/ToastManager';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import React, { useState } from 'react';
 import { Text, View } from 'react-native';
+import { authApi } from '../../api/auth';
 import { ScreenWrapper } from '../../components/ScreenWrapper';
 import CustomButton from '../../components/UI/CustomButton';
 import { useAuthStore } from '../../store/useAuthStore';
@@ -10,35 +11,43 @@ import { useAuthStore } from '../../store/useAuthStore';
 export default function OTPPage() {
     const router = useRouter();
     const params = useLocalSearchParams();
-    const login = useAuthStore((state) => state.login);
-    
+    const signup = useAuthStore((state) => state.signup);
+
     const [otp, setOtp] = useState('');
     const [isLoading, setIsLoading] = useState(false);
 
     const handleSubmit = async () => {
-        if (otp !== '000000') {
-            Toast.error("Invalid OTP. Try 000000");
-            return;
-        }
+        const mobile = params.mobile as string;
+        const countryCode = params.countryCode as string;
+        const flow = params.flow as string;
 
         setIsLoading(true);
         try {
-            // Auto-login after OTP success using credentials passed in params
-            const success = await login(
-                params.mobile as string,
-                params.countryCode as string,
-                params.password as string
-            );
+            await authApi.verifyOtp({
+                country_code: countryCode,
+                phone_number: mobile,
+                otp,
+                request_type: flow === 'reset' ? 'FORGOT_PASSWORD' : 'SIGNUP',
+            });
 
-            if (success) {
+            if (flow === 'signup') {
+                await signup({
+                    country_code: countryCode,
+                    phone_number: mobile,
+                    password: params.password as string,
+                    first_name: params.firstName as string,
+                    last_name: params.lastName as string,
+                    email: params.email as string,
+                });
                 Toast.success("Verification successful!");
                 router.replace('/(tabs)');
             } else {
-                Toast.error("Login after verification failed");
-                router.replace('/login');
+                router.replace({
+                    pathname: '/auth/create-password',
+                    params: { flow: 'reset', mobile, countryCode },
+                });
             }
         } catch (error) {
-            console.error(error);
             Toast.error("Something went wrong");
         } finally {
             setIsLoading(false);
@@ -67,10 +76,6 @@ export default function OTPPage() {
                 <CustomButton onPress={handleSubmit} loading={isLoading}>
                     Verify & Continue
                 </CustomButton>
-                
-                <Text className="text-center text-xs text-gray-400">
-                    Hint: Use 000000 for verification
-                </Text>
             </View>
         </ScreenWrapper>
     );

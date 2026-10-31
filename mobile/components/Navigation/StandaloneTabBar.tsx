@@ -22,7 +22,7 @@ const TABS = [
 // Inner component that safely uses navigation hooks (only rendered when context exists)
 function StandaloneTabBarInner() {
     const router = useRouter();
-    const segments = useSegments();
+    const segments = useSegments() as string[];
     const [isMenuOpen, setIsMenuOpen] = React.useState(false);
     const setTweakType = useCreateTweakStore((state) => state.setTweakType);
     const reset = useCreateTweakStore((state) => state.reset);
@@ -66,7 +66,7 @@ function StandaloneTabBarInner() {
     // Determine the active tab based on segments
     // For index, segments might just be ['(tabs)']
     // For tweaks, segments might be ['(tabs)', 'tweaks']
-    const activeRouteName = segments.length > 1 && segments[0] === '(tabs)' ? segments[1] : 'index';
+    const activeRouteName = segments[0] === '(tabs)' && segments.length > 1 ? segments[1] : 'index';
 
     // If we're not inside the main app navigation, default to nothing or keep Home lit?
     // We'll just light up the tab based on segments.

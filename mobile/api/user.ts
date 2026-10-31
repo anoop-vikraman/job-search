@@ -1,25 +1,41 @@
+import api from '../utils/api';
+
+export interface UserProfile {
+    id: string;
+    first_name: string;
+    last_name?: string;
+    email?: string;
+    phone_number: string;
+    country_code: string;
+    date_of_birth?: string;
+    gender?: string;
+    bio?: string;
+    profile_picture_url?: string;
+    skills: string[];
+    completed_categories: string[];
+    rating_avg: number;
+    rating_count: number;
+}
+
+export interface UpdateUserRequest {
+    first_name?: string;
+    last_name?: string;
+    email?: string;
+    date_of_birth?: string;
+    gender?: string;
+    bio?: string;
+    profile_picture_url?: string;
+    skills?: string[];
+}
 
 export const userApi = {
-    // 9. Get the user data
-    getUser: async (id: number | string) => {
-        await new Promise(resolve => setTimeout(resolve, 1000));
-        return {
-            id: id,
-            name: 'Test User',
-            email: 'test@example.com',
-            mobileNumber: '0000000000',
-            profilePicture: 'https://via.placeholder.com/150',
-            // Add other fields as expected by the app
-        };
+    getMe: async (): Promise<UserProfile> => {
+        const res = await api.get('/api/v1/users/me');
+        return res.data;
     },
 
-    // To update the user data
-    updateUser: async (id: number | string, data: any) => {
-        await new Promise(resolve => setTimeout(resolve, 1000));
-        return {
-            success: true,
-            message: 'User updated successfully',
-            data: { ...data, id }
-        };
-    }
+    updateMe: async (data: UpdateUserRequest): Promise<UserProfile> => {
+        const res = await api.patch('/api/v1/users/me', data);
+        return res.data;
+    },
 };

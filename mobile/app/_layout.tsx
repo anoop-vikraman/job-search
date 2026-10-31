@@ -15,22 +15,25 @@ import GlobalFatalErrorModal from "@/components/UI/GlobalFatalErrorModal";
 import NoInternetBanner from "@/components/UI/NoInternetBanner";
 import ToastManager from "@/components/UI/ToastManager";
 import { useAuthStore } from "@/store/useAuthStore";
-import { ActivityIndicator, View } from 'react-native';
 
 function AppContent() {
   const { isAuthenticated } = useAuthStore();
   const segments = useSegments();
   const router = useRouter();
 
-  // Protect Routes / Redirect Logic
+  // Route protection: keep authed users out of auth screens and
+  // push unauthenticated users to login when they hit a protected route.
   useEffect(() => {
     const currentGroup = segments[0] as string;
-    const isAuthRoute = currentGroup === 'auth' || currentGroup === 'login' || currentGroup === 'signup';
+    const isAuthRoute =
+      currentGroup === 'auth' || currentGroup === 'login' || currentGroup === 'signup';
 
     if (isAuthenticated && isAuthRoute) {
       router.replace('/(tabs)');
+    } else if (!isAuthenticated && !isAuthRoute) {
+      router.replace('/login');
     }
-  }, [isAuthenticated, segments]);
+  }, [isAuthenticated, segments, router]);
 
   return (
     <GestureHandlerRootView style={{ flex: 1, backgroundColor: themeColors.background }}>

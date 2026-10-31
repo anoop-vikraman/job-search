@@ -57,7 +57,7 @@ export interface ScreenWrapperProps {
     keyboardOffset?: number;
     scrollable?: boolean;
     contentContainerStyle?: ViewStyle;
-    edges?: Array<'top' | 'right' | 'bottom' | 'left'>;
+    edges?: ('top' | 'right' | 'bottom' | 'left')[];
 }
 
 export interface TabSelectorProps {

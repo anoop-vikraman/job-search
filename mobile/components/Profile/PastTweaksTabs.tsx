@@ -1,7 +1,11 @@
 import { Ionicons } from '@expo/vector-icons';
 import React, { useState } from 'react';
 import { ScrollView, Text, TouchableOpacity, View } from 'react-native';
-import { mockCompletedTweaks, mockCreatedTweaks, PastTweak } from '../../constants/mockProfileData';
+
+interface PastTweak { id: string; title: string; status: string; date: string; amount: number; rating?: number }
+
+const createdTweaks: PastTweak[] = [];
+const completedTweaks: PastTweak[] = [];
 
 export default function PastTweaksTabs() {
     const [activeTab, setActiveTab] = useState<'created' | 'completed'>('created');
@@ -64,8 +68,8 @@ export default function PastTweaksTabs() {
             {/* Content */}
             <ScrollView className="max-h-96" showsVerticalScrollIndicator={false}>
                 {activeTab === 'created'
-                    ? mockCreatedTweaks.map(renderTweakCard)
-                    : mockCompletedTweaks.map(renderTweakCard)
+                    ? createdTweaks.map(renderTweakCard)
+                    : completedTweaks.map(renderTweakCard)
                 }
             </ScrollView>
         </View>

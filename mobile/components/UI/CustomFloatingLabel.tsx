@@ -18,9 +18,9 @@ import Animated, {
     withTiming
 } from 'react-native-reanimated';
 
-const { width: screenWidth } = Dimensions.get('window');
-
 import { CustomFloatingLabelProps } from '../../types/ui';
+
+const { width: screenWidth } = Dimensions.get('window');
 
 export default function CustomFloatingLabel({
     label,

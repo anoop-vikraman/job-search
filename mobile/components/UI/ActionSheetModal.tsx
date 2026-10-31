@@ -4,6 +4,9 @@ import { KeyboardAvoidingView, Modal, Platform, ScrollView, TouchableOpacity, Vi
 
 import { ActionSheetModalProps } from '../../types/ui';
 
+// Helper Text component import workaround since we missed importing Text above
+import { Text } from 'react-native';
+
 export default function ActionSheetModal({
     visible,
     onClose,
@@ -89,6 +92,3 @@ export default function ActionSheetModal({
         </Modal>
     );
 }
-
-// Helper Text component import workaround since we missed importing Text above
-import { Text } from 'react-native';

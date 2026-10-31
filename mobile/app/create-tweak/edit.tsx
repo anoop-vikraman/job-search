@@ -1,5 +1,4 @@
 import { Ionicons } from '@expo/vector-icons';
-import { NavigationContext } from '@react-navigation/native';
 import dayjs from 'dayjs';
 import * as Haptics from 'expo-haptics';
 import { useRouter } from 'expo-router';
@@ -54,14 +53,6 @@ const { width: SCREEN_WIDTH } = Dimensions.get('window');
 
 export default function EditTweak() {
     const router = useRouter();
-    const navContext = React.useContext(NavigationContext);
-
-    // Prevent rendering until navigation context is completely ready
-    // This protects against crashes in sub-components that might reach for context (like NativeWind interop)
-    if (!navContext) {
-        console.log("[EditTweak] Waiting for navigation context...");
-        return null;
-    }
 
     // Get data from Zustand store
     const {
@@ -116,9 +107,9 @@ export default function EditTweak() {
     // Schedule specific states
     const [selectedDate, setSelectedDate] = useState<dayjs.Dayjs | null>(scheduleData?.date ? dayjs(scheduleData.date) : null);
     const [timeSlots, setTimeSlots] = useState<{ start: string, end: string }[]>(scheduleData?.timeSlots || []);
-    const [deadlineSlots, setDeadlineSlots] = useState<Array<{ date: string; start: string; end: string; status: 'default' | 'modified'; }>>(scheduleData?.deadlineSlots || []);
+    const [deadlineSlots, setDeadlineSlots] = useState<{ date: string; start: string; end: string; status: 'default' | 'modified'; }[]>(scheduleData?.deadlineSlots || []);
     const [activeDeadlineSlot, setActiveDeadlineSlot] = useState<number | null>(null);
-    const [fewDaysSlots, setFewDaysSlots] = useState<Array<{ date: string; start: string; end: string; status: 'default' | 'modified'; }>>(scheduleData?.fewDaysSlots || []);
+    const [fewDaysSlots, setFewDaysSlots] = useState<{ date: string; start: string; end: string; status: 'default' | 'modified'; }[]>(scheduleData?.fewDaysSlots || []);
     const [activeFewDaysSlot, setActiveFewDaysSlot] = useState<number | null>(null);
     const [calMonth, setCalMonth] = useState(dayjs().month());
     const [calYear, setCalYear] = useState(dayjs().year());

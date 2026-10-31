@@ -3,7 +3,8 @@ import { useRouter } from 'expo-router';
 import React from 'react';
 import { ScrollView, Text, TouchableOpacity, View } from 'react-native';
 import { ScreenWrapper } from '../../components/ScreenWrapper';
-import { mockRefunds } from '../../constants/mockProfileData';
+
+const refunds: { id: string; tweakName: string; amount: number; status: 'Pending' | 'Approved' | 'Rejected'; dateRequested: string }[] = [];
 
 export default function RefundsPage() {
     const router = useRouter();
@@ -28,7 +29,7 @@ export default function RefundsPage() {
             </View>
 
             <ScrollView className="flex-1 px-6 py-6">
-                {mockRefunds.length === 0 ? (
+                {refunds.length === 0 ? (
                     <View className="items-center py-16">
                         <View className="bg-gray-100 w-20 h-20 rounded-full items-center justify-center mb-4">
                             <Ionicons name="receipt-outline" size={40} color="#6B7280" />
@@ -37,7 +38,7 @@ export default function RefundsPage() {
                         <Text className="text-gray-500 text-center">Your refund requests will appear here</Text>
                     </View>
                 ) : (
-                    mockRefunds.map((refund) => {
+                    refunds.map((refund) => {
                         const colors = getStatusColor(refund.status);
                         return (
                             <View key={refund.id} className="bg-white rounded-2xl p-4 mb-3 shadow-sm border border-gray-100">

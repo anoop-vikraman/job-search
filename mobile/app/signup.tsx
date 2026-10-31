@@ -6,14 +6,13 @@ import { useRouter } from 'expo-router';
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Text, TouchableOpacity, View } from 'react-native';
+import { authApi } from '../api/auth';
 import { ScreenWrapper } from '../components/ScreenWrapper';
 import CustomButton from '../components/UI/CustomButton';
-import { useAuthStore } from '../store/useAuthStore';
 
 export default function SignUp() {
     const { t } = useTranslation();
     const router = useRouter();
-    const signup = useAuthStore((state) => state.signup);
 
     const [form, setForm] = useState({
         email: '',
@@ -37,29 +36,26 @@ export default function SignUp() {
 
         setIsLoading(true);
         try {
-            await signup({
-                firstName: form.name.split(' ')[0],
-                lastName: form.name.split(' ').slice(1).join(' '),
-                password: form.password,
-                contactDetails: {
-                    email: form.email,
-                    mobileNumber: form.mobileNumber,
-                    countryCode: countryCode,
-                }
+            await authApi.generateOtp({
+                country_code: countryCode,
+                phone_number: form.mobileNumber,
+                request_type: 'SIGNUP',
             });
-            
-            // Navigate to OTP with data
+
             router.push({
                 pathname: '/auth/otp',
-                params: { 
+                params: {
                     mobile: form.mobileNumber,
                     countryCode: countryCode,
-                    password: form.password // Pass for auto-login after OTP
+                    firstName: form.name.split(' ')[0],
+                    lastName: form.name.split(' ').slice(1).join(' '),
+                    email: form.email,
+                    password: form.password,
+                    flow: 'signup',
                 }
             });
         } catch (error) {
             Toast.error("Signup failed");
-            console.error(error);
         } finally {
             setIsLoading(false);
         }

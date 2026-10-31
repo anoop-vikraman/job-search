@@ -3,13 +3,14 @@ import { useRouter } from 'expo-router';
 import React from 'react';
 import { ScrollView, Share, Text, TouchableOpacity, View } from 'react-native';
 import { ScreenWrapper } from '../../components/ScreenWrapper';
-import { mockReferralData } from '../../constants/mockProfileData';
 import { useConfirmationStore } from '../../store/useConfirmationStore';
+
+const referralData = { totalEarnings: 0, friendsInvited: 0, referralLink: '' };
 
 export default function InvitePage() {
     const router = useRouter();
     const confirm = useConfirmationStore(state => state.confirm);
-    const { totalEarnings, friendsInvited, referralLink } = mockReferralData;
+    const { totalEarnings, friendsInvited, referralLink } = referralData;
 
     const shareReferral = async () => {
         try {

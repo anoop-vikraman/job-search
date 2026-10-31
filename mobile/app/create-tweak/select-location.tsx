@@ -11,9 +11,9 @@ import LocationSearchHeader from '../../components/Location/LocationSearchHeader
 import { ScreenWrapper } from '../../components/ScreenWrapper';
 import { themeColors } from '../../themes/colors';
 
-const { width, height } = Dimensions.get('window');
-
 import { useAppStore } from '../../store/useAppStore';
+
+const { width, height } = Dimensions.get('window');
 
 export default function SelectLocation() {
     const router = useRouter();

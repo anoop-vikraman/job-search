@@ -30,17 +30,15 @@ export default function EditProfilePage() {
         if (!user?.id) return;
         setIsSubmitting(true);
         try {
-            const payload = {
-                firstName: data.firstName,
-                lastName: data.lastName,
+            await userApi.updateMe({
+                first_name: data.firstName,
+                last_name: data.lastName,
                 email: data.email,
-                dateOfBirth: data.dateOfBirth,
+                date_of_birth: data.dateOfBirth,
                 gender: data.gender,
                 bio: data.bio,
-                profilePictureURL: user.profilePictureUrl
-            };
-
-            await userApi.updateUser(user.id, payload);
+                profile_picture_url: user.profilePictureUrl,
+            });
 
             updateUser({
                 firstName: data.firstName,
@@ -57,7 +55,7 @@ export default function EditProfilePage() {
             Toast.success("Profile updated successfully");
             router.back();
         } catch (error) {
-            console.error(error);
+            Toast.error("Could not update profile");
         } finally {
             setIsSubmitting(false);
         }
@@ -74,7 +72,7 @@ export default function EditProfilePage() {
                     <Ionicons name="close" size={24} color={themeColors.text} />
                 </TouchableOpacity>
                 <Text style={styles.headerTitle}>Edit Profile</Text>
-                <TouchableOpacity onPress={handleSubmit(onSubmit)} disabled={isSubmitting}>
+                <TouchableOpacity onPress={() => handleSubmit(onSubmit)()} disabled={isSubmitting}>
                     <Text style={[styles.saveButtonText, isSubmitting && { opacity: 0.5 }]}>Save</Text>
                 </TouchableOpacity>
             </View>

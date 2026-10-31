@@ -68,5 +68,4 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
         typedRoutes: true,
         reactCompiler: true
     },
-    jsEngine: 'hermes',
 });

@@ -248,10 +248,7 @@ export default function CreateTweakStep2() {
 
             <CreateTweakNavButtons
                 onNext={handleSubmit(onSubmit)}
-                onSaveDraft={() => {
-                    // TODO: Implement draft save
-                    console.log('Save draft');
-                }}
+                onSaveDraft={handleSubmit(() => router.push('/create-tweak/preview'))}
             />
         </ScreenWrapper>
     );
