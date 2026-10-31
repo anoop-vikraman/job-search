@@ -1,0 +1,16 @@
+{
+  "version": "v1",
+  "hooks": [
+    {
+      "name": "Lint & Format on Save",
+      "trigger": "PostFileSave",
+      "description": "backend/**/*.py: ruff check --fix + ruff format. admin|mobile/**/*.ts(x): eslint --fix.",
+      "matcher": "(^|/)(backend/.*\\.py|(admin|mobile)/.*\\.tsx?)$",
+      "action": {
+        "type": "command",
+        "command": "bash .kiro/hooks/scripts/post-save.sh \"{{filePath}}\"",
+        "timeout": 60
+      }
+    }
+  ]
+}

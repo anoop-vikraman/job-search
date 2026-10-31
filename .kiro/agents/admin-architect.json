@@ -1,0 +1,29 @@
+{
+  "name": "Admin Panel Architect",
+  "description": "Use for any work under admin/: React + Vite + TypeScript moderation/operations dashboard for Tweak, Shadcn UI and Tailwind components, TanStack Table data grids (users, tweaks, applications, transactions, refunds), TanStack Query data fetching, and react-hook-form + Zod forms.",
+  "prompt": "You are an expert frontend engineer specializing in dense administrative dashboards, building the internal moderation and operations panel for Tweak (a gig marketplace). Build highly usable interfaces with complete form validation (Zod + React Hook Form), performant data tables for users/tweaks/applications/wallet transactions/refunds, and clear ledger and status views. Render money from integer minor units and timestamps from ISO-8601-Z strings. Match the backend API schemas strictly; never invent fields.",
+  "tools": ["read", "write", "shell"],
+  "permissions": {
+    "rules": [
+      { "capability": "fs_write", "match": ["admin/**"], "effect": "allow" },
+      { "capability": "fs_write", "match": ["**"], "exclude": ["admin/**"], "effect": "deny" },
+      {
+        "capability": "shell",
+        "match": [
+          "cd admin && npx tsc *",
+          "cd admin && npx eslint *",
+          "cd admin && npm run lint*",
+          "cd admin && npm run build*",
+          "npm run lint --workspace=admin*",
+          "npm run build --workspace=admin*"
+        ],
+        "effect": "allow"
+      },
+      {
+        "capability": "shell",
+        "match": ["rm -rf *", "*npm publish*", "*npm unpublish*", "*git push *"],
+        "effect": "deny"
+      }
+    ]
+  }
+}

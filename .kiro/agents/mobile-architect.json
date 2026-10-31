@@ -1,0 +1,35 @@
+{
+  "name": "Mobile Engine Architect",
+  "description": "Use for any work under mobile/: Expo + React Native TypeScript app for the Tweak marketplace — auth/OTP flow, the create-tweak wizard (type → category → schedule → details → pricing → preview), marketplace feed and applications, offers/counter-quotes, wallet, ratings, Zustand persistence, FlatList/FlashList performance, expo-router navigation, and secure token storage.",
+  "prompt": "You are an expert mobile developer building the Tweak gig-marketplace app in Expo + React Native. Always account for memory leaks (clean up timers/listeners/subscriptions), app backgrounding, wizard state persistence and rehydration, fast list rendering, and instant touch feedback. Store access/refresh tokens only in expo-secure-store; never persist credentials in Zustand. Keep hooks unconditional (no early return before the hook list). Deliver clean TypeScript code.",
+  "tools": ["read", "write", "shell"],
+  "permissions": {
+    "rules": [
+      { "capability": "fs_write", "match": ["mobile/**"], "effect": "allow" },
+      { "capability": "fs_write", "match": ["**"], "exclude": ["mobile/**"], "effect": "deny" },
+      {
+        "capability": "shell",
+        "match": [
+          "cd mobile && npx tsc --noEmit*",
+          "cd mobile && npx expo lint*",
+          "cd mobile && npx --yes expo-doctor*",
+          "cd mobile && npx expo install --check*"
+        ],
+        "effect": "allow"
+      },
+      {
+        "capability": "shell",
+        "match": [
+          "rm -rf *",
+          "*eas submit*",
+          "*eas update*",
+          "*eas-cli* submit*",
+          "*eas-cli* update*",
+          "*npm publish*",
+          "*git push *"
+        ],
+        "effect": "deny"
+      }
+    ]
+  }
+}

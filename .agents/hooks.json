@@ -1,0 +1,30 @@
+{
+  "lint-format-after-edit": {
+    "PostToolUse": [
+      {
+        "matcher": "write_to_file|replace_file_content|multi_replace_file_content",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash \"$(git rev-parse --show-toplevel)/.agents/hooks/adapter.sh\" post",
+            "timeout": 60
+          }
+        ]
+      }
+    ]
+  },
+  "commit-typecheck-and-safety": {
+    "PreToolUse": [
+      {
+        "matcher": "run_command",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash \"$(git rev-parse --show-toplevel)/.agents/hooks/adapter.sh\" pre",
+            "timeout": 300
+          }
+        ]
+      }
+    ]
+  }
+}

@@ -1,0 +1,16 @@
+{
+  "version": "v1",
+  "hooks": [
+    {
+      "name": "Type Check Before Commit",
+      "trigger": "PreToolUse",
+      "description": "On git commit: run mypy backend/app and tsc --noEmit in admin/ and mobile/. Blocks (exit 2) on type errors.",
+      "matcher": "^(execute_bash|shell)$",
+      "action": {
+        "type": "command",
+        "command": "bash .kiro/hooks/scripts/pre-commit.sh",
+        "timeout": 300
+      }
+    }
+  ]
+}
