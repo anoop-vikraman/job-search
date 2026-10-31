@@ -10,6 +10,7 @@ from app.core.errors import AppError
 from app.models.application import Application, Offer
 from app.models.enums import ApplicationStatus, NotificationType, TweakStatus
 from app.models.tweak import Tweak
+from app.models.user import User
 from app.schemas.application import ApplicationCreate, CounterQuoteRequest
 from app.services import notification_service, wallet_service
 
@@ -240,6 +241,40 @@ async def list_for_tweak(
         )
     ).all()
     return list(rows)
+
+
+async def list_for_tweak_detailed(
+    db: AsyncSession, tweak_id: uuid.UUID, lister_user_id: uuid.UUID
+) -> list[tuple[Application, User, Offer | None]]:
+    """Applications for a tweak, each with the provider's profile and any counter-offer."""
+    tweak = await _get_tweak(db, tweak_id)
+    if tweak.created_by_user_id != lister_user_id:
+        raise AppError(status.HTTP_403_FORBIDDEN, "TWEAK_ACCESS_DENIED", "Not your tweak.")
+    rows = (
+        await db.execute(
+            select(Application, User, Offer)
+            .join(User, User.id == Application.provider_user_id)
+            .outerjoin(Offer, Offer.application_id == Application.id)
+            .where(Application.tweak_id == tweak_id)
+            .order_by(Application.applied_at.desc())
+        )
+    ).all()
+    return [(a, u, o) for a, u, o in rows]
+
+
+async def list_for_provider(
+    db: AsyncSession, provider_user_id: uuid.UUID
+) -> list[tuple[Application, Tweak]]:
+    """Applications the given provider submitted, each with the tweak's headline info."""
+    rows = (
+        await db.execute(
+            select(Application, Tweak)
+            .join(Tweak, Tweak.id == Application.tweak_id)
+            .where(Application.provider_user_id == provider_user_id)
+            .order_by(Application.applied_at.desc())
+        )
+    ).all()
+    return [(a, t) for a, t in rows]
 
 
 def _agreed_amount(application: Application, tweak: Tweak) -> int:

@@ -1,6 +1,7 @@
 import api from '../utils/api';
 import type {
-    BackendApplication,
+    BackendApplicationDetail,
+    BackendMyApplication,
     BackendTweak,
     CreateTweakRequest,
     Page,
@@ -43,8 +44,13 @@ export const tweaksApi = {
         await api.delete(`/api/v1/tweaks/${id}`);
     },
 
-    listApplications: async (id: string): Promise<BackendApplication[]> => {
+    listApplications: async (id: string): Promise<BackendApplicationDetail[]> => {
         const res = await api.get(`/api/v1/tweaks/${id}/applications`);
+        return res.data;
+    },
+
+    myApplications: async (): Promise<BackendMyApplication[]> => {
+        const res = await api.get('/api/v1/tweaks/applications/mine');
         return res.data;
     },
 };

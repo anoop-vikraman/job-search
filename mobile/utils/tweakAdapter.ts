@@ -1,5 +1,6 @@
 import type {
     BackendApplication,
+    BackendApplicationDetail,
     BackendPricingData,
     BackendTweak,
     CreateTweakRequest,
@@ -68,7 +69,7 @@ function derivePrice(
 /** Map a backend tweak to the local Tweak shape consumed by the UI. */
 export function backendTweakToLocal(
     b: BackendTweak,
-    applications?: BackendApplication[]
+    applications?: (BackendApplication | BackendApplicationDetail)[]
 ): Tweak {
     const pricingData = pricingDataToLocal(b.pricing_model, b.pricing_data, b.price_minor);
     const scheduleData = (b.schedule_data as ScheduleData | null) ?? null;
@@ -100,8 +101,19 @@ export function backendTweakToLocal(
     };
 }
 
-/** Map a backend application to the local TweakApplication shape. */
-export function backendApplicationToLocal(a: BackendApplication): TweakApplication {
+/**
+ * Map a backend application to the local TweakApplication shape. When given the
+ * detailed variant (with `provider`), the applicant's name/skills/rating/avatar
+ * and any counter-offer are populated.
+ */
+export function backendApplicationToLocal(
+    a: BackendApplication | BackendApplicationDetail
+): TweakApplication {
+    const detail = 'provider' in a ? a : undefined;
+    const provider = detail?.provider;
+    const providerName = provider
+        ? [provider.first_name, provider.last_name].filter(Boolean).join(' ').trim()
+        : '';
     const localStatus: TweakApplication['status'] =
         a.status === 'accepted' || a.status === 'completed'
             ? 'accepted'
@@ -115,17 +127,22 @@ export function backendApplicationToLocal(a: BackendApplication): TweakApplicati
         end: s.end,
     }));
 
+    const counterMinor =
+        detail?.offer?.lister_quoted_price_minor ?? a.agreed_price_minor ?? undefined;
+
     return {
         userId: a.provider_user_id,
-        userName: a.provider_user_id,
-        userSkills: [],
+        userName: providerName || a.provider_user_id,
+        profilePictureUrl: provider?.profile_picture_url ?? undefined,
+        userSkills: provider?.skills ?? [],
+        completedCategories: provider?.completed_categories,
+        rating: provider?.rating_avg,
         whyPreferMessage: a.why_prefer_message ?? '',
         quotedPrice: a.quoted_price_minor != null ? minorToMajor(a.quoted_price_minor) : undefined,
         selectedSlots,
         appliedAt: a.applied_at,
         status: localStatus,
-        listerQuotedPrice:
-            a.agreed_price_minor != null ? minorToMajor(a.agreed_price_minor) : undefined,
+        listerQuotedPrice: counterMinor != null ? minorToMajor(counterMinor) : undefined,
     };
 }
 

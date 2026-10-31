@@ -9,7 +9,7 @@ import { ScreenWrapper } from '../../components/ScreenWrapper';
 import TabButton from '../../components/UI/TabButton';
 import { Tweak } from '../../store/useTweaksStore';
 import { useAuthStore } from '../../store/useAuthStore';
-import { useMyTweaks } from '../../hooks/useTweaks';
+import { useMyApplications, useMyTweaks } from '../../hooks/useTweaks';
 import { loadDraftIntoCreateStore } from '../../utils/draftLoader';
 import TweakTile from '../../components/Tweak/TweakTile';
 import { palette } from '@tweak/theme';
@@ -37,12 +37,37 @@ export default function TweaksListing(): React.JSX.Element {
     const userId = user?.id || '';
 
     const { data: allMine = [] } = useMyTweaks();
+    const { data: myApplications = [] } = useMyApplications();
 
-    // Derive the three views from the single "mine" source.
+    // Derive the three views: my posted tweaks, drafts, and tweaks I applied to.
     const myTweaks = useMemo(() => allMine.filter((t) => t.status !== 'draft'), [allMine]);
     const draftTweaks = useMemo(() => allMine.filter((t) => t.status === 'draft'), [allMine]);
-    // No dedicated "applied as provider" endpoint in the contract yet.
-    const appliedTweaks = useMemo<Tweak[]>(() => [], []);
+    const appliedTweaks = useMemo<Tweak[]>(
+        () =>
+            myApplications.map((a) => ({
+                id: a.tweak_id,
+                title: a.tweak_title,
+                description: '',
+                category: a.tweak_category,
+                images: [],
+                audioUri: null,
+                address: null,
+                skills: [],
+                languages: [],
+                schedulePreference: '',
+                scheduleData: null,
+                pricingModel: '',
+                pricingData: null,
+                tweakType: '',
+                price: 0,
+                pricingType: '',
+                createdAt: a.applied_at,
+                status: a.tweak_status === 'active' ? 'active' : 'closed',
+                createdByUserId: '',
+                appliedAt: a.applied_at,
+            })),
+        [myApplications]
+    );
 
     const tweaksData = useMemo(() => {
         let data: Tweak[] = [];

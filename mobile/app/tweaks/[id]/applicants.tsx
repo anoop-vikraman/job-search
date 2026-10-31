@@ -3,6 +3,7 @@ import { useLocalSearchParams, useRouter, type Href } from 'expo-router';
 import React from 'react';
 import {
     FlatList,
+    Image,
     Text,
     TouchableOpacity,
     View,
@@ -76,7 +77,12 @@ export default function TweakApplicants(): React.JSX.Element {
                 }
                 renderItem={({ item }) => {
                     const statusStyle = getStatusStyle(item.status);
-                    const displayName = item.provider_user_id.slice(0, 8);
+                    const providerName = [item.provider.first_name, item.provider.last_name]
+                        .filter(Boolean)
+                        .join(' ')
+                        .trim();
+                    const displayName = providerName || item.provider_user_id.slice(0, 8);
+                    const skillsLabel = item.provider.skills.slice(0, 3).join(' · ');
                     const quoteLabel =
                         item.quoted_price_minor != null
                             ? formatMinor(item.quoted_price_minor)
@@ -100,11 +106,18 @@ export default function TweakApplicants(): React.JSX.Element {
                             }}
                         >
                             {/* Avatar */}
-                            <View style={{ width: 56, height: 56, borderRadius: 28, backgroundColor: palette.slate100, alignItems: 'center', justifyContent: 'center' }}>
-                                <Text style={{ fontSize: 20, fontWeight: '700', color: palette.slate500 }}>
-                                    {displayName.charAt(0).toUpperCase()}
-                                </Text>
-                            </View>
+                            {item.provider.profile_picture_url ? (
+                                <Image
+                                    source={{ uri: item.provider.profile_picture_url }}
+                                    style={{ width: 56, height: 56, borderRadius: 28, backgroundColor: palette.slate100 }}
+                                />
+                            ) : (
+                                <View style={{ width: 56, height: 56, borderRadius: 28, backgroundColor: palette.slate100, alignItems: 'center', justifyContent: 'center' }}>
+                                    <Text style={{ fontSize: 20, fontWeight: '700', color: palette.slate500 }}>
+                                        {displayName.charAt(0).toUpperCase()}
+                                    </Text>
+                                </View>
+                            )}
 
                             <View style={{ flex: 1 }}>
                                 <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 4 }}>
@@ -115,6 +128,21 @@ export default function TweakApplicants(): React.JSX.Element {
                                         </Text>
                                     </View>
                                 </View>
+
+                                {item.provider.rating_count > 0 ? (
+                                    <View style={{ flexDirection: 'row', alignItems: 'center', gap: 3, marginBottom: 4 }}>
+                                        <Ionicons name="star" size={12} color={palette.amber500} />
+                                        <Text style={{ fontSize: 12, fontWeight: '600', color: palette.slate600 }}>
+                                            {item.provider.rating_avg.toFixed(1)} ({item.provider.rating_count})
+                                        </Text>
+                                    </View>
+                                ) : null}
+
+                                {skillsLabel ? (
+                                    <Text numberOfLines={1} style={{ fontSize: 12, color: palette.slate500, marginBottom: 4 }}>
+                                        {skillsLabel}
+                                    </Text>
+                                ) : null}
 
                                 <View style={{ flexDirection: 'row', alignItems: 'center', gap: 4, marginBottom: 8 }}>
                                     <Text style={{ fontSize: 13, color: palette.slate500 }}>Quote:</Text>

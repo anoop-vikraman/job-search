@@ -10,6 +10,8 @@ import { tweaksApi } from '../api/tweaks';
 import { applicationsApi } from '../api/applications';
 import type {
     BackendApplication,
+    BackendApplicationDetail,
+    BackendMyApplication,
     CreateTweakRequest,
     UpdateTweakRequest,
 } from '../types/api';
@@ -49,7 +51,7 @@ export function useTweak(id: string | undefined): UseQueryResult<Tweak> {
         enabled: Boolean(id),
         queryFn: async (): Promise<Tweak> => {
             const tweak = await tweaksApi.get(id as string);
-            let applications: BackendApplication[] | undefined;
+            let applications: BackendApplicationDetail[] | undefined;
             try {
                 applications = await tweaksApi.listApplications(id as string);
             } catch {
@@ -75,15 +77,23 @@ export function useTweakApplications(
     });
 }
 
-/** Raw backend applications for a tweak (owner view) — carries the app `id`. */
+/** Raw backend applications for a tweak (owner view) — carries the app `id` + provider detail. */
 export function useTweakApplicationsRaw(
     id: string | undefined
-): UseQueryResult<BackendApplication[]> {
+): UseQueryResult<BackendApplicationDetail[]> {
     return useQuery({
         queryKey: queryKeys.tweakApplications(id ?? ''),
         enabled: Boolean(id),
-        queryFn: (): Promise<BackendApplication[]> =>
+        queryFn: (): Promise<BackendApplicationDetail[]> =>
             tweaksApi.listApplications(id as string),
+    });
+}
+
+/** The current user's applications as a provider (GET /tweaks/applications/mine). */
+export function useMyApplications(): UseQueryResult<BackendMyApplication[]> {
+    return useQuery({
+        queryKey: queryKeys.myApplications(),
+        queryFn: (): Promise<BackendMyApplication[]> => tweaksApi.myApplications(),
     });
 }
 
@@ -154,6 +164,7 @@ export function useApplyToTweak(): UseMutationResult<
             qc.invalidateQueries({
                 queryKey: queryKeys.tweakApplications(variables.tweakId),
             });
+            qc.invalidateQueries({ queryKey: queryKeys.myApplications() });
         },
     });
 }

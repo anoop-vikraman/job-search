@@ -35,6 +35,34 @@ class ApplicationResponse(ORMModel):
     responded_at: UtcDatetime | None
 
 
+class ProviderSummary(ORMModel):
+    """Public applicant info shown on applicant cards."""
+
+    id: uuid.UUID
+    first_name: str | None
+    last_name: str | None
+    profile_picture_url: str | None
+    skills: list[str]
+    completed_categories: list[str]
+    rating_avg: float
+    rating_count: int
+
+
+class ApplicationDetail(ApplicationResponse):
+    """Application enriched with provider info and a counter-offer (for applicant lists)."""
+
+    provider: ProviderSummary
+    offer: OfferResponse | None = None
+
+
+class MyApplication(ApplicationResponse):
+    """An application the current user submitted, with the tweak's headline info."""
+
+    tweak_title: str
+    tweak_category: str
+    tweak_status: str
+
+
 class CounterQuoteRequest(BaseModel):
     lister_quoted_price_minor: int = Field(ge=0)
     message: str | None = None

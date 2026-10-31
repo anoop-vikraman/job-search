@@ -128,6 +128,39 @@ export interface CounterApplicationRequest {
     message?: string;
 }
 
+export interface BackendOffer {
+    id: string;
+    application_id: string;
+    lister_quoted_price_minor: number;
+    message: string | null;
+    created_at: string;
+}
+
+/** Public applicant info shown on applicant cards. */
+export interface BackendProviderSummary {
+    id: string;
+    first_name: string | null;
+    last_name: string | null;
+    profile_picture_url: string | null;
+    skills: string[];
+    completed_categories: string[];
+    rating_avg: number;
+    rating_count: number;
+}
+
+/** An application enriched with the applicant's profile + any counter-offer. */
+export interface BackendApplicationDetail extends BackendApplication {
+    provider: BackendProviderSummary;
+    offer: BackendOffer | null;
+}
+
+/** An application the current user submitted, with the tweak's headline info. */
+export interface BackendMyApplication extends BackendApplication {
+    tweak_title: string;
+    tweak_category: string;
+    tweak_status: string;
+}
+
 // ─── Wallet ───────────────────────────────────────────────────────────────
 
 export interface Wallet {

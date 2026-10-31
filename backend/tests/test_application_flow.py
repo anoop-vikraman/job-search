@@ -125,3 +125,42 @@ async def test_counter_quote_creates_offer(db: AsyncSession) -> None:
         db, app.id, lister.id, CounterQuoteRequest(lister_quoted_price_minor=90000)
     )
     assert offer.lister_quoted_price_minor == 90000
+
+
+async def test_list_for_provider_returns_my_applications(db: AsyncSession) -> None:
+    lister = await make_user(db)
+    provider = await make_user(db)
+    tweak = await _active_tweak(db, lister.id)
+    await application_service.apply(db, tweak.id, provider.id, ApplicationCreate())
+    rows = await application_service.list_for_provider(db, provider.id)
+    assert len(rows) == 1
+    app, t = rows[0]
+    assert app.provider_user_id == provider.id
+    assert t.id == tweak.id
+
+
+async def test_list_for_tweak_detailed_includes_provider_and_offer(db: AsyncSession) -> None:
+    lister = await make_user(db)
+    provider = await make_user(db, phone="9123400011")
+    tweak = await _active_tweak(db, lister.id)
+    app = await application_service.apply(
+        db, tweak.id, provider.id, ApplicationCreate(quoted_price_minor=90000)
+    )
+    await application_service.counter_quote(
+        db, app.id, lister.id, CounterQuoteRequest(lister_quoted_price_minor=85000)
+    )
+    rows = await application_service.list_for_tweak_detailed(db, tweak.id, lister.id)
+    assert len(rows) == 1
+    returned_app, returned_provider, offer = rows[0]
+    assert returned_provider.id == provider.id
+    assert offer is not None
+    assert offer.lister_quoted_price_minor == 85000
+
+
+async def test_list_for_tweak_detailed_denied_for_non_owner(db: AsyncSession) -> None:
+    lister = await make_user(db)
+    stranger = await make_user(db)
+    tweak = await _active_tweak(db, lister.id)
+    with pytest.raises(AppError) as exc:
+        await application_service.list_for_tweak_detailed(db, tweak.id, stranger.id)
+    assert exc.value.code == "TWEAK_ACCESS_DENIED"

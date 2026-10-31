@@ -10,6 +10,7 @@ export interface TweakApplication {
     profilePictureUrl?: string;
     userSkills: string[];
     completedCategories?: string[];
+    rating?: number;
     whyPreferMessage: string;
     quotedPrice?: number;
     selectedSlots: ScheduleSlot[];

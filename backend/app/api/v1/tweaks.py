@@ -6,9 +6,12 @@ from fastapi import APIRouter, Query, status
 from app.api.deps import CurrentUser, DbSession
 from app.schemas.application import (
     ApplicationCreate,
+    ApplicationDetail,
     ApplicationResponse,
     CounterQuoteRequest,
+    MyApplication,
     OfferResponse,
+    ProviderSummary,
 )
 from app.schemas.common import ErrorResponse, Page
 from app.schemas.tweak import TweakCreate, TweakResponse, TweakUpdate
@@ -151,10 +154,34 @@ async def cancel_application(
     return ApplicationResponse.model_validate(application)
 
 
-@router.get("/{tweak_id}/applications", response_model=list[ApplicationResponse], responses=ERRORS)
+@router.get(
+    "/applications/mine", response_model=list[MyApplication], responses=ERRORS
+)
+async def list_my_applications(user: CurrentUser, db: DbSession) -> list[MyApplication]:
+    """Applications the current user submitted as a provider, with each tweak's headline."""
+    rows = await application_service.list_for_provider(db, user.id)
+    return [
+        MyApplication(
+            **ApplicationResponse.model_validate(app).model_dump(),
+            tweak_title=tweak.title,
+            tweak_category=tweak.category,
+            tweak_status=tweak.status.value,
+        )
+        for app, tweak in rows
+    ]
+
+
+@router.get("/{tweak_id}/applications", response_model=list[ApplicationDetail], responses=ERRORS)
 async def list_tweak_applications(
     tweak_id: uuid.UUID, user: CurrentUser, db: DbSession
-) -> list[ApplicationResponse]:
-    """List applications for a tweak (owner only)."""
-    rows = await application_service.list_for_tweak(db, tweak_id, user.id)
-    return [ApplicationResponse.model_validate(a) for a in rows]
+) -> list[ApplicationDetail]:
+    """List applications for a tweak (owner only), with provider info and any counter-offer."""
+    rows = await application_service.list_for_tweak_detailed(db, tweak_id, user.id)
+    return [
+        ApplicationDetail(
+            **ApplicationResponse.model_validate(app).model_dump(),
+            provider=ProviderSummary.model_validate(provider),
+            offer=OfferResponse.model_validate(offer) if offer is not None else None,
+        )
+        for app, provider, offer in rows
+    ]
