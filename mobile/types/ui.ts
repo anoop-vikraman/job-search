@@ -1,4 +1,4 @@
-import { TextInputProps, TouchableOpacityProps, ViewStyle } from 'react-native';
+import { StyleProp, TextInputProps, TouchableOpacityProps, ViewStyle } from 'react-native';
 
 // Button Types
 export type ButtonVariant = 'filled' | 'outlined' | 'text';
@@ -23,7 +23,7 @@ export interface CustomFloatingLabelProps extends TextInputProps {
     error?: boolean | string;
     width?: number | string;
     showCharCount?: boolean;
-    containerStyle?: any;
+    containerStyle?: StyleProp<ViewStyle>;
 }
 
 // Modal Types

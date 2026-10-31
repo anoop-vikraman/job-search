@@ -47,12 +47,13 @@ const schema = z.object({
 });
 
 type FormData = z.infer<typeof schema>;
+type FormInput = z.input<typeof schema>;
 
 export default function CreateTweakStep3() {
     const router = useRouter();
     const params = useLocalSearchParams();
 
-    const { control, handleSubmit, watch, setValue, formState: { errors } } = useForm<any>({
+    const { control, handleSubmit, watch, setValue, formState: { errors } } = useForm<FormInput, unknown, FormData>({
         resolver: zodResolver(schema),
         defaultValues: {
             selectedType: 'oneDay',
@@ -88,12 +89,12 @@ export default function CreateTweakStep3() {
     const [activeChip, setActiveChip] = useState<'allDay' | 'startAfter' | 'endBefore' | 'windowed'>('allDay');
     const [isWindowedVisible, setIsWindowedVisible] = useState(false);
 
-    const [address, setAddress] = useState<any>(null);
+    const [address, setAddress] = useState<Record<string, unknown> | null>(null);
 
     useEffect(() => {
         if (params.address) {
             try {
-                const parsedAddress = JSON.parse(params.address as string);
+                const parsedAddress = JSON.parse(params.address as string) as Record<string, unknown>;
                 setAddress(parsedAddress);
             } catch (e) {
                 console.error("Failed to parse address params", e);
@@ -185,7 +186,7 @@ export default function CreateTweakStep3() {
     };
 
     const onSubmit = (data: FormData) => {
-        const payload: any = {
+        const payload: Record<string, string | string[] | undefined> = {
             ...params,
             schedulingType: data.selectedType,
             closingDate: data.closingDate?.toISOString(),
@@ -220,7 +221,7 @@ export default function CreateTweakStep3() {
         <ScreenWrapper scrollable contentContainerStyle={{ flexGrow: 1 }}>
             <View className="px-6 py-4 border-b border-gray-100 flex-row items-center bg-white relative justify-between">
                 <View className="flex-row items-center flex-1">
-                    <TouchableOpacity onPress={() => router.back()} className="mr-4 p-1 rounded-full bg-gray-50">
+                    <TouchableOpacity onPress={() => router.back()} className="mr-4 p-1 rounded-full bg-gray-50" accessibilityRole="button" accessibilityLabel="Go back">
                         <Ionicons name="arrow-back" size={24} color={themeColors.text} />
                     </TouchableOpacity>
                     <View>
@@ -596,7 +597,7 @@ export default function CreateTweakStep3() {
                         />
                     )}
                 />
-                {errors.closingDate && <Text className="text-red-500 text-xs mt-1 ml-1">{(errors.closingDate as any).message}</Text>}
+                {errors.closingDate && <Text className="text-red-500 text-xs mt-1 ml-1">{errors.closingDate.message}</Text>}
 
                 <View className="mb-4 bg-yellow-50 p-4 rounded-xl border border-yellow-100 mt-2">
                     <Text className="text-yellow-800 text-xs leading-5 font-medium">

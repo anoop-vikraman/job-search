@@ -88,7 +88,8 @@ export default function DetailsPage() {
     });
 
     // Handle "Others" for Skills
-    const handleSkillsChange = (newSkills: string[]) => {
+    const handleSkillsChange = (value: string | string[]) => {
+        const newSkills = Array.isArray(value) ? value : [value];
         if (newSkills.includes('Others')) {
             // Remove 'Others' from immediate selection and open modal
             const filtered = newSkills.filter(s => s !== 'Others');
@@ -121,7 +122,8 @@ export default function DetailsPage() {
         }
     };
 
-    const handleLanguagesChange = (newLangs: string[]) => {
+    const handleLanguagesChange = (value: string | string[]) => {
+        const newLangs = Array.isArray(value) ? value : [value];
         setSelectedLanguages(newLangs);
         setLanguages(newLangs);
     };

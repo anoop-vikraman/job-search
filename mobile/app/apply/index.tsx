@@ -2,7 +2,7 @@ import { CATEGORIES, getCategoryMeta } from '@/constants/categories';
 import { themeColors } from '@/themes/colors';
 import { Ionicons } from '@expo/vector-icons';
 import dayjs from 'dayjs';
-import { useRouter } from 'expo-router';
+import { useRouter, type Href } from 'expo-router';
 import React, { useState, useMemo } from 'react';
 import { FlatList, Image, Modal, ScrollView, Text, TextInput, TouchableOpacity, View, Pressable } from 'react-native';
 import { ScreenWrapper } from '../../components/ScreenWrapper';
@@ -152,7 +152,7 @@ export default function TweaksListing() {
                             placeholderTextColor="#94A3B8"
                         />
                         {searchQuery.length > 0 && (
-                            <TouchableOpacity onPress={() => setSearchQuery('')}>
+                            <TouchableOpacity onPress={() => setSearchQuery('')} accessibilityRole="button" accessibilityLabel="Clear search">
                                 <Ionicons name="close-circle" size={18} color="#94A3B8" />
                             </TouchableOpacity>
                         )}
@@ -169,6 +169,8 @@ export default function TweaksListing() {
                             justifyContent: 'center',
                             position: 'relative'
                         }}
+                        accessibilityRole="button"
+                        accessibilityLabel="Filter"
                     >
                         <Ionicons
                             name="options-outline"
@@ -230,7 +232,7 @@ export default function TweaksListing() {
                                 onPress={() => handleTweakPress(item)}
                                 showAddress={showAddress}
                                 currentUserId={userId}
-                                onViewApplicants={activeTab === 'my' && !showDrafts ? () => router.push(`/tweaks/${item.id}/applicants` as any) : undefined}
+                                onViewApplicants={activeTab === 'my' && !showDrafts ? () => router.push(`/tweaks/${item.id}/applicants` as Href) : undefined}
                             />
                         )}
                         ListEmptyComponent={

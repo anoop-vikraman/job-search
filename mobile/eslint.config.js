@@ -1,6 +1,7 @@
 // https://docs.expo.dev/guides/using-eslint/
 const { defineConfig } = require('eslint/config');
 const expoConfig = require('eslint-config-expo/flat');
+const tsPlugin = require('@typescript-eslint/eslint-plugin');
 
 module.exports = defineConfig([
   expoConfig,
@@ -8,6 +9,8 @@ module.exports = defineConfig([
     ignores: ['dist/*'],
   },
   {
+    files: ['**/*.ts', '**/*.tsx'],
+    plugins: { '@typescript-eslint': tsPlugin },
     rules: {
       // Literal apostrophes/quotes in user-facing copy are fine in React Native;
       // escaping them hurts readability of translation strings.
@@ -21,6 +24,11 @@ module.exports = defineConfig([
       'react-hooks/refs': 'warn',
       'react-hooks/immutability': 'warn',
       'react-hooks/set-state-in-render': 'warn',
+
+      // Coding conventions (.kiro/steering/coding-conventions.md): no `any`,
+      // explicit return types on exported functions/hooks/API clients.
+      '@typescript-eslint/no-explicit-any': 'error',
+      '@typescript-eslint/explicit-module-boundary-types': 'warn',
     },
   },
 ]);

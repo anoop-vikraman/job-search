@@ -345,7 +345,7 @@ export default function CustomVoiceRecorder({ uri, onRecordingComplete, label = 
     // Metering
     const [meteringData, setMeteringData] = useState<number[]>([]);
     useEffect(() => {
-        let interval: any;
+        let interval: ReturnType<typeof setInterval> | undefined;
         if (recordingStatus === 'recording_held' || recordingStatus === 'recording_locked') {
             interval = setInterval(() => {
                 setMeteringData((prev) => {
@@ -383,7 +383,7 @@ export default function CustomVoiceRecorder({ uri, onRecordingComplete, label = 
         updateTimer(); // Initial update
 
         // Update timer continuously during recording
-        let interval: any;
+        let interval: ReturnType<typeof setInterval> | undefined;
         if (recordingStatus === 'recording_held' || recordingStatus === 'recording_locked') {
             interval = setInterval(updateTimer, 100);
         }
@@ -479,12 +479,12 @@ export default function CustomVoiceRecorder({ uri, onRecordingComplete, label = 
         return (
             <View className="flex-row items-center bg-white border border-gray-200 rounded-2xl px-2 py-2 gap-2 min-h-[56px]">
                 {/* Delete Button */}
-                <TouchableOpacity onPress={confirmDelete} className="p-2">
+                <TouchableOpacity onPress={confirmDelete} className="p-2" accessibilityRole="button" accessibilityLabel="Delete recording">
                     <MaterialCommunityIcons name="delete-outline" size={24} color="#6B7280" />
                 </TouchableOpacity>
 
                 {/* Playback Controls */}
-                <TouchableOpacity onPress={togglePlayback} className="p-2">
+                <TouchableOpacity onPress={togglePlayback} className="p-2" accessibilityRole="button" accessibilityLabel={playerStatus.playing ? "Pause audio" : "Play audio"}>
                     <Ionicons
                         name={playerStatus.playing ? "pause" : "play"}
                         size={20}
@@ -525,7 +525,7 @@ export default function CustomVoiceRecorder({ uri, onRecordingComplete, label = 
                 </View>
 
                 {/* Delete Button */}
-                <TouchableOpacity onPress={cancelRecording} className="p-2">
+                <TouchableOpacity onPress={cancelRecording} className="p-2" accessibilityRole="button" accessibilityLabel="Delete recording">
                     <MaterialCommunityIcons name="delete-outline" size={24} color="#EF4444" />
                 </TouchableOpacity>
 
@@ -534,6 +534,8 @@ export default function CustomVoiceRecorder({ uri, onRecordingComplete, label = 
                     onPress={stopRecording}
                     className="w-12 h-12 rounded-full justify-center items-center"
                     style={{ backgroundColor: themeColors.primary }}
+                    accessibilityRole="button"
+                    accessibilityLabel="Stop recording"
                 >
                     <FontAwesome5 name="stop" size={16} color="white" />
                 </TouchableOpacity>

@@ -35,7 +35,7 @@ export default function CountryCodePicker({ selectedCode, onSelect, disabled = f
                 <View className="flex-1 bg-white pt-4">
                     <View className="flex-row justify-between items-center px-4 mb-4">
                         <Text className="text-xl font-bold text-gray-900">Select Country Code</Text>
-                        <TouchableOpacity onPress={() => setVisible(false)} className="p-2">
+                        <TouchableOpacity onPress={() => setVisible(false)} className="p-2" accessibilityRole="button" accessibilityLabel="Close">
                             <Ionicons name="close" size={24} color="#000" />
                         </TouchableOpacity>
                     </View>

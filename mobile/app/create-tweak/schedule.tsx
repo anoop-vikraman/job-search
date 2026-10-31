@@ -3,8 +3,8 @@ import dayjs from 'dayjs';
 import * as Haptics from 'expo-haptics';
 import { useRouter } from 'expo-router';
 import React, { useCallback, useMemo, useState } from 'react';
-import { Pressable, ScrollView, Text, TouchableOpacity, View } from 'react-native';
-import DateTimePicker from 'react-native-ui-datepicker';
+import { GestureResponderEvent, Pressable, ScrollView, Text, TextStyle, TouchableOpacity, View, ViewStyle } from 'react-native';
+import DateTimePicker, { CalendarDay, DateType } from 'react-native-ui-datepicker';
 import CreateFlowHeader from '../../components/create-tweak/CreateFlowHeader';
 import { ScreenWrapper } from '../../components/ScreenWrapper';
 import CustomButton from '../../components/UI/CustomButton';
@@ -13,6 +13,17 @@ import { SwipeableSlot } from '../../components/UI/SwipeableSlot';
 import { useConfirmationStore } from '../../store/useConfirmationStore';
 import { useCreateTweakStore } from '../../store/useCreateTweakStore';
 import { themeColors } from '../../themes/colors';
+import { ScheduleData } from '../../types/tweak';
+
+interface DaySlot {
+    date: string;
+    start: string;
+    end: string;
+    status: 'default' | 'modified';
+}
+
+type MutableViewStyle = { -readonly [K in keyof ViewStyle]: ViewStyle[K] };
+type MutableTextStyle = { -readonly [K in keyof TextStyle]: TextStyle[K] };
 
 export default function SchedulePage() {
     const router = useRouter();
@@ -190,16 +201,16 @@ export default function SchedulePage() {
             : null;
         const resolvedFewDaysSlots = schedulePreference === 'few_days' ? fewDaysSlots : null;
 
-        const data: any = {
+        const data: ScheduleData = {
             date: selectedDate?.toISOString(),
             slotType,
-            timeSlots: resolvedTimeSlots,
-            deadlineSlots: schedulePreference === 'deadline' ? deadlineSlots : null,
-            fewDaysSlots: resolvedFewDaysSlots,
+            timeSlots: resolvedTimeSlots ?? undefined,
+            deadlineSlots: schedulePreference === 'deadline' ? deadlineSlots : undefined,
+            fewDaysSlots: resolvedFewDaysSlots ?? undefined,
             totalHours: schedulePreference === 'few_days'
-                ? (resolvedFewDaysSlots ?? []).reduce((t: number, s: any) => t + calculateHours(s.start, s.end), 0)
-                : null,
-            preference: schedulePreference
+                ? (resolvedFewDaysSlots ?? []).reduce((t: number, s: { start: string; end: string }) => t + calculateHours(s.start, s.end), 0)
+                : undefined,
+            preference: schedulePreference ?? undefined
         };
 
         setScheduleData(data);
@@ -265,7 +276,7 @@ export default function SchedulePage() {
                                     {isCurrentMonth
                                         ? <View style={{ width: 36 }} />
                                         : (
-                                            <TouchableOpacity onPress={goPrevMonth} style={{ padding: 8 }} hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}>
+                                            <TouchableOpacity onPress={goPrevMonth} style={{ padding: 8 }} hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }} accessibilityRole="button" accessibilityLabel="Previous month">
                                                 <Ionicons name="chevron-back" size={20} color={themeColors.primary} />
                                             </TouchableOpacity>
                                         )
@@ -273,7 +284,7 @@ export default function SchedulePage() {
                                     <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#1F2937' }}>
                                         {dayjs().month(calMonth).year(calYear).format('MMMM YYYY')}
                                     </Text>
-                                    <TouchableOpacity onPress={goNextMonth} style={{ padding: 8 }} hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}>
+                                    <TouchableOpacity onPress={goNextMonth} style={{ padding: 8 }} hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }} accessibilityRole="button" accessibilityLabel="Next month">
                                         <Ionicons name="chevron-forward" size={20} color={themeColors.primary} />
                                     </TouchableOpacity>
                                 </View>
@@ -282,7 +293,7 @@ export default function SchedulePage() {
                                     mode="single"
                                     date={selectedDate || dayjs()}
                                     minDate={dayjs().startOf('day').toDate()}
-                                    onChange={(params: any) => {
+                                    onChange={(params: { date: DateType }) => {
                                         if (params.date) {
                                             const d = dayjs(params.date);
                                             setSelectedDate(d);
@@ -303,13 +314,13 @@ export default function SchedulePage() {
                                         }
                                     }}
                                     components={{
-                                        Day: ({ date, isToday, onPress }: any) => {
+                                        Day: ({ date }: CalendarDay) => {
                                             const dateObj = dayjs(date);
                                             const dateStr = dateObj.format('YYYY-MM-DD');
                                             const isSelected = selectedDate && dateStr === selectedDate.format('YYYY-MM-DD');
                                             const isBeforeToday = dateObj.isBefore(dayjs().startOf('day'));
 
-                                            const containerStyle: any = {
+                                            const containerStyle: MutableViewStyle = {
                                                 width: 32,
                                                 height: 32,
                                                 borderRadius: 8,
@@ -317,7 +328,7 @@ export default function SchedulePage() {
                                                 alignItems: 'center',
                                             };
 
-                                            const textStyle: any = {
+                                            const textStyle: MutableTextStyle = {
                                                 fontSize: 14,
                                                 color: isBeforeToday ? '#D1D5DB' : '#374151',
                                                 fontWeight: '500'
@@ -452,6 +463,8 @@ export default function SchedulePage() {
                                                     <TouchableOpacity
                                                         onPress={() => removeTimeSlot(index)}
                                                         className="mt-6 h-8 w-8 bg-red-50 border border-red-100 rounded-lg items-center justify-center active:bg-red-100"
+                                                        accessibilityRole="button"
+                                                        accessibilityLabel="Remove time slot"
                                                     >
                                                         <Ionicons name="close" size={16} color="#EF4444" />
                                                     </TouchableOpacity>
@@ -515,7 +528,7 @@ export default function SchedulePage() {
                                     {isCurrentMonth
                                         ? <View style={{ width: 36 }} />
                                         : (
-                                            <TouchableOpacity onPress={goPrevMonth} style={{ padding: 8 }} hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}>
+                                            <TouchableOpacity onPress={goPrevMonth} style={{ padding: 8 }} hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }} accessibilityRole="button" accessibilityLabel="Previous month">
                                                 <Ionicons name="chevron-back" size={20} color={themeColors.primary} />
                                             </TouchableOpacity>
                                         )
@@ -523,7 +536,7 @@ export default function SchedulePage() {
                                     <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#1F2937' }}>
                                         {dayjs().month(calMonth).year(calYear).format('MMMM YYYY')}
                                     </Text>
-                                    <TouchableOpacity onPress={goNextMonth} style={{ padding: 8 }} hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}>
+                                    <TouchableOpacity onPress={goNextMonth} style={{ padding: 8 }} hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }} accessibilityRole="button" accessibilityLabel="Next month">
                                         <Ionicons name="chevron-forward" size={20} color={themeColors.primary} />
                                     </TouchableOpacity>
                                 </View>
@@ -532,7 +545,7 @@ export default function SchedulePage() {
                                     mode="single"
                                     date={selectedDate || dayjs()}
                                     minDate={dayjs().startOf('day').toDate()}
-                                    onChange={(params: any) => {
+                                    onChange={(params: { date: DateType }) => {
                                         if (params.date) {
                                             const d = dayjs(params.date);
                                             setSelectedDate(d);
@@ -543,7 +556,7 @@ export default function SchedulePage() {
                                             const today = dayjs().startOf('day');
                                             const deadline = d.startOf('day');
                                             const daysDiff = deadline.diff(today, 'day');
-                                            const newSlots: any[] = [];
+                                            const newSlots: DaySlot[] = [];
                                             for (let i = 0; i <= Math.max(0, daysDiff); i++) {
                                                 newSlots.push({
                                                     date: today.add(i, 'day').format('YYYY-MM-DD'),
@@ -569,14 +582,14 @@ export default function SchedulePage() {
                                         }
                                     }}
                                     components={{
-                                        Day: ({ date }: any) => {
+                                        Day: ({ date }: CalendarDay) => {
                                             const dateObj = dayjs(date);
                                             const dateStr = dateObj.format('YYYY-MM-DD');
                                             const slot = deadlineSlotsMap.get(dateStr);
                                             const isDeadline = selectedDate && dateStr === selectedDate.format('YYYY-MM-DD');
                                             const isBeforeToday = dateObj.isBefore(dayjs().startOf('day'));
 
-                                            const containerStyle: any = {
+                                            const containerStyle: MutableViewStyle = {
                                                 width: 32,
                                                 height: 32,
                                                 borderRadius: 8,
@@ -584,7 +597,7 @@ export default function SchedulePage() {
                                                 alignItems: 'center',
                                             };
 
-                                            const textStyle: any = {
+                                            const textStyle: MutableTextStyle = {
                                                 fontSize: 14,
                                                 color: isBeforeToday ? '#D1D5DB' : '#374151',
                                             };
@@ -613,7 +626,7 @@ export default function SchedulePage() {
                                                         // Generate slots from Today to Deadline
                                                         const today = dayjs().startOf('day');
                                                         const daysDiff = newDate.startOf('day').diff(today, 'day');
-                                                        const newSlots: any[] = [];
+                                                        const newSlots: DaySlot[] = [];
 
                                                         // Generate for today + next days up to deadline (inclusive)
                                                         for (let i = 0; i <= Math.max(0, daysDiff); i++) {
@@ -689,7 +702,7 @@ export default function SchedulePage() {
                                                     }}
                                                 >
                                                     <Pressable
-                                                        onPress={(e: any) => {
+                                                        onPress={(e: GestureResponderEvent) => {
                                                             e.stopPropagation();
                                                             Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
                                                             const newSlots = deadlineSlots.filter((_, i) => i !== index);
@@ -700,6 +713,8 @@ export default function SchedulePage() {
                                                         className="absolute -top-2.5 -right-2.5 p-1 bg-red-100 border-2 border-red-100 rounded-full"
                                                         style={{ zIndex: 10 }}
                                                         hitSlop={{ top: 20, bottom: 20, left: 20, right: 20 }}
+                                                        accessibilityRole="button"
+                                                        accessibilityLabel="Remove day"
                                                     >
                                                         <Ionicons name="close" size={12} color="#EF4444" />
                                                     </Pressable>
@@ -807,7 +822,7 @@ export default function SchedulePage() {
                                     {isCurrentMonth
                                         ? <View style={{ width: 36 }} />
                                         : (
-                                            <TouchableOpacity onPress={goPrevMonth} style={{ padding: 8 }} hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}>
+                                            <TouchableOpacity onPress={goPrevMonth} style={{ padding: 8 }} hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }} accessibilityRole="button" accessibilityLabel="Previous month">
                                                 <Ionicons name="chevron-back" size={20} color={themeColors.primary} />
                                             </TouchableOpacity>
                                         )
@@ -815,7 +830,7 @@ export default function SchedulePage() {
                                     <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#1F2937' }}>
                                         {dayjs().month(calMonth).year(calYear).format('MMMM YYYY')}
                                     </Text>
-                                    <TouchableOpacity onPress={goNextMonth} style={{ padding: 8 }} hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}>
+                                    <TouchableOpacity onPress={goNextMonth} style={{ padding: 8 }} hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }} accessibilityRole="button" accessibilityLabel="Next month">
                                         <Ionicons name="chevron-forward" size={20} color={themeColors.primary} />
                                     </TouchableOpacity>
                                 </View>
@@ -835,7 +850,7 @@ export default function SchedulePage() {
                                         }
                                     }}
                                     components={{
-                                        Day: ({ date }: any) => {
+                                        Day: ({ date }: CalendarDay) => {
                                             const dateObj = dayjs(date);
                                             const dateStr = dateObj.format('YYYY-MM-DD');
                                             const slotData = fewDaysSlotsMap.get(dateStr);
@@ -844,7 +859,7 @@ export default function SchedulePage() {
                                             const slotIndex = slotData?.index ?? -1;
                                             const isBeforeToday = dateObj.isBefore(dayjs().startOf('day'));
 
-                                            let containerStyle: any = {
+                                            const containerStyle: MutableViewStyle = {
                                                 width: 32,
                                                 height: 32,
                                                 borderRadius: 8,
@@ -852,7 +867,7 @@ export default function SchedulePage() {
                                                 alignItems: 'center',
                                             };
 
-                                            let textStyle: any = {
+                                            const textStyle: MutableTextStyle = {
                                                 fontSize: 14,
                                                 color: isBeforeToday ? '#D1D5DB' : '#374151',
                                             };
@@ -966,7 +981,7 @@ export default function SchedulePage() {
                                                     }}
                                                 >
                                                     <Pressable
-                                                        onPress={(e: any) => {
+                                                        onPress={(e: GestureResponderEvent) => {
                                                             e.stopPropagation();
                                                             Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
                                                             const newSlots = fewDaysSlots.filter((_, i) => i !== index);
@@ -976,6 +991,8 @@ export default function SchedulePage() {
                                                         className="absolute -top-2.5 -right-2.5 p-1 bg-red-100 border border-red-100 rounded-full"
                                                         style={{ zIndex: 10 }}
                                                         hitSlop={{ top: 20, bottom: 20, left: 20, right: 20 }}
+                                                        accessibilityRole="button"
+                                                        accessibilityLabel="Remove day"
                                                     >
                                                         <Ionicons name="close" size={12} color="#EF4444" />
                                                     </Pressable>

@@ -67,7 +67,7 @@ export default function ToastManager() {
             style={[styles.container, { top: insets.top + 10 }]}
         >
             <View style={[styles.card, { backgroundColor: bg }]}>
-                <Ionicons name={icon as any} size={20} color="white" />
+                <Ionicons name={icon as keyof typeof Ionicons.glyphMap} size={20} color="white" />
                 <Text style={styles.text}>{currentToast.message}</Text>
             </View>
         </Animated.View>

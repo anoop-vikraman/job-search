@@ -48,6 +48,8 @@ export default function SavedAddressesList({
                             <TouchableOpacity
                                 onPress={onClose}
                                 className="absolute left-4 p-2 rounded-full active:bg-gray-100"
+                                accessibilityRole="button"
+                                accessibilityLabel="Close"
                             >
                                 <Ionicons name="close" size={24} color="#111827" />
                             </TouchableOpacity>

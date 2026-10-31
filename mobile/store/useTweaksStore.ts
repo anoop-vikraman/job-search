@@ -2,6 +2,8 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { create } from 'zustand';
 import { createJSONStorage, persist } from 'zustand/middleware';
 
+import { PricingData, ScheduleData, ScheduleSlot, TweakAddress, TweakImage } from '../types/tweak';
+
 export interface TweakApplication {
     userId: string;
     userName: string;
@@ -10,7 +12,7 @@ export interface TweakApplication {
     completedCategories?: string[];
     whyPreferMessage: string;
     quotedPrice?: number;
-    selectedSlots: any[];
+    selectedSlots: ScheduleSlot[];
     appliedAt: string;
     status: 'pending' | 'accepted' | 'rejected';
     listerQuotedPrice?: number;
@@ -21,15 +23,15 @@ export interface Tweak {
     title: string;
     description: string;
     category: string;
-    images: any[];
+    images: TweakImage[];
     audioUri: string | null;
-    address: any;
+    address: TweakAddress | null;
     skills: string[];
     languages: string[];
     schedulePreference: string;
-    scheduleData: any;
+    scheduleData: ScheduleData | null;
     pricingModel: string;
-    pricingData: any;
+    pricingData: PricingData | null;
     tweakType: string;
     price: number;
     pricingType: string; // 'hourly' | 'quantity' | 'fixed'

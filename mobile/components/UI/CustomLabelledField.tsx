@@ -1,6 +1,6 @@
 import { themeColors } from '@/themes/colors';
 import React, { useRef, useState } from 'react';
-import { Text, TextInput, TouchableWithoutFeedback, View } from 'react-native';
+import { KeyboardTypeOptions, StyleProp, Text, TextInput, TouchableWithoutFeedback, View, ViewStyle } from 'react-native';
 import ScrollingPlaceholder from './ScrollingPlaceholder';
 
 interface Props {
@@ -10,9 +10,9 @@ interface Props {
     onBlur?: () => void;
     placeholder?: string;
     scrollingPlaceholders?: string[]; // New Prop
-    containerStyle?: any;
+    containerStyle?: StyleProp<ViewStyle>;
     secureTextEntry?: boolean;
-    keyboardType?: any;
+    keyboardType?: KeyboardTypeOptions;
     multiline?: boolean;
     maxLength?: number;
     showCharCount?: boolean;

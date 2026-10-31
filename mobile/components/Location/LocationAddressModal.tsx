@@ -93,9 +93,11 @@ export default function LocationAddressModal({
     ];
 
     const onSubmit = (data: FormData) => {
+        const { saveAsOther, ...addressData } = data;
         onSave({
-            ...data,
-            saveAs: data.saveAs === 'Other' ? data.saveAsOther || 'Other' : data.saveAs,
+            ...addressData,
+            id: Date.now().toString(),
+            saveAs: data.saveAs === 'Other' ? saveAsOther || 'Other' : data.saveAs,
             formattedAddress: lockedAddress,
             latitude: lockedCoords.latitude,
             longitude: lockedCoords.longitude

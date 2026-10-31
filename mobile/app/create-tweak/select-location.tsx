@@ -12,6 +12,7 @@ import { ScreenWrapper } from '../../components/ScreenWrapper';
 import { themeColors } from '../../themes/colors';
 
 import { useAppStore } from '../../store/useAppStore';
+import type { Address, Coordinates } from '../../types/location';
 
 const { width, height } = Dimensions.get('window');
 
@@ -41,7 +42,7 @@ export default function SelectLocation() {
         };
     });
     const [showAddressModal, setShowAddressModal] = useState(false);
-    const [location, setLocation] = useState<any>(editAddress ? { latitude: editAddress.latitude, longitude: editAddress.longitude } : null);
+    const [location, setLocation] = useState<Coordinates | null>(editAddress ? { latitude: editAddress.latitude, longitude: editAddress.longitude } : null);
     const [formattedAddress, setFormattedAddress] = useState(editAddress?.formattedAddress || '');
     const [area, setArea] = useState(editAddress?.area || '');
     const [city, setCity] = useState(editAddress?.city || '');
@@ -320,7 +321,7 @@ export default function SelectLocation() {
     }, [editAddressStr]);
 
 
-    const handleSaveAddress = (data: any) => {
+    const handleSaveAddress = (data: Omit<Address, 'id'>) => {
         if (editAddress) {
             const updated = { ...editAddress, ...data };
             updateAddress(editAddress.id, updated);

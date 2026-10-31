@@ -1,14 +1,14 @@
 import { Ionicons } from '@expo/vector-icons';
-import DateTimePicker from '@react-native-community/datetimepicker';
+import DateTimePicker, { DateTimePickerEvent } from '@react-native-community/datetimepicker';
 import React, { useState } from 'react';
-import { Platform, Text, TouchableOpacity, View } from 'react-native';
+import { Platform, StyleProp, Text, TouchableOpacity, View, ViewStyle } from 'react-native';
 
 interface Props {
     label: string;
     value: Date | null;
     onChange: (date: Date) => void;
     placeholder?: string;
-    containerStyle?: any;
+    containerStyle?: StyleProp<ViewStyle>;
     minimumDate?: Date;
     mode?: 'date' | 'time' | 'datetime';
 }
@@ -41,7 +41,7 @@ export default function CustomDateTimePicker({
         setShowPicker(true);
     };
 
-    const handleChange = (event: any, selectedDate?: Date) => {
+    const handleChange = (event: DateTimePickerEvent, selectedDate?: Date) => {
         if (Platform.OS === 'android') {
             setShowPicker(false); // Close current picker
         }
@@ -74,7 +74,7 @@ export default function CustomDateTimePicker({
     };
 
     // iOS Specific Logic for "datetime" mode
-    const handleIOSChange = (event: any, selectedDate?: Date) => {
+    const handleIOSChange = (event: DateTimePickerEvent, selectedDate?: Date) => {
         if (selectedDate) {
             setTempDate(selectedDate);
             onChange(selectedDate); // Instant update? Or wait for close? 
@@ -149,7 +149,7 @@ export default function CustomDateTimePicker({
                 ) : (
                     <DateTimePicker
                         value={tempDate}
-                        mode={pickerMode as any}
+                        mode={pickerMode}
                         display="default"
                         onChange={handleChange}
                         minimumDate={minimumDate}

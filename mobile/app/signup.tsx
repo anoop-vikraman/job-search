@@ -110,7 +110,7 @@ export default function SignUp() {
                     onChangeText={(text) => setForm({ ...form, password: text })}
                     secureTextEntry={!isPasswordVisible}
                     rightComponent={
-                        <TouchableOpacity onPress={() => setIsPasswordVisible(!isPasswordVisible)}>
+                        <TouchableOpacity onPress={() => setIsPasswordVisible(!isPasswordVisible)} accessibilityRole="button" accessibilityLabel={isPasswordVisible ? 'Hide password' : 'Show password'}>
                             <Ionicons name={isPasswordVisible ? 'eye-off' : 'eye'} size={20} color="#6B7280" />
                         </TouchableOpacity>
                     }

@@ -56,7 +56,15 @@ export default function PreferencesPage() {
     );
 }
 
-const PreferenceCard = ({ icon, color, title, desc, onPress }: any) => (
+interface PreferenceCardProps {
+    icon: keyof typeof Ionicons.glyphMap;
+    color: string;
+    title: string;
+    desc: string;
+    onPress: () => void;
+}
+
+const PreferenceCard = ({ icon, color, title, desc, onPress }: PreferenceCardProps) => (
     <TouchableOpacity
         onPress={onPress}
         className="bg-white p-5 rounded-2xl border border-gray-200 flex-row items-center shadow-sm active:border-primary active:bg-blue-50"

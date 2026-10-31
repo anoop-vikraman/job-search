@@ -62,7 +62,7 @@ export default function ProfileBanner({ onImageSelected }: ProfileBannerProps) {
             {/* Gradient Background */}
             <View className="bg-gradient-to-br from-orange-500 to-purple-600 pt-4 pb-20 px-6 rounded-b-3xl">
                 <View className="flex-row justify-between items-center mb-6">
-                    <TouchableOpacity onPress={() => router.back()}>
+                    <TouchableOpacity onPress={() => router.back()} accessibilityRole="button" accessibilityLabel="Go back">
                         <Ionicons name="arrow-back" size={24} color="white" />
                     </TouchableOpacity>
                     <Text className="text-white font-bold text-lg">My Profile</Text>
@@ -85,6 +85,8 @@ export default function ProfileBanner({ onImageSelected }: ProfileBannerProps) {
                             onPress={() => setUploadModalVisible(true)}
                             className="absolute bottom-0 right-0 bg-white w-8 h-8 rounded-full items-center justify-center border-2"
                             style={{ borderColor: themeColors.primary }}
+                            accessibilityRole="button"
+                            accessibilityLabel="Change profile photo"
                         >
                             <Ionicons name="camera" size={16} color={themeColors.primary} />
                         </TouchableOpacity>

@@ -1,5 +1,5 @@
 import { Ionicons } from '@expo/vector-icons';
-import { useLocalSearchParams, useRouter } from 'expo-router';
+import { useLocalSearchParams, useRouter, type Href } from 'expo-router';
 import React, { useState } from 'react';
 import {
     KeyboardAvoidingView,
@@ -36,7 +36,7 @@ export default function ApplyStep1() {
                     paddingHorizontal: 16, paddingVertical: 14,
                     backgroundColor: '#fff', borderBottomWidth: 1, borderBottomColor: '#F1F5F9',
                 }}>
-                    <TouchableOpacity onPress={() => router.back()} style={{ padding: 6 }}>
+                    <TouchableOpacity onPress={() => router.back()} style={{ padding: 6 }} accessibilityRole="button" accessibilityLabel="Go back">
                         <Ionicons name="arrow-back" size={24} color="#111827" />
                     </TouchableOpacity>
                     <Text style={{ fontSize: 17, fontWeight: '800', color: '#0F172A' }}>Apply for Tweak</Text>
@@ -147,9 +147,9 @@ export default function ApplyStep1() {
                         onPress={() => {
                             if (!canContinue) return;
                             router.push({
-                                pathname: `/apply/application/${tweakId}/step2` as any,
+                                pathname: `/apply/application/${tweakId}/step2`,
                                 params: { whyMessage: message },
-                            });
+                            } as Href);
                         }}
                         disabled={!canContinue}
                         style={{

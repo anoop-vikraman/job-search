@@ -1,5 +1,5 @@
 import { Ionicons } from '@expo/vector-icons';
-import { useLocalSearchParams, useRouter } from 'expo-router';
+import { useLocalSearchParams, useRouter, type Href } from 'expo-router';
 import React from 'react';
 import {
     FlatList,
@@ -45,7 +45,7 @@ export default function TweakApplicants() {
                 paddingHorizontal: 16, paddingVertical: 14,
                 backgroundColor: '#fff', borderBottomWidth: 1, borderBottomColor: '#F1F5F9',
             }}>
-                <TouchableOpacity onPress={() => router.back()} style={{ padding: 6 }}>
+                <TouchableOpacity onPress={() => router.back()} style={{ padding: 6 }} accessibilityRole="button" accessibilityLabel="Go back">
                     <Ionicons name="arrow-back" size={24} color="#111827" />
                 </TouchableOpacity>
                 <View style={{ alignItems: 'center' }}>
@@ -74,7 +74,7 @@ export default function TweakApplicants() {
                     const statusStyle = getStatusStyle(item.status);
                     return (
                         <TouchableOpacity
-                            onPress={() => router.push(`/tweaks/${tweak.id}/applicants/${item.userId}` as any)}
+                            onPress={() => router.push(`/tweaks/${tweak.id}/applicants/${item.userId}` as Href)}
                             activeOpacity={0.7}
                             style={{
                                 backgroundColor: '#fff',

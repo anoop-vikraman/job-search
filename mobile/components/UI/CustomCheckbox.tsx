@@ -1,5 +1,5 @@
 import React from 'react';
-import { Text, TouchableOpacity, View } from 'react-native';
+import { StyleProp, Text, TouchableOpacity, View, ViewStyle } from 'react-native';
 import { themeColors } from '../../themes/colors';
 
 interface Props {
@@ -7,7 +7,7 @@ interface Props {
     description?: string;
     checked: boolean;
     onChange: (checked: boolean) => void;
-    containerStyle?: any;
+    containerStyle?: StyleProp<ViewStyle>;
     color?: string;
 }
 

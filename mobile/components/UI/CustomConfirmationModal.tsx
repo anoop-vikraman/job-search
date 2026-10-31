@@ -61,7 +61,7 @@ export default function CustomConfirmationModal({
                 <View className="bg-white rounded-[32px] w-full p-6 shadow-2xl">
                     <View className="items-center mb-4">
                         <View className={`${config.bgColor} p-4 rounded-full`}>
-                            <Ionicons name={config.icon as any} size={32} color={config.iconColor} />
+                            <Ionicons name={config.icon as keyof typeof Ionicons.glyphMap} size={32} color={config.iconColor} />
                         </View>
                     </View>
 

@@ -77,6 +77,8 @@ export default function ActionSheetModal({
                                         <TouchableOpacity
                                             onPress={onClose}
                                             className="bg-gray-100 p-2 rounded-full"
+                                            accessibilityRole="button"
+                                            accessibilityLabel="Close"
                                         >
                                             <Ionicons name="close" size={20} color="#666" />
                                         </TouchableOpacity>

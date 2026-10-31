@@ -42,7 +42,7 @@ export default function InvitePage() {
         <ScreenWrapper>
             {/* Header */}
             <View className="flex-row items-center px-6 py-4 bg-white border-b border-gray-100">
-                <TouchableOpacity onPress={() => router.back()} className="mr-4">
+                <TouchableOpacity onPress={() => router.back()} className="mr-4" accessibilityRole="button" accessibilityLabel="Go back">
                     <Ionicons name="arrow-back" size={24} color="#111827" />
                 </TouchableOpacity>
                 <Text className="text-lg font-bold text-gray-900">Invite Friends</Text>
@@ -60,7 +60,7 @@ export default function InvitePage() {
                             <Ionicons name="link" size={20} color="#8B5CF6" />
                             <Text className="text-gray-600 text-sm ml-2 flex-1" numberOfLines={1}>{referralLink}</Text>
                         </View>
-                        <TouchableOpacity onPress={copyLink}>
+                        <TouchableOpacity onPress={copyLink} accessibilityRole="button" accessibilityLabel="Copy link">
                             <Ionicons name="copy" size={20} color="#8B5CF6" />
                         </TouchableOpacity>
                     </View>

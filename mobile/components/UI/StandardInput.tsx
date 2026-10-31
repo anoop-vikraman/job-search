@@ -1,10 +1,10 @@
 import React, { forwardRef } from 'react';
-import { Text, TextInput, TextInputProps, View } from 'react-native';
+import { StyleProp, Text, TextInput, TextInputProps, View, ViewStyle } from 'react-native';
 
 export interface StandardInputProps extends TextInputProps {
     label?: string;
     error?: string;
-    containerStyle?: any;
+    containerStyle?: StyleProp<ViewStyle>;
     leftComponent?: React.ReactNode;
     rightComponent?: React.ReactNode;
 }

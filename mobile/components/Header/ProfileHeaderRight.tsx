@@ -18,7 +18,7 @@ export default function ProfileHeaderRight() {
     };
 
     return (
-        <TouchableOpacity onPress={handlePress} style={{ marginRight: 16 }}>
+        <TouchableOpacity onPress={handlePress} style={{ marginRight: 16 }} accessibilityRole="button" accessibilityLabel="Open profile">
             {user?.profilePictureUrl ? (
                 <Image
                     source={{ uri: user.profilePictureUrl }}

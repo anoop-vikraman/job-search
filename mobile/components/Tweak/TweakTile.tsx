@@ -5,6 +5,7 @@ import dayjs from 'dayjs';
 import React from 'react';
 import { Image, ScrollView, Text, TouchableOpacity, View } from 'react-native';
 import { Tweak } from '../../store/useTweaksStore';
+import { ScheduleSlot } from '../../types/tweak';
 
 // ─── Constants ──────────────────────────────────────────────────────────────
 
@@ -65,16 +66,16 @@ export function getDateDisplay(item: Tweak): DateDisplay {
     }
 
     if (pref === 'few_days') {
-        const slots: { date: string; start: string; end: string }[] = sd.fewDaysSlots ?? [];
+        const slots: ScheduleSlot[] = sd.fewDaysSlots ?? [];
         if (slots.length === 0) return { dateText: '—', daysText: null, hoursText: null, slotType };
-        const sorted = [...slots].sort((a, b) => a.date.localeCompare(b.date));
+        const sorted = [...slots].sort((a, b) => (a.date ?? '').localeCompare(b.date ?? ''));
         const start = dayjs(sorted[0].date).format('DD MMM');
         const end = dayjs(sorted[sorted.length - 1].date).format('DD MMM YYYY');
         const days = slots.length;
         let hoursText: string | null = null;
         if (slotType === 'working_time') {
             const totalH = sd.totalHours ?? slots.reduce((acc, s) => acc + calculateHours(s.start, s.end), 0);
-            if (totalH > 0) hoursText = `${(totalH as number).toFixed(1)} hrs`;
+            if (totalH > 0) hoursText = `${totalH.toFixed(1)} hrs`;
         }
         return {
             dateText: `${start} → ${end}`,
@@ -155,7 +156,7 @@ export default function TweakTile({
                             alignSelf: 'center',
                         }}
                     >
-                        <Ionicons name={catMeta.icon as any} size={28} color={catMeta.color} />
+                        <Ionicons name={catMeta.icon as keyof typeof Ionicons.glyphMap} size={28} color={catMeta.color} />
                     </View>
                 )}
 

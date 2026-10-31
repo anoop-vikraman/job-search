@@ -28,7 +28,7 @@ export default function CreateTweakIndex() {
         <ScreenWrapper>
             {/* Header */}
             <View className="px-6 py-4 flex-row items-center justify-between bg-white border-b border-gray-100">
-                <TouchableOpacity onPress={() => router.back()} className="p-2 -ml-2 rounded-full active:bg-gray-100">
+                <TouchableOpacity onPress={() => router.back()} className="p-2 -ml-2 rounded-full active:bg-gray-100" accessibilityRole="button" accessibilityLabel="Close">
                     <Ionicons name="close" size={24} color="#111827" />
                 </TouchableOpacity>
                 <Text className="text-lg font-bold text-gray-900">Step 1 of 8</Text>

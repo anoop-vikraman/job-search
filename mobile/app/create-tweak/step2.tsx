@@ -22,12 +22,13 @@ const schema = z.object({
 });
 
 type FormData = z.infer<typeof schema>;
+type FormInput = z.input<typeof schema>;
 
 export default function CreateTweakStep2() {
     const router = useRouter();
     const params = useLocalSearchParams();
 
-    const { control, handleSubmit, watch, setValue, formState: { errors } } = useForm<any>({
+    const { control, handleSubmit, watch, setValue, formState: { errors } } = useForm<FormInput, unknown, FormData>({
         resolver: zodResolver(schema),
         defaultValues: {
             category: '',
@@ -77,7 +78,8 @@ export default function CreateTweakStep2() {
     ];
 
     // Handle Language Change to enforce 'Not Preferred' exclusivity
-    const handleLanguageChange = (newValues: string[]) => {
+    const handleLanguageChange = (value: string | string[]) => {
+        const newValues = Array.isArray(value) ? value : [value];
         // Did we just add 'not_preferred'?
         if (newValues.includes('not_preferred') && !languages.includes('not_preferred')) {
             setValue('languages', ['not_preferred']);
@@ -114,7 +116,7 @@ export default function CreateTweakStep2() {
         <ScreenWrapper scrollable contentContainerStyle={{ flexGrow: 1 }}>
             <View className="px-6 py-4 border-b border-gray-100 flex-row items-center justify-between">
                 <View className="flex-row items-center">
-                    <TouchableOpacity onPress={() => router.back()} className="mr-4">
+                    <TouchableOpacity onPress={() => router.back()} className="mr-4" accessibilityRole="button" accessibilityLabel="Go back">
                         <Ionicons name="arrow-back" size={24} color="black" />
                     </TouchableOpacity>
                     <Text className="text-xl font-bold">Create Tweak</Text>
@@ -222,7 +224,7 @@ export default function CreateTweakStep2() {
                             />
                         )}
                     />
-                    {errors.experience && <Text className="text-red-500 text-xs mt-1">{(errors.experience as any).message}</Text>}
+                    {errors.experience && <Text className="text-red-500 text-xs mt-1">{errors.experience.message}</Text>}
                 </View>
 
                 {/* KYC Preference */}
@@ -241,7 +243,7 @@ export default function CreateTweakStep2() {
                             />
                         )}
                     />
-                    {errors.kycVerified && <Text className="text-red-500 text-xs mt-1">{(errors.kycVerified as any).message}</Text>}
+                    {errors.kycVerified && <Text className="text-red-500 text-xs mt-1">{errors.kycVerified.message}</Text>}
                 </View>
 
             </View>

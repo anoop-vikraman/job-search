@@ -8,6 +8,8 @@ import {
     TouchableOpacity,
     TouchableWithoutFeedback,
     View,
+    ViewStyle,
+    StyleProp,
 } from 'react-native';
 import { themeColors } from '../../themes/colors';
 
@@ -20,10 +22,10 @@ interface Props {
     label: string;
     options: Option[];
     value: string | string[]; // Single value or array for multi
-    onChange: (value: any) => void;
+    onChange: (value: string | string[]) => void;
     multiSelect?: boolean;
     placeholder?: string;
-    containerStyle?: any;
+    containerStyle?: StyleProp<ViewStyle>;
     visible?: boolean;
     onVisibleChange?: (visible: boolean) => void;
 }
@@ -188,7 +190,7 @@ export default function CustomDropdown({
                                 {/* Header */}
                                 <View className="flex-row justify-between items-center px-6 py-4 border-b border-gray-100">
                                     <Text className="text-lg font-bold" style={{ color: themeColors.primary }}>{label}</Text>
-                                    <TouchableOpacity onPress={() => setVisible(false)}>
+                                    <TouchableOpacity onPress={() => setVisible(false)} accessibilityRole="button" accessibilityLabel="Close">
                                         <AntDesign name="close" size={24} color="#374151" />
                                     </TouchableOpacity>
                                 </View>

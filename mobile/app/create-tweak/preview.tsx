@@ -21,8 +21,13 @@ import { FeatureFlags } from '../../constants/featureFlags';
 import { useCreateTweakStore } from '../../store/useCreateTweakStore';
 import { useAuthStore } from '../../store/useAuthStore';
 import { Tweak, useTweaksStore } from '../../store/useTweaksStore';
+import { ScheduleSlot } from '../../types/tweak';
 
 const { width: SCREEN_WIDTH } = Dimensions.get('window');
+
+interface PreviewImage {
+    uri: string;
+}
 
 export default function TweakPreview() {
     const router = useRouter();
@@ -190,7 +195,7 @@ export default function TweakPreview() {
         if (schedulePreference === 'one_day' && scheduleData.date) {
             return formatDate(new Date(scheduleData.date));
         } else if (schedulePreference === 'deadline' && (scheduleData.deadline || scheduleData.date)) {
-            return `By ${formatDate(new Date(scheduleData.deadline || scheduleData.date))}`;
+            return `By ${formatDate(new Date(scheduleData.deadline || scheduleData.date || ''))}`;
         } else if (schedulePreference === 'few_days') {
             if (scheduleData.fewDaysSlots && scheduleData.fewDaysSlots.length > 0) {
                 const days = scheduleData.fewDaysSlots.length;
@@ -294,8 +299,8 @@ export default function TweakPreview() {
                             {(schedulePreference === 'few_days' || schedulePreference === 'deadline') ? (
                                 <ScrollView horizontal showsHorizontalScrollIndicator={false} className="mb-2">
                                     <View className="flex-row gap-3">
-                                        {(schedulePreference === 'few_days' ? scheduleData.fewDaysSlots : scheduleData.deadlineSlots)?.map((slot: any, index: number) => {
-                                            const slotDate = new Date(slot.date);
+                                        {(schedulePreference === 'few_days' ? scheduleData.fewDaysSlots : scheduleData.deadlineSlots)?.map((slot: ScheduleSlot, index: number) => {
+                                            const slotDate = new Date(slot.date ?? '');
                                             const dayName = slotDate.toLocaleDateString('en-US', { weekday: 'short' });
                                             const day = slotDate.getDate();
                                             const month = slotDate.toLocaleDateString('en-US', { month: 'short' });
@@ -328,7 +333,7 @@ export default function TweakPreview() {
 
                                     {scheduleData.timeSlots && scheduleData.timeSlots.length > 0 && (
                                         <View className="flex-row flex-wrap gap-2">
-                                            {scheduleData.timeSlots.map((slot: any, index: number) => (
+                                            {scheduleData.timeSlots.map((slot: ScheduleSlot, index: number) => (
                                                 <View key={index} className="bg-blue-50 border border-blue-200 rounded-lg px-4 py-2.5">
                                                     <Text className="text-blue-700 font-semibold text-sm">
                                                         {slot.start} - {slot.end}
@@ -365,6 +370,8 @@ export default function TweakPreview() {
                                 <TouchableOpacity
                                     onPress={togglePlayback}
                                     className="w-10 h-10 bg-gray-100 rounded-full items-center justify-center mr-4"
+                                    accessibilityRole="button"
+                                    accessibilityLabel={isPlaying ? "Pause audio" : "Play audio"}
                                 >
                                     <FontAwesome5 name={isPlaying ? "pause" : "play"} size={14} color="#374151" />
                                 </TouchableOpacity>
@@ -387,11 +394,13 @@ export default function TweakPreview() {
                         <View className="mb-6">
                             <Text className="text-base font-bold text-gray-900 mb-3">Photos</Text>
                             <ScrollView horizontal showsHorizontalScrollIndicator={false} className="-mx-5 px-5">
-                                {images.map((img: any, index: number) => (
+                                {images.map((img: PreviewImage, index: number) => (
                                     <TouchableOpacity
                                         key={index}
                                         onPress={() => handleImagePress(index)}
                                         className="mr-3 shadow-md shadow-gray-200"
+                                        accessibilityRole="button"
+                                        accessibilityLabel="View image"
                                     >
                                         <Image
                                             source={{ uri: img.uri }}
@@ -471,7 +480,7 @@ export default function TweakPreview() {
                 >
                     <View style={{ flex: 1 }}>
                         <View className="flex-row items-center justify-between p-4 pt-12 bg-white border-b border-gray-200">
-                            <TouchableOpacity onPress={() => setShowMapModal(false)} className="p-2">
+                            <TouchableOpacity onPress={() => setShowMapModal(false)} className="p-2" accessibilityRole="button" accessibilityLabel="Close">
                                 <Ionicons name="close" size={24} color="black" />
                             </TouchableOpacity>
                             <Text className="font-bold text-lg">{address?.city || 'Location'}</Text>
@@ -503,7 +512,7 @@ export default function TweakPreview() {
             {images && images.length > 0 && (
                 <ImageGalleryModal
                     visible={showImageGallery}
-                    images={images.map((img: any) => img.uri)}
+                    images={images.map((img: PreviewImage) => img.uri)}
                     initialIndex={selectedImageIndex}
                     onClose={() => setShowImageGallery(false)}
                 />

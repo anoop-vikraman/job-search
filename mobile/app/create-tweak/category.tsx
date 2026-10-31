@@ -80,7 +80,7 @@ export default function CategoryPage() {
                                     <View className={`w-10 h-10 rounded-full items-center justify-center mb-2 ${isSelected ? 'bg-blue-100' : 'bg-gray-50'
                                         }`}>
                                         <Ionicons
-                                            name={cat.icon as any}
+                                            name={cat.icon as keyof typeof Ionicons.glyphMap}
                                             size={20}
                                             color={isSelected ? themeColors.primary : '#4B5563'}
                                         />

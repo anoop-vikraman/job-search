@@ -7,23 +7,24 @@ import {
     Modal,
     Pressable,
     ScrollView,
+    StyleProp,
     Text,
     TouchableOpacity,
-    View
+    View,
+    ViewStyle
 } from 'react-native';
 import { useConfirmationStore } from '../../store/useConfirmationStore';
 import { themeColors } from '../../themes/colors';
 
-export interface ImageItem {
-    uri: string;
-    isThumbnail: boolean;
-}
+import { TweakImage } from '../../types/tweak';
+
+export type ImageItem = TweakImage;
 
 interface Props {
     images: ImageItem[];
     onImagesChange: (images: ImageItem[]) => void;
     maxImages?: number;
-    containerStyle?: any;
+    containerStyle?: StyleProp<ViewStyle>;
     showThumbnailFeature?: boolean;
 }
 
@@ -216,6 +217,8 @@ export default function CustomImageUploader({
                                 onPress={() => handlePress(index)}
                                 onLongPress={() => confirmDelete(index)}
                                 className="relative w-24 h-24 rounded-lg overflow-hidden border border-gray-200"
+                                accessibilityRole="button"
+                                accessibilityLabel="Image options"
                             >
                                 <Image source={{ uri: img.uri }} className="w-full h-full" resizeMode="cover" />
                                 {showThumbnailFeature && img.isThumbnail && (
@@ -232,6 +235,8 @@ export default function CustomImageUploader({
                                 onPress={openUploadModal}
                                 className="w-24 h-24 rounded-2xl justify-center items-center"
                                 style={{ backgroundColor: themeColors.primary + '15' }} // 15% opacity of primary
+                                accessibilityRole="button"
+                                accessibilityLabel="Add image"
                             >
                                 <AntDesign name="plus" size={24} color={themeColors.primary} />
                             </TouchableOpacity>

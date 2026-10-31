@@ -15,7 +15,7 @@ export default function SourceSurveyModal({
     const [selectedSource, setSelectedSource] = useState<string | null>(null);
     const [otherSource, setOtherSource] = useState('');
 
-    const sources = [
+    const sources: { label: string; icon: keyof typeof Ionicons.glyphMap }[] = [
         { label: 'Search Engine', icon: 'search-outline' },
         { label: 'Social Media', icon: 'logo-instagram' },
         { label: 'Friend or Colleague', icon: 'people-outline' },
@@ -71,7 +71,7 @@ export default function SourceSurveyModal({
                             className="w-full flex-row items-center border border-gray-100 bg-gray-50/50 rounded-2xl p-4"
                         >
                             <View className="bg-white p-2 rounded-xl mr-4 shadow-sm">
-                                <Ionicons name={source.icon as any} size={20} color="#6366f1" />
+                                <Ionicons name={source.icon} size={20} color="#6366f1" />
                             </View>
                             <Text className="text-gray-700 text-lg font-medium flex-1">
                                 {source.label}

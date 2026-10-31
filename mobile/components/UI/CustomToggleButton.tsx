@@ -1,5 +1,5 @@
 import React from 'react';
-import { Text, TouchableOpacity, View } from 'react-native';
+import { StyleProp, Text, TouchableOpacity, View, ViewStyle } from 'react-native';
 import { themeColors } from '../../themes/colors';
 
 interface Option {
@@ -11,8 +11,8 @@ interface Props {
     label?: string;
     options: Option[];
     value: string | boolean | null;
-    onChange: (value: any) => void;
-    containerStyle?: any;
+    onChange: (value: string | boolean | null) => void;
+    containerStyle?: StyleProp<ViewStyle>;
 }
 
 export default function CustomToggleButton({

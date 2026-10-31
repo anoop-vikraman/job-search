@@ -157,6 +157,8 @@ export default function CustomTabBar({ state, descriptors, navigation }: BottomT
                 style={[styles.centerButton, isMenuOpen && styles.centerButtonActive]}
                 activeOpacity={0.8}
                 onPress={() => setIsMenuOpen(!isMenuOpen)}
+                accessibilityRole="button"
+                accessibilityLabel={isMenuOpen ? "Close create menu" : "Create tweak"}
             >
                 <Ionicons
                     name={isMenuOpen ? "close" : "add"}
@@ -168,8 +170,15 @@ export default function CustomTabBar({ state, descriptors, navigation }: BottomT
     );
 }
 
-const TabItem = ({ name, options, isFocused, onPress }: any) => {
-    let iconName: any = 'help';
+interface TabItemProps {
+    name: string;
+    options: BottomTabBarProps['descriptors'][string]['options'];
+    isFocused: boolean;
+    onPress: () => void;
+}
+
+const TabItem = ({ name, options, isFocused, onPress }: TabItemProps) => {
+    let iconName: keyof typeof Ionicons.glyphMap = 'help';
     let label = 'Tab';
 
     if (name === 'jobs') {

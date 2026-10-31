@@ -15,7 +15,8 @@ import {
 } from 'react-native';
 import { ScreenWrapper } from '@/components/ScreenWrapper';
 import { useAuthStore } from '@/store/useAuthStore';
-import { TweakApplication, useTweaksStore } from '@/store/useTweaksStore';
+import { Tweak, TweakApplication, useTweaksStore } from '@/store/useTweaksStore';
+import { ScheduleSlot } from '@/types/tweak';
 
 // ─── Conflict Detection (same logic as details page) ─────────────────────────
 
@@ -34,9 +35,20 @@ function slotsOverlap(aDate: string, aStart: string, aEnd: string, bDate: string
 
 type ConflictType = 'availability' | 'working_time' | null;
 
+type TimeSlotShape = ScheduleSlot;
+type AppliedTweakShape = Tweak;
+
+interface BuiltSlot {
+    key: string;
+    label: string;
+    dateLabel: string;
+    slotData: { date: string; start: string; end: string };
+    conflict: ConflictType;
+}
+
 function getSlotConflict(
     slotDate: string, slotStart: string, slotEnd: string,
-    appliedTweaks: any[], currentTweakId: string,
+    appliedTweaks: AppliedTweakShape[], currentTweakId: string,
 ): ConflictType {
     for (const applied of appliedTweaks) {
         if (applied.id === currentTweakId) continue;
@@ -52,11 +64,13 @@ function getSlotConflict(
         }
         if (applied.schedulePreference === 'few_days') {
             for (const fs of (sd.fewDaysSlots || [])) {
+                if (!fs.date) continue;
                 if (slotsOverlap(slotDate, slotStart, slotEnd, new Date(fs.date).toISOString().split('T')[0], fs.start, fs.end)) return slotType || 'availability';
             }
         }
         if (applied.schedulePreference === 'deadline') {
             for (const ds of (sd.deadlineSlots || [])) {
+                if (!ds.date) continue;
                 if (slotsOverlap(slotDate, slotStart, slotEnd, new Date(ds.date).toISOString().split('T')[0], ds.start, ds.end)) return slotType || 'availability';
             }
         }
@@ -118,7 +132,7 @@ function SlotItem({
                 </View>
             </View>
             {conflict && (
-                <TouchableOpacity onPress={onConflictInfo} hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}>
+                <TouchableOpacity onPress={onConflictInfo} hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }} accessibilityRole="button" accessibilityLabel="Conflict details">
                     <Ionicons name="information-circle-outline" size={18} color={conflictText} />
                 </TouchableOpacity>
             )}
@@ -161,7 +175,7 @@ export default function ApplyStep2() {
         if (tweak.schedulePreference === 'one_day') {
             const date = sd.date ? new Date(sd.date).toISOString().split('T')[0] : '';
             const dateLabel = sd.date ? new Date(sd.date).toLocaleDateString('en-US', { weekday: 'short', day: 'numeric', month: 'short' }) : '';
-            return (sd.timeSlots || []).map((ts: any, i: number) => ({
+            return (sd.timeSlots || []).map((ts: TimeSlotShape, i: number) => ({
                 key: `one_${i}`,
                 label: `${ts.start} – ${ts.end}`,
                 dateLabel,
@@ -171,9 +185,9 @@ export default function ApplyStep2() {
         }
 
         if (tweak.schedulePreference === 'few_days') {
-            return (sd.fewDaysSlots || []).map((fs: any, i: number) => {
-                const d = new Date(fs.date).toISOString().split('T')[0];
-                const dateLabel = new Date(fs.date).toLocaleDateString('en-US', { weekday: 'short', day: 'numeric', month: 'short' });
+            return (sd.fewDaysSlots || []).map((fs: TimeSlotShape, i: number) => {
+                const d = new Date(fs.date ?? '').toISOString().split('T')[0];
+                const dateLabel = new Date(fs.date ?? '').toLocaleDateString('en-US', { weekday: 'short', day: 'numeric', month: 'short' });
                 return {
                     key: `few_${i}`,
                     label: `${fs.start} – ${fs.end}`,
@@ -185,9 +199,9 @@ export default function ApplyStep2() {
         }
 
         if (tweak.schedulePreference === 'deadline') {
-            return (sd.deadlineSlots || []).map((ds: any, i: number) => {
-                const d = new Date(ds.date).toISOString().split('T')[0];
-                const dateLabel = new Date(ds.date).toLocaleDateString('en-US', { weekday: 'short', day: 'numeric', month: 'short' });
+            return (sd.deadlineSlots || []).map((ds: TimeSlotShape, i: number) => {
+                const d = new Date(ds.date ?? '').toISOString().split('T')[0];
+                const dateLabel = new Date(ds.date ?? '').toLocaleDateString('en-US', { weekday: 'short', day: 'numeric', month: 'short' });
                 return {
                     key: `dead_${i}`,
                     label: `${ds.start} – ${ds.end}`,
@@ -216,7 +230,7 @@ export default function ApplyStep2() {
         if (!canApply || applying) return;
         setApplying(true);
 
-        const chosenSlots = slots.filter((s: any) => selectedSlots.includes(s.key)).map((s: any) => s.slotData);
+        const chosenSlots = slots.filter((s: BuiltSlot) => selectedSlots.includes(s.key)).map((s: BuiltSlot) => s.slotData);
         const application: TweakApplication = {
             userId,
             userName: `${user?.firstName || ''} ${user?.lastName || ''}`.trim(),
@@ -251,7 +265,7 @@ export default function ApplyStep2() {
                     paddingHorizontal: 16, paddingVertical: 14,
                     backgroundColor: '#fff', borderBottomWidth: 1, borderBottomColor: '#F1F5F9',
                 }}>
-                    <TouchableOpacity onPress={() => router.back()} style={{ padding: 6 }}>
+                    <TouchableOpacity onPress={() => router.back()} style={{ padding: 6 }} accessibilityRole="button" accessibilityLabel="Go back">
                         <Ionicons name="arrow-back" size={24} color="#111827" />
                     </TouchableOpacity>
                     <Text style={{ fontSize: 17, fontWeight: '800', color: '#0F172A' }}>Apply for Tweak</Text>
@@ -282,7 +296,7 @@ export default function ApplyStep2() {
                         </View>
                     ) : (
                         <View style={{ marginBottom: 24 }}>
-                            {slots.map((s: any) => (
+                            {slots.map((s: BuiltSlot) => (
                                 <SlotItem
                                     key={s.key}
                                     label={s.label}

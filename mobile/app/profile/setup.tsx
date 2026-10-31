@@ -30,7 +30,7 @@ export default function ProfileSetupPage() {
         <ScreenWrapper>
             {/* Header */}
             <View className="flex-row items-center px-6 py-4 bg-white border-b border-gray-100">
-                <TouchableOpacity onPress={() => router.back()} className="mr-4">
+                <TouchableOpacity onPress={() => router.back()} className="mr-4" accessibilityRole="button" accessibilityLabel="Go back">
                     <Ionicons name="arrow-back" size={24} color="#111827" />
                 </TouchableOpacity>
                 <Text className="text-lg font-bold text-gray-900">Profile setup</Text>

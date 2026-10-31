@@ -3,11 +3,13 @@ import React, { useEffect, useRef, useState } from 'react';
 import { themeColors } from '../../themes/colors';
 
 import {
+    DimensionValue,
     Dimensions,
     Pressable,
     StyleSheet,
     Text,
     TextInput,
+    TextInputFocusEvent,
     View
 } from 'react-native';
 import Animated, {
@@ -47,12 +49,12 @@ export default function CustomFloatingLabel({
         animatedValue.value = withTiming(isFocused || value ? 1 : 0, { duration: 200 });
     }, [isFocused, value]);
 
-    const handleFocus = (e: any) => {
+    const handleFocus = (e: TextInputFocusEvent) => {
         setIsFocused(true);
         if (onFocus) onFocus(e);
     };
 
-    const handleBlur = (e: any) => {
+    const handleBlur = (e: TextInputFocusEvent) => {
         setIsFocused(false);
         if (onBlur) onBlur(e);
     };
@@ -103,7 +105,7 @@ export default function CustomFloatingLabel({
     const remainingChars = props.maxLength ? props.maxLength - currentLength : 0;
 
     return (
-        <View style={[styles.outerContainer, { width: width as any }, containerStyle]}>
+        <View style={[styles.outerContainer, { width: width as DimensionValue }, containerStyle]}>
             <View style={[
                 styles.inputContainer,
                 props.multiline && styles.inputContainerMultiline,
@@ -138,7 +140,7 @@ export default function CustomFloatingLabel({
                 />
 
                 {isPassword && value ? (
-                    <Pressable onPress={toggleVisibility} style={styles.iconContainer}>
+                    <Pressable onPress={toggleVisibility} style={styles.iconContainer} accessibilityRole="button" accessibilityLabel={isVisible ? 'Hide password' : 'Show password'}>
                         <Entypo
                             name={isVisible ? 'lock-open' : 'lock'}
                             size={20}

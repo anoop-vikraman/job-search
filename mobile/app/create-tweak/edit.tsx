@@ -3,8 +3,8 @@ import dayjs from 'dayjs';
 import * as Haptics from 'expo-haptics';
 import { useRouter } from 'expo-router';
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { Dimensions, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
-import DateTimePicker from 'react-native-ui-datepicker';
+import { Dimensions, ScrollView, StyleSheet, Text, TextInput, TextStyle, TouchableOpacity, View, ViewStyle } from 'react-native';
+import DateTimePicker, { CalendarDay, DateType } from 'react-native-ui-datepicker';
 import AddressListView from '../../components/Location/AddressListView';
 import SavedAddressesList from '../../components/Location/SavedAddressesList';
 import { ScreenWrapper } from '../../components/ScreenWrapper';
@@ -18,8 +18,19 @@ import { Toast } from '../../components/UI/ToastManager';
 import { useConfirmationStore } from '../../store/useConfirmationStore';
 import { PricingModel, SchedulePreference, useCreateTweakStore } from '../../store/useCreateTweakStore';
 import { themeColors } from '../../themes/colors';
+import { ScheduleSlot } from '../../types/tweak';
 
-const CATEGORIES = [
+type MutableViewStyle = { -readonly [K in keyof ViewStyle]: ViewStyle[K] };
+type MutableTextStyle = { -readonly [K in keyof TextStyle]: TextStyle[K] };
+
+interface DaySlot {
+    date: string;
+    start: string;
+    end: string;
+    status: 'default' | 'modified';
+}
+
+const CATEGORIES: { name: string; icon: keyof typeof Ionicons.glyphMap; color: string }[] = [
     { name: 'Plumbing', icon: 'water', color: '#3B82F6' },
     { name: 'Electrical', icon: 'flash', color: '#F59E0B' },
     { name: 'Cleaning', icon: 'sparkles', color: '#10B981' },
@@ -107,9 +118,9 @@ export default function EditTweak() {
     // Schedule specific states
     const [selectedDate, setSelectedDate] = useState<dayjs.Dayjs | null>(scheduleData?.date ? dayjs(scheduleData.date) : null);
     const [timeSlots, setTimeSlots] = useState<{ start: string, end: string }[]>(scheduleData?.timeSlots || []);
-    const [deadlineSlots, setDeadlineSlots] = useState<{ date: string; start: string; end: string; status: 'default' | 'modified'; }[]>(scheduleData?.deadlineSlots || []);
+    const [deadlineSlots, setDeadlineSlots] = useState<ScheduleSlot[]>(scheduleData?.deadlineSlots || []);
     const [activeDeadlineSlot, setActiveDeadlineSlot] = useState<number | null>(null);
-    const [fewDaysSlots, setFewDaysSlots] = useState<{ date: string; start: string; end: string; status: 'default' | 'modified'; }[]>(scheduleData?.fewDaysSlots || []);
+    const [fewDaysSlots, setFewDaysSlots] = useState<ScheduleSlot[]>(scheduleData?.fewDaysSlots || []);
     const [activeFewDaysSlot, setActiveFewDaysSlot] = useState<number | null>(null);
     const [calMonth, setCalMonth] = useState(dayjs().month());
     const [calYear, setCalYear] = useState(dayjs().year());
@@ -244,7 +255,7 @@ export default function EditTweak() {
         }
     };
 
-    const cards = [
+    const cards: { id: string; title: string; icon: keyof typeof Ionicons.glyphMap }[] = [
         { id: 'type', title: 'Tweak Type', icon: 'apps-outline' },
         { id: 'location', title: 'Location', icon: 'location-outline' },
         { id: 'category', title: 'Category', icon: 'grid-outline' },
@@ -398,7 +409,7 @@ export default function EditTweak() {
                                 >
                                     <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 12 }}>
                                         <View style={{ backgroundColor: cat.color + '15', width: 40, height: 40, borderRadius: 12, alignItems: 'center', justifyContent: 'center' }}>
-                                            <Ionicons name={cat.icon as any} size={20} color={cat.color} />
+                                            <Ionicons name={cat.icon} size={20} color={cat.color} />
                                         </View>
                                         {localCategory === cat.name && (
                                             <View style={{ width: 22, height: 22, borderRadius: 11, backgroundColor: '#01C39D', alignItems: 'center', justifyContent: 'center' }}>
@@ -450,7 +461,7 @@ export default function EditTweak() {
                                 label="Required Skills"
                                 options={SKILLS_LIST}
                                 value={localSkills}
-                                onChange={setLocalSkills}
+                                onChange={(value) => setLocalSkills(Array.isArray(value) ? value : [value])}
                                 multiSelect
                                 placeholder="Select skills"
                             />
@@ -458,7 +469,7 @@ export default function EditTweak() {
                                 label="Preferred Languages"
                                 options={LANGUAGES_LIST}
                                 value={localLanguages}
-                                onChange={setLocalLanguages}
+                                onChange={(value) => setLocalLanguages(Array.isArray(value) ? value : [value])}
                                 multiSelect
                                 placeholder="Select languages"
                             />
@@ -471,11 +482,11 @@ export default function EditTweak() {
                         <Text style={{ fontSize: 24, fontWeight: 'bold', color: '#111827', marginBottom: 4 }}>Select Timeline</Text>
                         <Text style={{ color: '#6B7280', marginBottom: 32 }}>Choose a scheduling preference.</Text>
                         <View style={{ gap: 16 }}>
-                            {[
+                            {([
                                 { id: 'one_day', icon: 'calendar', title: 'Single Day Job', description: 'Best for quick tasks done in one visit.', color: '#3B82F6' },
                                 { id: 'deadline', icon: 'timer-outline', title: 'By a Deadline', description: 'Task must be completed by a specific date.', color: '#EC4899' },
                                 { id: 'few_days', icon: 'calendar-number-outline', title: 'Multi-day Project', description: 'Ideal for larger jobs spanning several days.', color: '#10B981' },
-                            ].map((item) => (
+                            ] as { id: string; icon: keyof typeof Ionicons.glyphMap; title: string; description: string; color: string }[]).map((item) => (
                                 <TouchableOpacity
                                     key={item.id}
                                     onPress={() => {
@@ -506,7 +517,7 @@ export default function EditTweak() {
                                     }}
                                 >
                                     <View style={{ width: 44, height: 44, borderRadius: 14, backgroundColor: item.color + '15', alignItems: 'center', justifyContent: 'center', marginRight: 16 }}>
-                                        <Ionicons name={item.icon as any} size={22} color={item.color} />
+                                        <Ionicons name={item.icon} size={22} color={item.color} />
                                     </View>
                                     <View style={{ flex: 1 }}>
                                         <Text style={{ fontSize: 16, fontWeight: 'bold', color: localSchedulePreference === item.id ? '#01C39D' : '#111827' }}>{item.title}</Text>
@@ -549,14 +560,14 @@ export default function EditTweak() {
                                         <View style={{ paddingHorizontal: 16, paddingBottom: 16 }}>
                                             <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: 8, paddingTop: 12, paddingBottom: 4 }}>
                                                 {isCurrentMonth ? <View style={{ width: 36 }} /> : (
-                                                    <TouchableOpacity onPress={goPrevMonth} style={{ padding: 8 }}>
+                                                    <TouchableOpacity onPress={goPrevMonth} style={{ padding: 8 }} accessibilityRole="button" accessibilityLabel="Previous month">
                                                         <Ionicons name="chevron-back" size={20} color="#01C39D" />
                                                     </TouchableOpacity>
                                                 )}
                                                 <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#1F2937' }}>
                                                     {dayjs().month(calMonth).year(calYear).format('MMMM YYYY')}
                                                 </Text>
-                                                <TouchableOpacity onPress={goNextMonth} style={{ padding: 8 }}>
+                                                <TouchableOpacity onPress={goNextMonth} style={{ padding: 8 }} accessibilityRole="button" accessibilityLabel="Next month">
                                                     <Ionicons name="chevron-forward" size={20} color="#01C39D" />
                                                 </TouchableOpacity>
                                             </View>
@@ -565,7 +576,7 @@ export default function EditTweak() {
                                                 mode="single"
                                                 date={selectedDate || dayjs()}
                                                 minDate={dayjs().startOf('day').toDate()}
-                                                onChange={(params: any) => {
+                                                onChange={(params: { date: DateType }) => {
                                                     if (params.date) {
                                                         const d = dayjs(params.date);
                                                         setSelectedDate(d);
@@ -579,13 +590,13 @@ export default function EditTweak() {
                                                 hideHeader={true}
                                                 timePicker={false}
                                                 components={{
-                                                    Day: ({ date, isToday }: any) => {
+                                                    Day: ({ date, isToday }: CalendarDay) => {
                                                         const dateObj = dayjs(date);
                                                         const dateStr = dateObj.format('YYYY-MM-DD');
                                                         const isSelected = selectedDate && dateStr === selectedDate.format('YYYY-MM-DD');
                                                         const isBeforeToday = dateObj.isBefore(dayjs().startOf('day'));
 
-                                                        const containerStyle: any = {
+                                                        const containerStyle: MutableViewStyle = {
                                                             width: 32,
                                                             height: 32,
                                                             borderRadius: 8,
@@ -593,7 +604,7 @@ export default function EditTweak() {
                                                             alignItems: 'center',
                                                         };
 
-                                                        const textStyle: any = {
+                                                        const textStyle: MutableTextStyle = {
                                                             fontSize: 14,
                                                             color: isBeforeToday ? '#D1D5DB' : '#374151',
                                                             fontWeight: '500'
@@ -697,6 +708,8 @@ export default function EditTweak() {
                                                                         borderWidth: 1,
                                                                         borderColor: '#FEE2E2'
                                                                     }}
+                                                                    accessibilityRole="button"
+                                                                    accessibilityLabel="Remove time slot"
                                                                 >
                                                                     <Ionicons name="close" size={18} color="#EF4444" />
                                                                 </TouchableOpacity>
@@ -725,14 +738,14 @@ export default function EditTweak() {
                                         <View style={{ paddingHorizontal: 16, paddingBottom: 16 }}>
                                             <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: 8, paddingTop: 12, paddingBottom: 4 }}>
                                                 {isCurrentMonth ? <View style={{ width: 36 }} /> : (
-                                                    <TouchableOpacity onPress={goPrevMonth} style={{ padding: 8 }}>
+                                                    <TouchableOpacity onPress={goPrevMonth} style={{ padding: 8 }} accessibilityRole="button" accessibilityLabel="Previous month">
                                                         <Ionicons name="chevron-back" size={20} color="#01C39D" />
                                                     </TouchableOpacity>
                                                 )}
                                                 <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#1F2937' }}>
                                                     {dayjs().month(calMonth).year(calYear).format('MMMM YYYY')}
                                                 </Text>
-                                                <TouchableOpacity onPress={goNextMonth} style={{ padding: 8 }}>
+                                                <TouchableOpacity onPress={goNextMonth} style={{ padding: 8 }} accessibilityRole="button" accessibilityLabel="Next month">
                                                     <Ionicons name="chevron-forward" size={20} color="#01C39D" />
                                                 </TouchableOpacity>
                                             </View>
@@ -741,7 +754,7 @@ export default function EditTweak() {
                                                 mode="single"
                                                 date={selectedDate || dayjs()}
                                                 minDate={dayjs().startOf('day').toDate()}
-                                                onChange={(params: any) => {
+                                                onChange={(params: { date: DateType }) => {
                                                     if (params.date) {
                                                         const d = dayjs(params.date);
                                                         setSelectedDate(d);
@@ -750,7 +763,7 @@ export default function EditTweak() {
 
                                                         const today = dayjs().startOf('day');
                                                         const daysDiff = d.startOf('day').diff(today, 'day');
-                                                        const newSlots: any[] = [];
+                                                        const newSlots: DaySlot[] = [];
                                                         for (let i = 0; i <= Math.max(0, daysDiff); i++) {
                                                             newSlots.push({
                                                                 date: today.add(i, 'day').format('YYYY-MM-DD'),
@@ -769,14 +782,14 @@ export default function EditTweak() {
                                                 hideHeader={true}
                                                 timePicker={false}
                                                 components={{
-                                                    Day: ({ date, isToday }: any) => {
+                                                    Day: ({ date, isToday }: CalendarDay) => {
                                                         const dateObj = dayjs(date);
                                                         const dateStr = dateObj.format('YYYY-MM-DD');
                                                         const isDeadline = selectedDate && dateStr === selectedDate.format('YYYY-MM-DD');
                                                         const slot = deadlineSlots.find(s => s.date === dateStr);
                                                         const isBeforeToday = dateObj.isBefore(dayjs().startOf('day'));
 
-                                                        const containerStyle: any = {
+                                                        const containerStyle: MutableViewStyle = {
                                                             width: 32,
                                                             height: 32,
                                                             borderRadius: 8,
@@ -784,7 +797,7 @@ export default function EditTweak() {
                                                             alignItems: 'center',
                                                         };
 
-                                                        const textStyle: any = {
+                                                        const textStyle: MutableTextStyle = {
                                                             fontSize: 14,
                                                             color: isBeforeToday ? '#D1D5DB' : '#374151',
                                                             fontWeight: '500'
@@ -815,7 +828,7 @@ export default function EditTweak() {
                                                                     // Generate slots from Today to Deadline (inclusive)
                                                                     const today = dayjs().startOf('day');
                                                                     const daysDiff = newDate.startOf('day').diff(today, 'day');
-                                                                    const newSlots: any[] = [];
+                                                                    const newSlots: DaySlot[] = [];
                                                                     for (let i = 0; i <= Math.max(0, daysDiff); i++) {
                                                                         newSlots.push({
                                                                             date: today.add(i, 'day').format('YYYY-MM-DD'),
@@ -938,14 +951,14 @@ export default function EditTweak() {
                                         <View style={{ paddingHorizontal: 16, paddingBottom: 16 }}>
                                             <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: 8, paddingTop: 12, paddingBottom: 4 }}>
                                                 {isCurrentMonth ? <View style={{ width: 36 }} /> : (
-                                                    <TouchableOpacity onPress={goPrevMonth} style={{ padding: 8 }}>
+                                                    <TouchableOpacity onPress={goPrevMonth} style={{ padding: 8 }} accessibilityRole="button" accessibilityLabel="Previous month">
                                                         <Ionicons name="chevron-back" size={20} color="#01C39D" />
                                                     </TouchableOpacity>
                                                 )}
                                                 <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#1F2937' }}>
                                                     {dayjs().month(calMonth).year(calYear).format('MMMM YYYY')}
                                                 </Text>
-                                                <TouchableOpacity onPress={goNextMonth} style={{ padding: 8 }}>
+                                                <TouchableOpacity onPress={goNextMonth} style={{ padding: 8 }} accessibilityRole="button" accessibilityLabel="Next month">
                                                     <Ionicons name="chevron-forward" size={20} color="#01C39D" />
                                                 </TouchableOpacity>
                                             </View>
@@ -957,17 +970,17 @@ export default function EditTweak() {
                                                 minDate={dayjs().startOf('day').toDate()}
                                                 hideHeader={true}
                                                 timePicker={false}
-                                                onChange={(params: any) => {
+                                                onChange={(params: { dates: DateType[]; datePressed?: DateType; change: 'added' | 'removed' | 'updated' }) => {
                                                     // Selection logic is handled in custom Day component
                                                 }}
                                                 components={{
-                                                    Day: ({ date, isToday }: any) => {
+                                                    Day: ({ date, isToday }: CalendarDay) => {
                                                         const dateStr = dayjs(date).format('YYYY-MM-DD');
                                                         const slotData = fewDaysSlotsMap.get(dateStr);
                                                         const isSelected = !!slotData;
                                                         const isBeforeToday = dayjs(date).isBefore(dayjs().startOf('day'));
 
-                                                        const containerStyle: any = {
+                                                        const containerStyle: MutableViewStyle = {
                                                             width: 32,
                                                             height: 32,
                                                             borderRadius: 8,
@@ -975,7 +988,7 @@ export default function EditTweak() {
                                                             alignItems: 'center',
                                                         };
 
-                                                        const textStyle: any = {
+                                                        const textStyle: MutableTextStyle = {
                                                             fontSize: 14,
                                                             color: isSelected ? 'white' : (isBeforeToday ? '#D1D5DB' : '#374151'),
                                                             fontWeight: isSelected || isToday ? 'bold' : 'normal'
@@ -1000,8 +1013,8 @@ export default function EditTweak() {
                                                                             setActiveFewDaysSlot(null);
                                                                         }
                                                                     } else {
-                                                                        const newSlots = [...fewDaysSlots, { date: dateStr, start: '09:00', end: '17:00', status: 'default' }].sort((a, b) => a.date.localeCompare(b.date));
-                                                                        setFewDaysSlots(newSlots as any);
+                                                                        const newSlots = [...fewDaysSlots, { date: dateStr, start: '09:00', end: '17:00', status: 'default' as const }].sort((a, b) => (a.date ?? '').localeCompare(b.date ?? ''));
+                                                                        setFewDaysSlots(newSlots);
                                                                     }
                                                                 }}
                                                                 style={containerStyle}
@@ -1119,7 +1132,16 @@ export default function EditTweak() {
                 );
             case 'pricing':
                 const renderPricingEditor = () => {
-                    const PricingOption = ({ id, title, description, icon, color, isSelected, onSelect, children }: any) => (
+                    const PricingOption = ({ id, title, description, icon, color, isSelected, onSelect, children }: {
+                        id: string;
+                        title: string;
+                        description: string;
+                        icon: keyof typeof Ionicons.glyphMap;
+                        color: string;
+                        isSelected: boolean;
+                        onSelect: () => void;
+                        children?: React.ReactNode;
+                    }) => (
                         <View
                             style={{
                                 borderRadius: 24, backgroundColor: isSelected ? '#01C39D' + '08' : 'white', borderWidth: 2, marginBottom: 16,
@@ -1426,7 +1448,7 @@ export default function EditTweak() {
         <ScreenWrapper edges={['top', 'bottom', 'left', 'right']} style={{ backgroundColor: 'white' }}>
             {/* Header - Tightened and Premium */}
             <View style={styles.header}>
-                <TouchableOpacity onPress={() => router.back()} style={styles.backButton}>
+                <TouchableOpacity onPress={() => router.back()} style={styles.backButton} accessibilityRole="button" accessibilityLabel="Go back">
                     <Ionicons name="arrow-back" size={20} color={themeColors.text} />
                 </TouchableOpacity>
                 <View style={styles.headerTextContainer}>
@@ -1472,6 +1494,8 @@ export default function EditTweak() {
                                 <TouchableOpacity
                                     onPress={() => scrollToStep(i)}
                                     style={{ alignItems: 'center' }}
+                                    accessibilityRole="button"
+                                    accessibilityLabel={`Go to ${card.title}`}
                                 >
                                     <View
                                         style={{
@@ -1501,7 +1525,7 @@ export default function EditTweak() {
                                         }}
                                     >
                                         <Ionicons
-                                            name={card.icon as any}
+                                            name={card.icon}
                                             size={18}
                                             color={iconColor}
                                         />
@@ -1528,6 +1552,8 @@ export default function EditTweak() {
                         <TouchableOpacity
                             onPress={() => currentIndex > 0 ? scrollToStep(currentIndex - 1) : router.back()}
                             style={{ width: 56, height: 56, borderRadius: 16, backgroundColor: '#F3F4F6', alignItems: 'center', justifyContent: 'center' }}
+                            accessibilityRole="button"
+                            accessibilityLabel="Previous step"
                         >
                             <Ionicons name="chevron-back" size={24} color="#374151" />
                         </TouchableOpacity>
@@ -1560,6 +1586,8 @@ export default function EditTweak() {
                                 }
                             }}
                             style={{ width: 56, height: 56, borderRadius: 16, backgroundColor: themeColors.primary, alignItems: 'center', justifyContent: 'center' }}
+                            accessibilityRole="button"
+                            accessibilityLabel="Next step"
                         >
                             <Ionicons name="chevron-forward" size={24} color="white" />
                         </TouchableOpacity>

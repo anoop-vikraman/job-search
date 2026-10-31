@@ -16,6 +16,8 @@ export default function LocationSearchHeader({ onSearch }: LocationSearchHeaderP
                 <TouchableOpacity
                     onPress={() => router.back()}
                     className="bg-white p-2 rounded-full shadow-md"
+                    accessibilityRole="button"
+                    accessibilityLabel="Go back"
                 >
                     <Ionicons name="arrow-back" size={24} color="black" />
                 </TouchableOpacity>
@@ -35,7 +37,7 @@ export default function LocationSearchHeader({ onSearch }: LocationSearchHeaderP
                         returnKeyType="search"
                     />
                     {query.length > 0 && (
-                        <TouchableOpacity onPress={() => { setQuery(''); onSearch(''); }}>
+                        <TouchableOpacity onPress={() => { setQuery(''); onSearch(''); }} accessibilityRole="button" accessibilityLabel="Clear search">
                             <Ionicons name="close-circle" size={20} color="#9CA3AF" />
                         </TouchableOpacity>
                     )}

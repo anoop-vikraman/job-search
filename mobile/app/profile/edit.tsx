@@ -10,12 +10,21 @@ import { Toast } from '../../components/UI/ToastManager';
 import { useAuthStore } from '../../store/useAuthStore';
 import { themeColors } from '../../themes/colors';
 
+interface ProfileFormData {
+    firstName: string;
+    lastName: string;
+    email: string;
+    dateOfBirth: string;
+    gender: string;
+    bio: string;
+}
+
 export default function EditProfilePage() {
     const router = useRouter();
     const { user, updateUser } = useAuthStore();
     const [isSubmitting, setIsSubmitting] = useState(false);
 
-    const { control, handleSubmit, formState: { errors } } = useForm({
+    const { control, handleSubmit, formState: { errors } } = useForm<ProfileFormData>({
         defaultValues: {
             firstName: user?.firstName || '',
             lastName: user?.lastName || '',
@@ -26,7 +35,7 @@ export default function EditProfilePage() {
         }
     });
 
-    const onSubmit = async (data: any) => {
+    const onSubmit = async (data: ProfileFormData) => {
         if (!user?.id) return;
         setIsSubmitting(true);
         try {
@@ -68,7 +77,7 @@ export default function EditProfilePage() {
     return (
         <ScreenWrapper>
             <View style={styles.header}>
-                <TouchableOpacity onPress={() => router.back()} style={styles.backButton}>
+                <TouchableOpacity onPress={() => router.back()} style={styles.backButton} accessibilityRole="button" accessibilityLabel="Close">
                     <Ionicons name="close" size={24} color={themeColors.text} />
                 </TouchableOpacity>
                 <Text style={styles.headerTitle}>Edit Profile</Text>

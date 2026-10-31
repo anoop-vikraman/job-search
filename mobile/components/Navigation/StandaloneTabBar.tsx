@@ -1,6 +1,6 @@
 import { Ionicons } from '@expo/vector-icons';
 import { NavigationContext } from '@react-navigation/native';
-import { useRouter, useSegments } from 'expo-router';
+import { useRouter, useSegments, type Href } from 'expo-router';
 import React from 'react';
 import { Dimensions, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import Svg, { Path } from 'react-native-svg';
@@ -11,7 +11,16 @@ const { width, height } = Dimensions.get('window');
 const TAB_HEIGHT = 80;
 const CENTER_BUTTON_RADIUS = 28; // Smaller button (was 35)
 
-const TABS = [
+interface TabConfig {
+    name: string;
+    label: string;
+    route: string;
+    icon?: keyof typeof Ionicons.glyphMap;
+    outlineIcon?: keyof typeof Ionicons.glyphMap;
+    isSpacer?: boolean;
+}
+
+const TABS: TabConfig[] = [
     { name: 'index', label: 'Home', icon: 'home', outlineIcon: 'home-outline', route: '/(tabs)' },
     { name: 'apply', label: 'Apply', icon: 'search', outlineIcon: 'search-outline', route: '/(tabs)/apply' },
     { name: 'create', label: 'Create', route: 'create', isSpacer: true },
@@ -91,7 +100,7 @@ function StandaloneTabBarInner() {
 
                     const onPress = () => {
                         if (!isFocused) {
-                            router.push(tab.route as any);
+                            router.push(tab.route as Href);
                         }
                     };
 
@@ -151,6 +160,8 @@ function StandaloneTabBarInner() {
                 style={[styles.centerButton, isMenuOpen && styles.centerButtonActive]}
                 activeOpacity={0.8}
                 onPress={() => setIsMenuOpen(!isMenuOpen)}
+                accessibilityRole="button"
+                accessibilityLabel={isMenuOpen ? "Close create menu" : "Create tweak"}
             >
                 <Ionicons
                     name={isMenuOpen ? "close" : "add"}
@@ -175,7 +186,14 @@ export default function StandaloneTabBar() {
     return <StandaloneTabBarInner />;
 }
 
-const TabItem = ({ label, iconName, isFocused, onPress }: any) => {
+interface TabItemProps {
+    label: string;
+    iconName?: keyof typeof Ionicons.glyphMap;
+    isFocused: boolean;
+    onPress: () => void;
+}
+
+const TabItem = ({ label, iconName, isFocused, onPress }: TabItemProps) => {
     return (
         <TouchableOpacity onPress={onPress} style={styles.tabItem}>
             <Ionicons

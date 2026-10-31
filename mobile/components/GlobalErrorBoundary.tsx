@@ -37,7 +37,7 @@ const ErrorFallback = ({ error, resetErrorBoundary }: FallbackProps) => {
                 </Text>
 
                 <Text className="text-gray-500 text-center text-base mb-10 px-4 leading-6">
-                    {(error as any).message || "An unexpected error occurred in the application interface."}
+                    {(error as Error).message || "An unexpected error occurred in the application interface."}
                 </Text>
 
                 <TouchableOpacity

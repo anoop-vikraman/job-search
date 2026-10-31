@@ -13,7 +13,7 @@ try {
 }
 
 // In-Memory Fallback Implementation
-const memoryStorage = new Map<string, any>();
+const memoryStorage = new Map<string, string | boolean | number>();
 
 // MMKV Storage Helper (Synchronous)
 export const storage = {

@@ -1,6 +1,6 @@
 import { FontAwesome5, Ionicons } from '@expo/vector-icons';
 import { useAudioPlayer, useAudioPlayerStatus } from 'expo-audio';
-import { useLocalSearchParams, useRouter } from 'expo-router';
+import { useLocalSearchParams, useRouter, type Href } from 'expo-router';
 import React, { useEffect, useState } from 'react';
 import {
     Alert,
@@ -15,6 +15,7 @@ import {
 import { ScreenWrapper } from '@/components/ScreenWrapper';
 import { useAuthStore } from '@/store/useAuthStore';
 import { useTweaksStore } from '@/store/useTweaksStore';
+import { ScheduleSlot } from '@/types/tweak';
 
 // ─── Conflict Detection Helpers ───────────────────────────────────────────────
 
@@ -61,8 +62,9 @@ function getSlotConflict(
         }
         // Check few_days
         if (applied.schedulePreference === 'few_days') {
-            const fewSlots: { date: string; start: string; end: string }[] = sd.fewDaysSlots || [];
+            const fewSlots: ScheduleSlot[] = sd.fewDaysSlots || [];
             for (const fs of fewSlots) {
+                if (!fs.date) continue;
                 const fsDate = new Date(fs.date).toISOString().split('T')[0];
                 if (slotsOverlap(slotDate, slotStart, slotEnd, fsDate, fs.start, fs.end)) {
                     return slotType || 'availability';
@@ -71,8 +73,9 @@ function getSlotConflict(
         }
         // Check deadline
         if (applied.schedulePreference === 'deadline') {
-            const deadlineSlots: { date: string; start: string; end: string }[] = sd.deadlineSlots || [];
+            const deadlineSlots: ScheduleSlot[] = sd.deadlineSlots || [];
             for (const ds of deadlineSlots) {
+                if (!ds.date) continue;
                 const dsDate = new Date(ds.date).toISOString().split('T')[0];
                 if (slotsOverlap(slotDate, slotStart, slotEnd, dsDate, ds.start, ds.end)) {
                     return slotType || 'availability';
@@ -336,14 +339,14 @@ export default function TweakDetails() {
     };
 
     const getFewDaysSlotConflicts = () => {
-        const slots: { date: string; start: string; end: string }[] =
+        const slots: ScheduleSlot[] =
             tweak.schedulePreference === 'few_days'
                 ? tweak.scheduleData?.fewDaysSlots || []
                 : tweak.scheduleData?.deadlineSlots || [];
         return slots.map((slot) => ({
             slot,
             conflict: getSlotConflict(
-                new Date(slot.date).toISOString().split('T')[0],
+                new Date(slot.date ?? '').toISOString().split('T')[0],
                 slot.start,
                 slot.end,
                 appliedTweaks,
@@ -371,7 +374,7 @@ export default function TweakDetails() {
         <ScreenWrapper>
             {/* ── Header ──────────────────────────────────────────────────── */}
             <View className="px-4 py-4 flex-row items-center justify-between bg-white border-b border-gray-100">
-                <TouchableOpacity onPress={() => router.back()} className="p-2 -ml-2">
+                <TouchableOpacity onPress={() => router.back()} className="p-2 -ml-2" accessibilityRole="button" accessibilityLabel="Go back">
                     <Ionicons name="arrow-back" size={24} color="#111827" />
                 </TouchableOpacity>
                 <Text className="text-lg font-bold text-gray-900">Tweak Details</Text>
@@ -381,6 +384,8 @@ export default function TweakDetails() {
                         <TouchableOpacity
                             onPress={toggleWatchlist}
                             style={{ padding: 8, borderRadius: 10 }}
+                            accessibilityRole="button"
+                            accessibilityLabel={isWatchlisted ? 'Remove from watchlist' : 'Add to watchlist'}
                         >
                             <Ionicons
                                 name={isWatchlisted ? 'bookmark' : 'bookmark-outline'}
@@ -393,6 +398,8 @@ export default function TweakDetails() {
                     <TouchableOpacity
                         onPress={() => setShowMenuModal(true)}
                         style={{ padding: 8, borderRadius: 10 }}
+                        accessibilityRole="button"
+                        accessibilityLabel="More options"
                     >
                         <Ionicons name="ellipsis-vertical" size={22} color="#374151" />
                     </TouchableOpacity>
@@ -488,7 +495,7 @@ export default function TweakDetails() {
                                 <ScrollView horizontal showsHorizontalScrollIndicator={false} className="mb-2">
                                     <View style={{ flexDirection: 'row', gap: 10 }}>
                                         {multiDayConflicts.map(({ slot, conflict }, index) => {
-                                            const slotDate = new Date(slot.date);
+                                            const slotDate = new Date(slot.date ?? '');
                                             const dayName = slotDate.toLocaleDateString('en-US', { weekday: 'short' });
                                             const day = slotDate.getDate();
                                             const month = slotDate.toLocaleDateString('en-US', { month: 'short' });
@@ -581,6 +588,8 @@ export default function TweakDetails() {
                                 <TouchableOpacity
                                     onPress={togglePlayback}
                                     className="w-10 h-10 bg-gray-100 rounded-full items-center justify-center mr-4"
+                                    accessibilityRole="button"
+                                    accessibilityLabel={isPlaying ? 'Pause audio' : 'Play audio'}
                                 >
                                     <FontAwesome5 name={isPlaying ? 'pause' : 'play'} size={14} color="#374151" />
                                 </TouchableOpacity>
@@ -601,7 +610,7 @@ export default function TweakDetails() {
                         <View className="mb-6">
                             <Text className="text-base font-bold text-gray-900 mb-3">Photos</Text>
                             <ScrollView horizontal showsHorizontalScrollIndicator={false} className="-mx-5 px-5">
-                                {tweak.images.map((img: any, index: number) => (
+                                {tweak.images.map((img: { uri: string }, index: number) => (
                                     <View key={index} className="mr-3 shadow-md shadow-gray-200">
                                         <Image
                                             source={{ uri: img.uri }}
@@ -659,7 +668,7 @@ export default function TweakDetails() {
                             <View style={{ gap: 10 }}>
                                 {/* View Applicants Button */}
                                 <TouchableOpacity
-                                    onPress={() => router.push(`/tweaks/${tweak.id}/applicants` as any)}
+                                    onPress={() => router.push(`/tweaks/${tweak.id}/applicants` as Href)}
                                     style={{
                                         backgroundColor: '#EFF6FF',
                                         borderWidth: 1,
@@ -717,7 +726,7 @@ export default function TweakDetails() {
                             <TouchableOpacity
                                 onPress={() => {
                                     if (allConflicted) return;
-                                    router.push(`/apply/application/${tweak.id}/step1` as any);
+                                    router.push(`/apply/application/${tweak.id}/step1` as Href);
                                 }}
                                 disabled={allConflicted}
                                 style={{
@@ -789,7 +798,7 @@ export default function TweakDetails() {
                     <View style={{ backgroundColor: '#fff', borderTopLeftRadius: 24, borderTopRightRadius: 24, padding: 24, minHeight: '60%' }}>
                         <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: 20 }}>
                             <Text style={{ fontSize: 20, fontWeight: '800', color: '#0F172A' }}>Your Application</Text>
-                            <TouchableOpacity onPress={() => setShowAppSummaryModal(false)}>
+                            <TouchableOpacity onPress={() => setShowAppSummaryModal(false)} accessibilityRole="button" accessibilityLabel="Close">
                                 <Ionicons name="close-circle" size={28} color="#CBD5E1" />
                             </TouchableOpacity>
                         </View>
@@ -842,7 +851,7 @@ export default function TweakDetails() {
                                     <View key={i} style={{ backgroundColor: '#F1F5F9', padding: 12, borderRadius: 12, flexDirection: 'row', alignItems: 'center', gap: 10 }}>
                                         <Ionicons name="time-outline" size={16} color="#64748B" />
                                         <Text style={{ fontSize: 14, color: '#334155', fontWeight: '600' }}>
-                                            {new Date(slot.date).toLocaleDateString('en-US', { day: 'numeric', month: 'short' })}: {slot.start} - {slot.end}
+                                            {new Date(slot.date ?? '').toLocaleDateString('en-US', { day: 'numeric', month: 'short' })}: {slot.start} - {slot.end}
                                         </Text>
                                     </View>
                                 ))}

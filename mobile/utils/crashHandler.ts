@@ -9,7 +9,9 @@ type ErrorUtilsType = {
     setGlobalHandler: (handler: (error: Error, isFatal?: boolean) => void) => void;
 };
 
-const errorUtils: ErrorUtilsType | undefined = (globalThis as any).ErrorUtils;
+const errorUtils: ErrorUtilsType | undefined = (
+    globalThis as unknown as { ErrorUtils?: ErrorUtilsType }
+).ErrorUtils;
 
 if (errorUtils) {
     const previousHandler = errorUtils.getGlobalHandler();

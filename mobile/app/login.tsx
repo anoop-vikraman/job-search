@@ -72,7 +72,7 @@ export default function Login() {
                     value={password}
                     secureTextEntry={!isPasswordVisible}
                     rightComponent={
-                        <TouchableOpacity onPress={() => setIsPasswordVisible(!isPasswordVisible)}>
+                        <TouchableOpacity onPress={() => setIsPasswordVisible(!isPasswordVisible)} accessibilityRole="button" accessibilityLabel={isPasswordVisible ? 'Hide password' : 'Show password'}>
                             <Ionicons name={isPasswordVisible ? 'eye-off' : 'eye'} size={20} color="#6B7281" />
                         </TouchableOpacity>
                     }

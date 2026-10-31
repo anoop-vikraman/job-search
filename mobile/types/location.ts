@@ -22,7 +22,7 @@ export interface Coordinates {
 export interface LocationAddressModalProps {
     visible: boolean;
     onClose: () => void;
-    onSave: (data: any) => void;
+    onSave: (data: Address) => void;
     formattedAddress: string;
     latitude: number;
     longitude: number;

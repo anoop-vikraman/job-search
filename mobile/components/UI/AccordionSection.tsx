@@ -9,7 +9,7 @@ if (Platform.OS === 'android' && UIManager.setLayoutAnimationEnabledExperimental
 
 interface AccordionSectionProps {
     title: string;
-    icon: string;
+    icon: keyof typeof Ionicons.glyphMap;
     isExpanded: boolean;
     onToggle: () => void;
     children: React.ReactNode;
@@ -39,7 +39,7 @@ export default function AccordionSection({
                 <View style={styles.headerLeft}>
                     <View style={[styles.iconContainer, isExpanded && styles.iconContainerExpanded]}>
                         <Ionicons
-                            name={icon as any}
+                            name={icon}
                             size={20}
                             color={isExpanded ? 'white' : themeColors.primary}
                         />

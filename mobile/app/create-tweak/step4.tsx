@@ -58,7 +58,7 @@ export default function CreateTweakStep4() {
     const schedulingType = params.schedulingType as string;
     const showDurationPricing = schedulingType === 'fixed';
 
-    const { control, handleSubmit, watch, setValue, formState: { errors } } = useForm<any>({
+    const { control, handleSubmit, watch, setValue, formState: { errors } } = useForm<FormData>({
         resolver: zodResolver(schema),
         defaultValues: {
             selectedPricingType: (params.pricingType as PricingType) || 'fixed',
@@ -118,7 +118,20 @@ export default function CreateTweakStep4() {
 
     const onSubmit = (data: FormData) => {
         let totalAmount = 0;
-        let pricingData: any = {
+        interface PricingPayload {
+            pricingType: PricingType;
+            fixedPrice?: number;
+            quantityRate?: number;
+            quantityUnit?: string;
+            estimatedQuantity?: number;
+            durationType?: DurationTab;
+            estimatedHours?: number;
+            hourlyRate?: number;
+            dailyRate?: number;
+            numberOfDays?: number;
+            totalAmount?: number;
+        }
+        const pricingData: PricingPayload = {
             pricingType: data.selectedPricingType
         };
 
@@ -171,7 +184,7 @@ export default function CreateTweakStep4() {
     return (
         <ScreenWrapper scrollable contentContainerStyle={styles.scrollContent}>
             <View style={styles.header}>
-                <TouchableOpacity onPress={() => router.back()} style={styles.backButton}>
+                <TouchableOpacity onPress={() => router.back()} style={styles.backButton} accessibilityRole="button" accessibilityLabel="Go back">
                     <Ionicons name="arrow-back" size={24} color={themeColors.text} />
                 </TouchableOpacity>
                 <View style={styles.headerTextContainer}>

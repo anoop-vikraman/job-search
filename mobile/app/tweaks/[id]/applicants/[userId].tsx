@@ -68,7 +68,7 @@ export default function ApplicantDetail() {
                     paddingHorizontal: 16, paddingVertical: 14,
                     backgroundColor: '#fff', borderBottomWidth: 1, borderBottomColor: '#F1F5F9',
                 }}>
-                    <TouchableOpacity onPress={() => router.back()} style={{ padding: 6 }}>
+                    <TouchableOpacity onPress={() => router.back()} style={{ padding: 6 }} accessibilityRole="button" accessibilityLabel="Go back">
                         <Ionicons name="arrow-back" size={24} color="#111827" />
                     </TouchableOpacity>
                     <Text style={{ fontSize: 17, fontWeight: '800', color: '#0F172A' }}>Applicant Profile</Text>
@@ -127,7 +127,7 @@ export default function ApplicantDetail() {
                         <Text style={{ fontSize: 16, fontWeight: '800', color: '#0F172A', marginBottom: 12 }}>Preferred Slots</Text>
                         <View style={{ gap: 8, marginBottom: 24 }}>
                             {applicant.selectedSlots.map((slot, idx) => {
-                                const d = new Date(slot.date).toLocaleDateString('en-US', { day: 'numeric', month: 'short' });
+                                const d = new Date(slot.date ?? '').toLocaleDateString('en-US', { day: 'numeric', month: 'short' });
                                 return (
                                     <View key={idx} style={{ backgroundColor: '#EFF6FF', padding: 12, borderRadius: 12, flexDirection: 'row', alignItems: 'center', gap: 8 }}>
                                         <Ionicons name="calendar-outline" size={16} color="#2563EB" />

@@ -1,5 +1,5 @@
 import React from 'react';
-import { Text, TouchableOpacity, View } from 'react-native';
+import { StyleProp, Text, TextStyle, TouchableOpacity, View, ViewStyle } from 'react-native';
 import { themeColors } from '../../themes/colors';
 
 interface Option {
@@ -10,10 +10,10 @@ interface Option {
 interface Props {
     options: Option[];
     value: string | boolean | null;
-    onChange: (value: any) => void;
+    onChange: (value: string | boolean | null) => void;
     layout?: 'row' | 'column';
-    containerStyle?: any;
-    labelStyle?: any;
+    containerStyle?: StyleProp<ViewStyle>;
+    labelStyle?: StyleProp<TextStyle>;
 }
 
 export function CustomRadioButton({

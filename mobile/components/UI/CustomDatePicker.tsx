@@ -1,7 +1,7 @@
 import { Ionicons } from '@expo/vector-icons';
-import DateTimePicker from '@react-native-community/datetimepicker';
+import DateTimePicker, { DateTimePickerEvent } from '@react-native-community/datetimepicker';
 import React, { useState } from 'react';
-import { Modal, Platform, Text, TouchableOpacity, TouchableWithoutFeedback, View } from 'react-native';
+import { Modal, Platform, StyleProp, Text, TouchableOpacity, TouchableWithoutFeedback, View, ViewStyle } from 'react-native';
 import { themeColors } from '../../themes/colors';
 
 interface Props {
@@ -9,7 +9,7 @@ interface Props {
     value: Date | null;
     onChange: (date: Date) => void;
     placeholder?: string;
-    containerStyle?: any;
+    containerStyle?: StyleProp<ViewStyle>;
     minimumDate?: Date;
     maximumDate?: Date;
 }
@@ -26,7 +26,7 @@ export default function CustomDatePicker({
     const [showPicker, setShowPicker] = useState(false);
     const [tempDate, setTempDate] = useState<Date>(value || new Date());
 
-    const handleChange = (event: any, selectedDate?: Date) => {
+    const handleChange = (event: DateTimePickerEvent, selectedDate?: Date) => {
         if (Platform.OS === 'android') {
             setShowPicker(false);
         }

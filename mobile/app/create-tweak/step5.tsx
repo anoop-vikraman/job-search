@@ -1,5 +1,5 @@
 import { Ionicons } from '@expo/vector-icons';
-import { useLocalSearchParams, useRouter } from 'expo-router';
+import { useLocalSearchParams, useRouter, type Href } from 'expo-router';
 import React, { useState } from 'react';
 import { ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import ProfileHeaderRight from '../../components/Header/ProfileHeaderRight';
@@ -72,9 +72,9 @@ export default function CreateTweakStep5() {
     const handleEditSection = (step: string) => {
         const editParams = { ...params, editMode: 'true' };
         router.push({
-            pathname: `/create-tweak/${step}` as any,
+            pathname: `/create-tweak/${step}`,
             params: editParams
-        });
+        } as Href);
     };
 
     const handleSaveDraft = async () => {
@@ -99,7 +99,7 @@ export default function CreateTweakStep5() {
     return (
         <ScreenWrapper>
             <View style={styles.header}>
-                <TouchableOpacity onPress={handleBack} style={styles.backButton}>
+                <TouchableOpacity onPress={handleBack} style={styles.backButton} accessibilityRole="button" accessibilityLabel="Go back">
                     <Ionicons name="arrow-back" size={24} color={themeColors.text} />
                 </TouchableOpacity>
                 <View style={styles.headerTextContainer}>

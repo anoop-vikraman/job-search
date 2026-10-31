@@ -79,6 +79,8 @@ export default function MarketPage() {
                     <TouchableOpacity
                         onPress={() => setIsFilterModalVisible(true)}
                         style={{ width: 44, height: 44, backgroundColor: activeFilterCount > 0 ? `${themeColors.primary}15` : '#F1F5F9', borderRadius: 12, alignItems: 'center', justifyContent: 'center' }}
+                        accessibilityRole="button"
+                        accessibilityLabel="Filter"
                     >
                         <Ionicons name="options-outline" size={20} color={activeFilterCount > 0 ? themeColors.primary : '#64748B'} />
                     </TouchableOpacity>

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import { StyleProp, StyleSheet, Text, TextStyle, View, ViewStyle } from 'react-native';
 import Animated, {
     FadeInUp,
     FadeOutUp
@@ -8,8 +8,8 @@ import Animated, {
 interface Props {
     placeholders: string[];
     duration?: number;
-    textStyle?: any;
-    containerStyle?: any;
+    textStyle?: StyleProp<TextStyle>;
+    containerStyle?: StyleProp<ViewStyle>;
 }
 
 export default function ScrollingPlaceholder({

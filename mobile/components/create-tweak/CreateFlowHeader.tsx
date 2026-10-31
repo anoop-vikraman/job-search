@@ -138,7 +138,7 @@ export default function CreateFlowHeader({
     return (
         <View className="bg-white border-b border-gray-100">
             <View className="px-6 py-4 flex-row items-center justify-between">
-                <TouchableOpacity onPress={handleBack} className="p-2 -ml-2 rounded-full active:bg-gray-100">
+                <TouchableOpacity onPress={handleBack} className="p-2 -ml-2 rounded-full active:bg-gray-100" accessibilityRole="button" accessibilityLabel="Go back">
                     <Ionicons name="arrow-back" size={24} color="#111827" />
                 </TouchableOpacity>
 
@@ -198,7 +198,7 @@ export default function CreateFlowHeader({
                                                 className={`w-8 h-8 rounded-full items-center justify-center ${isActive ? 'bg-[#007AFF]' : 'bg-blue-50 border border-blue-100'}`}
                                             >
                                                 <Ionicons
-                                                    name={isActive ? step.icon as any : `${step.icon}-outline` as any}
+                                                    name={(isActive ? step.icon : `${step.icon}-outline`) as keyof typeof Ionicons.glyphMap}
                                                     size={14}
                                                     color={isActive ? 'white' : '#007AFF'}
                                                 />

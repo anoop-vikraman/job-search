@@ -45,6 +45,8 @@ export default function HomeHeader({ currentAddress = "Select Location", onLocat
                 <TouchableOpacity
                     onPress={() => router.push('/profile')}
                     className="p-2 bg-gray-100 rounded-full"
+                    accessibilityRole="button"
+                    accessibilityLabel="Open profile"
                 >
                     <Ionicons name="person" size={24} color="#374151" />
                 </TouchableOpacity>
@@ -61,7 +63,7 @@ export default function HomeHeader({ currentAddress = "Select Location", onLocat
                 // onPressIn={() => router.push('/search')} 
                 />
                 <View className="h-5 w-[1px] bg-gray-300 mx-2" />
-                <TouchableOpacity>
+                <TouchableOpacity accessibilityRole="button" accessibilityLabel="Voice search">
                     <Ionicons name="mic" size={20} color="#F97316" />
                 </TouchableOpacity>
             </View>

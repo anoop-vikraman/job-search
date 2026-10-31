@@ -167,7 +167,7 @@ export default function CreatePassword() {
                                 secureTextEntry={!isPasswordVisible}
                                 error={errors.password?.message}
                                 rightComponent={
-                                    <TouchableOpacity onPress={() => setIsPasswordVisible(!isPasswordVisible)}>
+                                    <TouchableOpacity onPress={() => setIsPasswordVisible(!isPasswordVisible)} accessibilityRole="button" accessibilityLabel={isPasswordVisible ? 'Hide password' : 'Show password'}>
                                         <Ionicons name={isPasswordVisible ? 'eye-off' : 'eye'} size={20} color="#6B7280" />
                                     </TouchableOpacity>
                                 }
@@ -190,7 +190,7 @@ export default function CreatePassword() {
                                     error={errors.confirmPassword?.message}
                                     secureTextEntry={!isConfirmPasswordVisible}
                                     rightComponent={
-                                        <TouchableOpacity onPress={() => setIsConfirmPasswordVisible(!isConfirmPasswordVisible)}>
+                                        <TouchableOpacity onPress={() => setIsConfirmPasswordVisible(!isConfirmPasswordVisible)} accessibilityRole="button" accessibilityLabel={isConfirmPasswordVisible ? 'Hide password' : 'Show password'}>
                                             <Ionicons name={isConfirmPasswordVisible ? 'eye-off' : 'eye'} size={20} color="#6B7280" />
                                         </TouchableOpacity>
                                     }

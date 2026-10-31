@@ -49,7 +49,7 @@ export default function ImageGalleryModal({
             <View style={styles.container}>
                 <View style={styles.overlay}>
                     {/* Close Button */}
-                    <TouchableOpacity style={styles.closeButton} onPress={onClose}>
+                    <TouchableOpacity style={styles.closeButton} onPress={onClose} accessibilityRole="button" accessibilityLabel="Close">
                         <Ionicons name="close" size={32} color="white" />
                     </TouchableOpacity>
 
@@ -77,6 +77,8 @@ export default function ImageGalleryModal({
                                 <TouchableOpacity
                                     style={[styles.navButton, styles.navButtonLeft]}
                                     onPress={handlePrevious}
+                                    accessibilityRole="button"
+                                    accessibilityLabel="Previous image"
                                 >
                                     <Ionicons name="chevron-back" size={32} color="white" />
                                 </TouchableOpacity>
@@ -86,6 +88,8 @@ export default function ImageGalleryModal({
                                 <TouchableOpacity
                                     style={[styles.navButton, styles.navButtonRight]}
                                     onPress={handleNext}
+                                    accessibilityRole="button"
+                                    accessibilityLabel="Next image"
                                 >
                                     <Ionicons name="chevron-forward" size={32} color="white" />
                                 </TouchableOpacity>

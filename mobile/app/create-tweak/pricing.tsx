@@ -13,7 +13,7 @@ interface PricingCardProps {
     description: string;
     isSelected: boolean;
     onSelect: () => void;
-    icon: any;
+    icon: keyof typeof Ionicons.glyphMap;
     color: string;
     children?: React.ReactNode;
 }

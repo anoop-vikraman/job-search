@@ -19,7 +19,7 @@ export default function ScorePage() {
         <ScreenWrapper>
             {/* Header */}
             <View className="flex-row justify-between items-center px-6 py-4 bg-white border-b border-gray-100">
-                <TouchableOpacity onPress={() => router.back()}>
+                <TouchableOpacity onPress={() => router.back()} accessibilityRole="button" accessibilityLabel="Go back">
                     <Ionicons name="arrow-back" size={24} color="#111827" />
                 </TouchableOpacity>
                 <Text className="text-lg font-bold text-gray-900">Score</Text>
@@ -115,7 +115,7 @@ export default function ScorePage() {
                     <View className="bg-white rounded-t-3xl p-6 max-h-[80%]">
                         <View className="flex-row justify-between items-center mb-4">
                             <Text className="text-xl font-bold">Reliability score</Text>
-                            <TouchableOpacity onPress={() => setModalVisible(false)}>
+                            <TouchableOpacity onPress={() => setModalVisible(false)} accessibilityRole="button" accessibilityLabel="Close">
                                 <Ionicons name="close" size={24} color="#111827" />
                             </TouchableOpacity>
                         </View>

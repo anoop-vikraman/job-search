@@ -67,6 +67,8 @@ export default function AddressCard({
                             onMenuPress();
                         }}
                         className="p-2 -mr-2"
+                        accessibilityRole="button"
+                        accessibilityLabel="More options"
                     >
                         <Ionicons name="ellipsis-vertical" size={20} color="gray" />
                     </TouchableOpacity>
