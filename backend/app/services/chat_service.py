@@ -279,6 +279,7 @@ async def send_message(
         f"New message from {sender_name}",
         preview,
         tweak_id=conversation.tweak_id,
+        data={"conversation_id": str(conversation.id)},
     )
     await db.commit()
     await db.refresh(message)

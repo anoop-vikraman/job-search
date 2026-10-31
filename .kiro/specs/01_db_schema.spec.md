@@ -283,6 +283,19 @@ Required by steering: rotatable refresh tokens persisted in DB.
 - `ix_messages_conversation_created (conversation_id, created_at)`, `ix_messages_sender_user_id`.
 - `notification_type` gains `new_message`.
 
+### device_tokens (push)
+| Column | Type | Null | Default | Req |
+|---|---|---|---|---|
+| id | UUID | N | `gen_random_uuid()` | R |
+| user_id | UUID | N | | R, FK `users` **CASCADE** |
+| token | VARCHAR(255) | N | | R, UNIQUE (Expo push token; one owner at a time) |
+| platform | VARCHAR(16) | N | | R |
+| created_at | TIMESTAMPTZ | N | `now()` | |
+| last_seen_at | TIMESTAMPTZ | N | `now()` | R (bumped on re-register) |
+
+- `ck_device_tokens_platform_valid` (`platform IN ('ios','android','web')`).
+- `ix_device_tokens_user_id (user_id)`.
+
 ## A4. JSONB Schemas (Pydantic v2)
 
 All use `ConfigDict(extra="forbid", strict=True)`. Shapes are a proposal; B3 decides the final shape.

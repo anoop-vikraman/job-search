@@ -4,6 +4,7 @@ import { createJSONStorage, persist } from 'zustand/middleware';
 
 import { authApi, LoginRequest, SignupRequest } from '../api/auth';
 import { userApi } from '../api/user';
+import { unregisterFromPush } from '../utils/push';
 import { secureStorage } from '../utils/storage';
 
 interface ContactDetails {
@@ -89,6 +90,8 @@ export const useAuthStore = create<AuthState>()(
             },
 
             logout: async () => {
+                // Needs the access token, so it runs before the session is cleared.
+                await unregisterFromPush();
                 try {
                     await authApi.logout();
                 } catch {

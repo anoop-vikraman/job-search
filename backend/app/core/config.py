@@ -25,6 +25,12 @@ class Settings(BaseSettings):
     # Local media upload directory (served at /media).
     MEDIA_DIR: str = "media_uploads"
 
+    # Expo push (sent after each committed Notification). Disable to skip all push HTTP calls.
+    EXPO_PUSH_ENABLED: bool = True
+    EXPO_PUSH_URL: str = "https://exp.host/--/api/v2/push/send"
+    # Optional: required only if "enhanced push security" is enabled on the EAS project.
+    EXPO_ACCESS_TOKEN: str | None = None
+
     @property
     def cors_origins_list(self) -> list[str]:
         return [o.strip() for o in self.CORS_ORIGINS.split(",") if o.strip()]

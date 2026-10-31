@@ -1,14 +1,17 @@
 import { Ionicons } from '@expo/vector-icons';
+import { useRouter } from 'expo-router';
 import React from 'react';
 import { FlatList, Text, TouchableOpacity, View } from 'react-native';
 
 import { ScreenWrapper } from '../../components/ScreenWrapper';
 import { useMarkAllRead, useMarkRead, useNotifications } from '../../hooks/useNotifications';
+import { routeForNotification } from '../../utils/notificationRoutes';
 import { palette } from '@tweak/theme';
 import { useTheme } from '@/themes/ThemeProvider';
 
 export default function NotificationsPage(): React.JSX.Element {
     const { colors } = useTheme();
+    const router = useRouter();
     const { data: notifications = [] } = useNotifications();
     const markAllRead = useMarkAllRead();
     const markRead = useMarkRead();
@@ -49,6 +52,7 @@ export default function NotificationsPage(): React.JSX.Element {
                         activeOpacity={0.7}
                         onPress={() => {
                             if (!item.is_read) markRead.mutate(item.id);
+                            router.push(routeForNotification({ type: item.type, tweak_id: item.tweak_id }));
                         }}
                         className="flex-row items-start bg-white dark:bg-slate-900 p-4 rounded-xl mb-3 border border-gray-100 dark:border-slate-700 shadow-sm"
                         style={{ opacity: item.is_read ? 0.6 : 1 }}

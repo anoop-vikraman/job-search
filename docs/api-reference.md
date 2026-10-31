@@ -95,6 +95,12 @@ token · `403` insufficient role/access · `404` not found · `409` conflict/sta
 | POST | `/api/v1/conversations/{conversation_id}/messages` | user (party) |
 | POST | `/api/v1/conversations/{conversation_id}/read` | user (party) |
 
+### Devices (push)
+| Method | Path | Auth |
+|---|---|---|
+| POST | `/api/v1/devices` | user |
+| DELETE | `/api/v1/devices/{token}` | user (own token) |
+
 ### Admin
 | Method | Path | Auth |
 |---|---|---|

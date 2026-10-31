@@ -54,6 +54,13 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
         'expo-audio',
         'expo-video',
         [
+            'expo-notifications',
+            {
+                color: '#246BFD',
+                defaultChannel: 'default'
+            }
+        ],
+        [
             'expo-build-properties',
             {
                 android: {
@@ -67,5 +74,12 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
     experiments: {
         typedRoutes: true,
         reactCompiler: true
+    },
+    extra: {
+        ...config.extra,
+        // Expo push tokens are scoped to an EAS project (`eas init` prints the id).
+        eas: {
+            projectId: process.env.EAS_PROJECT_ID
+        }
     },
 });

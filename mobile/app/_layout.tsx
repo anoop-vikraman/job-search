@@ -16,6 +16,7 @@ import GlobalFatalErrorModal from "@/components/UI/GlobalFatalErrorModal";
 import NoInternetBanner from "@/components/UI/NoInternetBanner";
 import ToastManager from "@/components/UI/ToastManager";
 import { useAuthStore } from "@/store/useAuthStore";
+import { usePushNotifications } from "@/hooks/usePushNotifications";
 
 // Module-level client so it persists across re-renders.
 const queryClient = new QueryClient({
@@ -32,6 +33,7 @@ function AppContent() {
   const { colors, isDark } = useTheme();
   const segments = useSegments();
   const router = useRouter();
+  usePushNotifications(isAuthenticated);
 
   // Route protection: keep authed users out of auth screens and
   // push unauthenticated users to login when they hit a protected route.

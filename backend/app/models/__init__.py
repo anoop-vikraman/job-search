@@ -1,6 +1,7 @@
 from app.models.address import Address
 from app.models.application import Application, Offer
 from app.models.chat import Conversation, Message
+from app.models.device_token import DeviceToken
 from app.models.notification import Notification
 from app.models.rating import Rating
 from app.models.refresh_token import RefreshToken
@@ -14,6 +15,7 @@ __all__ = [
     "Address",
     "Application",
     "Conversation",
+    "DeviceToken",
     "Message",
     "Notification",
     "Offer",

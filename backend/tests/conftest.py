@@ -1,6 +1,7 @@
 import uuid
 from collections.abc import AsyncGenerator
 
+import pytest
 import pytest_asyncio
 from httpx import ASGITransport, AsyncClient
 from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker, create_async_engine
@@ -13,6 +14,12 @@ from app.main import app
 from app.models.enums import UserRole
 from app.models.user import User
 from app.models.wallet import Wallet
+
+
+@pytest.fixture(autouse=True)
+def _no_real_push(monkeypatch: pytest.MonkeyPatch) -> None:
+    """Never call the Expo API from tests; push tests re-enable it with a fake transport."""
+    monkeypatch.setattr(settings, "EXPO_PUSH_ENABLED", False)
 
 
 @pytest_asyncio.fixture
