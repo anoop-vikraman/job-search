@@ -13,7 +13,7 @@ export default function LocationCurrentButton({
     onPress,
     visible = true,
     bottomOffset = 230
-}: LocationCurrentButtonProps) {
+}: LocationCurrentButtonProps): React.JSX.Element | null {
     if (!visible) return null;
 
     return (

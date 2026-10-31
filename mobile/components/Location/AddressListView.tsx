@@ -19,7 +19,7 @@ export default function AddressListView({
     currentAddressId,
     onAddAddress,
     onEditAddress,
-}: AddressListViewProps) {
+}: AddressListViewProps): React.JSX.Element {
     const { savedAddresses, removeAddress } = useAppStore();
 
     const [deleteModalVisible, setDeleteModalVisible] = React.useState(false);

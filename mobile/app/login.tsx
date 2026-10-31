@@ -11,7 +11,7 @@ import { Toast } from '../components/UI/ToastManager';
 import { useAuthStore } from '../store/useAuthStore';
 import { palette } from '@tweak/theme';
 
-export default function Login() {
+export default function Login(): React.JSX.Element {
     const { t } = useTranslation();
     const router = useRouter();
     const { login } = useAuthStore();

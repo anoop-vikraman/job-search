@@ -1,7 +1,7 @@
 import { Tabs } from 'expo-router';
 import React from 'react';
 
-export default function TabLayout() {
+export default function TabLayout(): React.JSX.Element {
     return (
         <Tabs
             screenOptions={{

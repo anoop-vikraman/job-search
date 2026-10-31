@@ -16,7 +16,7 @@ import { ScreenWrapper } from '@/components/ScreenWrapper';
 import { useTweaksStore } from '@/store/useTweaksStore';
 import { palette } from '@tweak/theme';
 
-export default function ApplicantDetail() {
+export default function ApplicantDetail(): React.JSX.Element {
     const { id, userId } = useLocalSearchParams();
     const router = useRouter();
     const { getTweakById, updateApplicationStatus, updateListerCounterQuote } = useTweaksStore();

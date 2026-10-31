@@ -9,7 +9,7 @@ interface SelectableCardProps {
     onSelect: () => void;
 }
 
-export default function SelectableCard({ title, children, isSelected, onSelect }: SelectableCardProps) {
+export default function SelectableCard({ title, children, isSelected, onSelect }: SelectableCardProps): React.JSX.Element {
     return (
         <View style={[
             styles.container,

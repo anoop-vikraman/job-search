@@ -19,7 +19,7 @@ export default function CustomCheckbox({
     onChange,
     containerStyle,
     color = themeColors.primary
-}: Props) {
+}: Props): React.JSX.Element {
     return (
         <View style={containerStyle}>
             <TouchableOpacity

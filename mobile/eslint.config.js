@@ -28,7 +28,7 @@ module.exports = defineConfig([
       // Coding conventions (.kiro/steering/coding-conventions.md): no `any`,
       // explicit return types on exported functions/hooks/API clients.
       '@typescript-eslint/no-explicit-any': 'error',
-      '@typescript-eslint/explicit-module-boundary-types': 'warn',
+      '@typescript-eslint/explicit-module-boundary-types': 'error',
     },
   },
 ]);

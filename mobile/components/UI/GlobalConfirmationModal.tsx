@@ -2,7 +2,7 @@ import React from 'react';
 import { useConfirmationStore } from '../../store/useConfirmationStore';
 import CustomConfirmationModal from './CustomConfirmationModal';
 
-export default function GlobalConfirmationModal() {
+export default function GlobalConfirmationModal(): React.JSX.Element {
     const { visible, options, close } = useConfirmationStore();
 
     const handleConfirm = () => {

@@ -12,7 +12,7 @@ import { ScreenWrapper } from '@/components/ScreenWrapper';
 import { useTweaksStore } from '@/store/useTweaksStore';
 import { palette } from '@tweak/theme';
 
-export default function TweakApplicants() {
+export default function TweakApplicants(): React.JSX.Element {
     const { id } = useLocalSearchParams();
     const router = useRouter();
     const { getTweakById } = useTweaksStore();

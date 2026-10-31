@@ -10,7 +10,7 @@ interface MenuItem {
     route: string;
 }
 
-export default function ProfileMenuList() {
+export default function ProfileMenuList(): React.JSX.Element {
     const router = useRouter();
 
     const supportItems: MenuItem[] = [

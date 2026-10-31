@@ -9,7 +9,7 @@ interface HomeHeaderProps {
     onLocationPress?: () => void;
 }
 
-export default function HomeHeader({ currentAddress = "Select Location", onLocationPress }: HomeHeaderProps) {
+export default function HomeHeader({ currentAddress = "Select Location", onLocationPress }: HomeHeaderProps): React.JSX.Element {
     const router = useRouter();
 
     return (

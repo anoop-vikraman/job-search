@@ -75,7 +75,7 @@ const checkForUpdates = async (lang: string) => {
     // Intentionally a no-op until the locale CDN endpoint exists.
 };
 
-export const changeLanguage = (lang: string) => {
+export const changeLanguage = (lang: string): void => {
     i18n.changeLanguage(lang);
     storage.set(LANG_STORAGE_KEY, lang);
     checkForUpdates(lang);

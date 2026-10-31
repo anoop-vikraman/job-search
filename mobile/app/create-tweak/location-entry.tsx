@@ -7,7 +7,7 @@ import { ScreenWrapper } from '../../components/ScreenWrapper';
 import { useAppStore } from '../../store/useAppStore';
 import { useCreateTweakStore } from '../../store/useCreateTweakStore';
 
-export default function LocationEntryPage() {
+export default function LocationEntryPage(): React.JSX.Element {
     const router = useRouter();
     const { setTweakType, setAddress, address: currentAddress } = useCreateTweakStore();
     const { savedAddresses } = useAppStore();

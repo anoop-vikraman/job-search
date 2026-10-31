@@ -15,7 +15,7 @@ export default function AddressCard({
     isMenuOpen = false,
     onEdit,
     onDelete
-}: AddressCardProps) {
+}: AddressCardProps): React.JSX.Element {
     const iconName =
         address.saveAs?.toLowerCase() === 'home' ? 'home' :
             address.saveAs?.toLowerCase() === 'work' ? 'briefcase' :

@@ -12,7 +12,7 @@ export default function SourceSurveyModal({
     visible,
     onClose,
     onComplete
-}: SourceSurveyModalProps) {
+}: SourceSurveyModalProps): React.JSX.Element {
     const [selectedSource, setSelectedSource] = useState<string | null>(null);
     const [otherSource, setOtherSource] = useState('');
 

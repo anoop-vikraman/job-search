@@ -18,7 +18,7 @@ type TabType = 'my' | 'applied';
 
 // ─── Screen ──────────────────────────────────────────────────────────────────
 
-export default function TweaksListing() {
+export default function TweaksListing(): React.JSX.Element {
     const router = useRouter();
     const [activeTab, setActiveTab] = useState<TabType>('my');
     const [showDrafts, setShowDrafts] = useState(false);

@@ -8,7 +8,7 @@ interface PastTweak { id: string; title: string; status: string; date: string; a
 const createdTweaks: PastTweak[] = [];
 const completedTweaks: PastTweak[] = [];
 
-export default function PastTweaksTabs() {
+export default function PastTweaksTabs(): React.JSX.Element {
     const [activeTab, setActiveTab] = useState<'created' | 'completed'>('created');
 
     const renderTweakCard = (tweak: PastTweak) => (

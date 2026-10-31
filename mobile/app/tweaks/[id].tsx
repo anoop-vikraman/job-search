@@ -221,7 +221,7 @@ function ConflictSlotBadge({
 
 // ─── Main Component ───────────────────────────────────────────────────────────
 
-export default function TweakDetails() {
+export default function TweakDetails(): React.JSX.Element {
     const { id } = useLocalSearchParams();
     const router = useRouter();
     const { getTweakById, addToWatchlist, removeFromWatchlist, getAppliedTweaks } = useTweaksStore();

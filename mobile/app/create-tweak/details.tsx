@@ -50,7 +50,7 @@ const PLACEHOLDERS = [
     "E.g. I need an electrician to fix a short circuit in the living room..."
 ];
 
-export default function DetailsPage() {
+export default function DetailsPage(): React.JSX.Element {
     const router = useRouter();
     const {
         tweakType,

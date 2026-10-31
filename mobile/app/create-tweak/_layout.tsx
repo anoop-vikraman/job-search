@@ -1,7 +1,7 @@
 import { Stack } from 'expo-router';
 import React from 'react';
 
-export default function CreateTweakLayout() {
+export default function CreateTweakLayout(): React.JSX.Element {
     return (
         <Stack
             screenOptions={{

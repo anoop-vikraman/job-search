@@ -8,7 +8,7 @@ interface CalculationSummaryProps {
     highlight?: boolean;
 }
 
-export default function CalculationSummary({ label, value, highlight = false }: CalculationSummaryProps) {
+export default function CalculationSummary({ label, value, highlight = false }: CalculationSummaryProps): React.JSX.Element {
     return (
         <View style={[styles.container, highlight && styles.containerHighlight]}>
             <Text style={styles.label}>{label}</Text>

@@ -63,7 +63,7 @@ const LANGUAGES_LIST = [
 
 const { width: SCREEN_WIDTH } = Dimensions.get('window');
 
-export default function EditTweak() {
+export default function EditTweak(): React.JSX.Element {
     const router = useRouter();
 
     // Get data from Zustand store

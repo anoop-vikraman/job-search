@@ -8,7 +8,7 @@ import { ScreenWrapper } from '../../components/ScreenWrapper';
 import CustomButton from '../../components/UI/CustomButton';
 import { useAuthStore } from '../../store/useAuthStore';
 
-export default function OTPPage() {
+export default function OTPPage(): React.JSX.Element {
     const router = useRouter();
     const params = useLocalSearchParams();
     const signup = useAuthStore((state) => state.signup);

@@ -19,7 +19,7 @@ export default function LocationConfirmSheet({
     longitude,
     onConfirm,
     visible = true
-}: LocationConfirmSheetProps) {
+}: LocationConfirmSheetProps): React.JSX.Element | null {
     if (!visible) return null;
 
     return (

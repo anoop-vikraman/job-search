@@ -6,7 +6,7 @@ import { palette } from '@tweak/theme';
 import { useAuthStore } from '../../store/useAuthStore';
 import { themeColors } from '../../themes/colors';
 
-export default function ProfileHeaderRight() {
+export default function ProfileHeaderRight(): React.JSX.Element {
     const router = useRouter();
     const { user } = useAuthStore();
 

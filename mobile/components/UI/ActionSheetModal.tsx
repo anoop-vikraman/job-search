@@ -15,7 +15,7 @@ export default function ActionSheetModal({
     subtitle,
     showCloseButton = true,
     height = 'h-[85%]'
-}: ActionSheetModalProps) {
+}: ActionSheetModalProps): React.JSX.Element {
     // Refs for scroll management
     const scrollViewRef = React.useRef<React.ComponentRef<typeof ScrollView>>(null);
 

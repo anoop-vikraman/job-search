@@ -17,18 +17,18 @@ interface Toast {
 let toastListener: ((toast: Toast) => void) | null = null;
 
 export const Toast = {
-    show: (message: string, type: ToastType = 'info') => {
+    show: (message: string, type: ToastType = 'info'): void => {
         if (toastListener) {
             toastListener({ id: Math.random().toString(), message, type });
         }
     },
-    success: (message: string) => Toast.show(message, 'success'),
-    error: (message: string) => Toast.show(message, 'error'),
-    info: (message: string) => Toast.show(message, 'info'),
-    warning: (message: string) => Toast.show(message, 'warning'),
+    success: (message: string): void => Toast.show(message, 'success'),
+    error: (message: string): void => Toast.show(message, 'error'),
+    info: (message: string): void => Toast.show(message, 'info'),
+    warning: (message: string): void => Toast.show(message, 'warning'),
 };
 
-export default function ToastManager() {
+export default function ToastManager(): React.JSX.Element | null {
     const [currentToast, setCurrentToast] = useState<Toast | null>(null);
     const insets = useSafeAreaInsets();
 

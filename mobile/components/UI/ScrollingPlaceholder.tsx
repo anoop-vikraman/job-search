@@ -18,7 +18,7 @@ export default function ScrollingPlaceholder({
     duration = 3000,
     textStyle,
     containerStyle
-}: Props) {
+}: Props): React.JSX.Element {
     const [currentIndex, setCurrentIndex] = useState(0);
 
     useEffect(() => {

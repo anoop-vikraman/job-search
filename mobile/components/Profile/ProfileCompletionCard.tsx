@@ -4,7 +4,7 @@ import { Text, TouchableOpacity, View } from 'react-native';
 
 const profileCompletion = { percentage: 0, nextStep: 'Complete your profile' };
 
-export default function ProfileCompletionCard() {
+export default function ProfileCompletionCard(): React.JSX.Element | null {
     const router = useRouter();
     const { percentage, nextStep } = profileCompletion;
 

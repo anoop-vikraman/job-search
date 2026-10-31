@@ -11,7 +11,7 @@ interface ProfileBannerProps {
     onImageSelected?: (uri: string) => void;
 }
 
-export default function ProfileBanner({ onImageSelected }: ProfileBannerProps) {
+export default function ProfileBanner({ onImageSelected }: ProfileBannerProps): React.JSX.Element {
     const router = useRouter();
     const { user } = useAuthStore();
     const [uploadModalVisible, setUploadModalVisible] = useState(false);

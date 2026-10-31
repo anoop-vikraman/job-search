@@ -14,7 +14,7 @@ import { palette } from '@tweak/theme';
 
 
 
-export default function MarketPage() {
+export default function MarketPage(): React.JSX.Element {
     const router = useRouter();
     const { getAllTweaks } = useTweaksStore();
     const { user } = useAuthStore();

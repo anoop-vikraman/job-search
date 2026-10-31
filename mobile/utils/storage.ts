@@ -17,39 +17,39 @@ const memoryStorage = new Map<string, string | boolean | number>();
 
 // MMKV Storage Helper (Synchronous)
 export const storage = {
-    set: (key: string, value: string | boolean | number) => {
+    set: (key: string, value: string | boolean | number): void => {
         if (!useFallback && mmkv) {
             mmkv.set(key, value);
         } else {
             memoryStorage.set(key, value);
         }
     },
-    getString: (key: string) => {
+    getString: (key: string): string | undefined => {
         if (!useFallback && mmkv) {
             return mmkv.getString(key);
         }
         return memoryStorage.get(key) as string | undefined;
     },
-    getNumber: (key: string) => {
+    getNumber: (key: string): number | undefined => {
         if (!useFallback && mmkv) {
             return mmkv.getNumber(key);
         }
         return memoryStorage.get(key) as number | undefined;
     },
-    getBoolean: (key: string) => {
+    getBoolean: (key: string): boolean | undefined => {
         if (!useFallback && mmkv) {
             return mmkv.getBoolean(key);
         }
         return memoryStorage.get(key) as boolean | undefined;
     },
-    delete: (key: string) => {
+    delete: (key: string): void => {
         if (!useFallback && mmkv) {
             mmkv.delete(key);
         } else {
             memoryStorage.delete(key);
         }
     },
-    clearAll: () => {
+    clearAll: (): void => {
         if (!useFallback && mmkv) {
             mmkv.clearAll();
         } else {
@@ -61,13 +61,13 @@ export const storage = {
 // Secure Store Helper (Asynchronous)
 // Used for sensitive data like Auth Tokens
 export const secureStorage = {
-    save: async (key: string, value: string) => {
+    save: async (key: string, value: string): Promise<void> => {
         await SecureStore.setItemAsync(key, value);
     },
-    get: async (key: string) => {
+    get: async (key: string): Promise<string | null> => {
         return await SecureStore.getItemAsync(key);
     },
-    delete: async (key: string) => {
+    delete: async (key: string): Promise<void> => {
         await SecureStore.deleteItemAsync(key);
     }
 };

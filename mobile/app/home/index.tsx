@@ -8,7 +8,7 @@ import ServiceGrid from '../../components/Home/ServiceGrid';
 import { ScreenWrapper } from '../../components/ScreenWrapper';
 import { useAppStore } from '../../store/useAppStore';
 
-export default function Home() {
+export default function Home(): React.JSX.Element {
     const router = useRouter();
     const savedAddresses = useAppStore((state) => state.savedAddresses);
     const address = savedAddresses[0]?.formattedAddress ?? 'Set your location';

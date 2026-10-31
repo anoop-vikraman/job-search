@@ -143,7 +143,7 @@ function SlotItem({
 
 // ─── Main Component ───────────────────────────────────────────────────────────
 
-export default function ApplyStep2() {
+export default function ApplyStep2(): React.JSX.Element {
     const { tweakId, whyMessage } = useLocalSearchParams<{ tweakId: string; whyMessage: string }>();
     const router = useRouter();
     const { getTweakById, getAppliedTweaks, addApplication } = useTweaksStore();

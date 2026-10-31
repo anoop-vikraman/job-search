@@ -24,7 +24,7 @@ export function CustomRadioButton({
     layout = 'row',
     containerStyle,
     labelStyle
-}: Props) {
+}: Props): React.JSX.Element {
     return (
         <View className={`flex-wrap ${layout === 'row' ? 'flex-row gap-6' : 'gap-3'}`} style={containerStyle}>
             {options.map((option, index) => {

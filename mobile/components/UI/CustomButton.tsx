@@ -15,7 +15,7 @@ export default function CustomButton({
     loading = false,
     disabled,
     ...props
-}: CustomButtonProps) {
+}: CustomButtonProps): React.JSX.Element {
 
     const baseClasses = "py-2 px-8 items-center justify-center flex-row shadow-sm active:opacity-80";
     const roundedClasses = type === 'pill' ? "rounded-full" : "rounded-xl";

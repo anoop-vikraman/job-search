@@ -22,7 +22,7 @@ export default function CustomToggleButton({
     value,
     onChange,
     containerStyle
-}: Props) {
+}: Props): React.JSX.Element {
     return (
         <View style={containerStyle}>
             {label && (

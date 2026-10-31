@@ -18,7 +18,7 @@ export default function PriceRecommendationGraph({
     recommendedPrice = 350,
     currencySymbol = '₹',
     isGoodPrice = false
-}: PriceRecommendationGraphProps) {
+}: PriceRecommendationGraphProps): React.JSX.Element {
     const graphWidth = width - 80;
     const graphHeight = 100;
 

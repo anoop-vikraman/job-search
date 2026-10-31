@@ -12,7 +12,7 @@ const MOCK_BANNERS = [
     { id: '3', color: palette.amber500, title: 'Banner 3' },
 ];
 
-export default function PromoBanner() {
+export default function PromoBanner(): React.JSX.Element {
     const [currentIndex, setCurrentIndex] = useState(0);
     const flatListRef = useRef<FlatList>(null);
 

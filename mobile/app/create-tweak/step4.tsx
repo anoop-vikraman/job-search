@@ -47,7 +47,7 @@ const schema = z.object({
 
 type FormData = z.infer<typeof schema>;
 
-export default function CreateTweakStep4() {
+export default function CreateTweakStep4(): React.JSX.Element {
     const router = useRouter();
     const params = useLocalSearchParams();
     const confirm = useConfirmationStore(state => state.confirm);

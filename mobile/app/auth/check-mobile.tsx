@@ -19,7 +19,7 @@ const schema = z.object({
 
 type FormData = z.infer<typeof schema>;
 
-export default function CheckMobile() {
+export default function CheckMobile(): React.JSX.Element {
     const { t } = useTranslation();
     const router = useRouter();
     const { flow } = useLocalSearchParams();

@@ -6,7 +6,7 @@ import { PasswordStrengthMeterProps } from '../../types/auth';
 
 export default function PasswordStrengthMeter({
     password = '',
-}: PasswordStrengthMeterProps) {
+}: PasswordStrengthMeterProps): React.JSX.Element {
     const [strength, setStrength] = useState(0);
     const [feedback, setFeedback] = useState('');
 

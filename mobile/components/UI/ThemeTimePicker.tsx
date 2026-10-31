@@ -17,7 +17,7 @@ export default function ThemeTimePicker({
     onConfirm,
     initialDate = new Date(),
     title = 'Select Time'
-}: Props) {
+}: Props): React.JSX.Element {
     // Generate arrays
     const hours = Array.from({ length: 12 }, (_, i) => String(i + 1).padStart(2, '0'));
     const minutes = Array.from({ length: 60 }, (_, i) => String(i).padStart(2, '0'));

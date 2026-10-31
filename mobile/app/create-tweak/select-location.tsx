@@ -16,7 +16,7 @@ import type { Address, Coordinates } from '../../types/location';
 
 const { width, height } = Dimensions.get('window');
 
-export default function SelectLocation() {
+export default function SelectLocation(): React.JSX.Element {
     const router = useRouter();
     const params = useLocalSearchParams();
     const { addAddress, updateAddress } = useAppStore(); // Verify store usage

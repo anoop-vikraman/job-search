@@ -12,7 +12,7 @@ const { width, height } = Dimensions.get('window');
 const TAB_HEIGHT = 80;
 const CENTER_BUTTON_RADIUS = 28; // Smaller button (was 35)
 
-export default function CustomTabBar({ state, descriptors, navigation }: BottomTabBarProps) {
+export default function CustomTabBar({ state, descriptors, navigation }: BottomTabBarProps): React.JSX.Element {
     const router = useRouter();
     const [isMenuOpen, setIsMenuOpen] = React.useState(false);
     const setTweakType = useCreateTweakStore((state) => state.setTweakType);

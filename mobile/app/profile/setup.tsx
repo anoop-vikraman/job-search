@@ -12,7 +12,7 @@ interface SetupStep {
     completed: boolean;
 }
 
-export default function ProfileSetupPage() {
+export default function ProfileSetupPage(): React.JSX.Element {
     const router = useRouter();
 
     const [steps] = useState<SetupStep[]>([

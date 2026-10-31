@@ -10,7 +10,7 @@ interface Props {
     error?: boolean;
 }
 
-export default function CustomOTPInput({ length = 6, value = '', onChange, error }: Props) {
+export default function CustomOTPInput({ length = 6, value = '', onChange, error }: Props): React.JSX.Element {
     const inputRef = useRef<React.ComponentRef<typeof TextInput>>(null);
     const [isFocused, setIsFocused] = useState(false);
 

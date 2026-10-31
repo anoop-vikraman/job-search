@@ -31,7 +31,7 @@ interface Props {
     label?: string;
 }
 
-export default function CustomVoiceRecorder({ uri, onRecordingComplete, label = 'Tap and hold to record' }: Props) {
+export default function CustomVoiceRecorder({ uri, onRecordingComplete, label = 'Tap and hold to record' }: Props): React.JSX.Element {
     const recorder = useAudioRecorder(RecordingPresets.HIGH_QUALITY);
     const recorderState = useAudioRecorderState(recorder, 100);
     const confirm = useConfirmationStore(state => state.confirm);

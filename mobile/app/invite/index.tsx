@@ -8,7 +8,7 @@ import { palette } from '@tweak/theme';
 
 const referralData = { totalEarnings: 0, friendsInvited: 0, referralLink: '' };
 
-export default function InvitePage() {
+export default function InvitePage(): React.JSX.Element {
     const router = useRouter();
     const confirm = useConfirmationStore(state => state.confirm);
     const { totalEarnings, friendsInvited, referralLink } = referralData;

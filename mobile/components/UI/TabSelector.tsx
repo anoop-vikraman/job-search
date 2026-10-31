@@ -4,7 +4,7 @@ import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
 import { TabSelectorProps } from '../../types/ui';
 
-export default function TabSelector({ options, selected, onSelect }: TabSelectorProps) {
+export default function TabSelector({ options, selected, onSelect }: TabSelectorProps): React.JSX.Element {
     return (
         <View style={styles.container}>
             {options.map((option) => (

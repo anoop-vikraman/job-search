@@ -9,7 +9,7 @@ const PROMO_ITEMS: { title: string; sub: string; color: string; icon: keyof type
     { title: 'Referral', sub: 'Invite friends', color: 'bg-green-100', icon: 'people', iconColor: palette.green600 },
 ];
 
-export default function SecondaryPromo() {
+export default function SecondaryPromo(): React.JSX.Element {
     return (
         <View className="mb-8">
             <View className="px-6 mb-3 flex-row justify-between items-end">

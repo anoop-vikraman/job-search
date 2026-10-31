@@ -15,7 +15,7 @@ import { useAuthStore } from '@/store/useAuthStore';
 import { TweakApplication, useTweaksStore } from '@/store/useTweaksStore';
 import { palette } from '@tweak/theme';
 
-export default function ApplyStep1() {
+export default function ApplyStep1(): React.JSX.Element {
     const { tweakId } = useLocalSearchParams();
     const router = useRouter();
     const { getTweakById } = useTweaksStore();

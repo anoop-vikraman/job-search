@@ -29,7 +29,7 @@ export default function CreateFlowHeader({
     onBack,
     progress = 0,
     hideAddress = false
-}: CreateFlowHeaderProps) {
+}: CreateFlowHeaderProps): React.JSX.Element {
     const router = useRouter();
     const tweakType = useCreateTweakStore((state) => state.tweakType);
     const address = useCreateTweakStore((state) => state.address);

@@ -8,7 +8,7 @@ interface DataRowProps {
     highlight?: boolean;
 }
 
-export default function DataRow({ label, value, highlight = false }: DataRowProps) {
+export default function DataRow({ label, value, highlight = false }: DataRowProps): React.JSX.Element {
     return (
         <View style={styles.container}>
             <Text style={styles.label}>{label}</Text>

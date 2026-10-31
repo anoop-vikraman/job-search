@@ -8,7 +8,7 @@ interface TabButtonProps {
     count?: number;
 }
 
-export default function TabButton({ label, active, onPress, count }: TabButtonProps) {
+export default function TabButton({ label, active, onPress, count }: TabButtonProps): React.JSX.Element {
     return (
         <TouchableOpacity
             onPress={onPress}

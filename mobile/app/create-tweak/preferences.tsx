@@ -7,7 +7,7 @@ import { ScreenWrapper } from '../../components/ScreenWrapper';
 import { SchedulePreference, useCreateTweakStore } from '../../store/useCreateTweakStore';
 import { palette } from '@tweak/theme';
 
-export default function PreferencesPage() {
+export default function PreferencesPage(): React.JSX.Element {
     const router = useRouter();
     const setSchedulePreference = useCreateTweakStore((state) => state.setSchedulePreference);
 

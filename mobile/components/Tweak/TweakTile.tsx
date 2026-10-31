@@ -16,7 +16,7 @@ const SCHEDULE_LABELS: Record<string, { label: string; color: string; bg: string
     few_days: { label: 'Multi-Day', color: palette.green600, bg: palette.emerald50 },
 };
 
-export function getScheduleMeta(pref: string) {
+export function getScheduleMeta(pref: string): { label: string; color: string; bg: string } {
     return SCHEDULE_LABELS[pref] ?? { label: pref, color: palette.gray500, bg: palette.gray100 };
 }
 
@@ -105,7 +105,7 @@ export default function TweakTile({
     showAddress = false,
     currentUserId,
     onViewApplicants,
-}: TweakTileProps) {
+}: TweakTileProps): React.JSX.Element {
     const catMeta = getCategoryMeta(item.category ?? '');
     const scheduleMeta = getScheduleMeta(item.schedulePreference);
     const { dateText, daysText, hoursText, slotType } = getDateDisplay(item);

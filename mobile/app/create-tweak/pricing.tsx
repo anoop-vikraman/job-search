@@ -54,7 +54,7 @@ const PricingCard: React.FC<PricingCardProps> = ({ title, description, isSelecte
     );
 };
 
-export default function PricingDetailsPage() {
+export default function PricingDetailsPage(): React.JSX.Element {
     const router = useRouter();
     const { pricingModel, pricingData, setPricingModel, setPricingData, isEditMode } = useCreateTweakStore();
     const confirm = useConfirmationStore(state => state.confirm);

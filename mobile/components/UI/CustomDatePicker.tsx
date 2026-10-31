@@ -23,7 +23,7 @@ export default function CustomDatePicker({
     containerStyle,
     minimumDate,
     maximumDate,
-}: Props) {
+}: Props): React.JSX.Element {
     const [showPicker, setShowPicker] = useState(false);
     const [tempDate, setTempDate] = useState<Date>(value || new Date());
 

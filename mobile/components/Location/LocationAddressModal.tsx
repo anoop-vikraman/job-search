@@ -41,7 +41,7 @@ export default function LocationAddressModal({
     initialPhoneNumber = '',
     initialContactName = '',
     initialSaveAs = 'Home'
-}: LocationAddressModalProps) {
+}: LocationAddressModalProps): React.JSX.Element {
     const { control, handleSubmit, watch, reset, setValue, formState: { errors } } = useForm<FormData>({
         resolver: zodResolver(schema),
         defaultValues: {

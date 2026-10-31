@@ -12,7 +12,7 @@ interface QuickAction {
     route: string;
 }
 
-export default function ProfileQuickActions() {
+export default function ProfileQuickActions(): React.JSX.Element {
     const router = useRouter();
 
     const actions: QuickAction[] = [

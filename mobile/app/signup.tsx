@@ -11,7 +11,7 @@ import { ScreenWrapper } from '../components/ScreenWrapper';
 import CustomButton from '../components/UI/CustomButton';
 import { palette } from '@tweak/theme';
 
-export default function SignUp() {
+export default function SignUp(): React.JSX.Element {
     const { t } = useTranslation();
     const router = useRouter();
 

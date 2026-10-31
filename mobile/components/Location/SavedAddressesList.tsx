@@ -13,7 +13,7 @@ export default function SavedAddressesList({
     onClose,
     onSelect,
     currentAddressId
-}: SavedAddressesListProps) {
+}: SavedAddressesListProps): React.JSX.Element {
     const router = useRouter();
     const { savedAddresses, removeAddress } = useAppStore();
     const [selectedId, setSelectedId] = useState<string | undefined>(currentAddressId);

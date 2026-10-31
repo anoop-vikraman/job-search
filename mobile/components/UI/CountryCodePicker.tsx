@@ -11,7 +11,7 @@ interface Props {
     disabled?: boolean;
 }
 
-export default function CountryCodePicker({ selectedCode, onSelect, disabled = false }: Props) {
+export default function CountryCodePicker({ selectedCode, onSelect, disabled = false }: Props): React.JSX.Element {
     const [visible, setVisible] = useState(false);
     const [search, setSearch] = useState('');
 

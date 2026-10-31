@@ -14,7 +14,7 @@ export default function CustomConfirmationModal({
     cancelLabel = 'Cancel',
     variant = 'danger',
     isLoading = false,
-}: ConfirmationModalProps) {
+}: ConfirmationModalProps): React.JSX.Element {
     const getVariantConfig = () => {
         switch (variant) {
             case 'danger':

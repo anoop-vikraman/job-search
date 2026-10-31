@@ -5,7 +5,7 @@ import { secureStorage } from './storage';
 
 // Callback registry to break the api <-> auth-store circular dependency.
 let logoutHandler: (() => void) | null = null;
-export const registerLogoutHandler = (handler: () => void) => {
+export const registerLogoutHandler = (handler: () => void): void => {
     logoutHandler = handler;
 };
 

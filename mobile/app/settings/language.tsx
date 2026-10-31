@@ -14,7 +14,7 @@ const LANGUAGES = [
     { code: 'ml', name: 'Malayalam', nativeName: 'മലയാളം' },
 ];
 
-export default function LanguageSettings() {
+export default function LanguageSettings(): React.JSX.Element {
     const router = useRouter();
     const [selectedLanguage, setSelectedLanguage] = React.useState('en');
 

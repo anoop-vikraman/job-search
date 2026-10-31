@@ -5,7 +5,7 @@ import { Text, TouchableOpacity, View } from 'react-native';
 import { palette } from '@tweak/theme';
 import { useCreateTweakStore } from '../../store/useCreateTweakStore';
 
-export default function ServiceGrid() {
+export default function ServiceGrid(): React.JSX.Element {
     const router = useRouter();
     const { setTweakType, reset } = useCreateTweakStore();
 

@@ -17,7 +17,7 @@ export default function CreateTweakNavButtons({
     nextLabel = 'Next',
     showDraft = true,
     isLoading = false,
-}: CreateTweakNavButtonsProps) {
+}: CreateTweakNavButtonsProps): React.JSX.Element {
     return (
         <View style={styles.container}>
             {showDraft && onSaveDraft && (

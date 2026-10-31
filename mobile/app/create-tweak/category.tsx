@@ -9,7 +9,7 @@ import { useCreateTweakStore } from '../../store/useCreateTweakStore';
 import { themeColors } from '../../themes/colors';
 import { palette } from '@tweak/theme';
 
-export default function CategoryPage() {
+export default function CategoryPage(): React.JSX.Element {
     const router = useRouter();
     const { setCategory, setSuggestedCategory } = useCreateTweakStore();
 

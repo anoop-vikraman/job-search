@@ -26,7 +26,7 @@ interface DaySlot {
 type MutableViewStyle = { -readonly [K in keyof ViewStyle]: ViewStyle[K] };
 type MutableTextStyle = { -readonly [K in keyof TextStyle]: TextStyle[K] };
 
-export default function SchedulePage() {
+export default function SchedulePage(): React.JSX.Element {
     const router = useRouter();
     const { schedulePreference, setScheduleData, isEditMode } = useCreateTweakStore();
     const confirm = useConfirmationStore(state => state.confirm);

@@ -38,7 +38,7 @@ export default function CustomFloatingLabel({
     containerStyle,
     leftComponent,
     ...props
-}: CustomFloatingLabelProps & { leftComponent?: React.ReactNode }) {
+}: CustomFloatingLabelProps & { leftComponent?: React.ReactNode }): React.JSX.Element {
     const [isFocused, setIsFocused] = useState(false);
     const [isVisible, setIsVisible] = useState(false);
     const inputRef = useRef<React.ComponentRef<typeof TextInput>>(null);

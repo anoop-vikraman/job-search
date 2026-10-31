@@ -6,7 +6,7 @@ import { ScreenWrapper } from '../../components/ScreenWrapper';
 import { useCreateTweakStore } from '../../store/useCreateTweakStore';
 import { palette } from '@tweak/theme';
 
-export default function CreateTweakIndex() {
+export default function CreateTweakIndex(): React.JSX.Element {
     const router = useRouter();
     const setTweakType = useCreateTweakStore((state) => state.setTweakType);
     const reset = useCreateTweakStore((state) => state.reset);

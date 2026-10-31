@@ -24,7 +24,7 @@ const schema = z.object({
 type FormData = z.infer<typeof schema>;
 type FormInput = z.input<typeof schema>;
 
-export default function CreateTweakStep2() {
+export default function CreateTweakStep2(): React.JSX.Element {
     const router = useRouter();
     const params = useLocalSearchParams();
 

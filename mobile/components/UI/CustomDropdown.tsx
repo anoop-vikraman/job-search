@@ -41,7 +41,7 @@ export default function CustomDropdown({
     containerStyle,
     visible: externalVisible,
     onVisibleChange,
-}: Props) {
+}: Props): React.JSX.Element {
     const [internalVisible, setInternalVisible] = useState(false);
 
     const visible = externalVisible !== undefined ? externalVisible : internalVisible;

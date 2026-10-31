@@ -3,7 +3,7 @@ import React from 'react';
 import { useFatalErrorStore } from '../../store/useFatalErrorStore';
 import CustomConfirmationModal from './CustomConfirmationModal';
 
-export default function GlobalFatalErrorModal() {
+export default function GlobalFatalErrorModal(): React.JSX.Element {
     const { visible, error, hideError } = useFatalErrorStore();
 
     const handleRestart = async () => {

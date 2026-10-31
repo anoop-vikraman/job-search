@@ -6,7 +6,7 @@ import { palette } from '@tweak/theme';
 
 import { LocationSearchHeaderProps } from '../../types/location';
 
-export default function LocationSearchHeader({ onSearch }: LocationSearchHeaderProps) {
+export default function LocationSearchHeader({ onSearch }: LocationSearchHeaderProps): React.JSX.Element {
     const router = useRouter();
     const [query, setQuery] = React.useState('');
 

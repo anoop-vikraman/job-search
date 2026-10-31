@@ -15,7 +15,7 @@ export default function DraftConfirmationDialog({
     onSaveDraft,
     onDiscard,
     onCancel
-}: DraftConfirmationDialogProps) {
+}: DraftConfirmationDialogProps): React.JSX.Element {
     return (
         <Modal
             visible={visible}

@@ -53,7 +53,7 @@ type SignupData = z.infer<typeof signupSchema>;
 type ResetData = z.infer<typeof resetSchema>;
 type FormData = SignupData | ResetData;
 
-export default function CreatePassword() {
+export default function CreatePassword(): React.JSX.Element {
     const { t } = useTranslation();
     const router = useRouter();
     const { flow } = useLocalSearchParams(); // 'signup' or 'reset'

@@ -20,7 +20,7 @@ interface ProfileFormData {
     bio: string;
 }
 
-export default function EditProfilePage() {
+export default function EditProfilePage(): React.JSX.Element {
     const router = useRouter();
     const { user, updateUser } = useAuthStore();
     const [isSubmitting, setIsSubmitting] = useState(false);

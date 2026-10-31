@@ -5,7 +5,7 @@ import { palette } from '@tweak/theme';
 
 const stats = { tweaksCreated: 0, tweaksCompleted: 0, rating: 0, totalReviews: 0 };
 
-export default function ProfileStats() {
+export default function ProfileStats(): React.JSX.Element {
     const { tweaksCreated, tweaksCompleted, rating, totalReviews } = stats;
 
     return (

@@ -12,7 +12,7 @@ import SectionCard from '../../components/UI/SectionCard';
 import { themeColors } from '../../themes/colors';
 import { palette } from '@tweak/theme';
 
-export default function CreateTweakStep5() {
+export default function CreateTweakStep5(): React.JSX.Element {
     const router = useRouter();
     const params = useLocalSearchParams();
     const [showDraftDialog, setShowDraftDialog] = useState(false);

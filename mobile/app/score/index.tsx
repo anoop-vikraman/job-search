@@ -11,7 +11,7 @@ const reliabilityScore = {
     negativeActs: [] as { name: string; points: number }[],
 };
 
-export default function ScorePage() {
+export default function ScorePage(): React.JSX.Element {
     const router = useRouter();
     const [modalVisible, setModalVisible] = useState(false);
     const { score, positiveActs, negativeActs } = reliabilityScore;

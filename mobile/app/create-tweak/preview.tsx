@@ -30,7 +30,7 @@ interface PreviewImage {
     uri: string;
 }
 
-export default function TweakPreview() {
+export default function TweakPreview(): React.JSX.Element {
     const router = useRouter();
 
     // Get data from Zustand store instead of URL params

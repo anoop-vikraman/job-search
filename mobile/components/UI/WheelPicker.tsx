@@ -28,7 +28,7 @@ export const WheelPicker = ({
     onValueChange,
     itemHeight = ITEM_HEIGHT,
     containerStyle,
-}: WheelPickerProps) => {
+}: WheelPickerProps): React.JSX.Element => {
     const scrollViewRef = useRef<React.ComponentRef<typeof ScrollView>>(null);
     const [selectedIndex, setSelectedIndex] = useState(0);
 

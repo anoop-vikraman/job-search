@@ -24,7 +24,7 @@ export default function ImageGalleryModal({
     images,
     initialIndex = 0,
     onClose,
-}: ImageGalleryModalProps) {
+}: ImageGalleryModalProps): React.JSX.Element {
     const [currentIndex, setCurrentIndex] = useState(initialIndex);
 
     const handleNext = () => {

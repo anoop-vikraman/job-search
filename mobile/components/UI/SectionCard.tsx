@@ -9,7 +9,7 @@ interface SectionCardProps {
     title?: string;
 }
 
-export default function SectionCard({ children, onEdit, title }: SectionCardProps) {
+export default function SectionCard({ children, onEdit, title }: SectionCardProps): React.JSX.Element {
     return (
         <View style={styles.container}>
             {title && (

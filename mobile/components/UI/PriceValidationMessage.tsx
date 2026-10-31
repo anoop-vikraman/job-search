@@ -12,7 +12,7 @@ export default function PriceValidationMessage({
     amount,
     minAmount = 200,
     recommendedAmount = 1000
-}: PriceValidationMessageProps) {
+}: PriceValidationMessageProps): React.JSX.Element | null {
     if (!amount || amount === 0) return null;
 
     const getValidationState = () => {

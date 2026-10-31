@@ -22,7 +22,7 @@ export default function CustomDateTimePicker({
     containerStyle,
     minimumDate,
     mode = 'date' // Default to date
-}: Props) {
+}: Props): React.JSX.Element {
     const [showPicker, setShowPicker] = useState(false);
     // Internal mode state might still be needed for Android 2-step picking if mode is 'datetime'
     // But if mode is explicitly passed as 'date' or 'time', we respect it.

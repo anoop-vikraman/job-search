@@ -5,7 +5,7 @@ import { ScrollView, Text, TouchableOpacity, View } from 'react-native';
 import { ScreenWrapper } from '../../components/ScreenWrapper';
 import { palette } from '@tweak/theme';
 
-export default function TermsPage() {
+export default function TermsPage(): React.JSX.Element {
     const router = useRouter();
 
     return (

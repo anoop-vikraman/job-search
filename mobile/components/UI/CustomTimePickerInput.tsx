@@ -12,7 +12,7 @@ interface Props {
     hasError?: boolean;
 }
 
-export default function CustomTimePickerInput({ value, onChange, placeholder = "Select Time", defaultTime, hasError }: Props) {
+export default function CustomTimePickerInput({ value, onChange, placeholder = "Select Time", defaultTime, hasError }: Props): React.JSX.Element {
     const [visible, setVisible] = useState(false);
 
     // Parse current time string to Date object or default to now/defaultTime

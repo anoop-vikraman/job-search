@@ -7,7 +7,7 @@ export default function CostSummaryCard({
     tweakCost,
     platformFee = 20,
     currencySymbol = '₹'
-}: CostSummaryCardProps) {
+}: CostSummaryCardProps): React.JSX.Element {
     const totalCost = tweakCost + platformFee;
 
     return (

@@ -65,7 +65,7 @@ interface Props {
     children: React.ReactNode;
 }
 
-export default function GlobalErrorBoundary({ children }: Props) {
+export default function GlobalErrorBoundary({ children }: Props): React.JSX.Element {
     return (
         <ErrorBoundary
             FallbackComponent={ErrorFallback}

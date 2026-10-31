@@ -11,7 +11,7 @@ import { ScreenWrapper } from '../../components/ScreenWrapper';
 import { useAuthStore } from '../../store/useAuthStore';
 import { useConfirmationStore } from '../../store/useConfirmationStore';
 
-export default function ProfilePage() {
+export default function ProfilePage(): React.JSX.Element {
     const router = useRouter();
     const { logout } = useAuthStore();
     const confirm = useConfirmationStore(state => state.confirm);

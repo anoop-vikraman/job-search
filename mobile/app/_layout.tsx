@@ -73,7 +73,7 @@ function AppContent() {
   );
 }
 
-export default function RootLayout() {
+export default function RootLayout(): React.JSX.Element {
   return (
     <GlobalErrorBoundary>
       <ThemeProvider>

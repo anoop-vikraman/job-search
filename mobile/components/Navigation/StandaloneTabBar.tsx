@@ -176,7 +176,7 @@ function StandaloneTabBarInner() {
 
 // Exported wrapper: only renders the inner tab bar when navigation context is available
 // AND we are not in an unstable state.
-export default function StandaloneTabBar() {
+export default function StandaloneTabBar(): React.JSX.Element | null {
     const navigationContext = React.useContext(NavigationContext);
 
     // Safety check for Expo Router context

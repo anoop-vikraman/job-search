@@ -6,7 +6,7 @@ interface Props {
     style?: StatusBarStyle;
 }
 
-export default function SafeAreaStatusBar({ backgroundColor, style = 'auto' }: Props) {
+export default function SafeAreaStatusBar({ backgroundColor, style = 'auto' }: Props): React.JSX.Element {
     return (
         <SafeAreaView
             edges={['top']}

@@ -35,7 +35,7 @@ export default function CustomImageUploader({
     maxImages = 6,
     containerStyle,
     showThumbnailFeature = true
-}: Props) {
+}: Props): React.JSX.Element {
     const [loading, setLoading] = useState(false);
     const confirm = useConfirmationStore(state => state.confirm);
 

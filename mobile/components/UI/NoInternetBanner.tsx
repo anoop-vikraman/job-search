@@ -6,7 +6,7 @@ import Animated, { SlideInUp, SlideOutUp } from 'react-native-reanimated';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useNetworkStore } from '../../store/useNetworkStore';
 
-export default function NoInternetBanner() {
+export default function NoInternetBanner(): React.JSX.Element | null {
     const isConnected = useNetworkStore((state) => state.isConnected);
     const insets = useSafeAreaInsets();
 

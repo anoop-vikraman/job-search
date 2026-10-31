@@ -24,7 +24,7 @@ export default function AccordionSection({
     onToggle,
     children,
     isCompleted = false,
-}: AccordionSectionProps) {
+}: AccordionSectionProps): React.JSX.Element {
     const handleToggle = () => {
         LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
         onToggle();
