@@ -28,7 +28,7 @@ export const WheelPicker = ({
     itemHeight = ITEM_HEIGHT,
     containerStyle,
 }: WheelPickerProps) => {
-    const scrollViewRef = useRef<ScrollView>(null);
+    const scrollViewRef = useRef<React.ComponentRef<typeof ScrollView>>(null);
     const [selectedIndex, setSelectedIndex] = useState(0);
 
     // Initial scroll to selected value

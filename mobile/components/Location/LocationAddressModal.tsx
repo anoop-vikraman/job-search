@@ -64,7 +64,7 @@ export default function LocationAddressModal({
     const [lockedCoords, setLockedCoords] = React.useState({ latitude, longitude });
 
     // Refs for focus management
-    const phoneInputRef = React.useRef<TextInput>(null);
+    const phoneInputRef = React.useRef<React.ComponentRef<typeof StandardInput>>(null);
 
     React.useEffect(() => {
         if (visible) {

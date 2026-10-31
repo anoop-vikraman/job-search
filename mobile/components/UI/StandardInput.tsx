@@ -9,7 +9,7 @@ export interface StandardInputProps extends TextInputProps {
     rightComponent?: React.ReactNode;
 }
 
-export const StandardInput = forwardRef<TextInput, StandardInputProps>(({
+export const StandardInput = forwardRef<React.ComponentRef<typeof TextInput>, StandardInputProps>(({
     label,
     error,
     containerStyle,

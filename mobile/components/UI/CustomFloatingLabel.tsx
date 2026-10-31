@@ -38,7 +38,7 @@ export default function CustomFloatingLabel({
 }: CustomFloatingLabelProps & { leftComponent?: React.ReactNode }) {
     const [isFocused, setIsFocused] = useState(false);
     const [isVisible, setIsVisible] = useState(false);
-    const inputRef = useRef<TextInput>(null);
+    const inputRef = useRef<React.ComponentRef<typeof TextInput>>(null);
 
     // Shared value for animation (from 0 to 1)
     const animatedValue = useSharedValue(value ? 1 : 0);

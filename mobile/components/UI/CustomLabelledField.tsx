@@ -36,7 +36,7 @@ export default function CustomLabelledField({
     error,
     required
 }: Props) {
-    const inputRef = useRef<TextInput>(null);
+    const inputRef = useRef<React.ComponentRef<typeof TextInput>>(null);
     const [isFocused, setIsFocused] = useState(false);
     const currentLength = value?.length || 0;
     const remainingChars = maxLength ? maxLength - currentLength : 0;

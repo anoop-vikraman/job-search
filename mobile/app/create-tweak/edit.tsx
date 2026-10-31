@@ -92,7 +92,7 @@ export default function EditTweak() {
         setIsEditMode,
     } = useCreateTweakStore();
 
-    const stepperRef = useRef<ScrollView>(null);
+    const stepperRef = useRef<React.ComponentRef<typeof ScrollView>>(null);
     const [showAddressList, setShowAddressList] = useState(false);
     const [invalidSteps, setInvalidSteps] = useState<string[]>([]);
     const [currentIndex, setCurrentIndex] = useState(0);

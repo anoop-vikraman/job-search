@@ -12,11 +12,7 @@ export default function SafeAreaStatusBar({ backgroundColor, style = 'auto' }: P
             edges={['top']}
             style={{ backgroundColor }}
         >
-            <StatusBar
-                style={style}
-                backgroundColor={backgroundColor}
-                translucent={true}
-            />
+            <StatusBar style={style} />
         </SafeAreaView>
     );
 }

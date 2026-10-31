@@ -10,7 +10,7 @@ interface Props {
 }
 
 export default function CustomOTPInput({ length = 6, value = '', onChange, error }: Props) {
-    const inputRef = useRef<TextInput>(null);
+    const inputRef = useRef<React.ComponentRef<typeof TextInput>>(null);
     const [isFocused, setIsFocused] = useState(false);
 
     const handlePress = () => {

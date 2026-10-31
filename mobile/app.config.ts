@@ -9,7 +9,6 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
     icon: './assets/images/icon.png',
     scheme: 'tweak',
     userInterfaceStyle: 'automatic',
-    newArchEnabled: true,
     ios: {
         supportsTablet: true,
         bundleIdentifier: 'com.anonymous.tweak'
@@ -21,7 +20,6 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
             backgroundImage: './assets/images/android-icon-background.png',
             monochromeImage: './assets/images/android-icon-monochrome.png'
         },
-        edgeToEdgeEnabled: true,
         predictiveBackGestureEnabled: false,
         package: 'com.anonymous.tweak',
         permissions: [

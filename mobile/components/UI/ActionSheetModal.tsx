@@ -14,7 +14,7 @@ export default function ActionSheetModal({
     height = 'h-[85%]'
 }: ActionSheetModalProps) {
     // Refs for scroll management
-    const scrollViewRef = React.useRef<ScrollView>(null);
+    const scrollViewRef = React.useRef<React.ComponentRef<typeof ScrollView>>(null);
 
     // No longer scrolling to end globally as it can be jarring
     // Relying on KeyboardAvoidingView and ScrollView's natural padding
