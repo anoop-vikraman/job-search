@@ -5,12 +5,11 @@ import React, { useEffect } from 'react';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import "../global.css";
-import { themeColors } from '../themes/colors';
 import '../utils/crashHandler'; // Initialize Crash Handler
 import '../utils/i18n';
 
 import GlobalErrorBoundary from "@/components/GlobalErrorBoundary";
-import { ThemeProvider } from "@/themes/ThemeProvider";
+import { ThemeProvider, useTheme } from "@/themes/ThemeProvider";
 import StandaloneTabBar from "@/components/Navigation/StandaloneTabBar";
 import GlobalConfirmationModal from "@/components/UI/GlobalConfirmationModal";
 import GlobalFatalErrorModal from "@/components/UI/GlobalFatalErrorModal";
@@ -30,6 +29,7 @@ const queryClient = new QueryClient({
 
 function AppContent() {
   const { isAuthenticated } = useAuthStore();
+  const { colors, isDark } = useTheme();
   const segments = useSegments();
   const router = useRouter();
 
@@ -48,21 +48,21 @@ function AppContent() {
   }, [isAuthenticated, segments, router]);
 
   return (
-    <GestureHandlerRootView style={{ flex: 1, backgroundColor: themeColors.background }}>
-      <SafeAreaStatusBar backgroundColor={themeColors.background} style="dark" />
+    <GestureHandlerRootView style={{ flex: 1, backgroundColor: colors.background }}>
+      <SafeAreaStatusBar backgroundColor={colors.background} style={isDark ? 'light' : 'dark'} />
       <Stack
         screenOptions={{
           headerShown: false,
           gestureEnabled: true,
           headerStyle: {
-            backgroundColor: themeColors.background,
+            backgroundColor: colors.background,
           },
-          headerTintColor: themeColors.primary,
+          headerTintColor: colors.primary,
           headerTitleStyle: {
             fontWeight: 'bold',
           },
           contentStyle: {
-            backgroundColor: themeColors.background,
+            backgroundColor: colors.background,
           },
         }}
       >

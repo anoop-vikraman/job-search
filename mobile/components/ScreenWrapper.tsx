@@ -7,7 +7,7 @@ import {
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
-import { themeColors } from '../themes/colors';
+import { useTheme } from '../themes/ThemeProvider';
 import { ScreenWrapperProps } from '../types/ui';
 
 export const ScreenWrapper: React.FC<ScreenWrapperProps> = ({
@@ -18,6 +18,7 @@ export const ScreenWrapper: React.FC<ScreenWrapperProps> = ({
     contentContainerStyle,
     edges,
 }) => {
+    const { colors } = useTheme();
     // On Android, 'height' behavior works best with 'windowSoftInputMode: adjustResize'
     // On iOS, 'padding' is the standard.
     const keyboardBehavior = Platform.OS === 'ios' ? 'padding' : 'height';
@@ -27,7 +28,7 @@ export const ScreenWrapper: React.FC<ScreenWrapperProps> = ({
             edges={edges || ['left', 'right', 'bottom']}
             style={[{
                 flex: 1,
-                backgroundColor: themeColors.background
+                backgroundColor: colors.background
             }, style]}
         >
             <KeyboardAvoidingView
