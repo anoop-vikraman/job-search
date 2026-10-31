@@ -1,4 +1,5 @@
 from functools import lru_cache
+from typing import Literal
 
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
@@ -20,6 +21,16 @@ class Settings(BaseSettings):
     # After the provider marks work done, escrow releases automatically unless the lister
     # confirms or disputes within this many hours.
     AUTO_RELEASE_HOURS: int = 72
+
+    # OTP SMS delivery: "console" (dev, logs the code), "msg91" or "twilio".
+    SMS_PROVIDER: Literal["console", "msg91", "twilio"] = "console"
+    # Console provider only: include the code in the API response for local testing.
+    OTP_DEV_ECHO: bool = True
+    MSG91_AUTH_KEY: str | None = None
+    MSG91_TEMPLATE_ID: str | None = None  # DLT-approved OTP template
+    TWILIO_ACCOUNT_SID: str | None = None
+    TWILIO_AUTH_TOKEN: str | None = None
+    TWILIO_FROM: str | None = None  # E.164 number or Messaging Service SID (MG...)
 
     # Login/OTP throttling.
     RATE_LIMIT_MAX_ATTEMPTS: int = 5

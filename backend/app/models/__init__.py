@@ -8,6 +8,7 @@ from app.models.kyc import KycSubmission
 from app.models.moderation import Block, Report
 from app.models.notification import Notification
 from app.models.notification_preference import NotificationPreference
+from app.models.otp import OtpCode
 from app.models.payment import PaymentOrder, Payout
 from app.models.push_ticket import PushTicket
 from app.models.rating import Rating
@@ -31,6 +32,7 @@ __all__ = [
     "Notification",
     "NotificationPreference",
     "Offer",
+    "OtpCode",
     "PaymentOrder",
     "Payout",
     "PushTicket",

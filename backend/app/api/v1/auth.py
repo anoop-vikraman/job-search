@@ -14,7 +14,7 @@ from app.schemas.auth import (
     VerifyOtpRequest,
 )
 from app.schemas.common import ErrorResponse, MessageResponse
-from app.services import auth_service, otp_service
+from app.services import auth_service, otp_service, sms_service
 
 
 def _throttle(key: str) -> None:
@@ -67,23 +67,26 @@ async def logout(user: CurrentUser, db: DbSession) -> MessageResponse:
 
 
 @router.post("/otp/generate", response_model=MessageResponse, responses=ERRORS)
-async def generate_otp(data: GenerateOtpRequest) -> MessageResponse:
-    """Generate and send an OTP.
+async def generate_otp(data: GenerateOtpRequest, db: DbSession) -> MessageResponse:
+    """Generate a 6-digit OTP (5-min TTL, single use) and send it by SMS.
 
-    Generates a 6-digit code and stores it (5-min TTL). Integrate an SMS provider to
-    deliver it; in non-production the code is returned in the response for testing.
+    With the dev `console` SMS provider the code is also returned in the message.
     """
     _throttle(f"otp:{data.country_code}:{data.phone_number}")
-    code = otp_service.generate(data.country_code, data.phone_number, data.request_type)
-    # TODO: send `code` via SMS provider. Returned here only for dev/testing.
-    return MessageResponse(message=f"OTP sent. (dev code: {code})")
+    code = await otp_service.generate(db, data.country_code, data.phone_number, data.request_type)
+    await sms_service.send_otp(data.country_code, data.phone_number, code)
+    if sms_service.exposes_dev_code():
+        return MessageResponse(message=f"OTP sent. (dev code: {code})")
+    return MessageResponse(message="OTP sent.")
 
 
 @router.post("/otp/verify", response_model=MessageResponse, responses=ERRORS)
-async def verify_otp(data: VerifyOtpRequest) -> MessageResponse:
-    """Verify an OTP against the stored code."""
+async def verify_otp(data: VerifyOtpRequest, db: DbSession) -> MessageResponse:
+    """Verify an OTP. Codes are single use and lock after 5 wrong attempts."""
     _throttle(f"otp-verify:{data.country_code}:{data.phone_number}")
-    ok = otp_service.verify(data.country_code, data.phone_number, data.request_type, data.otp)
+    ok = await otp_service.verify(
+        db, data.country_code, data.phone_number, data.request_type, data.otp
+    )
     if not ok:
         raise AppError(status.HTTP_400_BAD_REQUEST, "INVALID_OTP", "Invalid or expired OTP.")
     return MessageResponse(message="OTP verified.")

@@ -173,6 +173,7 @@ See [wallet-and-escrow.md](./wallet-and-escrow.md#adding-money-razorpay) for the
 | `SIMULATED_TOPUP_DISABLED` | Legacy top-up turned off |
 | `KYC_REQUIRED` / `UPI_NOT_VERIFIED` | Withdrawal before verification / to another UPI id |
 | `KYC_PENDING` / `ALREADY_VERIFIED` | Duplicate verification submission |
+| `INVALID_OTP` / `SMS_SEND_FAILED` / `RATE_LIMITED` | OTP verification / delivery / throttling |
 | `USER_BLOCKED` | Applying to / chatting with a blocked (or blocking) user |
 | `ALREADY_REPORTED` | Duplicate open report |
 | `WORK_SUBMITTED` | Lister cancel after the provider marked work done |
