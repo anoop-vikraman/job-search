@@ -23,6 +23,7 @@ from app.models.payment import PaymentOrder, Payout
 from app.models.user import User
 from app.models.wallet import WalletTransaction
 from app.services import (
+    analytics_service,
     job_service,
     kyc_service,
     notification_service,
@@ -160,6 +161,9 @@ async def _credit(
         return order, existing
 
     order.status = PaymentStatus.paid
+    analytics_service.track(
+        db, "topup_paid", user_id=order.user_id, properties={"amount_minor": order.amount_minor}
+    )
     order.provider_payment_id = payment_id
     order.paid_at = datetime.now(UTC)
     order.failure_reason = None
@@ -265,6 +269,9 @@ async def request_payout(
         db, user_id, amount_minor, reference=f"payout:{payout.id}"
     )
     db.add(payout)
+    analytics_service.track(
+        db, "payout_requested", user_id=user_id, properties={"amount_minor": amount_minor}
+    )
     await db.flush()
     payout.debit_txn_id = txn.id
     await db.commit()

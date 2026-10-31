@@ -3,6 +3,7 @@ import type {
   Application,
   Dispute,
   DisputeOutcome,
+  FunnelReport,
   KycSubmission,
   Page,
   PaymentOrder,
@@ -152,5 +153,10 @@ export async function listPaymentOrders(
 
 export async function runReconciliation(): Promise<ReconcileReport> {
   const res = await api.post<ReconcileReport>("/admin/payments/reconcile");
+  return res.data;
+}
+
+export async function getFunnel(days: number): Promise<FunnelReport> {
+  const res = await api.get<FunnelReport>("/admin/analytics/funnel", { params: { days } });
   return res.data;
 }

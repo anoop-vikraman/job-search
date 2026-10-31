@@ -363,6 +363,10 @@ Required by steering: rotatable refresh tokens persisted in DB.
   `(status, created_at)`.
 - `users` gains `kyc_verified_at`.
 
+### analytics_events
+- `name` VARCHAR(50), `user_id` (FK users SET NULL, indexed), `tweak_id` (FK tweaks SET NULL,
+  indexed), `properties` JSONB object (CHECK), `created_at`; `ix_analytics_events_name_created`.
+
 ### tweaks (additions)
 - `recurrence` recurrence enum (`weekly`,`biweekly`,`monthly`), nullable; `previous_occurrence_id`
   FK `tweaks` SET NULL (indexed); `ix_tweaks_feed_price (status, price_minor)`.

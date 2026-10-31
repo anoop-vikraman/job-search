@@ -20,7 +20,12 @@ from app.models.enums import (
 )
 from app.models.tweak import Tweak
 from app.schemas.dispute import DisputeCreate, DisputeResolve
-from app.services import application_service, notification_service, wallet_service
+from app.services import (
+    analytics_service,
+    application_service,
+    notification_service,
+    wallet_service,
+)
 
 
 async def _application_and_tweak(
@@ -61,6 +66,7 @@ async def open_dispute(
     db.add(dispute)
     application.status = ApplicationStatus.disputed
     application.auto_release_at = None  # the pending auto-release job becomes a no-op
+    analytics_service.track(db, "dispute_opened", user_id=user_id, tweak_id=tweak.id)
     other = (parties - {user_id}).pop()
     notification_service.add(
         db,

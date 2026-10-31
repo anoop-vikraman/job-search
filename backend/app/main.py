@@ -13,8 +13,11 @@ from sqlalchemy import text
 from app.api.v1.router import api_router
 from app.core.config import settings
 from app.core.errors import register_exception_handlers
+from app.core.observability import init_sentry
 from app.db.session import engine
 from app.services import jobs as _jobs  # noqa: F401 - registers job handlers + completion hooks
+
+init_sentry("api")
 
 
 def custom_operation_id(route: APIRoute) -> str:

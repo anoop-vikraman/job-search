@@ -14,7 +14,13 @@ from app.models.enums import ApplicationStatus, NotificationType, TweakStatus
 from app.models.tweak import Tweak
 from app.models.user import User
 from app.schemas.application import ApplicationCreate, CounterQuoteRequest, WorkSubmit
-from app.services import block_service, job_service, notification_service, wallet_service
+from app.services import (
+    analytics_service,
+    block_service,
+    job_service,
+    notification_service,
+    wallet_service,
+)
 
 
 def _platform_fee(amount_minor: int) -> int:
@@ -61,6 +67,9 @@ async def apply(
         selected_slots=data.selected_slots,
     )
     db.add(application)
+    analytics_service.track(
+        db, "application_submitted", user_id=provider_user_id, tweak_id=tweak.id
+    )
     notification_service.add(
         db,
         tweak.created_by_user_id,
@@ -106,6 +115,13 @@ async def accept(
     application.responded_at = datetime.now(UTC)
     # Work is now in progress; it is completed via complete().
     tweak.status = TweakStatus.in_progress
+    analytics_service.track(
+        db,
+        "application_accepted",
+        user_id=lister_user_id,
+        tweak_id=tweak.id,
+        properties={"amount_minor": agreed},
+    )
     notification_service.add(
         db,
         application.provider_user_id,
@@ -151,6 +167,13 @@ async def release_to_provider(
     application.status = ApplicationStatus.completed
     application.auto_release_at = None
     tweak.status = TweakStatus.completed
+    analytics_service.track(
+        db,
+        "job_completed",
+        user_id=application.provider_user_id,
+        tweak_id=tweak.id,
+        properties={"amount_minor": agreed, "fee_minor": fee, "how": reason},
+    )
     notification_service.add(
         db,
         application.provider_user_id,

@@ -52,6 +52,11 @@ class Settings(BaseSettings):
 
     # Background jobs. In production run `python -m app.worker` and set RUN_WORKER_IN_APP=false.
     RUN_WORKER_IN_APP: bool = True
+    # Error tracking (Sentry); unset DSN disables it.
+    SENTRY_DSN: str | None = None
+    SENTRY_ENVIRONMENT: str = "development"
+    SENTRY_TRACES_SAMPLE_RATE: float = 0.0
+
     # WebSocket chat events via Postgres LISTEN/NOTIFY.
     REALTIME_ENABLED: bool = True
     WORKER_POLL_SECONDS: float = 2.0

@@ -74,6 +74,11 @@ api.interceptors.response.use(
             }
         }
 
+        // Callers like analytics opt out of user-facing error toasts.
+        if (originalRequest?.headers?.['X-Silent-Errors']) {
+            return Promise.reject(error);
+        }
+
         // Backend error envelope: { detail, code }.
         const message: string =
             error.response?.data?.detail ||

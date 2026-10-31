@@ -18,6 +18,7 @@ This folder documents each feature: what it does, where it lives across the thre
 | [reports-and-blocking.md](./reports-and-blocking.md) | User reports, admin moderation queue, blocking |
 | [chat.md](./chat.md) | Lister ↔ accepted-provider messaging, unread counts |
 | [push-notifications.md](./push-notifications.md) | Expo push delivery, device tokens, tap-to-navigate, mute settings |
+| [observability-and-analytics.md](./observability-and-analytics.md) | Sentry error tracking, funnel analytics |
 | [background-jobs.md](./background-jobs.md) | Postgres job queue, worker, periodic tasks |
 | [wallet-and-escrow.md](./wallet-and-escrow.md) | Wallet balances, top-ups, the escrow hold/release ledger |
 | [refunds.md](./refunds.md) | Requesting and processing refunds |

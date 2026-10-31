@@ -18,6 +18,10 @@ import ToastManager from "@/components/UI/ToastManager";
 import { useAuthStore } from "@/store/useAuthStore";
 import { usePushNotifications } from "@/hooks/usePushNotifications";
 import { useRealtime } from "@/hooks/useRealtime";
+import { initObservability, Sentry, setReportingUser } from "@/utils/observability";
+import { track } from "@/utils/analytics";
+
+initObservability();
 
 // Module-level client so it persists across re-renders.
 const queryClient = new QueryClient({
@@ -36,6 +40,11 @@ function AppContent() {
   const router = useRouter();
   usePushNotifications(isAuthenticated);
   useRealtime(isAuthenticated);
+  const userId = useAuthStore((s) => s.user?.id ?? null);
+  useEffect(() => {
+    setReportingUser(userId);
+    if (userId) track('app_open');
+  }, [userId]);
 
   // Route protection: keep authed users out of auth screens and
   // push unauthenticated users to login when they hit a protected route.
@@ -88,7 +97,7 @@ function AppContent() {
   );
 }
 
-export default function RootLayout(): React.JSX.Element {
+function RootLayout(): React.JSX.Element {
   return (
     <GlobalErrorBoundary>
       <QueryClientProvider client={queryClient}>
@@ -101,3 +110,6 @@ export default function RootLayout(): React.JSX.Element {
     </GlobalErrorBoundary>
   );
 }
+
+// Sentry.wrap is a no-op passthrough when no DSN is configured.
+export default Sentry.wrap(RootLayout);

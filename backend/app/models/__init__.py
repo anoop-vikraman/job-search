@@ -1,4 +1,5 @@
 from app.models.address import Address
+from app.models.analytics import AnalyticsEvent
 from app.models.application import Application, Offer
 from app.models.chat import Conversation, Message
 from app.models.device_token import DeviceToken
@@ -22,6 +23,7 @@ from app.models.watchlist import Watchlist
 
 __all__ = [
     "Address",
+    "AnalyticsEvent",
     "Application",
     "Block",
     "Conversation",

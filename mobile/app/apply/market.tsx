@@ -14,6 +14,7 @@ import type { FeedSort, SavedSearchCreate } from '../../types/api';
 import { describeSavedSearch, useCreateSavedSearch } from '../../hooks/useSavedSearches';
 import TweakTile from '../../components/Tweak/TweakTile';
 import TweakMap from '../../components/Tweak/TweakMap';
+import { track } from '../../utils/analytics';
 import { useTheme } from '@/themes/ThemeProvider';
 
 const SORT_OPTIONS: { label: string; value: FeedSort; icon: keyof typeof Ionicons.glyphMap }[] = [
@@ -83,6 +84,9 @@ export default function MarketPage(): React.JSX.Element {
     );
 
     const feed = useTweaksFeed(feedFilters);
+    useEffect(() => {
+        if (debouncedSearch) track('search_performed', { length: debouncedSearch.length, near_me: Boolean(coords) });
+    }, [debouncedSearch, coords]);
     const { tweaks: feedTweaks, isFetching, isRefetching, isFetchingNextPage, refetch } = feed;
 
     const marketTweaks = useMemo(() => {

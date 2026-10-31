@@ -1,5 +1,6 @@
 import {
   ArrowLeftRight,
+  BarChart3,
   LogOut,
   ReceiptText,
   Users,
@@ -19,6 +20,7 @@ import { useAuthStore } from "@/features/auth/store";
 import { cn } from "@/lib/utils";
 
 const NAV = [
+  { to: "/analytics", label: "Analytics", icon: BarChart3 },
   { to: "/users", label: "Users", icon: Users },
   { to: "/tweaks", label: "Tweaks", icon: Wrench },
   { to: "/applications", label: "Applications", icon: ClipboardList },

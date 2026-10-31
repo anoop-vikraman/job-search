@@ -2,6 +2,7 @@ import * as React from "react";
 import { Navigate, Route, Routes } from "react-router-dom";
 
 import { AppLayout } from "@/components/layout/AppLayout";
+import { AnalyticsPage } from "@/pages/AnalyticsPage";
 import { useAuthStore } from "@/features/auth/store";
 import { ApplicationsPage } from "@/pages/ApplicationsPage";
 import { DisputesPage } from "@/pages/DisputesPage";
@@ -41,6 +42,7 @@ export function App(): React.JSX.Element {
         <Route path="/kyc" element={<KycPage />} />
         <Route path="/payouts" element={<PayoutsPage />} />
         <Route path="/payments" element={<PaymentsPage />} />
+        <Route path="/analytics" element={<AnalyticsPage />} />
       </Route>
       <Route path="*" element={<Navigate to="/users" replace />} />
     </Routes>

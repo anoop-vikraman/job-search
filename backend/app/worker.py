@@ -9,6 +9,7 @@ import asyncio
 import logging
 
 from app.core.config import settings
+from app.core.observability import init_sentry
 from app.db.session import async_session_maker
 from app.services import job_service
 from app.services import jobs as _jobs  # noqa: F401 - registers handlers and periodic tasks
@@ -35,6 +36,7 @@ async def run_forever(stop: asyncio.Event | None = None) -> None:
 
 def main() -> None:
     logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(name)s %(message)s")
+    init_sentry("worker")
     asyncio.run(run_forever())
 
 

@@ -53,6 +53,10 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
         ],
         'expo-audio',
         'expo-video',
+        // Source-map upload needs SENTRY_ORG/SENTRY_PROJECT (+ SENTRY_AUTH_TOKEN at build).
+        ...(process.env.SENTRY_ORG && process.env.SENTRY_PROJECT
+            ? [['@sentry/react-native/expo', { organization: process.env.SENTRY_ORG, project: process.env.SENTRY_PROJECT }] as [string, Record<string, string>]]
+            : []),
         [
             'expo-notifications',
             {

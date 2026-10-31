@@ -186,3 +186,17 @@ export interface ReconcileReport {
   paid_without_ledger: number;
   credited_order_ids: string[];
 }
+
+export interface FunnelStep {
+  name: string;
+  count: number;
+  unique_users: number;
+  conversion: number | null;
+}
+
+export interface FunnelReport {
+  days: number;
+  steps: FunnelStep[];
+  other_events: Record<string, { count: number; unique_users: number }>;
+  daily: ({ date: string } & Record<string, number | string>)[];
+}

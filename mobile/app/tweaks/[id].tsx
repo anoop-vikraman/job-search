@@ -23,6 +23,7 @@ import NoteWithPhotosSheet from '@/components/Work/NoteWithPhotosSheet';
 import WorkStatusBanner from '@/components/Work/WorkStatusBanner';
 import ReportSheet from '@/components/Moderation/ReportSheet';
 import { Toast } from '@/components/UI/ToastManager';
+import { track } from '@/utils/analytics';
 import { minorToMajor } from '@/utils/money';
 import { useAddToWatchlist, useRemoveFromWatchlist, useWatchlist } from '@/hooks/useWatchlist';
 import { ScheduleSlot } from '@/types/tweak';
@@ -318,6 +319,10 @@ export default function TweakDetails(): React.JSX.Element {
     const [isPlaying, setIsPlaying] = useState(false);
 
     const isWatchlisted = tweak ? watchlist.some((w) => w.id === tweak.id) : false;
+
+    useEffect(() => {
+        if (id) track('tweak_viewed', { tweak_id: String(id) });
+    }, [id]);
 
     useEffect(() => {
         if (playerStatus.didJustFinish) {

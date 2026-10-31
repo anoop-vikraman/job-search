@@ -133,6 +133,12 @@ See [wallet-and-escrow.md](./wallet-and-escrow.md#adding-money-razorpay) for the
 | GET | `/api/v1/admin/kyc/{submission_id}/documents/{index}` | admin |
 | POST | `/api/v1/admin/kyc/{submission_id}/review` | admin |
 
+### Analytics
+| Method | Path | Auth |
+|---|---|---|
+| POST | `/api/v1/analytics/events` | user (whitelisted client events) |
+| GET | `/api/v1/admin/analytics/funnel?days` | admin |
+
 ### Devices (push)
 | Method | Path | Auth |
 |---|---|---|

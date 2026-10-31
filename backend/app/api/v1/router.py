@@ -3,6 +3,7 @@ from fastapi import APIRouter
 from app.api.v1 import (
     addresses,
     admin,
+    analytics,
     auth,
     conversations,
     devices,
@@ -36,5 +37,6 @@ api_router.include_router(reports.router)
 api_router.include_router(kyc.router)
 api_router.include_router(realtime.router)
 api_router.include_router(saved_searches.router)
+api_router.include_router(analytics.router)
 api_router.include_router(media.router)
 api_router.include_router(admin.router)

@@ -32,7 +32,7 @@ from app.models.enums import ApplicationStatus, TweakStatus, TweakType
 from app.models.tweak import Tweak
 from app.schemas.jsonb import resolve_price_minor
 from app.schemas.tweak import FeedSort, TweakCreate, TweakUpdate
-from app.services import job_service
+from app.services import analytics_service, job_service
 
 
 def _validate_and_price(pricing_model: str, pricing_data: dict | None) -> int | None:
@@ -68,6 +68,7 @@ async def create_tweak(db: AsyncSession, owner_id: uuid.UUID, data: TweakCreate)
     if tweak.status == TweakStatus.active:
         await db.flush()
         _alert_saved_searches(db, tweak.id)
+        analytics_service.track(db, "tweak_posted", user_id=owner_id, tweak_id=tweak.id)
     await db.commit()
     await db.refresh(tweak)
     return tweak
@@ -98,6 +99,7 @@ async def update_tweak(
         setattr(tweak, key, value)
     if tweak.status == TweakStatus.active and not was_active:
         _alert_saved_searches(db, tweak.id)
+        analytics_service.track(db, "tweak_posted", user_id=owner_id, tweak_id=tweak.id)
     # Re-derive the price if pricing changed.
     if "pricing_model" in fields or "pricing_data" in fields:
         tweak.price_minor = _validate_and_price(tweak.pricing_model.value, tweak.pricing_data)

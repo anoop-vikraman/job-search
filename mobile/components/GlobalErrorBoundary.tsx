@@ -5,6 +5,7 @@ import { ErrorBoundary, FallbackProps } from 'react-error-boundary';
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { palette } from '@tweak/theme';
 import { useTheme } from '@/themes/ThemeProvider';
+import { reportError } from '@/utils/observability';
 
 const ErrorFallback = ({ error, resetErrorBoundary }: FallbackProps): React.JSX.Element => {
     const { colors, isDark } = useTheme();
@@ -75,6 +76,7 @@ export default function GlobalErrorBoundary({ children }: Props): React.JSX.Elem
                 // Potential cleanup logic
             }}
             onError={(error) => {
+                reportError(error, { boundary: 'GlobalErrorBoundary' });
                 console.error("UI Boundary Caught Error:", error);
             }}
         >

@@ -16,6 +16,7 @@ import {
 } from '../../hooks/useWallet';
 import { useAuthStore } from '../../store/useAuthStore';
 import { formatMinor, toMinor } from '../../utils/money';
+import { track } from '../../utils/analytics';
 import type { Payout, RazorpaySuccess, TopupOrder, Transaction } from '../../types/api';
 import { useTheme } from '@/themes/ThemeProvider';
 import { themeColors } from '@/themes/colors';
@@ -78,6 +79,7 @@ export default function WalletPage(): React.JSX.Element {
             onSuccess: (created) => {
                 setSheetOpen(false);
                 setOrder(created);
+                track('checkout_opened', { amount_minor: created.amount_minor });
             },
         });
     };

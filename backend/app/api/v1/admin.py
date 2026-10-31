@@ -1,7 +1,7 @@
 import uuid
 from collections.abc import Sequence
 from dataclasses import asdict
-from typing import TypeVar
+from typing import Any, TypeVar
 
 from fastapi import APIRouter, Depends, Query, status
 from fastapi.responses import FileResponse
@@ -46,6 +46,7 @@ from app.schemas.tweak import TweakResponse
 from app.schemas.user import AdminBanRequest, UserProfile
 from app.schemas.wallet import TransactionResponse
 from app.services import (
+    analytics_service,
     dispute_service,
     kyc_service,
     payment_service,
@@ -269,6 +270,26 @@ async def resolve_dispute(
     """Settle a dispute: release to the provider, refund the lister, or split the escrow."""
     dispute = await dispute_service.resolve_dispute(db, dispute_id, admin.id, data)
     return DisputeResponse.model_validate(dispute)
+
+
+class FunnelStep(BaseModel):
+    name: str
+    count: int
+    unique_users: int
+    conversion: float | None
+
+
+class FunnelResponse(BaseModel):
+    days: int
+    steps: list[FunnelStep]
+    other_events: dict[str, dict[str, int]]
+    daily: list[dict[str, Any]]
+
+
+@router.get("/analytics/funnel", response_model=FunnelResponse, status_code=status.HTTP_200_OK)
+async def analytics_funnel(db: DbSession, days: int = Query(30, ge=1, le=365)) -> FunnelResponse:
+    """Posted → applied → accepted → completed over the last `days`, with daily counts."""
+    return FunnelResponse.model_validate(await analytics_service.funnel(db, days))
 
 
 @router.get("/payments", response_model=Page[AdminPaymentOrder])
