@@ -4,6 +4,7 @@ import * as React from "react";
 
 import { DataTable } from "@/components/data-table";
 import { StatusBadge } from "@/components/status-badge";
+import { TableToolbar } from "@/components/table-toolbar";
 import { Button } from "@/components/ui/button";
 import { banUser, listUsers } from "@/features/admin/api";
 import { formatDate } from "@/lib/utils";
@@ -11,10 +12,25 @@ import type { UserProfile } from "@/lib/types";
 
 export function UsersPage(): React.JSX.Element {
   const [page, setPage] = React.useState(1);
+  const [search, setSearch] = React.useState("");
+  const [role, setRole] = React.useState("");
+  const [banned, setBanned] = React.useState("");
   const qc = useQueryClient();
+
+  // Reset to page 1 whenever a filter changes.
+  const onFilter = <T,>(setter: (v: T) => void) => (v: T): void => {
+    setter(v);
+    setPage(1);
+  };
+
   const { data, isLoading } = useQuery({
-    queryKey: ["admin-users", page],
-    queryFn: () => listUsers(page),
+    queryKey: ["admin-users", page, search, role, banned],
+    queryFn: () =>
+      listUsers(page, {
+        search: search || undefined,
+        role: role || undefined,
+        is_banned: banned === "" ? undefined : banned === "true",
+      }),
   });
 
   const banMutation = useMutation({
@@ -66,6 +82,31 @@ export function UsersPage(): React.JSX.Element {
   return (
     <div className="space-y-4">
       <h1 className="text-2xl font-bold">Users</h1>
+      <TableToolbar
+        search={search}
+        onSearchChange={onFilter(setSearch)}
+        searchPlaceholder="Search name or phone"
+        filters={[
+          {
+            label: "Role",
+            value: role,
+            onChange: onFilter(setRole),
+            options: [
+              { label: "admin", value: "admin" },
+              { label: "user", value: "user" },
+            ],
+          },
+          {
+            label: "Status",
+            value: banned,
+            onChange: onFilter(setBanned),
+            options: [
+              { label: "banned", value: "true" },
+              { label: "active", value: "false" },
+            ],
+          },
+        ]}
+      />
       <DataTable
         columns={columns}
         data={data?.items ?? []}

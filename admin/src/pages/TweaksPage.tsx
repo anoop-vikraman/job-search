@@ -4,17 +4,28 @@ import * as React from "react";
 
 import { DataTable } from "@/components/data-table";
 import { StatusBadge } from "@/components/status-badge";
+import { TableToolbar } from "@/components/table-toolbar";
 import { Button } from "@/components/ui/button";
 import { closeTweak, listTweaks } from "@/features/admin/api";
 import type { Tweak } from "@/lib/types";
 import { formatDate, formatMoney } from "@/lib/utils";
 
+const TWEAK_STATUSES = ["draft", "active", "in_progress", "completed", "cancelled", "closed"];
+
 export function TweaksPage(): React.JSX.Element {
   const [page, setPage] = React.useState(1);
+  const [search, setSearch] = React.useState("");
+  const [status, setStatus] = React.useState("");
   const qc = useQueryClient();
+
+  const onFilter = <T,>(setter: (v: T) => void) => (v: T): void => {
+    setter(v);
+    setPage(1);
+  };
+
   const { data, isLoading } = useQuery({
-    queryKey: ["admin-tweaks", page],
-    queryFn: () => listTweaks(page),
+    queryKey: ["admin-tweaks", page, search, status],
+    queryFn: () => listTweaks(page, { search: search || undefined, status: status || undefined }),
   });
 
   const closeMutation = useMutation({
@@ -56,6 +67,19 @@ export function TweaksPage(): React.JSX.Element {
   return (
     <div className="space-y-4">
       <h1 className="text-2xl font-bold">Tweaks</h1>
+      <TableToolbar
+        search={search}
+        onSearchChange={onFilter(setSearch)}
+        searchPlaceholder="Search title or category"
+        filters={[
+          {
+            label: "Status",
+            value: status,
+            onChange: onFilter(setStatus),
+            options: TWEAK_STATUSES.map((s) => ({ label: s, value: s })),
+          },
+        ]}
+      />
       <DataTable
         columns={columns}
         data={data?.items ?? []}

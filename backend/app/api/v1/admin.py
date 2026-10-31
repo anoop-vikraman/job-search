@@ -1,9 +1,10 @@
 import uuid
+from collections.abc import Sequence
 from typing import TypeVar
 
 from fastapi import APIRouter, Depends, Query, status
 from pydantic import BaseModel
-from sqlalchemy import func, select
+from sqlalchemy import ColumnElement, func, or_, select
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import InstrumentedAttribute
 
@@ -11,7 +12,7 @@ from app.api.deps import DbSession, require_admin
 from app.core.errors import AppError
 from app.db.base import Base
 from app.models.application import Application
-from app.models.enums import TweakStatus
+from app.models.enums import RefundStatus, TweakStatus, UserRole
 from app.models.refund import Refund
 from app.models.tweak import Tweak
 from app.models.user import User
@@ -37,11 +38,17 @@ async def _paginate(
     page: int,
     limit: int,
     order_col: InstrumentedAttribute,
+    conditions: Sequence[ColumnElement[bool]] = (),
 ) -> Page[R]:
-    total = await db.scalar(select(func.count()).select_from(model)) or 0
+    base = select(model)
+    count_q = select(func.count()).select_from(model)
+    for cond in conditions:
+        base = base.where(cond)
+        count_q = count_q.where(cond)
+    total = await db.scalar(count_q) or 0
     rows = (
         await db.scalars(
-            select(model).order_by(order_col.desc()).offset((page - 1) * limit).limit(limit)
+            base.order_by(order_col.desc()).offset((page - 1) * limit).limit(limit)
         )
     ).all()
     items = [response_cls.model_validate(r) for r in rows]
@@ -50,10 +57,29 @@ async def _paginate(
 
 @router.get("/users", response_model=Page[UserProfile])
 async def list_users(
-    db: DbSession, page: int = Query(1, ge=1), limit: int = Query(20, ge=1, le=100)
+    db: DbSession,
+    page: int = Query(1, ge=1),
+    limit: int = Query(20, ge=1, le=100),
+    search: str | None = Query(None, description="Match phone, first or last name"),
+    role: UserRole | None = None,
+    is_banned: bool | None = None,
 ) -> Page[UserProfile]:
-    """List all users (admin)."""
-    return await _paginate(db, User, UserProfile, page, limit, User.created_at)
+    """List users (admin), with optional search and role/ban filters."""
+    conditions: list[ColumnElement[bool]] = []
+    if search:
+        like = f"%{search}%"
+        conditions.append(
+            or_(
+                User.phone_number.ilike(like),
+                User.first_name.ilike(like),
+                User.last_name.ilike(like),
+            )
+        )
+    if role is not None:
+        conditions.append(User.role == role)
+    if is_banned is not None:
+        conditions.append(User.is_banned.is_(is_banned))
+    return await _paginate(db, User, UserProfile, page, limit, User.created_at, conditions)
 
 
 @router.post(
@@ -74,10 +100,20 @@ async def ban_user(user_id: uuid.UUID, data: AdminBanRequest, db: DbSession) -> 
 
 @router.get("/tweaks", response_model=Page[TweakResponse])
 async def list_tweaks(
-    db: DbSession, page: int = Query(1, ge=1), limit: int = Query(20, ge=1, le=100)
+    db: DbSession,
+    page: int = Query(1, ge=1),
+    limit: int = Query(20, ge=1, le=100),
+    search: str | None = Query(None, description="Match title or category"),
+    status_filter: TweakStatus | None = Query(None, alias="status"),
 ) -> Page[TweakResponse]:
-    """List all tweaks (admin moderation)."""
-    return await _paginate(db, Tweak, TweakResponse, page, limit, Tweak.created_at)
+    """List tweaks (admin moderation), with optional search and status filter."""
+    conditions: list[ColumnElement[bool]] = []
+    if search:
+        like = f"%{search}%"
+        conditions.append(or_(Tweak.title.ilike(like), Tweak.category.ilike(like)))
+    if status_filter is not None:
+        conditions.append(Tweak.status == status_filter)
+    return await _paginate(db, Tweak, TweakResponse, page, limit, Tweak.created_at, conditions)
 
 
 @router.post(
@@ -118,10 +154,16 @@ async def list_transactions(
 
 @router.get("/refunds", response_model=Page[RefundResponse])
 async def list_refunds(
-    db: DbSession, page: int = Query(1, ge=1), limit: int = Query(20, ge=1, le=100)
+    db: DbSession,
+    page: int = Query(1, ge=1),
+    limit: int = Query(20, ge=1, le=100),
+    status_filter: RefundStatus | None = Query(None, alias="status"),
 ) -> Page[RefundResponse]:
-    """List all refund requests (admin queue)."""
-    return await _paginate(db, Refund, RefundResponse, page, limit, Refund.created_at)
+    """List refund requests (admin queue), optionally filtered by status."""
+    conditions: list[ColumnElement[bool]] = []
+    if status_filter is not None:
+        conditions.append(Refund.status == status_filter)
+    return await _paginate(db, Refund, RefundResponse, page, limit, Refund.created_at, conditions)
 
 
 @router.post(
