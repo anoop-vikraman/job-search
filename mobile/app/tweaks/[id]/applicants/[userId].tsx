@@ -1,5 +1,5 @@
 import { Ionicons } from '@expo/vector-icons';
-import { useLocalSearchParams, useRouter } from 'expo-router';
+import { useLocalSearchParams, useRouter, type Href } from 'expo-router';
 import React, { useState } from 'react';
 import {
     Alert,
@@ -46,7 +46,9 @@ export default function ApplicantDetail(): React.JSX.Element {
         );
     }
 
-    const displayName = applicant.provider_user_id.slice(0, 8);
+    const displayName =
+        [applicant.provider.first_name, applicant.provider.last_name?.charAt(0)].filter(Boolean).join(' ') ||
+        'Applicant';
     const isAccepted = applicant.status === 'accepted';
     const isPending = applicant.status === 'pending';
     const workSubmitted = isAccepted && applicant.work_submitted_at != null;
@@ -137,6 +139,19 @@ export default function ApplicantDetail(): React.JSX.Element {
                             <Text style={{ fontSize: 40, fontWeight: '700', color: colors.textSecondary }}>{displayName.charAt(0).toUpperCase()}</Text>
                         </View>
                         <Text style={{ fontSize: 24, fontWeight: '800', color: colors.text }}>{displayName}</Text>
+                        <TouchableOpacity
+                            onPress={() => router.push(`/users/${applicant.provider_user_id}` as Href)}
+                            style={{ flexDirection: 'row', alignItems: 'center', gap: 4, marginTop: 6 }}
+                            accessibilityRole="button"
+                        >
+                            <Ionicons name="star" size={14} color="#F59E0B" />
+                            <Text style={{ color: colors.textSecondary, fontSize: 13 }}>
+                                {applicant.provider.rating_count > 0
+                                    ? `${applicant.provider.rating_avg.toFixed(1)} (${applicant.provider.rating_count}) · `
+                                    : ''}
+                                <Text style={{ color: palette.iosBlue, fontWeight: '700' }}>View profile & reviews</Text>
+                            </Text>
+                        </TouchableOpacity>
 
                         <View style={{ backgroundColor: palette.blue100, paddingHorizontal: 12, paddingVertical: 6, borderRadius: 20, marginTop: 12, flexDirection: 'row', alignItems: 'center', gap: 6 }}>
                             <Ionicons name="ribbon-outline" size={14} color={palette.blue800} />

@@ -268,6 +268,16 @@ export default function ChatThreadPage(): React.JSX.Element {
                                 <TouchableOpacity
                                     onPress={() => {
                                         setMenuOpen(false);
+                                        router.push(`/users/${conversation.other_user.id}` as Href);
+                                    }}
+                                    style={{ flexDirection: 'row', alignItems: 'center', gap: 10, padding: 14, borderBottomWidth: 1, borderBottomColor: colors.border }}
+                                >
+                                    <Ionicons name="person-circle-outline" size={18} color={colors.textSecondary} />
+                                    <Text style={{ fontWeight: '600', color: colors.textSecondary }}>View profile</Text>
+                                </TouchableOpacity>
+                                <TouchableOpacity
+                                    onPress={() => {
+                                        setMenuOpen(false);
                                         setReportTarget({ type: 'user', id: conversation.other_user.id });
                                     }}
                                     style={{ flexDirection: 'row', alignItems: 'center', gap: 10, padding: 14, borderBottomWidth: 1, borderBottomColor: colors.border }}

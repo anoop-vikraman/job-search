@@ -117,6 +117,7 @@ See [wallet-and-escrow.md](./wallet-and-escrow.md#adding-money-razorpay) for the
 | Method | Path | Auth |
 |---|---|---|
 | POST | `/api/v1/reports` | user |
+| GET | `/api/v1/users/{user_id}/public` | user |
 | POST | `/api/v1/users/{user_id}/block` | user |
 | DELETE | `/api/v1/users/{user_id}/block` | user |
 | GET | `/api/v1/users/me/blocks` | user |

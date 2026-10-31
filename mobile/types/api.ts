@@ -400,6 +400,33 @@ export interface Conversation {
     created_at: string;
 }
 
+// ─── Public profiles ──────────────────────────────────────────────────────
+
+export interface PublicReview {
+    score: number;
+    comment: string | null;
+    created_at: string;
+    reviewer_name: string;
+    tweak_title: string;
+    tweak_category: string;
+}
+
+export interface PublicProfile {
+    id: string;
+    display_name: string;
+    profile_picture_url: string | null;
+    bio: string | null;
+    skills: string[];
+    completed_categories: string[];
+    rating_avg: number;
+    rating_count: number;
+    completed_jobs: number;
+    verified: boolean;
+    member_since: string;
+    reviews: PublicReview[];
+    portfolio: { url: string; tweak_title: string; tweak_category: string }[];
+}
+
 // ─── Saved searches ───────────────────────────────────────────────────────
 
 export interface SavedSearchCreate {

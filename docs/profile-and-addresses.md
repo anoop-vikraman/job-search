@@ -65,3 +65,17 @@ added.
 ## Key files
 - Backend: `app/api/v1/users.py`, `app/api/v1/addresses.py`, `app/models/{user,address}.py`
 - Mobile: `app/profile/*`, `app/settings/*`, `app/score/*`, `app/invite/*`, `components/Location/*`
+
+
+## Public profiles
+
+`GET /api/v1/users/{user_id}/public` (any signed-in user) returns what others may see:
+`display_name` ("Priya S."), photo, bio, skills, completed categories, rating average/count,
+`completed_jobs` (as a provider), `verified` (identity verification approved), `member_since`, the
+latest 20 `reviews` (score, comment, reviewer's short name, tweak title) and up to 12 `portfolio`
+photos taken from completed jobs' completion photos. No phone, email, full last name or date of
+birth. Banned users, and users in a block relation with the viewer, return `404`.
+
+Mobile: `app/users/[id].tsx` (report button in the header). Opened from the applicant screen
+("View profile & reviews", which now also shows the applicant's name instead of an id) and the
+chat ⋮ menu.

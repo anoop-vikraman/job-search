@@ -6,8 +6,9 @@ from app.api.deps import CurrentUser, DbSession
 from app.schemas.chat import ChatParticipant
 from app.schemas.common import ErrorResponse, MessageResponse
 from app.schemas.moderation import BlockedUser
+from app.schemas.profile import PublicProfile
 from app.schemas.user import UpdateUserRequest, UserProfile
-from app.services import block_service
+from app.services import block_service, profile_service
 
 router = APIRouter(prefix="/users", tags=["users"])
 
@@ -16,6 +17,20 @@ router = APIRouter(prefix="/users", tags=["users"])
 async def get_me(user: CurrentUser) -> UserProfile:
     """Return the authenticated user's profile."""
     return UserProfile.model_validate(user)
+
+
+@router.get(
+    "/{user_id}/public",
+    response_model=PublicProfile,
+    status_code=status.HTTP_200_OK,
+    responses={404: {"model": ErrorResponse}},
+)
+async def get_public_profile(user_id: uuid.UUID, user: CurrentUser, db: DbSession) -> PublicProfile:
+    """Public profile: rating, reviews, completed jobs, portfolio photos, verified badge.
+
+    404 for banned users and when either side blocked the other.
+    """
+    return await profile_service.get_public_profile(db, user_id, user.id)
 
 
 @router.get("/me/blocks", response_model=list[BlockedUser], status_code=status.HTTP_200_OK)
