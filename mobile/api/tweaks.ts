@@ -27,8 +27,9 @@ export const tweaksApi = {
         return res.data;
     },
 
-    mine: async (params: TweakFeedParams = {}): Promise<Page<BackendTweak>> => {
-        const res = await api.get('/api/v1/tweaks/mine', { params });
+    /** All of the caller's tweaks (any status). Unpaginated: the backend returns a plain list. */
+    mine: async (): Promise<BackendTweak[]> => {
+        const res = await api.get('/api/v1/tweaks/mine');
         return res.data;
     },
 

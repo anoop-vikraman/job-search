@@ -46,8 +46,8 @@ export function useMyTweaks(): UseQueryResult<Tweak[]> {
     return useQuery({
         queryKey: queryKeys.tweaksMine(),
         queryFn: async (): Promise<Tweak[]> => {
-            const page = await tweaksApi.mine({ page: 1, limit: 50 });
-            return page.items.map((t) => backendTweakToLocal(t));
+            const tweaks = await tweaksApi.mine();
+            return tweaks.map((t) => backendTweakToLocal(t));
         },
     });
 }
