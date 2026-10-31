@@ -46,6 +46,8 @@ class Application(Base):
     )
     why_prefer_message: Mapped[str | None] = mapped_column(Text)
     quoted_price_minor: Mapped[int | None] = mapped_column(BigInteger)
+    agreed_price_minor: Mapped[int | None] = mapped_column(BigInteger)
+    platform_fee_minor: Mapped[int | None] = mapped_column(BigInteger)
     selected_slots: Mapped[list[dict[str, Any]]] = mapped_column(
         JSONB, nullable=False, default=list
     )

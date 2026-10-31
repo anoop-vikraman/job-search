@@ -3,6 +3,8 @@ from typing import Any
 from fastapi import APIRouter, status
 
 from app.api.deps import CurrentUser, DbSession
+from app.core.config import settings
+from app.core.errors import AppError
 from app.schemas.auth import (
     GenerateOtpRequest,
     LoginRequest,
@@ -12,7 +14,19 @@ from app.schemas.auth import (
     VerifyOtpRequest,
 )
 from app.schemas.common import ErrorResponse, MessageResponse
-from app.services import auth_service
+from app.services import auth_service, otp_service
+
+
+def _throttle(key: str) -> None:
+    if otp_service.rate_limited(
+        key, settings.RATE_LIMIT_MAX_ATTEMPTS, settings.RATE_LIMIT_WINDOW_SECONDS
+    ):
+        raise AppError(
+            status.HTTP_429_TOO_MANY_REQUESTS,
+            "RATE_LIMITED",
+            "Too many attempts. Please try again later.",
+        )
+
 
 router = APIRouter(prefix="/auth", tags=["auth"])
 
@@ -35,6 +49,7 @@ async def signup(data: SignupRequest, db: DbSession) -> TokenResponse:
 @router.post("/login", response_model=TokenResponse, responses=ERRORS)
 async def login(data: LoginRequest, db: DbSession) -> TokenResponse:
     """Authenticate with phone + password and return tokens."""
+    _throttle(f"login:{data.country_code}:{data.phone_number}")
     return await auth_service.login(db, data)
 
 
@@ -53,11 +68,22 @@ async def logout(user: CurrentUser, db: DbSession) -> MessageResponse:
 
 @router.post("/otp/generate", response_model=MessageResponse, responses=ERRORS)
 async def generate_otp(data: GenerateOtpRequest) -> MessageResponse:
-    """Send an OTP (stub: integrate an SMS provider)."""
-    return MessageResponse(message="OTP sent.")
+    """Generate and send an OTP.
+
+    Generates a 6-digit code and stores it (5-min TTL). Integrate an SMS provider to
+    deliver it; in non-production the code is returned in the response for testing.
+    """
+    _throttle(f"otp:{data.country_code}:{data.phone_number}")
+    code = otp_service.generate(data.country_code, data.phone_number, data.request_type)
+    # TODO: send `code` via SMS provider. Returned here only for dev/testing.
+    return MessageResponse(message=f"OTP sent. (dev code: {code})")
 
 
 @router.post("/otp/verify", response_model=MessageResponse, responses=ERRORS)
 async def verify_otp(data: VerifyOtpRequest) -> MessageResponse:
-    """Verify an OTP (stub: validate against the SMS provider)."""
+    """Verify an OTP against the stored code."""
+    _throttle(f"otp-verify:{data.country_code}:{data.phone_number}")
+    ok = otp_service.verify(data.country_code, data.phone_number, data.request_type, data.otp)
+    if not ok:
+        raise AppError(status.HTTP_400_BAD_REQUEST, "INVALID_OTP", "Invalid or expired OTP.")
     return MessageResponse(message="OTP verified.")

@@ -15,6 +15,16 @@ class Settings(BaseSettings):
 
     CORS_ORIGINS: str = "http://localhost:5173,http://localhost:8081"
 
+    # Platform fee taken from the provider's payout on completion (basis points; 500 = 5%).
+    PLATFORM_FEE_BPS: int = 500
+
+    # Login/OTP throttling.
+    RATE_LIMIT_MAX_ATTEMPTS: int = 5
+    RATE_LIMIT_WINDOW_SECONDS: int = 300
+
+    # Local media upload directory (served at /media).
+    MEDIA_DIR: str = "media_uploads"
+
     @property
     def cors_origins_list(self) -> list[str]:
         return [o.strip() for o in self.CORS_ORIGINS.split(",") if o.strip()]

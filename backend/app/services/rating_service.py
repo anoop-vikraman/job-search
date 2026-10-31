@@ -20,15 +20,16 @@ async def create_rating(db: AsyncSession, rater_id: uuid.UUID, data: RatingCreat
     tweak = await db.get(Tweak, data.tweak_id)
     if tweak is None:
         raise AppError(status.HTTP_404_NOT_FOUND, "TWEAK_NOT_FOUND", "Tweak not found.")
-    # Ratings only after completion (tweak closed with an accepted application).
-    if tweak.status != TweakStatus.closed:
+    # Ratings only after completion.
+    if tweak.status not in (TweakStatus.completed, TweakStatus.closed):
         raise AppError(
             status.HTTP_400_BAD_REQUEST, "TWEAK_NOT_COMPLETED", "Tweak is not completed."
         )
 
     accepted = await db.scalar(
         select(Application).where(
-            Application.tweak_id == tweak.id, Application.status == ApplicationStatus.accepted
+            Application.tweak_id == tweak.id,
+            Application.status.in_([ApplicationStatus.accepted, ApplicationStatus.completed]),
         )
     )
     if accepted is None:

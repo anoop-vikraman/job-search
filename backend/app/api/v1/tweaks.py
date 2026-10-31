@@ -127,3 +127,34 @@ async def counter_quote(
     """Counter an applicant's quote (lister only)."""
     offer = await application_service.counter_quote(db, application_id, user.id, data)
     return OfferResponse.model_validate(offer)
+
+
+@router.post(
+    "/applications/{application_id}/complete", response_model=ApplicationResponse, responses=ERRORS
+)
+async def complete_application(
+    application_id: uuid.UUID, user: CurrentUser, db: DbSession
+) -> ApplicationResponse:
+    """Mark accepted work complete (lister only); releases escrow minus platform fee."""
+    application = await application_service.complete(db, application_id, user.id)
+    return ApplicationResponse.model_validate(application)
+
+
+@router.post(
+    "/applications/{application_id}/cancel", response_model=ApplicationResponse, responses=ERRORS
+)
+async def cancel_application(
+    application_id: uuid.UUID, user: CurrentUser, db: DbSession
+) -> ApplicationResponse:
+    """Cancel accepted work (lister only); refunds the escrow hold to the lister."""
+    application = await application_service.cancel(db, application_id, user.id)
+    return ApplicationResponse.model_validate(application)
+
+
+@router.get("/{tweak_id}/applications", response_model=list[ApplicationResponse], responses=ERRORS)
+async def list_tweak_applications(
+    tweak_id: uuid.UUID, user: CurrentUser, db: DbSession
+) -> list[ApplicationResponse]:
+    """List applications for a tweak (owner only)."""
+    rows = await application_service.list_for_tweak(db, tweak_id, user.id)
+    return [ApplicationResponse.model_validate(a) for a in rows]

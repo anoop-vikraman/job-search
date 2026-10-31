@@ -1,7 +1,10 @@
+from pathlib import Path
+
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 from fastapi.routing import APIRoute
+from fastapi.staticfiles import StaticFiles
 from sqlalchemy import text
 
 from app.api.v1.router import api_router
@@ -31,6 +34,11 @@ app.add_middleware(
 
 register_exception_handlers(app)
 app.include_router(api_router)
+
+# Serve uploaded media at /media.
+_media_dir = Path(settings.MEDIA_DIR)
+_media_dir.mkdir(parents=True, exist_ok=True)
+app.mount("/media", StaticFiles(directory=str(_media_dir)), name="media")
 
 
 @app.get("/health", tags=["health"])

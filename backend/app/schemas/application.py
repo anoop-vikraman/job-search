@@ -27,6 +27,8 @@ class ApplicationResponse(ORMModel):
     provider_user_id: uuid.UUID
     why_prefer_message: str | None
     quoted_price_minor: int | None
+    agreed_price_minor: int | None
+    platform_fee_minor: int | None
     selected_slots: list[dict[str, Any]]
     status: ApplicationStatus
     applied_at: UtcDatetime

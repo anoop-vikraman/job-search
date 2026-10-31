@@ -86,16 +86,29 @@ async def release_hold(
     amount_minor: int,
     tweak_id: uuid.UUID,
     application_id: uuid.UUID,
+    fee_minor: int = 0,
 ) -> None:
-    """Completion: release the lister's hold to the provider's balance."""
+    """Completion: release the lister's hold to the provider (minus the platform fee).
+
+    The lister's full held amount is released; the provider receives
+    `amount_minor - fee_minor`, and `fee_minor` is recorded as a platform fee.
+    """
+    if fee_minor < 0 or fee_minor > amount_minor:
+        raise AppError(status.HTTP_400_BAD_REQUEST, "INVALID_FEE", "Invalid platform fee.")
     lister = await get_or_create_wallet(db, lister_user_id)
     if lister.held_minor < amount_minor:
         raise AppError(status.HTTP_400_BAD_REQUEST, "NO_HELD_FUNDS", "No matching held funds.")
     provider = await get_or_create_wallet(db, provider_user_id)
+
+    # Invariant: balance_minor == sum(completed txn amounts) per wallet. Releasing escrow
+    # only empties the lister's `held` (balance was already debited at hold time), so the
+    # lister's release entry is net-zero to the balance ledger.
     _record(
-        db, lister, TxnType.release, -amount_minor, tweak_id=tweak_id, application_id=application_id
+        db, lister, TxnType.release, 0, tweak_id=tweak_id, application_id=application_id
     )
     lister.held_minor -= amount_minor
+
+    # Provider is credited the full released amount, then the platform fee is debited.
     _record(
         db,
         provider,
@@ -105,6 +118,11 @@ async def release_hold(
         application_id=application_id,
     )
     provider.balance_minor += amount_minor
+    if fee_minor > 0:
+        _record(
+            db, provider, TxnType.fee, -fee_minor, tweak_id=tweak_id, application_id=application_id
+        )
+        provider.balance_minor -= fee_minor
 
 
 async def refund_hold(

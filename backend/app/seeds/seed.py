@@ -59,9 +59,7 @@ async def _clear(db: AsyncSession) -> None:
     app_ids = (
         await db.scalars(select(Application.id).where(Application.provider_user_id.in_(ids)))
     ).all()
-    tweak_ids = (
-        await db.scalars(select(Tweak.id).where(Tweak.created_by_user_id.in_(ids)))
-    ).all()
+    tweak_ids = (await db.scalars(select(Tweak.id).where(Tweak.created_by_user_id.in_(ids)))).all()
     await db.execute(delete(Rating).where(Rating.rater_user_id.in_(ids)))
     if app_ids:
         await db.execute(delete(Refund).where(Refund.application_id.in_(app_ids)))
@@ -172,7 +170,12 @@ async def _create_tweaks(db: AsyncSession, u: dict[str, User]) -> list[Tweak]:
 
 
 async def _application(
-    db: AsyncSession, tweak: Tweak, provider: User, *, quote: int | None, msg: str,
+    db: AsyncSession,
+    tweak: Tweak,
+    provider: User,
+    *,
+    quote: int | None,
+    msg: str,
     status: ApplicationStatus = ApplicationStatus.pending,
 ) -> Application:
     app = Application(
