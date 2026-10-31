@@ -115,6 +115,15 @@ See [wallet-and-escrow.md](./wallet-and-escrow.md#adding-money-razorpay) for the
 | GET | `/api/v1/admin/reports?status&target_type&page&limit` | admin |
 | POST | `/api/v1/admin/reports/{report_id}/resolve` | admin |
 
+### Identity verification (KYC)
+| Method | Path | Auth |
+|---|---|---|
+| GET | `/api/v1/kyc` | user |
+| POST | `/api/v1/kyc` | user (multipart) |
+| GET | `/api/v1/admin/kyc?status&page&limit` | admin |
+| GET | `/api/v1/admin/kyc/{submission_id}/documents/{index}` | admin |
+| POST | `/api/v1/admin/kyc/{submission_id}/review` | admin |
+
 ### Devices (push)
 | Method | Path | Auth |
 |---|---|---|
@@ -162,6 +171,8 @@ See [wallet-and-escrow.md](./wallet-and-escrow.md#adding-money-razorpay) for the
 | `INVALID_SIGNATURE` / `PAYMENT_MISMATCH` / `PAYMENT_NOT_CAPTURED` | Top-up verification failures |
 | `ORDER_ALREADY_PAID` | Order credited by a different payment |
 | `SIMULATED_TOPUP_DISABLED` | Legacy top-up turned off |
+| `KYC_REQUIRED` / `UPI_NOT_VERIFIED` | Withdrawal before verification / to another UPI id |
+| `KYC_PENDING` / `ALREADY_VERIFIED` | Duplicate verification submission |
 | `USER_BLOCKED` | Applying to / chatting with a blocked (or blocking) user |
 | `ALREADY_REPORTED` | Duplicate open report |
 | `WORK_SUBMITTED` | Lister cancel after the provider marked work done |

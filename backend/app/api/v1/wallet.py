@@ -125,11 +125,16 @@ async def razorpay_webhook(
     "/payouts",
     response_model=PayoutResponse,
     status_code=status.HTTP_201_CREATED,
-    responses={400: {"model": ErrorResponse}, 422: {"model": ErrorResponse}},
+    responses={
+        400: {"model": ErrorResponse},
+        403: {"model": ErrorResponse},
+        422: {"model": ErrorResponse},
+    },
 )
 async def request_payout(data: PayoutCreate, user: CurrentUser, db: DbSession) -> PayoutResponse:
-    """Withdraw to a UPI id. The amount leaves the balance now; an admin sends the transfer."""
-    payout = await payment_service.request_payout(db, user.id, data.amount_minor, data.upi_id)
+    """Withdraw to your verified UPI id (requires KYC). The amount leaves the balance now;
+    an admin sends the transfer."""
+    payout = await payment_service.request_payout(db, user, data.amount_minor, data.upi_id)
     return PayoutResponse.model_validate(payout)
 
 

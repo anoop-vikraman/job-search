@@ -3,7 +3,9 @@ import type {
   Application,
   Dispute,
   DisputeOutcome,
+  KycSubmission,
   Page,
+  Payout,
   Refund,
   Report,
   Transaction,
@@ -104,4 +106,36 @@ export interface ReportResolution {
 
 export async function resolveReport(reportId: string, body: ReportResolution): Promise<void> {
   await api.post(`/admin/reports/${reportId}/resolve`, body);
+}
+
+export async function listKyc(page: number, status?: string): Promise<Page<KycSubmission>> {
+  const res = await api.get<Page<KycSubmission>>("/admin/kyc", withPage(page, { status }));
+  return res.data;
+}
+
+/** Fetch a private KYC document with the admin token and open it in a new tab. */
+export async function openKycDocument(submissionId: string, index: number): Promise<void> {
+  const res = await api.get<Blob>(`/admin/kyc/${submissionId}/documents/${index}`, {
+    responseType: "blob",
+  });
+  const url = URL.createObjectURL(res.data);
+  window.open(url, "_blank", "noopener");
+  // Give the new tab time to load before revoking.
+  setTimeout(() => URL.revokeObjectURL(url), 60_000);
+}
+
+export async function reviewKyc(submissionId: string, approve: boolean, reason?: string): Promise<void> {
+  await api.post(`/admin/kyc/${submissionId}/review`, { approve, reason });
+}
+
+export async function listPayouts(page: number, status?: string): Promise<Page<Payout>> {
+  const res = await api.get<Page<Payout>>("/admin/payouts", withPage(page, { status }));
+  return res.data;
+}
+
+export async function decidePayout(
+  payoutId: string,
+  body: { approve: boolean; reference?: string; reason?: string },
+): Promise<void> {
+  await api.post(`/admin/payouts/${payoutId}/decide`, body);
 }

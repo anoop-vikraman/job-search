@@ -354,6 +354,14 @@ Required by steering: rotatable refresh tokens persisted in DB.
   CHECK), `auto_release_at`; `application_status` gains `disputed`; `notification_type` gains
   `work_submitted`, `dispute_opened`, `dispute_resolved`.
 
+### kyc_submissions
+- `user_id` (FK CASCADE), `status` kyc_status (`pending`,`approved`,`rejected`), `full_name`,
+  `id_type` kyc_id_type, `id_number_last4` CHAR(4), `document_keys` JSONB array (file names in the
+  private KYC_DIR), `upi_id`, `rejection_reason`, `reviewed_by_user_id`, `reviewed_at`.
+  `uq_kyc_one_pending_per_user (user_id) WHERE status='pending'`; indexes `(user_id, created_at)`,
+  `(status, created_at)`.
+- `users` gains `kyc_verified_at`.
+
 ### reports / blocks
 - `reports`: `reporter_user_id`, `target_type` report_target (`user`,`tweak`,`message`), `target_id`,
   `target_user_id` (accountable user), `reason` report_reason, `details`, `status` report_status

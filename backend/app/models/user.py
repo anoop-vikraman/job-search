@@ -41,6 +41,8 @@ class User(Base):
     )
     is_phone_verified: Mapped[bool] = mapped_column(Boolean, nullable=False, default=False)
     is_banned: Mapped[bool] = mapped_column(Boolean, nullable=False, default=False)
+    # Set when an admin approves identity verification (KYC).
+    kyc_verified_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
     banned_reason: Mapped[str | None] = mapped_column(Text)
     created_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True), nullable=False, server_default=func.now()

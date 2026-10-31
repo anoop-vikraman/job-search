@@ -5,10 +5,18 @@ import { ActivityIndicator, FlatList, Modal, Pressable, Text, TextInput, Touchab
 import { ScreenWrapper } from '../../components/ScreenWrapper';
 import { Toast } from '../../components/UI/ToastManager';
 import RazorpayCheckout, { type CheckoutPrefill } from '../../components/Wallet/RazorpayCheckout';
-import { useCreateTopupOrder, useVerifyTopup, useWallet, useWalletTransactions } from '../../hooks/useWallet';
+import {
+    useCreateTopupOrder,
+    useKycStatus,
+    usePayouts,
+    useRequestPayout,
+    useVerifyTopup,
+    useWallet,
+    useWalletTransactions,
+} from '../../hooks/useWallet';
 import { useAuthStore } from '../../store/useAuthStore';
 import { formatMinor, toMinor } from '../../utils/money';
-import type { RazorpaySuccess, TopupOrder, Transaction } from '../../types/api';
+import type { Payout, RazorpaySuccess, TopupOrder, Transaction } from '../../types/api';
 import { useTheme } from '@/themes/ThemeProvider';
 import { themeColors } from '@/themes/colors';
 
@@ -16,6 +24,13 @@ import { themeColors } from '@/themes/colors';
 const MIN_TOPUP_RUPEES = 1;
 const MAX_TOPUP_RUPEES = 100000;
 const QUICK_AMOUNTS = [100, 500, 1000, 2000];
+const MIN_WITHDRAW_RUPEES = 100; // backend PAYOUT_MIN_MINOR
+
+const PAYOUT_STATUS: Record<Payout['status'], { label: string; color: string }> = {
+    requested: { label: 'Processing', color: '#D97706' },
+    paid: { label: 'Sent', color: '#16A34A' },
+    rejected: { label: 'Returned', color: '#DC2626' },
+};
 
 function transactionLabel(t: Transaction): string {
     if (t.type === 'payout') return t.amount_minor < 0 ? 'Withdrawal' : 'Withdrawal reversed';
@@ -35,6 +50,11 @@ export default function WalletPage(): React.JSX.Element {
     const [sheetOpen, setSheetOpen] = useState(false);
     const [amountText, setAmountText] = useState('');
     const [order, setOrder] = useState<TopupOrder | null>(null);
+    const [withdrawOpen, setWithdrawOpen] = useState(false);
+    const [withdrawText, setWithdrawText] = useState('');
+    const { data: kyc } = useKycStatus();
+    const { data: payouts = [] } = usePayouts();
+    const requestPayout = useRequestPayout();
 
     const walletBalanceMinor = wallet?.balance_minor ?? 0;
     const currency = wallet?.currency ?? 'INR';
@@ -58,6 +78,23 @@ export default function WalletPage(): React.JSX.Element {
             onSuccess: (created) => {
                 setSheetOpen(false);
                 setOrder(created);
+            },
+        });
+    };
+
+    const withdrawAmount = Number(withdrawText);
+    const withdrawValid =
+        Number.isFinite(withdrawAmount) &&
+        withdrawAmount >= MIN_WITHDRAW_RUPEES &&
+        toMinor(withdrawAmount) <= walletBalanceMinor;
+
+    const submitWithdraw = (): void => {
+        if (!withdrawValid) return;
+        requestPayout.mutate(toMinor(withdrawAmount), {
+            onSuccess: (p) => {
+                setWithdrawOpen(false);
+                setWithdrawText('');
+                Toast.success(`${formatMinor(p.amount_minor, currency)} is on its way to ${p.upi_id}`);
             },
         });
     };
@@ -110,10 +147,11 @@ export default function WalletPage(): React.JSX.Element {
                                         Held: {formatMinor(wallet.held_minor, currency)}
                                     </Text>
                                 )}
+                                <View style={{ flexDirection: 'row', gap: 10, marginTop: 20 }}>
                                 <TouchableOpacity
                                     onPress={() => setSheetOpen(true)}
                                     disabled={busy}
-                                    style={{ marginTop: 20, alignSelf: 'flex-start', flexDirection: 'row', alignItems: 'center', gap: 6, backgroundColor: 'rgba(255,255,255,0.22)', paddingHorizontal: 16, paddingVertical: 10, borderRadius: 14 }}
+                                    style={{ flexDirection: 'row', alignItems: 'center', gap: 6, backgroundColor: 'rgba(255,255,255,0.22)', paddingHorizontal: 16, paddingVertical: 10, borderRadius: 14 }}
                                     accessibilityRole="button"
                                     accessibilityLabel="Add money"
                                 >
@@ -126,9 +164,37 @@ export default function WalletPage(): React.JSX.Element {
                                         {verify.isPending ? 'Confirming payment…' : 'Add money'}
                                     </Text>
                                 </TouchableOpacity>
+                                <TouchableOpacity
+                                    onPress={() => setWithdrawOpen(true)}
+                                    style={{ flexDirection: 'row', alignItems: 'center', gap: 6, backgroundColor: 'rgba(255,255,255,0.22)', paddingHorizontal: 16, paddingVertical: 10, borderRadius: 14 }}
+                                    accessibilityRole="button"
+                                    accessibilityLabel="Withdraw"
+                                >
+                                    <Ionicons name="arrow-up-circle" size={18} color="#fff" />
+                                    <Text style={{ color: '#fff', fontWeight: '800', fontSize: 15 }}>Withdraw</Text>
+                                </TouchableOpacity>
+                                </View>
                             </View>
                         </View>
 
+                        {payouts.length > 0 && (
+                            <View className="px-6 mb-4">
+                                <Text className="font-bold text-lg text-gray-900 dark:text-slate-50 mb-3">Withdrawals</Text>
+                                {payouts.slice(0, 5).map((p) => (
+                                    <View key={p.id} className="bg-white dark:bg-slate-900 rounded-2xl p-4 mb-2 border border-gray-100 dark:border-slate-700 flex-row justify-between items-center">
+                                        <View style={{ flex: 1 }}>
+                                            <Text className="font-semibold text-gray-900 dark:text-slate-50">{formatMinor(p.amount_minor, currency)} → {p.upi_id}</Text>
+                                            <Text className="text-gray-500 dark:text-slate-400 text-xs mt-1">
+                                                {new Date(p.created_at).toLocaleDateString()}
+                                                {p.reference ? ` · Ref ${p.reference}` : ''}
+                                                {p.failure_reason ? ` · ${p.failure_reason}` : ''}
+                                            </Text>
+                                        </View>
+                                        <Text style={{ color: PAYOUT_STATUS[p.status].color, fontWeight: '800', fontSize: 12 }}>{PAYOUT_STATUS[p.status].label}</Text>
+                                    </View>
+                                ))}
+                            </View>
+                        )}
                         <View className="px-6">
                             <Text className="font-bold text-lg text-gray-900 dark:text-slate-50 mb-4">Transactions</Text>
                         </View>
@@ -216,6 +282,75 @@ export default function WalletPage(): React.JSX.Element {
                             <Ionicons name="shield-checkmark-outline" size={14} color={colors.textMuted} />
                             <Text style={{ fontSize: 12, color: colors.textMuted }}>UPI, cards and netbanking via Razorpay</Text>
                         </View>
+                    </Pressable>
+                </Pressable>
+            </Modal>
+
+            {/* Withdraw sheet */}
+            <Modal visible={withdrawOpen} transparent animationType="slide" onRequestClose={() => setWithdrawOpen(false)}>
+                <Pressable style={{ flex: 1, backgroundColor: 'rgba(0,0,0,0.5)', justifyContent: 'flex-end' }} onPress={() => setWithdrawOpen(false)}>
+                    <Pressable style={{ backgroundColor: colors.surface, borderTopLeftRadius: 24, borderTopRightRadius: 24, padding: 20, paddingBottom: 32 }}>
+                        <Text style={{ fontSize: 18, fontWeight: '800', color: colors.text, marginBottom: 8 }}>Withdraw</Text>
+                        {!kyc?.verified ? (
+                            <>
+                                <Text style={{ fontSize: 14, color: colors.textSecondary }}>
+                                    {kyc?.latest?.status === 'pending'
+                                        ? 'Your identity verification is in review. You can withdraw once it is approved.'
+                                        : 'Verify your identity once to start withdrawing your earnings to UPI.'}
+                                </Text>
+                                {kyc?.latest?.status !== 'pending' && (
+                                    <TouchableOpacity
+                                        onPress={() => {
+                                            setWithdrawOpen(false);
+                                            router.push('/wallet/verify');
+                                        }}
+                                        style={{ marginTop: 16, backgroundColor: themeColors.primary, paddingVertical: 15, borderRadius: 14, alignItems: 'center' }}
+                                        accessibilityRole="button"
+                                    >
+                                        <Text style={{ color: '#fff', fontSize: 16, fontWeight: '800' }}>Verify identity</Text>
+                                    </TouchableOpacity>
+                                )}
+                            </>
+                        ) : (
+                            <>
+                                <Text style={{ fontSize: 13, color: colors.textSecondary, marginBottom: 12 }}>
+                                    Available {formatMinor(walletBalanceMinor, currency)} · paid to {kyc.latest?.upi_id}
+                                </Text>
+                                <View style={{ flexDirection: 'row', alignItems: 'center', backgroundColor: colors.surfaceMuted, borderRadius: 14, borderWidth: 1, borderColor: colors.border, paddingHorizontal: 14 }}>
+                                    <Text style={{ fontSize: 24, fontWeight: '800', color: colors.textSecondary, marginRight: 6 }}>₹</Text>
+                                    <TextInput
+                                        value={withdrawText}
+                                        onChangeText={(t) => setWithdrawText(t.replace(/[^0-9]/g, ''))}
+                                        placeholder="Amount"
+                                        placeholderTextColor={colors.textMuted}
+                                        keyboardType="number-pad"
+                                        maxLength={7}
+                                        style={{ flex: 1, paddingVertical: 14, fontSize: 24, fontWeight: '800', color: colors.text }}
+                                        accessibilityLabel="Withdrawal amount in rupees"
+                                    />
+                                    <TouchableOpacity onPress={() => setWithdrawText(String(Math.floor(walletBalanceMinor / 100)))}>
+                                        <Text style={{ color: themeColors.primary, fontWeight: '700' }}>Max</Text>
+                                    </TouchableOpacity>
+                                </View>
+                                {withdrawText.length > 0 && !withdrawValid && (
+                                    <Text style={{ color: '#DC2626', fontSize: 12, marginTop: 8 }}>
+                                        Minimum ₹{MIN_WITHDRAW_RUPEES}, up to your available balance.
+                                    </Text>
+                                )}
+                                <TouchableOpacity
+                                    onPress={submitWithdraw}
+                                    disabled={!withdrawValid || requestPayout.isPending}
+                                    style={{ marginTop: 20, backgroundColor: themeColors.primary, opacity: !withdrawValid || requestPayout.isPending ? 0.5 : 1, paddingVertical: 15, borderRadius: 14, alignItems: 'center', flexDirection: 'row', justifyContent: 'center', gap: 8 }}
+                                    accessibilityRole="button"
+                                >
+                                    {requestPayout.isPending && <ActivityIndicator size="small" color="#fff" />}
+                                    <Text style={{ color: '#fff', fontSize: 16, fontWeight: '800' }}>Withdraw</Text>
+                                </TouchableOpacity>
+                                <Text style={{ fontSize: 12, color: colors.textMuted, textAlign: 'center', marginTop: 10 }}>
+                                    Transfers are usually sent within 1 working day.
+                                </Text>
+                            </>
+                        )}
                     </Pressable>
                 </Pressable>
             </Modal>

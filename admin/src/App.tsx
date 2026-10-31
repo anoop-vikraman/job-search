@@ -5,7 +5,9 @@ import { AppLayout } from "@/components/layout/AppLayout";
 import { useAuthStore } from "@/features/auth/store";
 import { ApplicationsPage } from "@/pages/ApplicationsPage";
 import { DisputesPage } from "@/pages/DisputesPage";
+import { KycPage } from "@/pages/KycPage";
 import { LoginPage } from "@/pages/LoginPage";
+import { PayoutsPage } from "@/pages/PayoutsPage";
 import { RefundsPage } from "@/pages/RefundsPage";
 import { ReportsPage } from "@/pages/ReportsPage";
 import { TransactionsPage } from "@/pages/TransactionsPage";
@@ -35,6 +37,8 @@ export function App(): React.JSX.Element {
         <Route path="/refunds" element={<RefundsPage />} />
         <Route path="/disputes" element={<DisputesPage />} />
         <Route path="/reports" element={<ReportsPage />} />
+        <Route path="/kyc" element={<KycPage />} />
+        <Route path="/payouts" element={<PayoutsPage />} />
       </Route>
       <Route path="*" element={<Navigate to="/users" replace />} />
     </Routes>

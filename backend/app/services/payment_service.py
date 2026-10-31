@@ -19,8 +19,9 @@ from app.core.config import settings
 from app.core.errors import AppError
 from app.models.enums import NotificationType, PaymentStatus, PayoutStatus
 from app.models.payment import PaymentOrder, Payout
+from app.models.user import User
 from app.models.wallet import WalletTransaction
-from app.services import notification_service, razorpay_client, wallet_service
+from app.services import kyc_service, notification_service, razorpay_client, wallet_service
 
 logger = logging.getLogger(__name__)
 
@@ -221,9 +222,31 @@ async def handle_webhook(db: AsyncSession, body: bytes, signature: str | None) -
 
 
 async def request_payout(
-    db: AsyncSession, user_id: uuid.UUID, amount_minor: int, upi_id: str
+    db: AsyncSession, user: User, amount_minor: int, upi_id: str | None = None
 ) -> Payout:
-    """Withdraw to UPI. Funds leave the balance now; an admin sends the transfer."""
+    """Withdraw to UPI. Funds leave the balance now; an admin sends the transfer.
+
+    With KYC_REQUIRED_FOR_PAYOUT (default) the user must be verified and the money goes to
+    the UPI id checked during verification.
+    """
+    user_id = user.id
+    if settings.KYC_REQUIRED_FOR_PAYOUT:
+        verified = await kyc_service.verified_upi(db, user)
+        if verified is None:
+            raise AppError(
+                status.HTTP_403_FORBIDDEN,
+                "KYC_REQUIRED",
+                "Verify your identity before withdrawing.",
+            )
+        if upi_id is not None and upi_id != verified:
+            raise AppError(
+                status.HTTP_400_BAD_REQUEST,
+                "UPI_NOT_VERIFIED",
+                "Withdrawals go to the UPI id you verified.",
+            )
+        upi_id = verified
+    elif upi_id is None:
+        raise AppError(status.HTTP_422_UNPROCESSABLE_ENTITY, "UPI_REQUIRED", "Enter a UPI id.")
     if amount_minor < settings.PAYOUT_MIN_MINOR:
         raise AppError(
             status.HTTP_400_BAD_REQUEST,

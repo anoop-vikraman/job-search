@@ -19,7 +19,7 @@ from app.models.payment import PaymentOrder
 from app.models.user import User
 from app.models.wallet import WalletTransaction
 from app.services import payment_service, razorpay_client, wallet_service
-from tests.conftest import make_user
+from tests.conftest import make_user, verify_kyc
 
 KEY_SECRET = "test_secret_123"
 WEBHOOK_SECRET = "whsec_456"
@@ -357,14 +357,22 @@ async def test_legacy_topup_guards(
 async def test_payout_debits_and_rejection_recredits(db: AsyncSession) -> None:
     user = await make_user(db, balance_minor=50000)
     with pytest.raises(AppError) as exc:
-        await payment_service.request_payout(db, user.id, 60000, "priya@okicici")
+        await payment_service.request_payout(db, user, 20000)
+    assert exc.value.code == "KYC_REQUIRED"
+    await verify_kyc(db, user, "priya@okicici")
+    with pytest.raises(AppError) as exc:
+        await payment_service.request_payout(db, user, 20000, "someone.else@ybl")
+    assert exc.value.code == "UPI_NOT_VERIFIED"
+    with pytest.raises(AppError) as exc:
+        await payment_service.request_payout(db, user, 60000)
     assert exc.value.code == "INSUFFICIENT_BALANCE"
     with pytest.raises(AppError) as exc:
-        await payment_service.request_payout(db, user.id, 500, "priya@okicici")
+        await payment_service.request_payout(db, user, 500)
     assert exc.value.code == "AMOUNT_OUT_OF_RANGE"
 
-    payout = await payment_service.request_payout(db, user.id, 20000, "priya@okicici")
+    payout = await payment_service.request_payout(db, user, 20000)
     assert payout.status == PayoutStatus.requested
+    assert payout.upi_id == "priya@okicici"
     assert payout.debit_txn_id is not None
     assert await _balance(db, user) == 30000
 
@@ -384,7 +392,8 @@ async def test_payout_debits_and_rejection_recredits(db: AsyncSession) -> None:
 
 async def test_payout_approval_requires_reference(db: AsyncSession) -> None:
     user = await make_user(db, balance_minor=50000)
-    payout = await payment_service.request_payout(db, user.id, 20000, "sam@ybl")
+    await verify_kyc(db, user)
+    payout = await payment_service.request_payout(db, user, 20000)
     with pytest.raises(AppError) as exc:
         await payment_service.decide_payout(
             db, payout.id, approve=True, reference=None, reason=None
@@ -400,6 +409,7 @@ async def test_payout_approval_requires_reference(db: AsyncSession) -> None:
 async def test_payout_http_and_admin(client: AsyncClient, db: AsyncSession) -> None:
     user = await make_user(db, balance_minor=50000)
     admin = await make_user(db, role=UserRole.admin)
+    await verify_kyc(db, user, "user.name@okaxis")
 
     bad_upi = await client.post(
         "/api/v1/wallet/payouts",

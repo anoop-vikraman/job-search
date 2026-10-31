@@ -54,8 +54,9 @@ class WebhookAck(BaseModel):
 
 class PayoutCreate(BaseModel):
     amount_minor: int = Field(gt=0)
-    upi_id: str = Field(
-        pattern=r"^[A-Za-z0-9.\-_]{2,256}@[A-Za-z][A-Za-z0-9]{1,63}$", max_length=100
+    # Optional: defaults to the UPI id from the user's approved verification.
+    upi_id: str | None = Field(
+        None, pattern=r"^[A-Za-z0-9.\-_]{2,256}@[A-Za-z][A-Za-z0-9]{1,63}$", max_length=100
     )
 
 

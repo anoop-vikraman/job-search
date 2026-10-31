@@ -100,3 +100,27 @@ def same_session(db: AsyncSession) -> Callable[[], AbstractAsyncContextManager[A
         yield db
 
     return _factory
+
+
+async def verify_kyc(db: AsyncSession, user: User, upi_id: str = "test.user@okaxis") -> None:
+    """Mark `user` identity-verified with an approved submission (for payout tests)."""
+    from datetime import UTC, datetime
+
+    from app.models.enums import KycIdType, KycStatus
+    from app.models.kyc import KycSubmission
+
+    now = datetime.now(UTC)
+    db.add(
+        KycSubmission(
+            user_id=user.id,
+            status=KycStatus.approved,
+            full_name="Test User",
+            id_type=KycIdType.pan,
+            id_number_last4="1234",
+            document_keys=[],
+            upi_id=upi_id,
+            reviewed_at=now,
+        )
+    )
+    user.kyc_verified_at = now
+    await db.flush()

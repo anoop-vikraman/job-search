@@ -237,6 +237,41 @@ export interface RazorpaySuccess {
     razorpay_signature: string;
 }
 
+export type PayoutStatus = 'requested' | 'paid' | 'rejected';
+
+export interface Payout {
+    id: string;
+    amount_minor: number;
+    currency: string;
+    upi_id: string;
+    status: PayoutStatus;
+    reference: string | null;
+    failure_reason: string | null;
+    created_at: string;
+    processed_at: string | null;
+}
+
+export type KycIdType = 'aadhaar' | 'pan' | 'passport' | 'driving_licence' | 'voter_id';
+export type KycStatus = 'pending' | 'approved' | 'rejected';
+
+export interface KycSubmission {
+    id: string;
+    status: KycStatus;
+    full_name: string;
+    id_type: KycIdType;
+    id_number_last4: string;
+    upi_id: string;
+    rejection_reason: string | null;
+    reviewed_at: string | null;
+    created_at: string;
+}
+
+export interface KycStatusResponse {
+    verified: boolean;
+    verified_at: string | null;
+    latest: KycSubmission | null;
+}
+
 export interface TopupVerifyResponse {
     status: 'created' | 'paid' | 'failed';
     transaction: Transaction;

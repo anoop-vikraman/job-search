@@ -23,6 +23,7 @@ class UserProfile(ORMModel):
     rating_count: int
     role: UserRole
     is_banned: bool
+    kyc_verified_at: UtcDatetime | None = None
     created_at: UtcDatetime
 
 

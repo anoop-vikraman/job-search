@@ -126,3 +126,36 @@ export interface Report {
   created_at: string;
   open_reports_against_user: number;
 }
+
+export type KycStatus = "pending" | "approved" | "rejected";
+
+export interface KycSubmission {
+  id: string;
+  status: KycStatus;
+  full_name: string;
+  id_type: string;
+  id_number_last4: string;
+  upi_id: string;
+  rejection_reason: string | null;
+  reviewed_at: string | null;
+  created_at: string;
+  user_id: string;
+  user_name: string;
+  user_phone: string;
+  document_count: number;
+}
+
+export type PayoutStatus = "requested" | "paid" | "rejected";
+
+export interface Payout {
+  id: string;
+  user_id: string;
+  amount_minor: number;
+  currency: string;
+  upi_id: string;
+  status: PayoutStatus;
+  reference: string | null;
+  failure_reason: string | null;
+  created_at: string;
+  processed_at: string | null;
+}

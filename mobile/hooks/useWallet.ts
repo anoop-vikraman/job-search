@@ -6,8 +6,12 @@ import {
     type UseQueryResult,
 } from '@tanstack/react-query';
 
+import { kycApi, type KycSubmitInput } from '../api/kyc';
 import { walletApi } from '../api/wallet';
 import type {
+    KycStatusResponse,
+    KycSubmission,
+    Payout,
     RazorpaySuccess,
     TopupOrder,
     TopupVerifyResponse,
@@ -51,5 +55,39 @@ export function useVerifyTopup(): UseMutationResult<TopupVerifyResponse, Error, 
             qc.invalidateQueries({ queryKey: queryKeys.walletTransactions() });
             qc.invalidateQueries({ queryKey: queryKeys.notifications() });
         },
+    });
+}
+
+export function usePayouts(): UseQueryResult<Payout[]> {
+    return useQuery({
+        queryKey: queryKeys.payouts(),
+        queryFn: async (): Promise<Payout[]> => (await walletApi.listPayouts()).items,
+    });
+}
+
+export function useRequestPayout(): UseMutationResult<Payout, Error, number> {
+    const qc = useQueryClient();
+    return useMutation({
+        mutationFn: (amountMinor: number) => walletApi.requestPayout(amountMinor),
+        onSuccess: () => {
+            qc.invalidateQueries({ queryKey: queryKeys.payouts() });
+            qc.invalidateQueries({ queryKey: queryKeys.wallet() });
+            qc.invalidateQueries({ queryKey: queryKeys.walletTransactions() });
+        },
+    });
+}
+
+export function useKycStatus(): UseQueryResult<KycStatusResponse> {
+    return useQuery({
+        queryKey: queryKeys.kyc(),
+        queryFn: (): Promise<KycStatusResponse> => kycApi.status(),
+    });
+}
+
+export function useSubmitKyc(): UseMutationResult<KycSubmission, Error, KycSubmitInput> {
+    const qc = useQueryClient();
+    return useMutation({
+        mutationFn: (input: KycSubmitInput) => kycApi.submit(input),
+        onSuccess: () => qc.invalidateQueries({ queryKey: queryKeys.kyc() }),
     });
 }

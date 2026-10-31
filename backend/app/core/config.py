@@ -27,6 +27,10 @@ class Settings(BaseSettings):
 
     # Local media upload directory (served at /media).
     MEDIA_DIR: str = "media_uploads"
+    # Private identity documents; never mounted as static files.
+    KYC_DIR: str = "kyc_private"
+    # Withdrawals need approved identity verification.
+    KYC_REQUIRED_FOR_PAYOUT: bool = True
 
     # Expo push (sent after each committed Notification). Disable to skip all push HTTP calls.
     EXPO_PUSH_ENABLED: bool = True

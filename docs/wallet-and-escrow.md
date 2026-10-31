@@ -92,12 +92,26 @@ tunnel domains; their docs suggest zrok for local testing.
 
 ## Withdrawals (payouts)
 
-`POST /wallet/payouts { amount_minor, upi_id }` (minimum ₹100) debits the balance immediately
-(`payout` ledger row, wallet row locked against concurrent withdrawals) and creates a `payouts`
-record with status `requested`. Sending the money is manual for now: an admin calls
-`POST /admin/payouts/{id}/decide` with `{ approve: true, reference: "<UTR>" }` to mark it `paid`,
-or `{ approve: false, reason }` to reject it, which re-credits the wallet. The user is notified
-either way. Automated transfers (RazorpayX Payouts) are not integrated.
+Withdrawals need **identity verification** (`KYC_REQUIRED_FOR_PAYOUT=true`, default):
+
+1. The user submits `POST /api/v1/kyc` (multipart: `full_name`, `id_type`
+   aadhaar|pan|passport|driving_licence|voter_id, `id_number`, `upi_id`, 1–3 `documents`
+   JPG/PNG/WebP/PDF ≤ 8 MB). Documents are written to the private `KYC_DIR` (not under `/media`,
+   git-ignored) with random names; only the last 4 characters of the ID number are stored. One
+   pending submission at a time (`409 KYC_PENDING`).
+2. An admin reviews it in the panel's **Verification** page: documents open through
+   `GET /admin/kyc/{id}/documents/{n}` (admin token, `Cache-Control: no-store`), then
+   `POST /admin/kyc/{id}/review { approve, reason? }` (reason required to reject). Approval sets
+   `users.kyc_verified_at`; the user is notified either way and can resubmit after a rejection.
+3. `GET /api/v1/kyc` → `{ verified, verified_at, latest }` for the app.
+
+`POST /wallet/payouts { amount_minor }` (minimum ₹100) then pays out to the **verified UPI id**
+(`403 KYC_REQUIRED` if unverified, `400 UPI_NOT_VERIFIED` if a different `upi_id` is sent). It
+debits the balance immediately (`payout` ledger row, wallet row locked against concurrent
+withdrawals) and creates a `payouts` record with status `requested`. An admin sends the transfer
+and marks it in the panel's **Payouts** page (`POST /admin/payouts/{id}/decide`
+`{ approve: true, reference: "<UTR>" }`), or rejects it with a reason, which re-credits the wallet.
+The user is notified either way. Automated transfers (RazorpayX Payouts) are not integrated.
 
 ## Endpoints
 
@@ -108,19 +122,25 @@ either way. Automated transfers (RazorpayX Payouts) are not integrated.
 | POST | `/api/v1/wallet/topup/order` | Create a Razorpay order (201) |
 | POST | `/api/v1/wallet/topup/verify` | Verify Checkout result and credit (idempotent) |
 | POST | `/api/v1/wallet/razorpay/webhook` | Razorpay events (HMAC-verified, no auth) |
-| POST | `/api/v1/wallet/payouts` | Request a UPI withdrawal (201) |
+| POST | `/api/v1/wallet/payouts` | Withdraw to the verified UPI id (201) |
 | GET | `/api/v1/wallet/payouts?page&limit` | Caller's withdrawals |
 | GET | `/api/v1/wallet/transactions?page&limit` | Paginated ledger, newest first |
+| GET | `/api/v1/kyc` | Verification status |
+| POST | `/api/v1/kyc` | Submit identity documents (multipart) |
+| GET | `/api/v1/admin/kyc?status&page&limit` | Admin verification queue |
+| GET | `/api/v1/admin/kyc/{id}/documents/{n}` | Admin: view a document |
+| POST | `/api/v1/admin/kyc/{id}/review` | Admin: approve / reject |
 | GET | `/api/v1/admin/payouts?status&page&limit` | Admin withdrawal queue |
 | POST | `/api/v1/admin/payouts/{id}/decide` | Admin: mark paid / reject |
 
 ## Mobile
 `app/wallet/index.tsx` renders the balance card, an **Add money** sheet (amount + quick picks),
-and the ledger (signed amounts: green credits, red debits). Paying opens
+a **Withdraw** sheet (verification prompt if needed, then amount → verified UPI), recent
+withdrawals with status, and the ledger (signed amounts: green credits, red debits).
+`app/wallet/verify.tsx` collects the identity details and ID photos. Paying opens
 `components/Wallet/RazorpayCheckout.tsx`: Razorpay Standard Checkout (`checkout.js`) inside a
 `react-native-webview`, which hands `upi://` and other app links to the OS so UPI apps open. On
-success the app calls verify; if that call fails, the webhook still credits the payment. There is
-no withdrawal UI in the app yet.
+success the app calls verify; if that call fails, the webhook still credits the payment.
 
 ## Admin
 `src/pages/TransactionsPage.tsx` shows the full cross-user ledger (type, amount, status,

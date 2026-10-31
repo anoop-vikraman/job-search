@@ -79,6 +79,20 @@ class TxnStatus(str, enum.Enum):
     reversed = "reversed"
 
 
+class KycStatus(str, enum.Enum):
+    pending = "pending"
+    approved = "approved"
+    rejected = "rejected"
+
+
+class KycIdType(str, enum.Enum):
+    aadhaar = "aadhaar"
+    pan = "pan"
+    passport = "passport"
+    driving_licence = "driving_licence"
+    voter_id = "voter_id"
+
+
 class ReportTarget(str, enum.Enum):
     user = "user"
     tweak = "tweak"

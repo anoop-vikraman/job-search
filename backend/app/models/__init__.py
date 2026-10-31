@@ -4,6 +4,7 @@ from app.models.chat import Conversation, Message
 from app.models.device_token import DeviceToken
 from app.models.dispute import Dispute
 from app.models.job import Job
+from app.models.kyc import KycSubmission
 from app.models.moderation import Block, Report
 from app.models.notification import Notification
 from app.models.notification_preference import NotificationPreference
@@ -25,6 +26,7 @@ __all__ = [
     "DeviceToken",
     "Dispute",
     "Job",
+    "KycSubmission",
     "Message",
     "Notification",
     "NotificationPreference",

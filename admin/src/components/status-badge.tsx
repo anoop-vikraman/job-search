@@ -18,6 +18,7 @@ const TONES: Record<string, Tone> = {
   open: "pending",
   resolved: "success",
   actioned: "success",
+  paid: "success",
   dismissed: "neutral",
   disputed: "danger",
   requested: "pending",

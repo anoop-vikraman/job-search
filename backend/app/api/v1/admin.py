@@ -3,6 +3,7 @@ from collections.abc import Sequence
 from typing import TypeVar
 
 from fastapi import APIRouter, Depends, Query, status
+from fastapi.responses import FileResponse
 from pydantic import BaseModel
 from sqlalchemy import ColumnElement, func, or_, select
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -14,6 +15,7 @@ from app.db.base import Base
 from app.models.application import Application
 from app.models.enums import (
     DisputeStatus,
+    KycStatus,
     PayoutStatus,
     RefundStatus,
     ReportStatus,
@@ -29,13 +31,20 @@ from app.models.wallet import WalletTransaction
 from app.schemas.application import ApplicationResponse
 from app.schemas.common import ErrorResponse, MessageResponse, Page
 from app.schemas.dispute import DisputeResolve, DisputeResponse
+from app.schemas.kyc import AdminKycSubmission, KycReview, KycSubmissionResponse
 from app.schemas.moderation import AdminReportResponse, ReportResolve, ReportResponse
 from app.schemas.payment import PayoutDecision, PayoutResponse
 from app.schemas.refund import RefundDecision, RefundResponse
 from app.schemas.tweak import TweakResponse
 from app.schemas.user import AdminBanRequest, UserProfile
 from app.schemas.wallet import TransactionResponse
-from app.services import dispute_service, payment_service, refund_service, report_service
+from app.services import (
+    dispute_service,
+    kyc_service,
+    payment_service,
+    refund_service,
+    report_service,
+)
 
 router = APIRouter(prefix="/admin", tags=["admin"], dependencies=[Depends(require_admin)])
 
@@ -253,6 +262,64 @@ async def resolve_dispute(
     """Settle a dispute: release to the provider, refund the lister, or split the escrow."""
     dispute = await dispute_service.resolve_dispute(db, dispute_id, admin.id, data)
     return DisputeResponse.model_validate(dispute)
+
+
+@router.get("/kyc", response_model=Page[AdminKycSubmission])
+async def list_kyc(
+    db: DbSession,
+    page: int = Query(1, ge=1),
+    limit: int = Query(20, ge=1, le=100),
+    status_filter: KycStatus | None = Query(None, alias="status"),
+) -> Page[AdminKycSubmission]:
+    """Identity verification queue, newest first."""
+    rows, total = await kyc_service.list_submissions(
+        db, status_filter=status_filter, page=page, limit=limit
+    )
+    return Page(
+        items=[
+            AdminKycSubmission(
+                **KycSubmissionResponse.model_validate(k).model_dump(),
+                user_id=u.id,
+                user_name=" ".join(p for p in (u.first_name, u.last_name) if p) or "—",
+                user_phone=f"{u.country_code} {u.phone_number}",
+                document_count=len(k.document_keys),
+            )
+            for k, u in rows
+        ],
+        total=total,
+        page=page,
+        limit=limit,
+    )
+
+
+@router.get(
+    "/kyc/{submission_id}/documents/{index}",
+    response_class=FileResponse,
+    responses={404: {"model": ErrorResponse}},
+)
+async def get_kyc_document(submission_id: uuid.UUID, index: int, db: DbSession) -> FileResponse:
+    """Stream one identity document (admins only; never publicly served)."""
+    path = await kyc_service.document_path(db, submission_id, index)
+    return FileResponse(path, headers={"Cache-Control": "no-store"})
+
+
+@router.post(
+    "/kyc/{submission_id}/review",
+    response_model=KycSubmissionResponse,
+    responses={
+        400: {"model": ErrorResponse},
+        404: {"model": ErrorResponse},
+        409: {"model": ErrorResponse},
+    },
+)
+async def review_kyc(
+    submission_id: uuid.UUID, data: KycReview, admin: CurrentUser, db: DbSession
+) -> KycSubmissionResponse:
+    """Approve (user becomes verified) or reject with a reason the user can fix."""
+    submission = await kyc_service.review(
+        db, submission_id, admin.id, approve=data.approve, reason=data.reason
+    )
+    return KycSubmissionResponse.model_validate(submission)
 
 
 @router.get("/payouts", response_model=Page[PayoutResponse])
