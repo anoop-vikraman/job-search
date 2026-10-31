@@ -55,6 +55,9 @@ data → pricing → preview**. Backing state is the `useCreateTweakStore` Zusta
   (`remote`/`in_person`).
 - **Map coordinates**: in-person tweaks with a geocoded address carry `approx_lat`/`approx_lng`,
   snapped to a 0.005° grid (~550 m) so the exact address is never exposed. Remote tweaks get `null`.
+  Mobile: the List / Map toggle on Find Tweaks shows the loaded results as pins
+  (`components/Tweak/TweakMap.tsx`, `react-native-maps`), with the Near-me radius drawn as a circle.
+  Tapping a pin's callout opens the tweak. Android needs `GOOGLE_MAPS_API_KEY` at build time.
 - Mobile: the search box is debounced (350 ms) and sent as `search`. "Near me" uses `expo-location`
   (foreground permission, position rounded to ~110 m) and switches the sort to `distance` with a
   25 km default radius (changeable in Filters). The schedule filter is applied

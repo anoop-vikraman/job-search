@@ -38,6 +38,8 @@ export interface Tweak {
     pricingType: string; // 'hourly' | 'quantity' | 'fixed'
     createdAt: string;
     distanceKm?: number | null; // Feed only, when the viewer shared their location
+    approxLat?: number | null; // Feed only: ~550 m grid, for the map
+    approxLng?: number | null;
     status: 'active' | 'draft' | 'closed';
     createdByUserId: string; // Link to AuthStore user.id
     appliedBy?: string[]; // IDs of users who applied

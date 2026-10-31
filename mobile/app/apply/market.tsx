@@ -13,6 +13,7 @@ import { useDebouncedValue } from '../../hooks/useDebouncedValue';
 import type { FeedSort, SavedSearchCreate } from '../../types/api';
 import { describeSavedSearch, useCreateSavedSearch } from '../../hooks/useSavedSearches';
 import TweakTile from '../../components/Tweak/TweakTile';
+import TweakMap from '../../components/Tweak/TweakMap';
 import { useTheme } from '@/themes/ThemeProvider';
 
 const SORT_OPTIONS: { label: string; value: FeedSort; icon: keyof typeof Ionicons.glyphMap }[] = [
@@ -119,6 +120,8 @@ export default function MarketPage(): React.JSX.Element {
         if (value === 'distance' && !nearMe && !(await enableNearMe())) return;
         setSortBy(value);
     };
+
+    const [viewMode, setViewMode] = useState<'list' | 'map'>('list');
 
     // ─── Saved search alert ──────────────────────────────────────────────
     const createSaved = useCreateSavedSearch();
@@ -283,7 +286,31 @@ export default function MarketPage(): React.JSX.Element {
                     </ScrollView>
                 </View>
 
-                {/* Market List */}
+                {/* List / map toggle */}
+                <View style={{ flexDirection: 'row', alignSelf: 'flex-end', backgroundColor: colors.surfaceMuted, borderRadius: 10, padding: 3, marginBottom: 10 }}>
+                    {(['list', 'map'] as const).map((mode) => (
+                        <TouchableOpacity
+                            key={mode}
+                            onPress={() => setViewMode(mode)}
+                            style={{ flexDirection: 'row', alignItems: 'center', gap: 4, paddingHorizontal: 12, paddingVertical: 6, borderRadius: 8, backgroundColor: viewMode === mode ? colors.surface : 'transparent' }}
+                            accessibilityRole="button"
+                            accessibilityState={{ selected: viewMode === mode }}
+                        >
+                            <Ionicons name={mode === 'list' ? 'list-outline' : 'map-outline'} size={14} color={viewMode === mode ? colors.text : colors.textMuted} />
+                            <Text style={{ fontSize: 12, fontWeight: '700', color: viewMode === mode ? colors.text : colors.textMuted }}>{mode === 'list' ? 'List' : 'Map'}</Text>
+                        </TouchableOpacity>
+                    ))}
+                </View>
+
+                {/* Market List / Map */}
+                {viewMode === 'map' ? (
+                    <TweakMap
+                        tweaks={marketTweaks}
+                        center={coords}
+                        radiusKm={coords ? radiusKm : null}
+                        onOpen={(tweakId) => router.push(`/tweaks/${tweakId}`)}
+                    />
+                ) : (
                 <FlatList
                     data={marketTweaks}
                     keyExtractor={(item) => item.id}
@@ -321,6 +348,8 @@ export default function MarketPage(): React.JSX.Element {
                         )
                     }
                 />
+
+                )}
 
                 {/* Save alert sheet */}
                 <Modal visible={saveOpen} transparent animationType="slide" onRequestClose={() => setSaveOpen(false)}>
