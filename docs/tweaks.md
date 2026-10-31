@@ -48,10 +48,17 @@ data → pricing → preview**. Backing state is the `useCreateTweakStore` Zusta
 
   `radius_km` or `sort=distance` without a location returns `422 LOCATION_REQUIRED`. `distance_km` is
   `null` when no location was sent or the tweak has no coordinates.
+- **Pagination**: the response is `{ items, total, page, limit, next_cursor }`. Pass `next_cursor`
+  back as `cursor` for the next page; it's a keyset cursor (sort key + id), so new tweaks arriving
+  don't shift or duplicate pages. A cursor from a different `sort` (or a garbled one) returns
+  `422 INVALID_CURSOR`. `page` still works for offset paging. Other params: `tweak_type`
+  (`remote`/`in_person`).
+- **Map coordinates**: in-person tweaks with a geocoded address carry `approx_lat`/`approx_lng`,
+  snapped to a 0.005° grid (~550 m) so the exact address is never exposed. Remote tweaks get `null`.
 - Mobile: the search box is debounced (350 ms) and sent as `search`. "Near me" uses `expo-location`
   (foreground permission, position rounded to ~110 m) and switches the sort to `distance` with a
-  25 km default radius (changeable in Filters). Tweak type and schedule filters are applied
-  client-side to the fetched page.
+  25 km default radius (changeable in Filters). The schedule filter is applied
+  client-side to loaded pages. The list loads 20 at a time and fetches more on scroll.
 - `GET /api/v1/tweaks/mine` returns the caller's own tweaks (any status) for the "My Tweaks" tab.
 
 ## Pricing validation
@@ -71,7 +78,7 @@ before deriving `price_minor`. Invalid shapes return `422 INVALID_PRICING_DATA`.
 
 | Method | Path | Notes |
 |---|---|---|
-| GET | `/api/v1/tweaks?page&limit&category&search&lat&lng&radius_km&sort` | Marketplace feed (paginated) |
+| GET | `/api/v1/tweaks?cursor&page&limit&category&tweak_type&search&lat&lng&radius_km&sort` | Marketplace feed (cursor-paginated) |
 | GET | `/api/v1/tweaks/mine` | Caller's own tweaks |
 | POST | `/api/v1/tweaks` | Create (draft or active) |
 | GET | `/api/v1/tweaks/{id}` | Fetch one |

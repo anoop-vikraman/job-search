@@ -61,6 +61,9 @@ class TweakResponse(ORMModel):
     created_at: UtcDatetime
     # Only set on the feed when the caller passes lat/lng and the tweak has a geocoded address.
     distance_km: float | None = None
+    # Feed only: in-person tweak location snapped to a ~550 m grid for map display.
+    approx_lat: float | None = None
+    approx_lng: float | None = None
 
 
 class FeedSort(str, enum.Enum):

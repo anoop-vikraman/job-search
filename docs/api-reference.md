@@ -51,7 +51,7 @@ token · `403` insufficient role/access · `404` not found · `409` conflict/sta
 ### Tweaks
 | Method | Path | Auth |
 |---|---|---|
-| GET | `/api/v1/tweaks?page&limit&category&search&lat&lng&radius_km&sort` | user — marketplace feed (see [tweaks.md](./tweaks.md#the-marketplace-feed)) |
+| GET | `/api/v1/tweaks?cursor&page&limit&category&tweak_type&search&lat&lng&radius_km&sort` | user — marketplace feed (see [tweaks.md](./tweaks.md#the-marketplace-feed)) |
 | GET | `/api/v1/tweaks/mine` | user |
 | POST | `/api/v1/tweaks` | user |
 | GET | `/api/v1/tweaks/{tweak_id}` | user |
@@ -140,6 +140,7 @@ See [wallet-and-escrow.md](./wallet-and-escrow.md#adding-money-razorpay) for the
 | `INVALID_PRICING_DATA` | Pricing payload fails validation |
 | `FORBIDDEN` | Non-admin on an admin route |
 | `LOCATION_REQUIRED` | Feed `radius_km` / `sort=distance` without `lat`+`lng` |
+| `INVALID_CURSOR` | Feed cursor garbled or from another sort |
 | `CHAT_NOT_AVAILABLE` / `CHAT_CLOSED` | Chat before acceptance / after cancellation |
 | `CONVERSATION_ACCESS_DENIED` | Not a party to the conversation |
 | `PAYMENTS_NOT_CONFIGURED` | Razorpay keys unset |

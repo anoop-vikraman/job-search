@@ -1,5 +1,7 @@
+import { useMemo } from 'react';
 import {
     keepPreviousData,
+    useInfiniteQuery,
     useMutation,
     useQuery,
     useQueryClient,
@@ -23,22 +25,53 @@ import {
 } from '../utils/tweakAdapter';
 import { queryKeys } from './queryKeys';
 
-export type TweakFeedFilters = Omit<TweakFeedParams, 'page' | 'limit'>;
+export type TweakFeedFilters = Omit<TweakFeedParams, 'page' | 'limit' | 'cursor'>;
+
+const FEED_PAGE_SIZE = 20;
+
+export interface TweaksFeed {
+    tweaks: Tweak[];
+    total: number;
+    isFetching: boolean;
+    isRefetching: boolean;
+    isFetchingNextPage: boolean;
+    hasNextPage: boolean;
+    /** Load the next page (no-op at the end or while loading). */
+    loadMore: () => void;
+    refetch: () => void;
+}
 
 /**
- * Feed of tweaks from other users (GET /tweaks), mapped to the local shape.
- * Search, location radius and sort run server-side; the previous page stays on
- * screen while a new filter combination loads.
+ * Infinite feed of tweaks from other users (GET /tweaks, keyset cursor), mapped to the
+ * local shape. Search, location radius and sort run server-side; the previous results
+ * stay on screen while a new filter combination loads.
  */
-export function useTweaksFeed(filters: TweakFeedFilters = {}): UseQueryResult<Tweak[]> {
-    return useQuery({
+export function useTweaksFeed(filters: TweakFeedFilters = {}): TweaksFeed {
+    const query = useInfiniteQuery({
         queryKey: queryKeys.tweaksFeed(filters),
         placeholderData: keepPreviousData,
-        queryFn: async (): Promise<Tweak[]> => {
-            const page = await tweaksApi.feed({ page: 1, limit: 50, ...filters });
-            return page.items.map((t) => backendTweakToLocal(t));
-        },
+        initialPageParam: undefined as string | undefined,
+        queryFn: ({ pageParam }) =>
+            tweaksApi.feed({ limit: FEED_PAGE_SIZE, cursor: pageParam, ...filters }),
+        getNextPageParam: (last) => last.next_cursor ?? undefined,
     });
+    const { data, hasNextPage, isFetchingNextPage, fetchNextPage, refetch } = query;
+    const tweaks = useMemo(
+        () => (data?.pages ?? []).flatMap((p) => p.items.map((t) => backendTweakToLocal(t))),
+        [data]
+    );
+    return {
+        tweaks,
+        total: data?.pages[0]?.total ?? 0,
+        isFetching: query.isFetching,
+        isRefetching: query.isRefetching && !isFetchingNextPage,
+        isFetchingNextPage,
+        hasNextPage,
+        loadMore: () => {
+            if (hasNextPage && !isFetchingNextPage) void fetchNextPage();
+        },
+        refetch: () => void refetch(),
+    };
 }
 
 /** The current user's tweaks (GET /tweaks/mine), mapped to the local shape. */

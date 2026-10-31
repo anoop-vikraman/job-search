@@ -26,6 +26,12 @@ class Page(BaseModel, Generic[T]):
     limit: int
 
 
+class CursorPage(Page[T], Generic[T]):
+    """Page plus a keyset cursor; pass `next_cursor` back as `cursor` (null at the end)."""
+
+    next_cursor: str | None = None
+
+
 class ErrorResponse(BaseModel):
     detail: str
     code: str

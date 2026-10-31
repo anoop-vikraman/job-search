@@ -63,7 +63,7 @@ export default function MarketPage(): React.JSX.Element {
     const location = useCurrentLocation();
     const coords = nearMe ? location.coords : null;
 
-    // Filters (category server-side; type/schedule client-side on the fetched page)
+    // Filters (category and type server-side; schedule client-side on the loaded pages)
     const [isFilterModalVisible, setIsFilterModalVisible] = useState(false);
     const [filters, setFilters] = useState<ClientFilters>(DEFAULT_FILTERS);
 
@@ -71,22 +71,23 @@ export default function MarketPage(): React.JSX.Element {
         () => ({
             search: debouncedSearch || undefined,
             category: filters.category !== 'All' ? filters.category : undefined,
+            tweak_type: filters.tweakType === 'in_person' || filters.tweakType === 'remote' ? filters.tweakType : undefined,
             sort: sortBy === 'distance' && !coords ? 'newest' : sortBy,
             ...(coords
                 ? { lat: coords.lat, lng: coords.lng, radius_km: radiusKm ?? undefined }
                 : {}),
         }),
-        [debouncedSearch, filters.category, sortBy, coords, radiusKm]
+        [debouncedSearch, filters.category, filters.tweakType, sortBy, coords, radiusKm]
     );
 
-    const { data: feedTweaks = [], isFetching, isRefetching, refetch } = useTweaksFeed(feedFilters);
+    const feed = useTweaksFeed(feedFilters);
+    const { tweaks: feedTweaks, isFetching, isRefetching, isFetchingNextPage, refetch } = feed;
 
     const marketTweaks = useMemo(() => {
         let data = feedTweaks.filter((t) => t.createdByUserId !== userId);
-        if (filters.tweakType !== 'All') data = data.filter((t) => t.tweakType === filters.tweakType);
         if (filters.schedulePreference !== 'All') data = data.filter((t) => t.schedulePreference === filters.schedulePreference);
         return data;
-    }, [feedTweaks, userId, filters.tweakType, filters.schedulePreference]);
+    }, [feedTweaks, userId, filters.schedulePreference]);
 
     const enableNearMe = async (): Promise<boolean> => {
         setNearMe(true);
@@ -182,7 +183,7 @@ export default function MarketPage(): React.JSX.Element {
                             style={{ flex: 1, height: '100%', fontSize: 14, color: colors.text }}
                             placeholderTextColor={colors.textMuted}
                         />
-                        {isFetching && !isRefetching ? (
+                        {isFetching && !isRefetching && !isFetchingNextPage ? (
                             <ActivityIndicator size="small" color={colors.textMuted} />
                         ) : searchQuery.length > 0 ? (
                             <TouchableOpacity onPress={() => setSearchQuery('')} accessibilityRole="button" accessibilityLabel="Clear search">
@@ -249,6 +250,15 @@ export default function MarketPage(): React.JSX.Element {
                     contentContainerStyle={{ paddingBottom: 100 }}
                     refreshing={isRefetching}
                     onRefresh={refetch}
+                    onEndReached={feed.loadMore}
+                    onEndReachedThreshold={0.5}
+                    ListFooterComponent={
+                        isFetchingNextPage ? (
+                            <View style={{ paddingVertical: 16 }}>
+                                <ActivityIndicator color={colors.textMuted} />
+                            </View>
+                        ) : undefined
+                    }
                     renderItem={({ item }) => (
                         <TweakTile
                             item={item}

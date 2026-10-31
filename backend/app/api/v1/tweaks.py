@@ -4,6 +4,7 @@ from typing import Any
 from fastapi import APIRouter, Query, status
 
 from app.api.deps import CurrentUser, DbSession
+from app.models.enums import TweakType
 from app.schemas.application import (
     ApplicationCreate,
     ApplicationDetail,
@@ -13,7 +14,7 @@ from app.schemas.application import (
     OfferResponse,
     ProviderSummary,
 )
-from app.schemas.common import ErrorResponse, Page
+from app.schemas.common import CursorPage, ErrorResponse
 from app.schemas.tweak import FeedSort, TweakCreate, TweakResponse, TweakUpdate
 from app.services import application_service, tweak_service
 
@@ -29,7 +30,7 @@ ERRORS: dict[int | str, dict[str, Any]] = {
 
 @router.get(
     "",
-    response_model=Page[TweakResponse],
+    response_model=CursorPage[TweakResponse],
     status_code=status.HTTP_200_OK,
     responses={422: {"model": ErrorResponse}},
 )
@@ -38,38 +39,54 @@ async def list_tweaks(
     db: DbSession,
     page: int = Query(1, ge=1),
     limit: int = Query(20, ge=1, le=100),
+    cursor: str | None = Query(None, max_length=500),
     category: str | None = None,
+    tweak_type: TweakType | None = None,
     search: str | None = Query(None, max_length=100),
     lat: float | None = Query(None, ge=-90, le=90),
     lng: float | None = Query(None, ge=-180, le=180),
     radius_km: float | None = Query(None, gt=0, le=500),
     sort: FeedSort = FeedSort.newest,
-) -> Page[TweakResponse]:
+) -> CursorPage[TweakResponse]:
     """Marketplace feed: active tweaks not owned by the viewer.
 
     `search` matches title, description, category and skills (case-insensitive).
-    Passing `lat`/`lng` adds `distance_km` to each item; `radius_km` and `sort=distance`
-    require them.
+    Passing `lat`/`lng` adds `distance_km`; `radius_km` and `sort=distance` require them.
+    Use `next_cursor` as `cursor` for the next page (stable while new tweaks arrive);
+    `page` is still accepted for offset paging.
     """
-    rows, total = await tweak_service.list_feed(
-        db,
-        viewer_id=user.id,
-        page=page,
-        limit=limit,
+    filters = tweak_service.FeedFilters(
         category=category,
         search=search,
         lat=lat,
         lng=lng,
         radius_km=radius_km,
-        sort=sort,
+        tweak_type=tweak_type,
     )
-    return Page(
+    rows, total, next_cursor = await tweak_service.list_feed(
+        db,
+        viewer_id=user.id,
+        page=page,
+        limit=limit,
+        filters=filters,
+        sort=sort,
+        cursor=cursor,
+    )
+    return CursorPage(
         items=[
-            TweakResponse.model_validate(t).model_copy(update={"distance_km": d}) for t, d in rows
+            TweakResponse.model_validate(r.tweak).model_copy(
+                update={
+                    "distance_km": r.distance_km,
+                    "approx_lat": r.approx_lat,
+                    "approx_lng": r.approx_lng,
+                }
+            )
+            for r in rows
         ],
         total=total,
         page=page,
         limit=limit,
+        next_cursor=next_cursor,
     )
 
 

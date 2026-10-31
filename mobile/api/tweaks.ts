@@ -4,15 +4,18 @@ import type {
     BackendMyApplication,
     BackendTweak,
     CreateTweakRequest,
+    CursorPage,
     FeedSort,
-    Page,
     UpdateTweakRequest,
 } from '../types/api';
 
 export interface TweakFeedParams {
     page?: number;
     limit?: number;
+    /** `next_cursor` from the previous page. */
+    cursor?: string;
     category?: string;
+    tweak_type?: 'remote' | 'in_person';
     /** Matches title, description, category and skills (case-insensitive). */
     search?: string;
     lat?: number;
@@ -22,7 +25,7 @@ export interface TweakFeedParams {
 }
 
 export const tweaksApi = {
-    feed: async (params: TweakFeedParams = {}): Promise<Page<BackendTweak>> => {
+    feed: async (params: TweakFeedParams = {}): Promise<CursorPage<BackendTweak>> => {
         const res = await api.get('/api/v1/tweaks', { params });
         return res.data;
     },

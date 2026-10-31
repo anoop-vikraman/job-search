@@ -10,6 +10,11 @@ export interface Page<T> {
     limit: number;
 }
 
+/** Page with a keyset cursor; send `next_cursor` back as `cursor` (null at the end). */
+export interface CursorPage<T> extends Page<T> {
+    next_cursor: string | null;
+}
+
 // ─── Tweaks ───────────────────────────────────────────────────────────────
 
 export type BackendTweakType = 'remote' | 'in_person';
@@ -66,6 +71,9 @@ export interface BackendTweak {
     created_at: string;
     /** Feed only: km from the caller's lat/lng; null when either side lacks coordinates. */
     distance_km?: number | null;
+    /** Feed only: in-person location snapped to a ~550 m grid (for the map). */
+    approx_lat?: number | null;
+    approx_lng?: number | null;
 }
 
 /** Feed ordering accepted by GET /tweaks. `distance` requires lat/lng. */
