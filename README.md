@@ -44,7 +44,23 @@ venv/bin/uvicorn app.main:app --reload --port 8000
   addresses, admin). Errors use the `{ "detail", "code" }` envelope; lists are `Page[T]`; money is
   integer minor units; timestamps are ISO-8601 UTC `Z`.
 
-### Creating an admin
+### Seed demo data
+Populate the DB with a realistic scenario — an admin, demo users, tweaks across categories,
+applications, a counter-offer, an accepted job with an escrow hold, wallet top-ups, a processed
+refund, and ratings. Idempotent (re-run anytime; it rebuilds the seed users and their data):
+
+```bash
+cd backend && venv/bin/python -m app.seeds.seed
+```
+
+Demo logins (all `+91`):
+
+| Phone | Password | Role |
+|---|---|---|
+| 9000000000 | `Admin@12345` | admin |
+| 9000000001 … 9000000005 | `Password@123` | user |
+
+### Creating an admin (manually)
 New signups are role `user`. Promote one to admin:
 
 ```bash

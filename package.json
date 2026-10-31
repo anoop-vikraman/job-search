@@ -10,6 +10,7 @@
     "dev:admin": "npm run dev --workspace=admin",
     "dev:mobile": "npm run start --workspace=mobile",
     "dev:backend": "cd backend && venv/bin/uvicorn app.main:app --reload --port 8000",
+    "seed": "cd backend && venv/bin/python -m app.seeds.seed",
     "lint:admin": "npm run lint --workspace=admin",
     "lint:mobile": "npm run lint --workspace=mobile"
   }
