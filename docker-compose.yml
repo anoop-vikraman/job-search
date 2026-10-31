@@ -22,8 +22,24 @@ services:
     environment:
       # Inside compose, reach the DB by service name, not localhost.
       DATABASE_URL: postgresql+asyncpg://postgres:postgres@postgres:5432/tweak_db
+      # The `worker` service runs jobs; don't also run them inside the API.
+      RUN_WORKER_IN_APP: "false"
     ports:
       - "127.0.0.1:8000:8000"
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - tweak_network
+
+  # Background jobs (push, auto-release, receipts, reconciliation, alerts).
+  worker:
+    build: ./backend
+    container_name: tweak_worker
+    env_file: backend/.env
+    environment:
+      DATABASE_URL: postgresql+asyncpg://postgres:postgres@postgres:5432/tweak_db
+    command: ["python", "-m", "app.worker"]
     depends_on:
       postgres:
         condition: service_healthy

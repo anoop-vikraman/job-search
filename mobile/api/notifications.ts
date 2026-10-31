@@ -1,5 +1,5 @@
 import api from '../utils/api';
-import type { Notification, Page, UnreadCount } from '../types/api';
+import type { Notification, NotificationPreferences, Page, UnreadCount } from '../types/api';
 
 export interface NotificationListParams {
     page?: number;
@@ -25,5 +25,14 @@ export const notificationsApi = {
 
     markRead: async (id: string): Promise<void> => {
         await api.post(`/api/v1/notifications/${id}/read`);
+    },
+    getPreferences: async (): Promise<NotificationPreferences> => {
+        const res = await api.get('/api/v1/notifications/preferences');
+        return res.data;
+    },
+    /** Send only the types to change; the response has every type. */
+    updatePreferences: async (push: Record<string, boolean>): Promise<NotificationPreferences> => {
+        const res = await api.put('/api/v1/notifications/preferences', { push });
+        return res.data;
     },
 };

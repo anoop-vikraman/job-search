@@ -1,3 +1,6 @@
+import asyncio
+from collections.abc import AsyncIterator
+from contextlib import asynccontextmanager
 from pathlib import Path
 
 from fastapi import FastAPI
@@ -18,10 +21,28 @@ def custom_operation_id(route: APIRoute) -> str:
     return route.name
 
 
+@asynccontextmanager
+async def lifespan(_: FastAPI) -> AsyncIterator[None]:
+    """Run the background worker in-process for local dev (RUN_WORKER_IN_APP)."""
+    stop = asyncio.Event()
+    task: asyncio.Task[None] | None = None
+    if settings.RUN_WORKER_IN_APP:
+        from app.worker import run_forever
+
+        task = asyncio.create_task(run_forever(stop))
+    try:
+        yield
+    finally:
+        stop.set()
+        if task is not None:
+            await task
+
+
 app = FastAPI(
     title="Tweak API",
     version="1.0.0",
     generate_unique_id_function=custom_operation_id,
+    lifespan=lifespan,
 )
 
 app.add_middleware(

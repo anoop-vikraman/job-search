@@ -5,21 +5,32 @@ devices. Tapping the push opens the related screen.
 
 ## Backend flow
 
-1. `notification_service.add()` inserts the row and queues a `PushMessage` on the DB session
-   (`services/push_service.py`). Callers don't change; any service that creates a notification gets
-   push for free.
-2. A SQLAlchemy `after_commit` hook hands the queued messages to a background task. A rolled-back
-   transaction sends nothing (`after_rollback` drops the queue).
-3. The task opens its own DB session, loads the users' `device_tokens`, and POSTs to the Expo Push
-   API in batches of 100. 429/5xx/network errors are retried once after 1 s; other failures are
-   logged. Delivery never raises into the request that created the notification.
-4. Tickets with `DeviceNotRegistered` delete that token.
+1. `notification_service.add()` inserts the row and enqueues a durable `push` job in the same
+   transaction ([background-jobs.md](./background-jobs.md)). Callers don't change; any service that
+   creates a notification gets push for free. Rolled-back work sends nothing, and a crash after
+   commit doesn't lose the push.
+2. The worker runs the job: it loads the user's `device_tokens`, drops the message if the user
+   muted that notification type, and POSTs to the Expo Push API in batches of 100. 429/5xx/network
+   errors are retried once inside the job; if every message still failed, the job raises and is
+   retried with backoff.
+3. Tickets with `DeviceNotRegistered` delete that token right away. OK tickets are stored in
+   `push_tickets`.
+4. The `push_receipts` periodic task (every 5 min) fetches receipts for tickets older than
+   15 minutes, deletes tokens whose receipt says `DeviceNotRegistered`, and drops tickets once
+   checked (or after 24 h, when Expo discards receipts).
 
 Push payload: `title`/`body` from the notification, `sound: default`, `priority: high`, and
 `data = { notification_id, type, tweak_id?, conversation_id? }` for routing.
 
-Not implemented: receipt polling (Expo recommends checking receipts ~15 min later for delayed
-`DeviceNotRegistered` errors), per-user mute settings, badge counts.
+## Mute settings
+
+`GET /api/v1/notifications/preferences` → `{ "push": { "<type>": true|false, … } }` (every type,
+default `true`). `PUT` the same shape with only the types to change. Muting affects push only;
+the in-app notification row is still created. Stored in `notification_preferences`
+(one row per changed type). Mobile: **Notification settings** screen
+(`app/settings/notifications.tsx`), linked from the profile menu.
+
+Not implemented: badge counts.
 
 ### Config (`backend/.env`)
 
@@ -27,6 +38,7 @@ Not implemented: receipt polling (Expo recommends checking receipts ~15 min late
 |---|---|---|
 | `EXPO_PUSH_ENABLED` | `true` | `false` skips all push HTTP calls (tests force this off) |
 | `EXPO_PUSH_URL` | `https://exp.host/--/api/v2/push/send` | Override to point at a mock |
+| `EXPO_RECEIPTS_URL` | `https://exp.host/--/api/v2/push/getReceipts` | Receipt lookups |
 | `EXPO_ACCESS_TOKEN` | unset | Only if enhanced push security is on for the EAS project |
 
 ## Device tokens

@@ -7,7 +7,8 @@ from app.api.deps import CurrentUser, DbSession
 from app.core.errors import AppError
 from app.models.notification import Notification
 from app.schemas.common import ErrorResponse, MessageResponse, Page
-from app.schemas.notification import NotificationResponse
+from app.schemas.notification import NotificationPreferences, NotificationResponse
+from app.services import push_service
 
 router = APIRouter(prefix="/notifications", tags=["notifications"])
 
@@ -53,6 +54,25 @@ async def unread_count(user: CurrentUser, db: DbSession) -> dict[str, int]:
         )
     ) or 0
     return {"count": count}
+
+
+@router.get("/preferences", response_model=NotificationPreferences, status_code=status.HTTP_200_OK)
+async def get_preferences(user: CurrentUser, db: DbSession) -> NotificationPreferences:
+    """Push on/off per notification type (in-app notifications are always kept)."""
+    return NotificationPreferences(push=await push_service.get_preferences(db, user.id))
+
+
+@router.put(
+    "/preferences",
+    response_model=NotificationPreferences,
+    status_code=status.HTTP_200_OK,
+    responses={422: {"model": ErrorResponse}},
+)
+async def update_preferences(
+    data: NotificationPreferences, user: CurrentUser, db: DbSession
+) -> NotificationPreferences:
+    """Update push settings; omitted types keep their current value."""
+    return NotificationPreferences(push=await push_service.set_preferences(db, user.id, data.push))
 
 
 @router.post("/read-all", response_model=MessageResponse)

@@ -63,6 +63,13 @@ class TxnStatus(str, enum.Enum):
     reversed = "reversed"
 
 
+class JobStatus(str, enum.Enum):
+    queued = "queued"
+    running = "running"
+    done = "done"
+    failed = "failed"
+
+
 class PaymentStatus(str, enum.Enum):
     created = "created"
     paid = "paid"

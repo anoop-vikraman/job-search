@@ -28,6 +28,11 @@ class Settings(BaseSettings):
     # Expo push (sent after each committed Notification). Disable to skip all push HTTP calls.
     EXPO_PUSH_ENABLED: bool = True
     EXPO_PUSH_URL: str = "https://exp.host/--/api/v2/push/send"
+    EXPO_RECEIPTS_URL: str = "https://exp.host/--/api/v2/push/getReceipts"
+
+    # Background jobs. In production run `python -m app.worker` and set RUN_WORKER_IN_APP=false.
+    RUN_WORKER_IN_APP: bool = True
+    WORKER_POLL_SECONDS: float = 2.0
     # Optional: required only if "enhanced push security" is enabled on the EAS project.
     EXPO_ACCESS_TOKEN: str | None = None
 

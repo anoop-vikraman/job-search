@@ -19,6 +19,7 @@ export default function ProfileMenuList(): React.JSX.Element {
         { icon: 'people', label: 'Invite a Friend', route: '/invite' },
         { icon: 'help-circle', label: 'Help Center', route: '/help' },
         { icon: 'language', label: 'Language', route: '/settings/language' },
+        { icon: 'notifications', label: 'Notification Settings', route: '/settings/notifications' },
     ];
 
     const legalItems: MenuItem[] = [

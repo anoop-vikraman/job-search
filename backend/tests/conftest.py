@@ -1,5 +1,6 @@
 import uuid
-from collections.abc import AsyncGenerator
+from collections.abc import AsyncGenerator, AsyncIterator, Callable
+from contextlib import AbstractAsyncContextManager, asynccontextmanager
 
 import pytest
 import pytest_asyncio
@@ -89,3 +90,13 @@ async def make_user(
 
         await wallet_service.topup(db, user.id, balance_minor, reference=None)
     return user
+
+
+def same_session(db: AsyncSession) -> Callable[[], AbstractAsyncContextManager[AsyncSession]]:
+    """Session factory for job/worker code that reuses the test's rolled-back session."""
+
+    @asynccontextmanager
+    async def _factory() -> AsyncIterator[AsyncSession]:
+        yield db
+
+    return _factory

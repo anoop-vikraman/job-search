@@ -274,6 +274,11 @@ export interface UnreadCount {
     count: number;
 }
 
+/** Push on/off per notification type (every type present in responses). */
+export interface NotificationPreferences {
+    push: Record<string, boolean>;
+}
+
 // ─── Chat ───────────────────────────────────────────────────────────────
 
 export interface ChatParticipant {
