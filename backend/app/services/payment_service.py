@@ -8,7 +8,8 @@ Razorpay calls the webhook) -> the order is credited exactly once through the ex
 import json
 import logging
 import uuid
-from datetime import UTC, datetime
+from dataclasses import dataclass, field
+from datetime import UTC, datetime, timedelta
 from typing import Any
 
 from fastapi import status
@@ -21,7 +22,13 @@ from app.models.enums import NotificationType, PaymentStatus, PayoutStatus
 from app.models.payment import PaymentOrder, Payout
 from app.models.user import User
 from app.models.wallet import WalletTransaction
-from app.services import kyc_service, notification_service, razorpay_client, wallet_service
+from app.services import (
+    job_service,
+    kyc_service,
+    notification_service,
+    razorpay_client,
+    wallet_service,
+)
 
 logger = logging.getLogger(__name__)
 
@@ -334,3 +341,124 @@ async def decide_payout(
     await db.commit()
     await db.refresh(payout)
     return payout
+
+
+# ─── Reconciliation ─────────────────────────────────────────────────────────
+
+RECONCILE_MIN_AGE = timedelta(minutes=30)  # give verify/webhook time first
+RECONCILE_MAX_AGE = timedelta(days=7)
+
+
+@dataclass
+class ReconcileReport:
+    checked: int = 0
+    credited: int = 0
+    captured: int = 0
+    still_unpaid: int = 0
+    errors: int = 0
+    # Paid orders whose ledger entry is missing (should always be 0).
+    paid_without_ledger: int = 0
+    credited_order_ids: list[str] = field(default_factory=list)
+
+
+async def reconcile(db: AsyncSession, *, now: datetime | None = None) -> ReconcileReport:
+    """Credit orders Razorpay captured but we never confirmed (app closed, webhook lost).
+
+    Looks at unpaid orders 30 min – 7 days old, asks Razorpay for their payments, captures
+    any matching `authorized` payment, and credits through the same idempotent `_credit`.
+    """
+    report = ReconcileReport()
+    if not razorpay_client.is_configured():
+        return report
+    now = now or datetime.now(UTC)
+    orders = list(
+        await db.scalars(
+            select(PaymentOrder)
+            .where(
+                PaymentOrder.status.in_([PaymentStatus.created, PaymentStatus.failed]),
+                PaymentOrder.created_at <= now - RECONCILE_MIN_AGE,
+                PaymentOrder.created_at >= now - RECONCILE_MAX_AGE,
+            )
+            .order_by(PaymentOrder.created_at)
+            .limit(500)
+        )
+    )
+    targets = [(o.id, o.provider_order_id) for o in orders]
+    await db.commit()
+    for order_id, provider_order_id in targets:
+        report.checked += 1
+        try:
+            payments = await razorpay_client.fetch_order_payments(provider_order_id)
+            order = await db.get(PaymentOrder, order_id)
+            if order is None:
+                continue
+            order.last_checked_at = now
+            await db.commit()
+            settled = False
+            for payment in payments:
+                try:
+                    _check_payment_matches(order, payment)
+                except AppError:
+                    continue
+                if payment.get("status") == "authorized":
+                    payment = await razorpay_client.capture_payment(
+                        str(payment["id"]), order.amount_minor, order.currency
+                    )
+                    report.captured += 1
+                if payment.get("status") == "captured":
+                    await _credit(db, provider_order_id, str(payment["id"]))
+                    report.credited += 1
+                    report.credited_order_ids.append(str(order_id))
+                    settled = True
+                    break
+            if not settled:
+                report.still_unpaid += 1
+        except Exception:
+            await db.rollback()
+            report.errors += 1
+            logger.exception("Reconciliation failed for order %s", provider_order_id)
+
+    report.paid_without_ledger = (
+        await db.scalar(
+            select(func.count())
+            .select_from(PaymentOrder)
+            .outerjoin(
+                WalletTransaction,
+                WalletTransaction.reference
+                == func.concat("razorpay:", PaymentOrder.provider_payment_id),
+            )
+            .where(PaymentOrder.status == PaymentStatus.paid, WalletTransaction.id.is_(None))
+        )
+    ) or 0
+    if report.paid_without_ledger:
+        logger.error("%d paid orders have no ledger entry", report.paid_without_ledger)
+    logger.info("Payment reconciliation: %s", report)
+    return report
+
+
+@job_service.periodic("reconcile_payments", 24 * 3600)
+async def _reconcile_task(db: AsyncSession) -> None:
+    await reconcile(db)
+
+
+async def list_orders(
+    db: AsyncSession, *, status_filter: PaymentStatus | None, stuck: bool, page: int, limit: int
+) -> tuple[list[PaymentOrder], int]:
+    """Admin view of gateway orders. `stuck` = unpaid and older than 30 minutes."""
+    conditions = []
+    if status_filter is not None:
+        conditions.append(PaymentOrder.status == status_filter)
+    if stuck:
+        conditions.append(PaymentOrder.status != PaymentStatus.paid)
+        conditions.append(PaymentOrder.created_at <= datetime.now(UTC) - RECONCILE_MIN_AGE)
+    total = (
+        await db.scalar(select(func.count()).select_from(PaymentOrder).where(*conditions))
+    ) or 0
+    rows = await db.scalars(
+        select(PaymentOrder)
+        .where(*conditions)
+        .order_by(PaymentOrder.created_at.desc())
+        .offset((page - 1) * limit)
+        .limit(limit)
+    )
+    return list(rows), total

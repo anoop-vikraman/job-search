@@ -48,6 +48,21 @@ class PaymentOrderResponse(ORMModel):
     paid_at: UtcDatetime | None
 
 
+class AdminPaymentOrder(PaymentOrderResponse):
+    user_id: uuid.UUID
+    last_checked_at: UtcDatetime | None
+
+
+class ReconcileReportResponse(BaseModel):
+    checked: int
+    credited: int
+    captured: int
+    still_unpaid: int
+    errors: int
+    paid_without_ledger: int
+    credited_order_ids: list[str]
+
+
 class WebhookAck(BaseModel):
     status: str
 

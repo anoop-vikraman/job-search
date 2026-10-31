@@ -150,6 +150,8 @@ See [wallet-and-escrow.md](./wallet-and-escrow.md#adding-money-razorpay) for the
 | GET | `/api/v1/admin/transactions?page&limit` | admin |
 | GET | `/api/v1/admin/refunds?page&limit` | admin |
 | POST | `/api/v1/admin/refunds/{refund_id}/decide` | admin |
+| GET | `/api/v1/admin/payments?status&stuck&page&limit` | admin |
+| POST | `/api/v1/admin/payments/reconcile` | admin |
 | GET | `/api/v1/admin/disputes?status&page&limit` | admin |
 | POST | `/api/v1/admin/disputes/{dispute_id}/resolve` | admin |
 | GET | `/api/v1/admin/payouts?status&page&limit` | admin |

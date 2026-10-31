@@ -82,6 +82,12 @@ async def fetch_payment(payment_id: str) -> Json:
     return await _request("GET", f"/payments/{payment_id}")
 
 
+async def fetch_order_payments(order_id: str) -> list[Json]:
+    body = await _request("GET", f"/orders/{order_id}/payments")
+    items = body.get("items", [])
+    return items if isinstance(items, list) else []
+
+
 async def capture_payment(payment_id: str, amount_minor: int, currency: str) -> Json:
     return await _request(
         "POST", f"/payments/{payment_id}/capture", {"amount": amount_minor, "currency": currency}

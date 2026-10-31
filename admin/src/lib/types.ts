@@ -159,3 +159,30 @@ export interface Payout {
   created_at: string;
   processed_at: string | null;
 }
+
+export type PaymentStatus = "created" | "paid" | "failed";
+
+export interface PaymentOrder {
+  id: string;
+  user_id: string;
+  provider: string;
+  provider_order_id: string;
+  provider_payment_id: string | null;
+  amount_minor: number;
+  currency: string;
+  status: PaymentStatus;
+  failure_reason: string | null;
+  created_at: string;
+  paid_at: string | null;
+  last_checked_at: string | null;
+}
+
+export interface ReconcileReport {
+  checked: number;
+  credited: number;
+  captured: number;
+  still_unpaid: number;
+  errors: number;
+  paid_without_ledger: number;
+  credited_order_ids: string[];
+}

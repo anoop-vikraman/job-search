@@ -1,5 +1,6 @@
 import uuid
 from collections.abc import Sequence
+from dataclasses import asdict
 from typing import TypeVar
 
 from fastapi import APIRouter, Depends, Query, status
@@ -16,6 +17,7 @@ from app.models.application import Application
 from app.models.enums import (
     DisputeStatus,
     KycStatus,
+    PaymentStatus,
     PayoutStatus,
     RefundStatus,
     ReportStatus,
@@ -33,7 +35,12 @@ from app.schemas.common import ErrorResponse, MessageResponse, Page
 from app.schemas.dispute import DisputeResolve, DisputeResponse
 from app.schemas.kyc import AdminKycSubmission, KycReview, KycSubmissionResponse
 from app.schemas.moderation import AdminReportResponse, ReportResolve, ReportResponse
-from app.schemas.payment import PayoutDecision, PayoutResponse
+from app.schemas.payment import (
+    AdminPaymentOrder,
+    PayoutDecision,
+    PayoutResponse,
+    ReconcileReportResponse,
+)
 from app.schemas.refund import RefundDecision, RefundResponse
 from app.schemas.tweak import TweakResponse
 from app.schemas.user import AdminBanRequest, UserProfile
@@ -262,6 +269,37 @@ async def resolve_dispute(
     """Settle a dispute: release to the provider, refund the lister, or split the escrow."""
     dispute = await dispute_service.resolve_dispute(db, dispute_id, admin.id, data)
     return DisputeResponse.model_validate(dispute)
+
+
+@router.get("/payments", response_model=Page[AdminPaymentOrder])
+async def list_payment_orders(
+    db: DbSession,
+    page: int = Query(1, ge=1),
+    limit: int = Query(20, ge=1, le=100),
+    status_filter: PaymentStatus | None = Query(None, alias="status"),
+    stuck: bool = False,
+) -> Page[AdminPaymentOrder]:
+    """Razorpay top-up orders; `stuck=true` shows unpaid orders older than 30 minutes."""
+    rows, total = await payment_service.list_orders(
+        db, status_filter=status_filter, stuck=stuck, page=page, limit=limit
+    )
+    return Page(
+        items=[AdminPaymentOrder.model_validate(o) for o in rows],
+        total=total,
+        page=page,
+        limit=limit,
+    )
+
+
+@router.post(
+    "/payments/reconcile",
+    response_model=ReconcileReportResponse,
+    status_code=status.HTTP_200_OK,
+)
+async def reconcile_payments(db: DbSession) -> ReconcileReportResponse:
+    """Run payment reconciliation now (it also runs daily in the worker)."""
+    report = await payment_service.reconcile(db)
+    return ReconcileReportResponse(**asdict(report))
 
 
 @router.get("/kyc", response_model=Page[AdminKycSubmission])

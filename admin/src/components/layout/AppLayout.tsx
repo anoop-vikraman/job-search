@@ -7,6 +7,7 @@ import {
   ClipboardList,
   BadgeCheck,
   Banknote,
+  CreditCard,
   Flag,
   Gavel,
 } from "lucide-react";
@@ -27,6 +28,7 @@ const NAV = [
   { to: "/reports", label: "Reports", icon: Flag },
   { to: "/kyc", label: "Verification", icon: BadgeCheck },
   { to: "/payouts", label: "Payouts", icon: Banknote },
+  { to: "/payments", label: "Payments", icon: CreditCard },
 ];
 
 export function AppLayout(): React.JSX.Element {

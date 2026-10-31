@@ -24,6 +24,7 @@ const TONES: Record<string, Tone> = {
   requested: "pending",
   hold: "pending",
   draft: "neutral",
+  created: "pending",
   closed: "neutral",
   withdrawn: "neutral",
 };

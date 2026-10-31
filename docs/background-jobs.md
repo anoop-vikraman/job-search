@@ -33,6 +33,7 @@ Durable jobs stored in Postgres (`jobs` table). No Redis or broker is needed.
 | `auto_release` (job) | provider submits work | Release escrow if the lister doesn't respond by `auto_release_at` |
 | `match_saved_searches` (job) | a tweak becomes active | Alert users whose saved searches match |
 | `push_receipts` (every 5 min) | periodic | Check Expo receipts, prune dead tokens |
+| `reconcile_payments` (daily) | periodic | Credit Razorpay payments that verify/webhook missed |
 | `purge_otp_codes` (every 6 h) | periodic | Delete OTP rows older than a day |
 | `requeue_stale_jobs` (every 5 min) | periodic | Recover jobs from crashed workers |
 

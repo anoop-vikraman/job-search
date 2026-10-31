@@ -2,6 +2,7 @@ import hashlib
 import hmac
 import json
 from collections.abc import Iterator
+from datetime import UTC, datetime, timedelta
 from typing import Any
 
 import httpx
@@ -51,6 +52,10 @@ class FakeRazorpay:
             order_id = f"order_{len(self.orders) + 1:04d}"
             self.orders[order_id] = {"id": order_id, "status": "created", **body}
             return httpx.Response(200, json=self.orders[order_id])
+        if request.method == "GET" and path.startswith("/orders/") and path.endswith("/payments"):
+            order_id = path.split("/")[2]
+            items = [p for p in self.payments.values() if p["order_id"] == order_id]
+            return httpx.Response(200, json={"entity": "collection", "items": items})
         if path.startswith("/payments/"):
             payment_id = path.split("/")[2]
             payment = self.payments.get(payment_id)
@@ -440,3 +445,63 @@ async def test_payout_http_and_admin(client: AsyncClient, db: AsyncSession) -> N
     )
     assert decided.status_code == 200
     assert decided.json()["status"] == "paid"
+
+
+# ─── Reconciliation ─────────────────────────────────────────────────────────
+
+
+async def _aged_order(db: AsyncSession, user: User, amount: int, minutes: int) -> PaymentOrder:
+    order = await payment_service.create_topup_order(db, user.id, amount)
+    order.created_at = datetime.now(UTC) - timedelta(minutes=minutes)
+    await db.commit()
+    return order
+
+
+async def test_reconcile_credits_missed_payments(db: AsyncSession, razorpay: FakeRazorpay) -> None:
+    user = await make_user(db)
+    captured = await _aged_order(db, user, 10_000, 60)
+    authorized = await _aged_order(db, user, 20_000, 90)
+    abandoned = await _aged_order(db, user, 30_000, 60)
+    too_recent = await _aged_order(db, user, 40_000, 5)
+    razorpay.pay(captured.provider_order_id, "pay_R1")
+    razorpay.pay(authorized.provider_order_id, "pay_R2", status="authorized")
+    razorpay.pay(too_recent.provider_order_id, "pay_R4")
+
+    report = await payment_service.reconcile(db)
+    assert str(captured.id) in report.credited_order_ids
+    assert str(authorized.id) in report.credited_order_ids
+    assert str(too_recent.id) not in report.credited_order_ids
+    assert "pay_R2" in razorpay.captures
+    assert report.paid_without_ledger == 0
+    assert await _balance(db, user) == 30_000
+    for order, expected in ((captured, PaymentStatus.paid), (abandoned, PaymentStatus.created)):
+        await db.refresh(order)
+        assert order.status == expected
+    await db.refresh(abandoned)
+    assert abandoned.last_checked_at is not None
+
+    # Running again (or the webhook arriving late) never double-credits.
+    await payment_service.reconcile(db)
+    body, sig = _webhook("payment.captured", razorpay.payments["pay_R1"])
+    await payment_service.handle_webhook(db, body, sig)
+    assert await _balance(db, user) == 30_000
+
+
+async def test_admin_payments_and_manual_reconcile(
+    client: AsyncClient, db: AsyncSession, razorpay: FakeRazorpay
+) -> None:
+    user = await make_user(db)
+    admin = await make_user(db, role=UserRole.admin)
+    stuck = await _aged_order(db, user, 15_000, 120)
+
+    listed = await client.get("/api/v1/admin/payments?stuck=true", headers=_auth(admin))
+    assert listed.status_code == 200
+    assert str(stuck.id) in [o["id"] for o in listed.json()["items"]]
+
+    razorpay.pay(stuck.provider_order_id, "pay_S1")
+    ran = await client.post("/api/v1/admin/payments/reconcile", headers=_auth(admin))
+    assert ran.status_code == 200
+    assert str(stuck.id) in ran.json()["credited_order_ids"]
+    assert (
+        await client.post("/api/v1/admin/payments/reconcile", headers=_auth(user))
+    ).status_code == 403

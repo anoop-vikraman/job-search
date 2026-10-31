@@ -77,6 +77,17 @@ Errors: `AMOUNT_OUT_OF_RANGE`, `PAYMENTS_NOT_CONFIGURED` (keys unset), `PAYMENT_
 `INVALID_SIGNATURE`, `PAYMENT_MISMATCH`, `PAYMENT_NOT_CAPTURED`, `PAYMENT_ORDER_NOT_FOUND`
 (also returned for another user's order).
 
+### Reconciliation
+
+A daily `reconcile_payments` task (and **Run reconciliation** on the admin **Payments** page,
+`POST /admin/payments/reconcile`) looks at orders still `created`/`failed` that are 30 min – 7 days
+old, asks Razorpay for their payments (`GET /orders/{id}/payments`), captures a matching
+`authorized` payment, and credits a captured one through the same idempotent `_credit` path. It
+also counts `paid` orders with no ledger entry (`paid_without_ledger`, should always be 0). The
+report: `{ checked, credited, captured, still_unpaid, errors, paid_without_ledger,
+credited_order_ids }`. `GET /admin/payments?status&stuck=true` lists orders (stuck = unpaid
+> 30 min), with `last_checked_at`.
+
 ### Config (`backend/.env`)
 
 | Var | Notes |

@@ -5,7 +5,9 @@ import type {
   DisputeOutcome,
   KycSubmission,
   Page,
+  PaymentOrder,
   Payout,
+  ReconcileReport,
   Refund,
   Report,
   Transaction,
@@ -138,4 +140,17 @@ export async function decidePayout(
   body: { approve: boolean; reference?: string; reason?: string },
 ): Promise<void> {
   await api.post(`/admin/payouts/${payoutId}/decide`, body);
+}
+
+export async function listPaymentOrders(
+  page: number,
+  filters: { status?: string; stuck?: boolean } = {},
+): Promise<Page<PaymentOrder>> {
+  const res = await api.get<Page<PaymentOrder>>("/admin/payments", withPage(page, { ...filters }));
+  return res.data;
+}
+
+export async function runReconciliation(): Promise<ReconcileReport> {
+  const res = await api.post<ReconcileReport>("/admin/payments/reconcile");
+  return res.data;
 }

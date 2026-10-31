@@ -27,6 +27,7 @@ class PaymentOrder(Base):
     __table_args__ = (
         CheckConstraint("amount_minor > 0", name="amount_positive"),
         Index("ix_payment_orders_user_created", "user_id", "created_at"),
+        Index("ix_payment_orders_status_created", "status", "created_at"),
     )
 
     id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
@@ -46,6 +47,8 @@ class PaymentOrder(Base):
         DateTime(timezone=True), nullable=False, server_default=func.now()
     )
     paid_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    # Last time reconciliation asked Razorpay about this order.
+    last_checked_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
 
 
 class Payout(Base):
