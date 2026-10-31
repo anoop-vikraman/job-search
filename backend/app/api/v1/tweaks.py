@@ -1,0 +1,129 @@
+import uuid
+from typing import Any
+
+from fastapi import APIRouter, Query, status
+
+from app.api.deps import CurrentUser, DbSession
+from app.schemas.application import (
+    ApplicationCreate,
+    ApplicationResponse,
+    CounterQuoteRequest,
+    OfferResponse,
+)
+from app.schemas.common import ErrorResponse, Page
+from app.schemas.tweak import TweakCreate, TweakResponse, TweakUpdate
+from app.services import application_service, tweak_service
+
+router = APIRouter(prefix="/tweaks", tags=["tweaks"])
+
+ERRORS: dict[int | str, dict[str, Any]] = {
+    400: {"model": ErrorResponse},
+    403: {"model": ErrorResponse},
+    404: {"model": ErrorResponse},
+    409: {"model": ErrorResponse},
+}
+
+
+@router.get("", response_model=Page[TweakResponse])
+async def list_tweaks(
+    user: CurrentUser,
+    db: DbSession,
+    page: int = Query(1, ge=1),
+    limit: int = Query(20, ge=1, le=100),
+    category: str | None = None,
+) -> Page[TweakResponse]:
+    """Marketplace feed: active tweaks not owned by the viewer."""
+    rows, total = await tweak_service.list_feed(
+        db, viewer_id=user.id, page=page, limit=limit, category=category
+    )
+    return Page(
+        items=[TweakResponse.model_validate(t) for t in rows],
+        total=total,
+        page=page,
+        limit=limit,
+    )
+
+
+@router.get("/mine", response_model=list[TweakResponse])
+async def list_my_tweaks(user: CurrentUser, db: DbSession) -> list[TweakResponse]:
+    """Tweaks created by the authenticated user (any status)."""
+    rows = await tweak_service.list_my_tweaks(db, user.id)
+    return [TweakResponse.model_validate(t) for t in rows]
+
+
+@router.post(
+    "", response_model=TweakResponse, status_code=status.HTTP_201_CREATED, responses=ERRORS
+)
+async def create_tweak(data: TweakCreate, user: CurrentUser, db: DbSession) -> TweakResponse:
+    """Create a tweak (draft or active)."""
+    tweak = await tweak_service.create_tweak(db, user.id, data)
+    return TweakResponse.model_validate(tweak)
+
+
+@router.get("/{tweak_id}", response_model=TweakResponse, responses=ERRORS)
+async def get_tweak(tweak_id: uuid.UUID, user: CurrentUser, db: DbSession) -> TweakResponse:
+    """Fetch a single tweak by id."""
+    tweak = await tweak_service.get_tweak(db, tweak_id)
+    return TweakResponse.model_validate(tweak)
+
+
+@router.patch("/{tweak_id}", response_model=TweakResponse, responses=ERRORS)
+async def update_tweak(
+    tweak_id: uuid.UUID, data: TweakUpdate, user: CurrentUser, db: DbSession
+) -> TweakResponse:
+    """Update a tweak (owner only)."""
+    tweak = await tweak_service.update_tweak(db, tweak_id, user.id, data)
+    return TweakResponse.model_validate(tweak)
+
+
+@router.delete("/{tweak_id}", status_code=status.HTTP_204_NO_CONTENT, responses=ERRORS)
+async def delete_tweak(tweak_id: uuid.UUID, user: CurrentUser, db: DbSession) -> None:
+    """Delete a tweak; if it has an accepted application it is closed instead."""
+    await tweak_service.delete_tweak(db, tweak_id, user.id)
+
+
+@router.post(
+    "/{tweak_id}/applications",
+    response_model=ApplicationResponse,
+    status_code=status.HTTP_201_CREATED,
+    responses=ERRORS,
+)
+async def apply_to_tweak(
+    tweak_id: uuid.UUID, data: ApplicationCreate, user: CurrentUser, db: DbSession
+) -> ApplicationResponse:
+    """Apply to a tweak as a provider."""
+    application = await application_service.apply(db, tweak_id, user.id, data)
+    return ApplicationResponse.model_validate(application)
+
+
+@router.post(
+    "/applications/{application_id}/accept", response_model=ApplicationResponse, responses=ERRORS
+)
+async def accept_application(
+    application_id: uuid.UUID, user: CurrentUser, db: DbSession
+) -> ApplicationResponse:
+    """Accept an application (lister only); places an escrow hold."""
+    application = await application_service.accept(db, application_id, user.id)
+    return ApplicationResponse.model_validate(application)
+
+
+@router.post(
+    "/applications/{application_id}/reject", response_model=ApplicationResponse, responses=ERRORS
+)
+async def reject_application(
+    application_id: uuid.UUID, user: CurrentUser, db: DbSession
+) -> ApplicationResponse:
+    """Reject an application (lister only)."""
+    application = await application_service.reject(db, application_id, user.id)
+    return ApplicationResponse.model_validate(application)
+
+
+@router.post(
+    "/applications/{application_id}/counter", response_model=OfferResponse, responses=ERRORS
+)
+async def counter_quote(
+    application_id: uuid.UUID, data: CounterQuoteRequest, user: CurrentUser, db: DbSession
+) -> OfferResponse:
+    """Counter an applicant's quote (lister only)."""
+    offer = await application_service.counter_quote(db, application_id, user.id, data)
+    return OfferResponse.model_validate(offer)
