@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import UTC, datetime
 from typing import Annotated, Generic, TypeVar
 
 from pydantic import BaseModel, ConfigDict, PlainSerializer
@@ -8,7 +8,10 @@ T = TypeVar("T")
 # Serialize datetimes as ISO-8601 UTC ending in `Z` (API guideline).
 UtcDatetime = Annotated[
     datetime,
-    PlainSerializer(lambda d: d.astimezone().isoformat().replace("+00:00", "Z"), return_type=str),
+    # astimezone(UTC), not astimezone(): the bare form converts to the server's local zone.
+    PlainSerializer(
+        lambda d: d.astimezone(UTC).isoformat().replace("+00:00", "Z"), return_type=str
+    ),
 ]
 
 
