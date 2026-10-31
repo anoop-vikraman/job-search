@@ -98,6 +98,7 @@ export function backendTweakToLocal(
         distanceKm: b.distance_km ?? null,
         approxLat: b.approx_lat ?? null,
         approxLng: b.approx_lng ?? null,
+        recurrence: b.recurrence ?? null,
         status,
         createdByUserId: b.created_by_user_id,
         applications: applications?.map(backendApplicationToLocal),

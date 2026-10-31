@@ -62,6 +62,7 @@ async def create_tweak(db: AsyncSession, owner_id: uuid.UUID, data: TweakCreate)
         pricing_model=data.pricing_model,
         pricing_data=data.pricing_data,
         price_minor=price_minor,
+        recurrence=data.recurrence,
     )
     db.add(tweak)
     if tweak.status == TweakStatus.active:

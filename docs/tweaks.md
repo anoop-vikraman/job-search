@@ -72,6 +72,18 @@ data → pricing → preview**. Backing state is the `useCreateTweakStore` Zusta
   the profile menu lists and deletes them.
 - `GET /api/v1/tweaks/mine` returns the caller's own tweaks (any status) for the "My Tweaks" tab.
 
+## Recurring tweaks
+
+`recurrence`: `weekly` | `biweekly` | `monthly` | `null` (one-off), set on create or via `PATCH`.
+When a recurring tweak's job **completes** (lister confirms, auto-release, or a dispute settled in
+the provider's favour), the next occurrence is posted in the same transaction
+(`services/recurrence_service.py`, a completion hook): same details, pricing and address, status
+`active`, `previous_occurrence_id` pointing back, and schedule dates moved forward by 7/14/30 days
+(repeatedly, until the first date is today or later; date and ISO datetime formats are kept).
+Saved-search alerts fire for it and the lister is notified. `PATCH { "recurrence": null }` on the
+latest occurrence stops the series. Mobile: **Repeat** chips (Off / Weekly / Every 2 weeks /
+Monthly) on the owner's tweak screen.
+
 ## Pricing validation
 
 The backend validates `pricing_data` against strict Pydantic schemas (`app/schemas/jsonb.py`)

@@ -26,6 +26,7 @@ import { Toast } from '@/components/UI/ToastManager';
 import { minorToMajor } from '@/utils/money';
 import { useAddToWatchlist, useRemoveFromWatchlist, useWatchlist } from '@/hooks/useWatchlist';
 import { ScheduleSlot } from '@/types/tweak';
+import type { Recurrence } from '@/types/api';
 import { palette } from '@tweak/theme';
 import { useTheme } from '@/themes/ThemeProvider';
 
@@ -231,6 +232,13 @@ function ConflictSlotBadge({
         </>
     );
 }
+
+const REPEAT_OPTIONS: { label: string; value: Recurrence | null }[] = [
+    { label: 'Off', value: null },
+    { label: 'Weekly', value: 'weekly' },
+    { label: 'Every 2 weeks', value: 'biweekly' },
+    { label: 'Monthly', value: 'monthly' },
+];
 
 // ─── Main Component ───────────────────────────────────────────────────────────
 
@@ -808,6 +816,33 @@ export default function TweakDetails(): React.JSX.Element {
                                         View Applicants{applicantsCount > 0 ? ` (${applicantsCount})` : ''}
                                     </Text>
                                 </TouchableOpacity>
+                                {/* Repeat after completion */}
+                                <View style={{ backgroundColor: colors.surfaceMuted, borderRadius: 14, padding: 12 }}>
+                                    <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6, marginBottom: 8 }}>
+                                        <Ionicons name="repeat-outline" size={16} color={colors.textSecondary} />
+                                        <Text style={{ fontWeight: '700', color: colors.text }}>Repeat</Text>
+                                        <Text style={{ fontSize: 12, color: colors.textMuted, flex: 1 }}>
+                                            Re-post automatically when this job is completed
+                                        </Text>
+                                    </View>
+                                    <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 6 }}>
+                                        {REPEAT_OPTIONS.map((opt) => {
+                                            const selected = (tweak.recurrence ?? null) === opt.value;
+                                            return (
+                                                <TouchableOpacity
+                                                    key={opt.label}
+                                                    disabled={updateTweak.isPending}
+                                                    onPress={() => updateTweak.mutate({ id: tweak.id, data: { recurrence: opt.value } })}
+                                                    style={{ paddingHorizontal: 12, paddingVertical: 6, borderRadius: 16, borderWidth: 1, borderColor: selected ? palette.iosBlue : colors.border, backgroundColor: selected ? `${palette.iosBlue}15` : colors.surface }}
+                                                    accessibilityRole="radio"
+                                                    accessibilityState={{ selected }}
+                                                >
+                                                    <Text style={{ fontSize: 12, fontWeight: '700', color: selected ? palette.iosBlue : colors.textSecondary }}>{opt.label}</Text>
+                                                </TouchableOpacity>
+                                            );
+                                        })}
+                                    </View>
+                                </View>
                                 <View className="flex-row gap-3">
                                     <TouchableOpacity
                                         onPress={() => router.push('/create-tweak/edit')}

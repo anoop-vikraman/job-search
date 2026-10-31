@@ -4,7 +4,7 @@ from typing import Any
 
 from pydantic import BaseModel, Field
 
-from app.models.enums import PricingModel, TweakStatus, TweakType
+from app.models.enums import PricingModel, Recurrence, TweakStatus, TweakType
 from app.schemas.common import ORMModel, UtcDatetime
 
 
@@ -22,6 +22,7 @@ class TweakCreate(BaseModel):
     pricing_model: PricingModel
     pricing_data: dict[str, Any] | None = None
     status: TweakStatus = TweakStatus.draft
+    recurrence: Recurrence | None = None
 
 
 class TweakUpdate(BaseModel):
@@ -38,6 +39,8 @@ class TweakUpdate(BaseModel):
     pricing_model: PricingModel | None = None
     pricing_data: dict[str, Any] | None = None
     status: TweakStatus | None = None
+    # Send null to stop repeating.
+    recurrence: Recurrence | None = None
 
 
 class TweakResponse(ORMModel):
@@ -59,6 +62,8 @@ class TweakResponse(ORMModel):
     price_minor: int | None
     currency: str
     created_at: UtcDatetime
+    recurrence: Recurrence | None = None
+    previous_occurrence_id: uuid.UUID | None = None
     # Only set on the feed when the caller passes lat/lng and the tweak has a geocoded address.
     distance_km: float | None = None
     # Feed only: in-person tweak location snapped to a ~550 m grid for map display.

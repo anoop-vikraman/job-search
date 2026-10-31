@@ -18,7 +18,7 @@ from sqlalchemy.dialects.postgresql import ARRAY, JSONB, UUID
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.db.base import Base
-from app.models.enums import PricingModel, TweakStatus, TweakType
+from app.models.enums import PricingModel, Recurrence, TweakStatus, TweakType
 
 if TYPE_CHECKING:
     from app.models.application import Application
@@ -60,6 +60,11 @@ class Tweak(Base):
     pricing_data: Mapped[dict[str, Any] | None] = mapped_column(JSONB)
     price_minor: Mapped[int | None] = mapped_column(BigInteger)
     currency: Mapped[str] = mapped_column(CHAR(3), nullable=False, default="INR")
+    # Repeat after completion (next occurrence is posted automatically). Null = one-off.
+    recurrence: Mapped[Recurrence | None] = mapped_column(Enum(Recurrence, name="recurrence"))
+    previous_occurrence_id: Mapped[uuid.UUID | None] = mapped_column(
+        UUID(as_uuid=True), ForeignKey("tweaks.id", ondelete="SET NULL"), index=True
+    )
     created_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True), nullable=False, server_default=func.now()
     )

@@ -69,12 +69,17 @@ export interface BackendTweak {
     price_minor: number | null;
     currency: string;
     created_at: string;
+    /** Re-post automatically after completion; null = one-off. */
+    recurrence?: Recurrence | null;
+    previous_occurrence_id?: string | null;
     /** Feed only: km from the caller's lat/lng; null when either side lacks coordinates. */
     distance_km?: number | null;
     /** Feed only: in-person location snapped to a ~550 m grid (for the map). */
     approx_lat?: number | null;
     approx_lng?: number | null;
 }
+
+export type Recurrence = 'weekly' | 'biweekly' | 'monthly';
 
 /** Feed ordering accepted by GET /tweaks. `distance` requires lat/lng. */
 export type FeedSort = 'newest' | 'price_asc' | 'price_desc' | 'distance';
@@ -94,6 +99,7 @@ export interface CreateTweakRequest {
     pricing_model: BackendPricingModel;
     pricing_data: BackendPricingData | null;
     address_id?: string | null;
+    recurrence?: Recurrence | null;
 }
 
 export type UpdateTweakRequest = Partial<Omit<CreateTweakRequest, 'status'>> & {

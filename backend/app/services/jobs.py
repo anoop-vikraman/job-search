@@ -8,6 +8,7 @@ from app.services import (
     job_service,
     otp_service,
     push_service,
+    recurrence_service,
     saved_search_service,
 )
 
@@ -16,5 +17,6 @@ __all__ = [
     "job_service",
     "otp_service",
     "push_service",
+    "recurrence_service",
     "saved_search_service",
 ]

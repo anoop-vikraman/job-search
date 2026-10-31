@@ -363,6 +363,10 @@ Required by steering: rotatable refresh tokens persisted in DB.
   `(status, created_at)`.
 - `users` gains `kyc_verified_at`.
 
+### tweaks (additions)
+- `recurrence` recurrence enum (`weekly`,`biweekly`,`monthly`), nullable; `previous_occurrence_id`
+  FK `tweaks` SET NULL (indexed); `ix_tweaks_feed_price (status, price_minor)`.
+
 ### saved_searches
 - `user_id` (FK CASCADE, indexed), `name`, `search`, `category`, `tweak_type` (tweak_type enum),
   `lat`, `lng`, `radius_km`, `last_matched_at`; CHECK location complete;

@@ -20,6 +20,12 @@ class TweakType(str, enum.Enum):
     in_person = "in_person"
 
 
+class Recurrence(str, enum.Enum):
+    weekly = "weekly"
+    biweekly = "biweekly"
+    monthly = "monthly"
+
+
 class PricingModel(str, enum.Enum):
     hourly = "hourly"
     quantity = "quantity"
