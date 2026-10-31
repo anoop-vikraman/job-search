@@ -1,8 +1,9 @@
 import uuid
 from datetime import datetime
+from typing import Any
 
-from sqlalchemy import CheckConstraint, DateTime, ForeignKey, Index, Text, func
-from sqlalchemy.dialects.postgresql import UUID
+from sqlalchemy import CheckConstraint, DateTime, ForeignKey, Index, Text, func, text
+from sqlalchemy.dialects.postgresql import JSONB, UUID
 from sqlalchemy.orm import Mapped, mapped_column
 
 from app.db.base import Base
@@ -46,7 +47,13 @@ class Conversation(Base):
 class Message(Base):
     __tablename__ = "messages"
     __table_args__ = (
-        CheckConstraint("char_length(body) BETWEEN 1 AND 2000", name="body_length"),
+        # Text up to 2000 chars; may be empty only when the message carries attachments.
+        CheckConstraint(
+            "char_length(body) <= 2000 AND "
+            "(char_length(body) >= 1 OR jsonb_array_length(attachments) > 0)",
+            name="body_or_attachment",
+        ),
+        CheckConstraint("jsonb_typeof(attachments) = 'array'", name="attachments_array"),
         Index("ix_messages_conversation_created", "conversation_id", "created_at"),
     )
 
@@ -58,6 +65,10 @@ class Message(Base):
         UUID(as_uuid=True), ForeignKey("users.id", ondelete="CASCADE"), nullable=False, index=True
     )
     body: Mapped[str] = mapped_column(Text, nullable=False)
+    # [{"url": "/media/...", "type": "image"}]
+    attachments: Mapped[list[dict[str, Any]]] = mapped_column(
+        JSONB, nullable=False, default=list, server_default=text("'[]'::jsonb")
+    )
     created_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True), nullable=False, server_default=func.now()
     )

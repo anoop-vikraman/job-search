@@ -25,8 +25,10 @@ export default function ConversationsPage(): React.JSX.Element {
 
     const renderItem = ({ item }: { item: Conversation }): React.JSX.Element => {
         const unread = item.unread_count > 0;
-        const preview = item.last_message
-            ? `${item.last_message.sender_user_id === item.other_user.id ? '' : 'You: '}${item.last_message.body}`
+        const last = item.last_message;
+        const lastText = last ? last.body || (last.attachments.length > 1 ? `📷 ${last.attachments.length} photos` : '📷 Photo') : '';
+        const preview = last
+            ? `${last.sender_user_id === item.other_user.id ? '' : 'You: '}${lastText}`
             : 'Say hello 👋';
         return (
             <TouchableOpacity

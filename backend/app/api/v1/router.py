@@ -10,6 +10,7 @@ from app.api.v1 import (
     media,
     notifications,
     ratings,
+    realtime,
     refunds,
     reports,
     tweaks,
@@ -32,5 +33,6 @@ api_router.include_router(conversations.router)
 api_router.include_router(devices.router)
 api_router.include_router(reports.router)
 api_router.include_router(kyc.router)
+api_router.include_router(realtime.router)
 api_router.include_router(media.router)
 api_router.include_router(admin.router)

@@ -25,8 +25,12 @@ export const chatApi = {
         const res = await api.get(`/api/v1/conversations/${id}/messages`, { params });
         return res.data;
     },
-    send: async (id: string, body: string): Promise<ChatMessage> => {
-        const res = await api.post(`/api/v1/conversations/${id}/messages`, { body });
+    /** Text and/or up to 4 photos (URLs from POST /media/upload). */
+    send: async (id: string, body: string, attachmentUrls: string[] = []): Promise<ChatMessage> => {
+        const res = await api.post(`/api/v1/conversations/${id}/messages`, {
+            body,
+            attachment_urls: attachmentUrls,
+        });
         return res.data;
     },
     markRead: async (id: string): Promise<void> => {

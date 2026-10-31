@@ -279,7 +279,8 @@ Required by steering: rotatable refresh tokens persisted in DB.
 | body | TEXT | N | | R |
 | created_at | TIMESTAMPTZ | N | `now()` (service sets wall-clock, strictly increasing per thread) | |
 
-- `ck_messages_body_length` (`char_length(body) BETWEEN 1 AND 2000`).
+- `attachments` JSONB array (`ck_messages_attachments_array`); `ck_messages_body_or_attachment`
+  (`char_length(body) <= 2000 AND (char_length(body) >= 1 OR jsonb_array_length(attachments) > 0)`).
 - `ix_messages_conversation_created (conversation_id, created_at)`, `ix_messages_sender_user_id`.
 - `notification_type` gains `new_message`.
 

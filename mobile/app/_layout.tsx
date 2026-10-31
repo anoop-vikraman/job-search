@@ -17,6 +17,7 @@ import NoInternetBanner from "@/components/UI/NoInternetBanner";
 import ToastManager from "@/components/UI/ToastManager";
 import { useAuthStore } from "@/store/useAuthStore";
 import { usePushNotifications } from "@/hooks/usePushNotifications";
+import { useRealtime } from "@/hooks/useRealtime";
 
 // Module-level client so it persists across re-renders.
 const queryClient = new QueryClient({
@@ -34,6 +35,7 @@ function AppContent() {
   const segments = useSegments();
   const router = useRouter();
   usePushNotifications(isAuthenticated);
+  useRealtime(isAuthenticated);
 
   // Route protection: keep authed users out of auth screens and
   // push unauthenticated users to login when they hit a protected route.

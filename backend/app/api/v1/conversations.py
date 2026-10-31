@@ -44,7 +44,8 @@ async def list_conversations(
 async def open_conversation(
     data: ConversationCreate, user: CurrentUser, db: DbSession, response: Response
 ) -> ConversationResponse:
-    """Open the chat for an accepted application (lister or provider).
+    """Open the chat for an application: either party once accepted, or the lister while it
+    is pending (to ask the applicant questions).
 
     Idempotent: returns 201 when the conversation is created, 200 if it already existed.
     """
@@ -107,8 +108,13 @@ async def list_messages(
 async def send_message(
     conversation_id: uuid.UUID, data: ChatMessageCreate, user: CurrentUser, db: DbSession
 ) -> ChatMessageResponse:
-    """Send a message; notifies the other party."""
-    message = await chat_service.send_message(db, conversation_id, user.id, data.body)
+    """Send a message (text and/or up to 4 uploaded photos); notifies the other party.
+
+    While the application is pending, each side may send CHAT_PRE_ACCEPT_LIMIT messages.
+    """
+    message = await chat_service.send_message(
+        db, conversation_id, user.id, data.body, data.attachment_urls
+    )
     return ChatMessageResponse.model_validate(message)
 
 

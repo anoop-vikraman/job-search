@@ -3,7 +3,7 @@ import { useIsFocused } from '@react-navigation/native';
 import dayjs from 'dayjs';
 import { useLocalSearchParams, useRouter, type Href } from 'expo-router';
 import React, { useEffect, useState } from 'react';
-import { ActivityIndicator, Alert, FlatList, Modal, Pressable, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import { ActivityIndicator, Alert, FlatList, Image, Modal, Pressable, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import { palette } from '@tweak/theme';
 
 import ChatAvatar from '@/components/Chat/ChatAvatar';
@@ -19,8 +19,12 @@ import { useTheme } from '@/themes/ThemeProvider';
 import type { ChatMessage, ReportTarget } from '@/types/api';
 import { useSetBlocked } from '@/hooks/useModeration';
 import ReportSheet from '@/components/Moderation/ReportSheet';
+import PhotoStrip from '@/components/Work/PhotoStrip';
+import { Toast } from '@/components/UI/ToastManager';
+import { mediaUri, pickAndUploadPhotos } from '@/utils/mediaUpload';
 
 const MAX_LENGTH = 2000;
+const MAX_PHOTOS = 4;
 
 function formatStamp(iso: string): string {
     const d = dayjs(iso);
@@ -54,11 +58,44 @@ export default function ChatThreadPage(): React.JSX.Element {
 
     const canSend = conversation?.can_send ?? false;
     const trimmed = draft.trim();
+    const [photos, setPhotos] = useState<string[]>([]);
+    const [uploading, setUploading] = useState(false);
+    const hasContent = trimmed.length > 0 || photos.length > 0;
+
+    // "Seen" goes under my newest message once the other side's read cursor passes it.
+    const myLatest = otherId ? messages.find((m) => m.sender_user_id !== otherId) : undefined;
+    const seenId =
+        myLatest && conversation?.other_last_read_at && conversation.other_last_read_at >= myLatest.created_at
+            ? myLatest.id
+            : undefined;
+
+    const attach = async (): Promise<void> => {
+        setUploading(true);
+        try {
+            const urls = await pickAndUploadPhotos(MAX_PHOTOS - photos.length);
+            setPhotos((prev) => [...prev, ...urls].slice(0, MAX_PHOTOS));
+        } catch {
+            Toast.error('Could not upload the photo. Please try again.');
+        } finally {
+            setUploading(false);
+        }
+    };
 
     const handleSend = (): void => {
-        if (!trimmed || !canSend || send.isPending) return;
+        if (!hasContent || !canSend || send.isPending || uploading) return;
+        const body = trimmed;
+        const attachmentUrls = photos;
         setDraft('');
-        send.mutate(trimmed, { onError: () => setDraft(trimmed) });
+        setPhotos([]);
+        send.mutate(
+            { body, attachmentUrls },
+            {
+                onError: () => {
+                    setDraft(body);
+                    setPhotos(attachmentUrls);
+                },
+            }
+        );
     };
 
     const renderMessage = ({ item }: { item: ChatMessage }): React.JSX.Element => {
@@ -80,10 +117,25 @@ export default function ChatThreadPage(): React.JSX.Element {
                         borderBottomLeftRadius: mine ? 16 : 4,
                     }}
                 >
-                    <Text style={{ fontSize: 15, lineHeight: 20, color: mine ? '#fff' : colors.text }}>{item.body}</Text>
+                    {item.attachments.length > 0 && (
+                        <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 4, marginBottom: item.body ? 6 : 0 }}>
+                            {item.attachments.map((a) => (
+                                <Image
+                                    key={a.url}
+                                    source={{ uri: mediaUri(a.url) }}
+                                    style={{ width: item.attachments.length === 1 ? 200 : 96, height: item.attachments.length === 1 ? 200 : 96, borderRadius: 10 }}
+                                    accessibilityLabel="Photo"
+                                />
+                            ))}
+                        </View>
+                    )}
+                    {item.body ? (
+                        <Text style={{ fontSize: 15, lineHeight: 20, color: mine ? '#fff' : colors.text }}>{item.body}</Text>
+                    ) : null}
                 </View>
                 <Text style={{ fontSize: 10, color: colors.textMuted, marginTop: 2, marginHorizontal: 4 }}>
                     {formatStamp(item.created_at)}
+                    {item.id === seenId ? ' · Seen' : ''}
                 </Text>
             </Pressable>
         );
@@ -153,11 +205,34 @@ export default function ChatThreadPage(): React.JSX.Element {
                     <Text style={{ textAlign: 'center', fontSize: 13, color: colors.textSecondary }}>
                         {conversation.blocked
                             ? "You can't message this user."
-                            : 'This job was cancelled, so the conversation is read-only.'}
+                            : conversation.pre_accept_remaining === 0
+                              ? "You've used your messages for now. Chat fully opens once the application is accepted."
+                              : 'This job was cancelled, so the conversation is read-only.'}
                     </Text>
                 </View>
             ) : (
-                <View style={{ flexDirection: 'row', alignItems: 'flex-end', gap: 8, paddingHorizontal: 12, paddingVertical: 10, backgroundColor: colors.surface, borderTopWidth: 1, borderTopColor: colors.border }}>
+                <View style={{ backgroundColor: colors.surface, borderTopWidth: 1, borderTopColor: colors.border }}>
+                {conversation?.pre_accept_remaining != null && (
+                    <Text style={{ fontSize: 12, color: colors.textSecondary, textAlign: 'center', paddingTop: 8, paddingHorizontal: 16 }}>
+                        Application not accepted yet: you can send {conversation.pre_accept_remaining} more message
+                        {conversation.pre_accept_remaining === 1 ? '' : 's'}.
+                    </Text>
+                )}
+                {photos.length > 0 && (
+                    <View style={{ paddingHorizontal: 12, paddingTop: 10 }}>
+                        <PhotoStrip urls={photos} size={56} onRemove={(url) => setPhotos((prev) => prev.filter((p) => p !== url))} />
+                    </View>
+                )}
+                <View style={{ flexDirection: 'row', alignItems: 'flex-end', gap: 8, paddingHorizontal: 12, paddingVertical: 10 }}>
+                    <TouchableOpacity
+                        onPress={attach}
+                        disabled={uploading || photos.length >= MAX_PHOTOS || !conversation}
+                        style={{ width: 40, height: 40, alignItems: 'center', justifyContent: 'center' }}
+                        accessibilityRole="button"
+                        accessibilityLabel="Attach photo"
+                    >
+                        {uploading ? <ActivityIndicator size="small" color={colors.textMuted} /> : <Ionicons name="image-outline" size={24} color={colors.textSecondary} />}
+                    </TouchableOpacity>
                     <TextInput
                         value={draft}
                         onChangeText={setDraft}
@@ -170,17 +245,18 @@ export default function ChatThreadPage(): React.JSX.Element {
                     />
                     <TouchableOpacity
                         onPress={handleSend}
-                        disabled={!trimmed || send.isPending}
-                        style={{ width: 40, height: 40, borderRadius: 20, alignItems: 'center', justifyContent: 'center', backgroundColor: trimmed ? palette.iosBlue : colors.surfaceMuted }}
+                        disabled={!hasContent || send.isPending || uploading}
+                        style={{ width: 40, height: 40, borderRadius: 20, alignItems: 'center', justifyContent: 'center', backgroundColor: hasContent ? palette.iosBlue : colors.surfaceMuted }}
                         accessibilityRole="button"
                         accessibilityLabel="Send message"
                     >
                         {send.isPending ? (
                             <ActivityIndicator size="small" color="#fff" />
                         ) : (
-                            <Ionicons name="send" size={18} color={trimmed ? '#fff' : colors.textMuted} />
+                            <Ionicons name="send" size={18} color={hasContent ? '#fff' : colors.textMuted} />
                         )}
                     </TouchableOpacity>
+                </View>
                 </View>
             )}
             {/* Options */}

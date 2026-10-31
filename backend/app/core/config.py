@@ -18,6 +18,8 @@ class Settings(BaseSettings):
 
     # Platform fee taken from the provider's payout on completion (basis points; 500 = 5%).
     PLATFORM_FEE_BPS: int = 500
+    # Messages each side may send while an application is still pending (questions).
+    CHAT_PRE_ACCEPT_LIMIT: int = 3
     # After the provider marks work done, escrow releases automatically unless the lister
     # confirms or disputes within this many hours.
     AUTO_RELEASE_HOURS: int = 72
@@ -50,6 +52,8 @@ class Settings(BaseSettings):
 
     # Background jobs. In production run `python -m app.worker` and set RUN_WORKER_IN_APP=false.
     RUN_WORKER_IN_APP: bool = True
+    # WebSocket chat events via Postgres LISTEN/NOTIFY.
+    REALTIME_ENABLED: bool = True
     WORKER_POLL_SECONDS: float = 2.0
     # Optional: required only if "enhanced push security" is enabled on the EAS project.
     EXPO_ACCESS_TOKEN: str | None = None

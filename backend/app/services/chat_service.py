@@ -9,6 +9,7 @@ from sqlalchemy import ColumnElement, Select, case, func, or_, select, update
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from app.core.config import settings
 from app.core.errors import AppError
 from app.models.application import Application
 from app.models.chat import Conversation, Message
@@ -17,7 +18,7 @@ from app.models.notification import Notification
 from app.models.tweak import Tweak
 from app.models.user import User
 from app.schemas.chat import ChatMessageResponse, ChatParticipant, ConversationResponse
-from app.services import block_service, notification_service
+from app.services import block_service, notification_service, realtime_service
 
 # Chat opens on acceptance and stays writable through disputes and after completion
 # (follow-ups, reviews). Rejected/withdrawn (incl. cancelled work) leaves it read-only.
@@ -115,11 +116,24 @@ async def _build(
         .where(Message.conversation_id.in_(conv_ids), _unread_condition(viewer_id))
         .group_by(Message.conversation_id),
     )
+    sent_by_viewer = await _pairs(
+        db,
+        select(Message.conversation_id, func.count())
+        .where(Message.conversation_id.in_(conv_ids), Message.sender_user_id == viewer_id)
+        .group_by(Message.conversation_id),
+    )
 
     out: list[ConversationResponse] = []
     for c in conversations:
         other_id = c.provider_user_id if c.lister_user_id == viewer_id else c.lister_user_id
         last = last_messages.get(c.id)
+        app_status = app_statuses.get(c.application_id)
+        pending = app_status == ApplicationStatus.pending
+        remaining = (
+            max(0, settings.CHAT_PRE_ACCEPT_LIMIT - sent_by_viewer.get(c.id, 0))
+            if pending
+            else None
+        )
         out.append(
             ConversationResponse(
                 id=c.id,
@@ -130,9 +144,15 @@ async def _build(
                 my_role=_role(c, viewer_id),
                 last_message=ChatMessageResponse.model_validate(last) if last else None,
                 unread_count=unread.get(c.id, 0),
-                can_send=app_statuses.get(c.application_id) in CHAT_OPEN_STATUSES
+                can_send=(app_status in CHAT_OPEN_STATUSES or bool(remaining))
                 and other_id not in blocked,
                 blocked=other_id in blocked,
+                other_last_read_at=(
+                    c.provider_last_read_at
+                    if c.lister_user_id == viewer_id
+                    else c.lister_last_read_at
+                ),
+                pre_accept_remaining=remaining,
                 last_message_at=c.last_message_at,
                 created_at=c.created_at,
             )
@@ -166,11 +186,15 @@ async def get_or_create(
     await block_service.ensure_not_blocked(
         db, tweak.created_by_user_id, application.provider_user_id
     )
-    if application.status not in CHAT_OPEN_STATUSES:
+    lister_asking = (
+        application.status == ApplicationStatus.pending and user_id == tweak.created_by_user_id
+    )
+    if application.status not in CHAT_OPEN_STATUSES and not lister_asking:
         raise AppError(
             status.HTTP_409_CONFLICT,
             "CHAT_NOT_AVAILABLE",
-            "Chat opens once the application is accepted.",
+            "Chat opens once the application is accepted (listers can ask applicants questions"
+            " before that).",
         )
     conversation = Conversation(
         application_id=application.id,
@@ -251,13 +275,31 @@ async def list_messages(
 
 
 async def send_message(
-    db: AsyncSession, conversation_id: uuid.UUID, sender_id: uuid.UUID, body: str
+    db: AsyncSession,
+    conversation_id: uuid.UUID,
+    sender_id: uuid.UUID,
+    body: str,
+    attachment_urls: list[str] | None = None,
 ) -> Message:
     conversation = await _get_for_party(db, conversation_id, sender_id)
     application_status = await db.scalar(
         select(Application.status).where(Application.id == conversation.application_id)
     )
-    if application_status not in CHAT_OPEN_STATUSES:
+    if application_status == ApplicationStatus.pending:
+        # Before acceptance each side gets a few messages for questions, not a full chat.
+        sent = await db.scalar(
+            select(func.count())
+            .select_from(Message)
+            .where(Message.conversation_id == conversation.id, Message.sender_user_id == sender_id)
+        )
+        if (sent or 0) >= settings.CHAT_PRE_ACCEPT_LIMIT:
+            raise AppError(
+                status.HTTP_409_CONFLICT,
+                "PRE_ACCEPT_LIMIT",
+                f"Up to {settings.CHAT_PRE_ACCEPT_LIMIT} messages each until the application is"
+                " accepted.",
+            )
+    elif application_status not in CHAT_OPEN_STATUSES:
         raise AppError(status.HTTP_409_CONFLICT, "CHAT_CLOSED", "This conversation is read-only.")
     await block_service.ensure_not_blocked(
         db, conversation.lister_user_id, conversation.provider_user_id
@@ -269,8 +311,13 @@ async def send_message(
     if conversation.last_message_at is not None and sent_at <= conversation.last_message_at:
         sent_at = conversation.last_message_at + timedelta(microseconds=1)
 
+    attachments = [{"url": url, "type": "image"} for url in (attachment_urls or [])]
     message = Message(
-        conversation_id=conversation.id, sender_user_id=sender_id, body=body, created_at=sent_at
+        conversation_id=conversation.id,
+        sender_user_id=sender_id,
+        body=body,
+        attachments=attachments,
+        created_at=sent_at,
     )
     db.add(message)
     conversation.last_message_at = sent_at
@@ -284,7 +331,14 @@ async def send_message(
 
     sender = await db.get(User, sender_id)
     sender_name = (sender.first_name if sender else None) or "your contact"
-    preview = body if len(body) <= PREVIEW_CHARS else body[: PREVIEW_CHARS - 1] + "…"
+    text_preview = body or (
+        "📷 Photo" if len(attachments) == 1 else f"📷 {len(attachments)} photos"
+    )
+    preview = (
+        text_preview
+        if len(text_preview) <= PREVIEW_CHARS
+        else text_preview[: PREVIEW_CHARS - 1] + "…"
+    )
     notification_service.add(
         db,
         recipient_id,
@@ -293,6 +347,9 @@ async def send_message(
         preview,
         tweak_id=conversation.tweak_id,
         data={"conversation_id": str(conversation.id)},
+    )
+    await realtime_service.notify(
+        db, "message", conversation.id, [conversation.lister_user_id, conversation.provider_user_id]
     )
     await db.commit()
     await db.refresh(message)
@@ -306,8 +363,11 @@ async def mark_read(db: AsyncSession, conversation_id: uuid.UUID, user_id: uuid.
         return
     if conversation.lister_user_id == user_id:
         conversation.lister_last_read_at = conversation.last_message_at
+        other_id = conversation.provider_user_id
     else:
         conversation.provider_last_read_at = conversation.last_message_at
+        other_id = conversation.lister_user_id
+    await realtime_service.notify(db, "read", conversation.id, [other_id])
     await db.execute(
         update(Notification)
         .where(

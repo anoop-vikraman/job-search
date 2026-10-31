@@ -18,7 +18,7 @@ plugins = ["pydantic.mypy"]
 exclude = ["alembic/versions/"]
 
 [[tool.mypy.overrides]]
-module = ["jose.*", "passlib.*"]
+module = ["jose.*", "passlib.*", "asyncpg.*"]
 ignore_missing_imports = true
 
 [tool.pytest.ini_options]

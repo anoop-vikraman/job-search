@@ -23,19 +23,22 @@ def custom_operation_id(route: APIRoute) -> str:
 
 @asynccontextmanager
 async def lifespan(_: FastAPI) -> AsyncIterator[None]:
-    """Run the background worker in-process for local dev (RUN_WORKER_IN_APP)."""
+    """Start the in-process worker (RUN_WORKER_IN_APP) and the realtime listener."""
     stop = asyncio.Event()
-    task: asyncio.Task[None] | None = None
+    tasks: list[asyncio.Task[None]] = []
     if settings.RUN_WORKER_IN_APP:
         from app.worker import run_forever
 
-        task = asyncio.create_task(run_forever(stop))
+        tasks.append(asyncio.create_task(run_forever(stop)))
+    if settings.REALTIME_ENABLED:
+        from app.services.realtime_service import listen_forever
+
+        tasks.append(asyncio.create_task(listen_forever(stop)))
     try:
         yield
     finally:
         stop.set()
-        if task is not None:
-            await task
+        await asyncio.gather(*tasks, return_exceptions=True)
 
 
 app = FastAPI(

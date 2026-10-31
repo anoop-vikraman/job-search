@@ -5,6 +5,7 @@ from httpx import AsyncClient
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from app.core.config import settings
 from app.core.errors import AppError
 from app.core.security import create_access_token
 from app.models.application import Application
@@ -60,11 +61,75 @@ async def test_open_is_idempotent_for_both_parties(db: AsyncSession) -> None:
     assert again.other_user.id == lister.id
 
 
-async def test_chat_requires_accepted_application(db: AsyncSession) -> None:
-    lister, _, application = await _accepted(db, accept=False)
+async def test_pending_application_allows_a_few_questions(db: AsyncSession) -> None:
+    lister, provider, application = await _accepted(db, accept=False)
+    # The provider can't start a chat on a pending application; the lister can.
     with pytest.raises(AppError) as exc:
-        await chat_service.get_or_create(db, application.id, lister.id)
+        await chat_service.get_or_create(db, application.id, provider.id)
     assert exc.value.code == "CHAT_NOT_AVAILABLE"
+    conv, _ = await chat_service.get_or_create(db, application.id, lister.id)
+    assert conv.can_send is True and conv.pre_accept_remaining == settings.CHAT_PRE_ACCEPT_LIMIT
+
+    for i in range(settings.CHAT_PRE_ACCEPT_LIMIT):
+        await chat_service.send_message(db, conv.id, lister.id, f"Question {i}?")
+    with pytest.raises(AppError) as exc:
+        await chat_service.send_message(db, conv.id, lister.id, "One more?")
+    assert exc.value.code == "PRE_ACCEPT_LIMIT"
+    as_lister = await chat_service.get_conversation(db, conv.id, lister.id)
+    assert as_lister.pre_accept_remaining == 0 and as_lister.can_send is False
+
+    # The provider still has their own allowance to answer.
+    as_provider = await chat_service.get_conversation(db, conv.id, provider.id)
+    assert as_provider.pre_accept_remaining == settings.CHAT_PRE_ACCEPT_LIMIT
+    await chat_service.send_message(db, conv.id, provider.id, "Yes, I have tools.")
+
+    # Acceptance lifts the cap.
+    await application_service.accept(db, application.id, lister.id)
+    after = await chat_service.get_conversation(db, conv.id, lister.id)
+    assert after.pre_accept_remaining is None and after.can_send is True
+    await chat_service.send_message(db, conv.id, lister.id, "Great, see you tomorrow")
+
+
+async def test_photo_messages_and_read_receipts(db: AsyncSession) -> None:
+    lister, provider, application = await _accepted(db)
+    conv, _ = await chat_service.get_or_create(db, application.id, lister.id)
+    msg = await chat_service.send_message(
+        db, conv.id, provider.id, "", ["/media/abc.jpg", "/media/def.jpg"]
+    )
+    assert msg.attachments == [
+        {"url": "/media/abc.jpg", "type": "image"},
+        {"url": "/media/def.jpg", "type": "image"},
+    ]
+    note = await db.scalar(
+        select(Notification)
+        .where(Notification.user_id == lister.id, Notification.type == NotificationType.new_message)
+        .order_by(Notification.created_at.desc())
+    )
+    assert note is not None and note.body == "📷 2 photos"
+
+    seen = await chat_service.get_conversation(db, conv.id, provider.id)
+    assert seen.other_last_read_at is None  # lister hasn't opened it yet
+    await chat_service.mark_read(db, conv.id, lister.id)
+    seen = await chat_service.get_conversation(db, conv.id, provider.id)
+    assert seen.other_last_read_at is not None and seen.other_last_read_at >= msg.created_at
+
+
+@pytest.mark.parametrize(
+    "payload",
+    [
+        {"body": "", "attachment_urls": []},
+        {"body": "hi", "attachment_urls": ["https://evil.example/x.jpg"]},
+        {"body": "hi", "attachment_urls": ["/media/../kyc_private/secret.jpg"]},
+        {"body": "hi", "attachment_urls": ["/media/a.jpg"] * 5},
+    ],
+)
+async def test_invalid_message_payloads(payload: dict[str, object]) -> None:
+    from pydantic import ValidationError
+
+    from app.schemas.chat import ChatMessageCreate
+
+    with pytest.raises(ValidationError):
+        ChatMessageCreate.model_validate(payload)
 
 
 async def test_only_the_two_parties_can_access(db: AsyncSession) -> None:

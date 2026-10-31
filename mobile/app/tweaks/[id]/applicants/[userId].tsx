@@ -114,7 +114,8 @@ export default function ApplicantDetail(): React.JSX.Element {
                         <Ionicons name="arrow-back" size={24} color={colors.text} />
                     </TouchableOpacity>
                     <Text style={{ fontSize: 17, fontWeight: '800', color: colors.text }}>Applicant Profile</Text>
-                    {CHAT_STATUSES.includes(applicant.status) ? (
+                    {/* Listers can also ask a pending applicant a few questions. */}
+                    {CHAT_STATUSES.includes(applicant.status) || isPending ? (
                         <TouchableOpacity
                             onPress={() => startChat.start(applicant.id)}
                             disabled={startChat.isPending}

@@ -104,6 +104,7 @@ See [wallet-and-escrow.md](./wallet-and-escrow.md#adding-money-razorpay) for the
 | GET | `/api/v1/conversations/{conversation_id}/messages?page&limit` | user (party) |
 | POST | `/api/v1/conversations/{conversation_id}/messages` | user (party) |
 | POST | `/api/v1/conversations/{conversation_id}/read` | user (party) |
+| WS | `/api/v1/ws` | access token in the first frame |
 
 ### Moderation
 | Method | Path | Auth |
@@ -174,6 +175,7 @@ See [wallet-and-escrow.md](./wallet-and-escrow.md#adding-money-razorpay) for the
 | `KYC_REQUIRED` / `UPI_NOT_VERIFIED` | Withdrawal before verification / to another UPI id |
 | `KYC_PENDING` / `ALREADY_VERIFIED` | Duplicate verification submission |
 | `INVALID_OTP` / `SMS_SEND_FAILED` / `RATE_LIMITED` | OTP verification / delivery / throttling |
+| `PRE_ACCEPT_LIMIT` | Message cap reached before the application was accepted |
 | `USER_BLOCKED` | Applying to / chatting with a blocked (or blocking) user |
 | `ALREADY_REPORTED` | Duplicate open report |
 | `WORK_SUBMITTED` | Lister cancel after the provider marked work done |

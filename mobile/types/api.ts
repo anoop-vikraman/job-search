@@ -372,7 +372,9 @@ export interface ChatMessage {
     id: string;
     conversation_id: string;
     sender_user_id: string;
+    /** May be empty when the message only has photos. */
     body: string;
+    attachments: { url: string; type: 'image' }[];
     created_at: string;
 }
 
@@ -390,6 +392,10 @@ export interface Conversation {
     can_send: boolean;
     /** Either side blocked the other. */
     blocked: boolean;
+    /** When the other party last read the thread ("Seen"). */
+    other_last_read_at: string | null;
+    /** While the application is pending: messages you may still send (null after acceptance). */
+    pre_accept_remaining: number | null;
     last_message_at: string | null;
     created_at: string;
 }

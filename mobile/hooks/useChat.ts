@@ -9,12 +9,20 @@ import { useRouter, type Href } from 'expo-router';
 
 import { chatApi } from '../api/chat';
 import type { ChatMessage, Conversation } from '../types/api';
+import { useRealtimeStore } from '../store/useRealtimeStore';
 import { queryKeys } from './queryKeys';
 
-// Polling intervals (no websocket yet). Only active while the screen is focused.
+// Polling is the fallback when the realtime socket is down; with it connected, a slow
+// safety poll catches anything missed during reconnects. Only while the screen is focused.
 const THREAD_POLL_MS = 4000;
 const LIST_POLL_MS = 15000;
 const BADGE_POLL_MS = 30000;
+const LIVE_SAFETY_POLL_MS = 60000;
+
+function pollEvery(poll: boolean, fallbackMs: number): number | false {
+    if (!poll) return false;
+    return useRealtimeStore.getState().connected ? LIVE_SAFETY_POLL_MS : fallbackMs;
+}
 
 export interface PollOptions {
     /** Poll while true (pass the screen's focus state). */
@@ -29,7 +37,7 @@ export function useConversations({ poll = false }: PollOptions = {}): UseQueryRe
             const page = await chatApi.list({ page: 1, limit: 50 });
             return page.items;
         },
-        refetchInterval: poll ? LIST_POLL_MS : false,
+        refetchInterval: () => pollEvery(poll, LIST_POLL_MS),
     });
 }
 
@@ -53,7 +61,7 @@ export function useMessages(
             const page = await chatApi.messages(id as string, { page: 1, limit: 100 });
             return page.items;
         },
-        refetchInterval: poll ? THREAD_POLL_MS : false,
+        refetchInterval: () => pollEvery(poll, THREAD_POLL_MS),
     });
 }
 
@@ -62,7 +70,7 @@ export function useChatUnreadCount({ poll = false }: PollOptions = {}): UseQuery
     return useQuery({
         queryKey: queryKeys.chatUnread(),
         queryFn: async (): Promise<number> => (await chatApi.unreadCount()).count,
-        refetchInterval: poll ? BADGE_POLL_MS : false,
+        refetchInterval: () => pollEvery(poll, BADGE_POLL_MS),
     });
 }
 
@@ -78,12 +86,18 @@ export function useOpenConversation(): UseMutationResult<Conversation, Error, st
     });
 }
 
+export interface SendMessageArgs {
+    body: string;
+    attachmentUrls?: string[];
+}
+
 export function useSendMessage(
     conversationId: string
-): UseMutationResult<ChatMessage, Error, string> {
+): UseMutationResult<ChatMessage, Error, SendMessageArgs> {
     const qc = useQueryClient();
     return useMutation({
-        mutationFn: (body: string) => chatApi.send(conversationId, body),
+        mutationFn: ({ body, attachmentUrls }: SendMessageArgs) =>
+            chatApi.send(conversationId, body, attachmentUrls),
         onSuccess: (message) => {
             // Show the sent message immediately; the next poll reconciles.
             qc.setQueryData<ChatMessage[]>(
@@ -91,6 +105,7 @@ export function useSendMessage(
                 (prev = []) => (prev.some((m) => m.id === message.id) ? prev : [message, ...prev])
             );
             qc.invalidateQueries({ queryKey: queryKeys.conversations(), exact: true });
+            qc.invalidateQueries({ queryKey: queryKeys.conversation(conversationId) });
         },
     });
 }
@@ -126,8 +141,8 @@ export function useStartChat(): StartChat {
     };
 }
 
-/** Application statuses for which the chat exists (accepted work, incl. finished). */
-export const CHAT_STATUSES: readonly string[] = ['accepted', 'completed'];
+/** Application statuses with a full chat (accepted work, disputes, finished jobs). */
+export const CHAT_STATUSES: readonly string[] = ['accepted', 'completed', 'disputed'];
 
 /** "Priya S." style display name with a fallback. */
 export function participantName(p: { first_name: string | null; last_name: string | null }): string {
