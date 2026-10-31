@@ -400,6 +400,31 @@ export interface Conversation {
     created_at: string;
 }
 
+// ─── Saved searches ───────────────────────────────────────────────────────
+
+export interface SavedSearchCreate {
+    name: string;
+    search?: string;
+    category?: string;
+    tweak_type?: BackendTweakType;
+    lat?: number;
+    lng?: number;
+    radius_km?: number;
+}
+
+export interface SavedSearch {
+    id: string;
+    name: string;
+    search: string | null;
+    category: string | null;
+    tweak_type: BackendTweakType | null;
+    lat: number | null;
+    lng: number | null;
+    radius_km: number | null;
+    last_matched_at: string | null;
+    created_at: string;
+}
+
 // ─── Moderation ───────────────────────────────────────────────────────────
 
 export type ReportTarget = 'user' | 'tweak' | 'message';

@@ -14,6 +14,7 @@ from app.models.push_ticket import PushTicket
 from app.models.rating import Rating
 from app.models.refresh_token import RefreshToken
 from app.models.refund import Refund
+from app.models.saved_search import SavedSearch
 from app.models.tweak import Tweak
 from app.models.user import User
 from app.models.wallet import Wallet, WalletTransaction
@@ -39,6 +40,7 @@ __all__ = [
     "Rating",
     "RefreshToken",
     "Report",
+    "SavedSearch",
     "Refund",
     "Tweak",
     "User",

@@ -13,6 +13,7 @@ from app.api.v1 import (
     realtime,
     refunds,
     reports,
+    saved_searches,
     tweaks,
     users,
     wallet,
@@ -34,5 +35,6 @@ api_router.include_router(devices.router)
 api_router.include_router(reports.router)
 api_router.include_router(kyc.router)
 api_router.include_router(realtime.router)
+api_router.include_router(saved_searches.router)
 api_router.include_router(media.router)
 api_router.include_router(admin.router)

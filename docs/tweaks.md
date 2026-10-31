@@ -59,6 +59,14 @@ data → pricing → preview**. Backing state is the `useCreateTweakStore` Zusta
   (foreground permission, position rounded to ~110 m) and switches the sort to `distance` with a
   25 km default radius (changeable in Filters). The schedule filter is applied
   client-side to loaded pages. The list loads 20 at a time and fetches more on scroll.
+- **Saved search alerts**: `POST /api/v1/saved-searches` `{ name, search?, category?, tweak_type?,
+  lat?, lng?, radius_km? }` (max 10 per user; needs at least one filter, `400 EMPTY_SEARCH`;
+  `409 TOO_MANY_SAVED_SEARCHES`), `GET`, `DELETE /{id}`. When a tweak becomes `active` (created
+  active or published from draft), a `match_saved_searches` job checks it against everyone's saved
+  searches with the feed's rules (case-insensitive text match, category, type, haversine radius)
+  and sends each matching user one `saved_search_match` notification. Owners and blocked users are
+  skipped. Mobile: bell icon on Find Tweaks saves the current search; **Saved Search Alerts** in
+  the profile menu lists and deletes them.
 - `GET /api/v1/tweaks/mine` returns the caller's own tweaks (any status) for the "My Tweaks" tab.
 
 ## Pricing validation

@@ -21,6 +21,7 @@ export default function ProfileMenuList(): React.JSX.Element {
         { icon: 'language', label: 'Language', route: '/settings/language' },
         { icon: 'notifications', label: 'Notification Settings', route: '/settings/notifications' },
         { icon: 'ban', label: 'Blocked Users', route: '/settings/blocked' },
+        { icon: 'search', label: 'Saved Search Alerts', route: '/settings/alerts' },
     ];
 
     const legalItems: MenuItem[] = [

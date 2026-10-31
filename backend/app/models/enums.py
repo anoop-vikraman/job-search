@@ -61,6 +61,7 @@ class NotificationType(str, enum.Enum):
     work_submitted = "work_submitted"
     dispute_opened = "dispute_opened"
     dispute_resolved = "dispute_resolved"
+    saved_search_match = "saved_search_match"
 
 
 class TxnType(str, enum.Enum):

@@ -58,6 +58,13 @@ token · `403` insufficient role/access · `404` not found · `409` conflict/sta
 | PATCH | `/api/v1/tweaks/{tweak_id}` | user (owner) |
 | DELETE | `/api/v1/tweaks/{tweak_id}` | user (owner) |
 
+### Saved searches
+| Method | Path | Auth |
+|---|---|---|
+| GET | `/api/v1/saved-searches` | user |
+| POST | `/api/v1/saved-searches` | user |
+| DELETE | `/api/v1/saved-searches/{saved_id}` | user (own) |
+
 ### Applications & offers
 | Method | Path | Auth |
 |---|---|---|

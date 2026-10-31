@@ -32,6 +32,7 @@ from app.models.enums import ApplicationStatus, TweakStatus, TweakType
 from app.models.tweak import Tweak
 from app.schemas.jsonb import resolve_price_minor
 from app.schemas.tweak import FeedSort, TweakCreate, TweakUpdate
+from app.services import job_service
 
 
 def _validate_and_price(pricing_model: str, pricing_data: dict | None) -> int | None:
@@ -63,9 +64,17 @@ async def create_tweak(db: AsyncSession, owner_id: uuid.UUID, data: TweakCreate)
         price_minor=price_minor,
     )
     db.add(tweak)
+    if tweak.status == TweakStatus.active:
+        await db.flush()
+        _alert_saved_searches(db, tweak.id)
     await db.commit()
     await db.refresh(tweak)
     return tweak
+
+
+def _alert_saved_searches(db: AsyncSession, tweak_id: uuid.UUID) -> None:
+    # Handled by saved_search_service (registered job); enqueued by kind to avoid an import cycle.
+    job_service.enqueue(db, "match_saved_searches", {"tweak_id": str(tweak_id)})
 
 
 async def get_tweak(db: AsyncSession, tweak_id: uuid.UUID) -> Tweak:
@@ -82,9 +91,12 @@ async def update_tweak(
     if tweak.created_by_user_id != owner_id:
         raise AppError(status.HTTP_403_FORBIDDEN, "TWEAK_ACCESS_DENIED", "Not your tweak.")
 
+    was_active = tweak.status == TweakStatus.active
     fields = data.model_dump(exclude_unset=True)
     for key, value in fields.items():
         setattr(tweak, key, value)
+    if tweak.status == TweakStatus.active and not was_active:
+        _alert_saved_searches(db, tweak.id)
     # Re-derive the price if pricing changed.
     if "pricing_model" in fields or "pricing_data" in fields:
         tweak.price_minor = _validate_and_price(tweak.pricing_model.value, tweak.pricing_data)

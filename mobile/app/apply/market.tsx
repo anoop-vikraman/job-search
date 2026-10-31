@@ -10,7 +10,8 @@ import { useAuthStore } from '../../store/useAuthStore';
 import { useTweaksFeed, type TweakFeedFilters } from '../../hooks/useTweaks';
 import { useCurrentLocation } from '../../hooks/useCurrentLocation';
 import { useDebouncedValue } from '../../hooks/useDebouncedValue';
-import type { FeedSort } from '../../types/api';
+import type { FeedSort, SavedSearchCreate } from '../../types/api';
+import { describeSavedSearch, useCreateSavedSearch } from '../../hooks/useSavedSearches';
 import TweakTile from '../../components/Tweak/TweakTile';
 import { useTheme } from '@/themes/ThemeProvider';
 
@@ -119,6 +120,38 @@ export default function MarketPage(): React.JSX.Element {
         setSortBy(value);
     };
 
+    // ─── Saved search alert ──────────────────────────────────────────────
+    const createSaved = useCreateSavedSearch();
+    const [saveOpen, setSaveOpen] = useState(false);
+    const [saveName, setSaveName] = useState('');
+    const savable: SavedSearchCreate = {
+        name: saveName.trim(),
+        search: feedFilters.search,
+        category: feedFilters.category,
+        tweak_type: feedFilters.tweak_type,
+        ...(coords && radiusKm != null ? { lat: coords.lat, lng: coords.lng, radius_km: radiusKm } : {}),
+    };
+    const hasSavableFilters = Boolean(savable.search || savable.category || savable.tweak_type || savable.radius_km);
+
+    const openSaveSheet = (): void => {
+        if (!hasSavableFilters) {
+            Toast.info('Search or pick a category, type or distance first, then save it as an alert.');
+            return;
+        }
+        setSaveName(savable.search ?? savable.category ?? 'Nearby tweaks');
+        setSaveOpen(true);
+    };
+
+    const saveAlert = (): void => {
+        if (!savable.name) return;
+        createSaved.mutate(savable, {
+            onSuccess: () => {
+                setSaveOpen(false);
+                Toast.success("Alert saved. We'll notify you about new matching tweaks.");
+            },
+        });
+    };
+
     const resetFilters = (): void => {
         setFilters(DEFAULT_FILTERS);
         setRadiusKm(DEFAULT_RADIUS_KM);
@@ -191,6 +224,14 @@ export default function MarketPage(): React.JSX.Element {
                             </TouchableOpacity>
                         ) : null}
                     </View>
+                    <TouchableOpacity
+                        onPress={openSaveSheet}
+                        style={{ width: 44, height: 44, backgroundColor: colors.surfaceMuted, borderRadius: 12, alignItems: 'center', justifyContent: 'center' }}
+                        accessibilityRole="button"
+                        accessibilityLabel="Save this search as an alert"
+                    >
+                        <Ionicons name="notifications-outline" size={20} color={colors.textSecondary} />
+                    </TouchableOpacity>
                     <TouchableOpacity
                         onPress={() => setIsFilterModalVisible(true)}
                         style={{ width: 44, height: 44, backgroundColor: activeFilterCount > 0 ? `${themeColors.primary}15` : colors.surfaceMuted, borderRadius: 12, alignItems: 'center', justifyContent: 'center' }}
@@ -280,6 +321,39 @@ export default function MarketPage(): React.JSX.Element {
                         )
                     }
                 />
+
+                {/* Save alert sheet */}
+                <Modal visible={saveOpen} transparent animationType="slide" onRequestClose={() => setSaveOpen(false)}>
+                    <Pressable style={{ flex: 1, backgroundColor: 'rgba(0,0,0,0.5)', justifyContent: 'flex-end' }} onPress={() => setSaveOpen(false)}>
+                        <Pressable style={{ backgroundColor: colors.surface, borderTopLeftRadius: 24, borderTopRightRadius: 24, padding: 20, paddingBottom: 32 }}>
+                            <Text style={{ fontSize: 18, fontWeight: '800', color: colors.text }}>Get alerts for this search</Text>
+                            <Text style={{ fontSize: 13, color: colors.textSecondary, marginTop: 4, marginBottom: 12 }}>
+                                {describeSavedSearch({
+                                    search: savable.search ?? null,
+                                    category: savable.category ?? null,
+                                    tweak_type: savable.tweak_type ?? null,
+                                    radius_km: savable.radius_km ?? null,
+                                })}
+                            </Text>
+                            <TextInput
+                                value={saveName}
+                                onChangeText={setSaveName}
+                                placeholder="Alert name"
+                                placeholderTextColor={colors.textMuted}
+                                maxLength={80}
+                                style={{ borderWidth: 1, borderColor: colors.border, borderRadius: 12, padding: 12, fontSize: 15, color: colors.text, backgroundColor: colors.surfaceMuted }}
+                            />
+                            <TouchableOpacity
+                                onPress={saveAlert}
+                                disabled={!savable.name || createSaved.isPending}
+                                style={{ marginTop: 16, backgroundColor: themeColors.primary, opacity: !savable.name || createSaved.isPending ? 0.5 : 1, paddingVertical: 14, borderRadius: 14, alignItems: 'center' }}
+                                accessibilityRole="button"
+                            >
+                                <Text style={{ color: '#fff', fontWeight: '800', fontSize: 16 }}>Save alert</Text>
+                            </TouchableOpacity>
+                        </Pressable>
+                    </Pressable>
+                </Modal>
 
                 {/* Filter Modal */}
                 <Modal

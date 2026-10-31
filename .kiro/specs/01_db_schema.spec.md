@@ -363,6 +363,11 @@ Required by steering: rotatable refresh tokens persisted in DB.
   `(status, created_at)`.
 - `users` gains `kyc_verified_at`.
 
+### saved_searches
+- `user_id` (FK CASCADE, indexed), `name`, `search`, `category`, `tweak_type` (tweak_type enum),
+  `lat`, `lng`, `radius_km`, `last_matched_at`; CHECK location complete;
+  `ix_saved_searches_category_type`. `notification_type` gains `saved_search_match`.
+
 ### reports / blocks
 - `reports`: `reporter_user_id`, `target_type` report_target (`user`,`tweak`,`message`), `target_id`,
   `target_user_id` (accountable user), `reason` report_reason, `details`, `status` report_status
