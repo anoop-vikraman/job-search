@@ -14,6 +14,8 @@ export default defineConfig({
     port: 5173,
     proxy: {
       "/api": "http://localhost:8000",
+      // Uploaded evidence/photos are served by the API at /media.
+      "/media": "http://localhost:8000",
     },
   },
 });

@@ -33,6 +33,16 @@ class ApplicationResponse(ORMModel):
     status: ApplicationStatus
     applied_at: UtcDatetime
     responded_at: UtcDatetime | None
+    work_submitted_at: UtcDatetime | None = None
+    completion_note: str | None = None
+    completion_photos: list[dict[str, Any]] = Field(default_factory=list)
+    auto_release_at: UtcDatetime | None = None
+
+
+class WorkSubmit(BaseModel):
+    note: str | None = Field(None, max_length=2000)
+    # URLs returned by POST /media/upload (before/after photos).
+    photo_urls: list[str] = Field(default_factory=list, max_length=10)
 
 
 class ProviderSummary(ORMModel):

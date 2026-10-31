@@ -5,6 +5,7 @@ import {
   Users,
   Wrench,
   ClipboardList,
+  Gavel,
 } from "lucide-react";
 import * as React from "react";
 import { NavLink, Outlet, useNavigate } from "react-router-dom";
@@ -19,6 +20,7 @@ const NAV = [
   { to: "/applications", label: "Applications", icon: ClipboardList },
   { to: "/transactions", label: "Transactions", icon: ArrowLeftRight },
   { to: "/refunds", label: "Refunds", icon: ReceiptText },
+  { to: "/disputes", label: "Disputes", icon: Gavel },
 ];
 
 export function AppLayout(): React.JSX.Element {

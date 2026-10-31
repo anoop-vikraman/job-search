@@ -1,5 +1,7 @@
 import uuid
-from datetime import UTC, datetime
+from collections.abc import Awaitable, Callable
+from datetime import UTC, datetime, timedelta
+from typing import Any
 
 from fastapi import status
 from sqlalchemy import select
@@ -11,8 +13,8 @@ from app.models.application import Application, Offer
 from app.models.enums import ApplicationStatus, NotificationType, TweakStatus
 from app.models.tweak import Tweak
 from app.models.user import User
-from app.schemas.application import ApplicationCreate, CounterQuoteRequest
-from app.services import notification_service, wallet_service
+from app.schemas.application import ApplicationCreate, CounterQuoteRequest, WorkSubmit
+from app.services import job_service, notification_service, wallet_service
 
 
 def _platform_fee(amount_minor: int) -> int:
@@ -84,7 +86,7 @@ async def accept(
     other_accepted = await db.scalar(
         select(Application).where(
             Application.tweak_id == tweak.id,
-            Application.status == ApplicationStatus.accepted,
+            Application.status.in_([ApplicationStatus.accepted, ApplicationStatus.disputed]),
         )
     )
     if other_accepted is not None:
@@ -119,32 +121,80 @@ async def accept(
 async def complete(
     db: AsyncSession, application_id: uuid.UUID, lister_user_id: uuid.UUID
 ) -> Application:
-    """Lister marks the accepted work complete: releases escrow (minus platform fee)."""
+    """Lister confirms the accepted work: releases escrow (minus platform fee)."""
     application = await _get_application_for_owner(db, application_id, lister_user_id)
     if application.status != ApplicationStatus.accepted:
         raise AppError(status.HTTP_409_CONFLICT, "INVALID_STATE", "Application is not accepted.")
     tweak = await _get_tweak(db, application.tweak_id)
+    await release_to_provider(db, application, tweak, reason="was marked complete")
+    await db.commit()
+    await db.refresh(application)
+    return application
 
+
+async def release_to_provider(
+    db: AsyncSession, application: Application, tweak: Tweak, *, reason: str
+) -> None:
+    """Pay the full escrow to the provider (minus fee) and close the job. Caller commits."""
     agreed = application.agreed_price_minor or _agreed_amount(application, tweak)
     fee = application.platform_fee_minor or _platform_fee(agreed)
     await wallet_service.release_hold(
         db,
-        lister_user_id,
+        tweak.created_by_user_id,
         application.provider_user_id,
         agreed,
         tweak_id=tweak.id,
         application_id=application.id,
         fee_minor=fee,
     )
-
     application.status = ApplicationStatus.completed
+    application.auto_release_at = None
     tweak.status = TweakStatus.completed
     notification_service.add(
         db,
         application.provider_user_id,
         NotificationType.tweak_completed,
         "Payment released",
-        f'"{tweak.title}" was marked complete and your payout was released.',
+        f'"{tweak.title}" {reason} and your payout was released.',
+        tweak_id=tweak.id,
+    )
+    for hook in COMPLETION_HOOKS:
+        await hook(db, tweak, application)
+
+
+# Follow-ups run inside the completing transaction (e.g. recurring tweaks re-post).
+COMPLETION_HOOKS: list[Callable[[AsyncSession, Tweak, Application], Awaitable[None]]] = []
+
+
+async def submit_work(
+    db: AsyncSession, application_id: uuid.UUID, provider_user_id: uuid.UUID, data: WorkSubmit
+) -> Application:
+    """Provider marks the job done. The lister then confirms or disputes; otherwise the
+    escrow releases automatically after AUTO_RELEASE_HOURS."""
+    application = await db.get(Application, application_id)
+    if application is None or application.provider_user_id != provider_user_id:
+        raise AppError(status.HTTP_404_NOT_FOUND, "APPLICATION_NOT_FOUND", "Application not found.")
+    if application.status != ApplicationStatus.accepted:
+        raise AppError(status.HTTP_409_CONFLICT, "INVALID_STATE", "Application is not accepted.")
+    tweak = await _get_tweak(db, application.tweak_id)
+    now = datetime.now(UTC)
+    application.work_submitted_at = now
+    application.completion_note = data.note
+    application.completion_photos = [{"url": url} for url in data.photo_urls]
+    application.auto_release_at = now + timedelta(hours=settings.AUTO_RELEASE_HOURS)
+    job_service.enqueue(
+        db,
+        "auto_release",
+        {"application_id": str(application.id)},
+        run_at=application.auto_release_at,
+    )
+    notification_service.add(
+        db,
+        tweak.created_by_user_id,
+        NotificationType.work_submitted,
+        "Work marked as done",
+        f'The provider finished "{tweak.title}". Confirm it or open a dispute within '
+        f"{settings.AUTO_RELEASE_HOURS} hours; otherwise payment releases automatically.",
         tweak_id=tweak.id,
     )
     await db.commit()
@@ -152,13 +202,53 @@ async def complete(
     return application
 
 
+@job_service.handler("auto_release")
+async def auto_release_job(db: AsyncSession, payload: dict[str, Any]) -> None:
+    """Release escrow if the lister neither confirmed nor disputed in time."""
+    application = await db.scalar(
+        select(Application)
+        .where(Application.id == uuid.UUID(payload["application_id"]))
+        .with_for_update()
+    )
+    if (
+        application is None
+        or application.status != ApplicationStatus.accepted
+        or application.auto_release_at is None
+        or application.auto_release_at > datetime.now(UTC)
+    ):
+        await db.commit()
+        return  # confirmed, disputed, cancelled or resubmitted since: nothing to do
+    tweak = await _get_tweak(db, application.tweak_id)
+    await release_to_provider(
+        db, application, tweak, reason="was auto-confirmed after the review window"
+    )
+    notification_service.add(
+        db,
+        tweak.created_by_user_id,
+        NotificationType.tweak_completed,
+        "Payment released automatically",
+        f'No response on "{tweak.title}" within the review window, so the payment was released.',
+        tweak_id=tweak.id,
+    )
+    await db.commit()
+
+
 async def cancel(
     db: AsyncSession, application_id: uuid.UUID, lister_user_id: uuid.UUID
 ) -> Application:
-    """Lister cancels an accepted job: refunds the escrow hold to the lister."""
+    """Lister cancels an accepted job: refunds the escrow hold to the lister.
+
+    Not allowed once the provider has marked the work done; that needs a dispute.
+    """
     application = await _get_application_for_owner(db, application_id, lister_user_id)
     if application.status != ApplicationStatus.accepted:
         raise AppError(status.HTTP_409_CONFLICT, "INVALID_STATE", "Application is not accepted.")
+    if application.work_submitted_at is not None:
+        raise AppError(
+            status.HTTP_409_CONFLICT,
+            "WORK_SUBMITTED",
+            "The provider marked this work done. Open a dispute instead of cancelling.",
+        )
     tweak = await _get_tweak(db, application.tweak_id)
     agreed = application.agreed_price_minor or _agreed_amount(application, tweak)
     await wallet_service.refund_hold(db, lister_user_id, agreed, application_id=application.id)

@@ -27,6 +27,7 @@ class Application(Base):
     __tablename__ = "applications"
     __table_args__ = (
         CheckConstraint("jsonb_typeof(selected_slots) = 'array'", name="slots_array"),
+        CheckConstraint("jsonb_typeof(completion_photos) = 'array'", name="photos_array"),
         # One active application per provider per tweak.
         Index(
             "uq_applications_active_one",
@@ -60,6 +61,14 @@ class Application(Base):
         DateTime(timezone=True), nullable=False, server_default=func.now()
     )
     responded_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    # Two-sided completion: the provider marks the work done; the lister confirms (or it
+    # auto-releases at `auto_release_at`).
+    work_submitted_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    completion_note: Mapped[str | None] = mapped_column(Text)
+    completion_photos: Mapped[list[dict[str, Any]]] = mapped_column(
+        JSONB, nullable=False, default=list, server_default=text("'[]'::jsonb")
+    )
+    auto_release_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
     created_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True), nullable=False, server_default=func.now()
     )

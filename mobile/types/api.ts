@@ -107,7 +107,9 @@ export type BackendApplicationStatus =
     | 'accepted'
     | 'completed'
     | 'rejected'
-    | 'withdrawn';
+    | 'withdrawn'
+    /** Escrow frozen while support reviews a dispute. */
+    | 'disputed';
 
 /** A single start/end time window the applicant selected. */
 export interface BackendSelectedSlot {
@@ -128,6 +130,39 @@ export interface BackendApplication {
     status: BackendApplicationStatus;
     applied_at: string;
     responded_at: string | null;
+    /** Set when the provider marks the work done. */
+    work_submitted_at: string | null;
+    completion_note: string | null;
+    completion_photos: { url: string }[];
+    /** Escrow releases automatically at this time unless the lister confirms or disputes. */
+    auto_release_at: string | null;
+}
+
+export interface WorkSubmitRequest {
+    note?: string;
+    photo_urls: string[];
+}
+
+export type DisputeStatus = 'open' | 'resolved';
+export type DisputeOutcome = 'release' | 'refund' | 'partial';
+
+export interface Dispute {
+    id: string;
+    application_id: string;
+    opened_by_user_id: string;
+    reason: string;
+    evidence: { url: string }[];
+    status: DisputeStatus;
+    outcome: DisputeOutcome | null;
+    provider_amount_minor: number | null;
+    admin_note: string | null;
+    resolved_at: string | null;
+    created_at: string;
+}
+
+export interface DisputeCreateRequest {
+    reason: string;
+    evidence_urls: string[];
 }
 
 export interface CreateApplicationRequest {

@@ -14,6 +14,9 @@ import {
 import { ScreenWrapper } from '@/components/ScreenWrapper';
 import { useApplicationAction, useTweak, useTweakApplicationsRaw } from '@/hooks/useTweaks';
 import { CHAT_STATUSES, useStartChat } from '@/hooks/useChat';
+import { useOpenDispute } from '@/hooks/useWorkflow';
+import NoteWithPhotosSheet from '@/components/Work/NoteWithPhotosSheet';
+import WorkStatusBanner from '@/components/Work/WorkStatusBanner';
 import { formatMinor, toMinor } from '@/utils/money';
 import { palette } from '@tweak/theme';
 import { useTheme } from '@/themes/ThemeProvider';
@@ -28,6 +31,8 @@ export default function ApplicantDetail(): React.JSX.Element {
     const applicant = applicants.find((a) => a.id === applicationId);
     const action = useApplicationAction();
     const startChat = useStartChat();
+    const openDispute = useOpenDispute();
+    const [disputeOpen, setDisputeOpen] = useState(false);
 
     const [counterQuote, setCounterQuote] = useState('');
 
@@ -44,6 +49,7 @@ export default function ApplicantDetail(): React.JSX.Element {
     const displayName = applicant.provider_user_id.slice(0, 8);
     const isAccepted = applicant.status === 'accepted';
     const isPending = applicant.status === 'pending';
+    const workSubmitted = isAccepted && applicant.work_submitted_at != null;
 
     const runAction = (
         label: string,
@@ -141,6 +147,12 @@ export default function ApplicantDetail(): React.JSX.Element {
 
                     {/* Content Section */}
                     <View style={{ padding: 20 }}>
+                        <WorkStatusBanner application={applicant} viewer="lister" />
+                        {isAccepted && !workSubmitted && (
+                            <TouchableOpacity onPress={() => setDisputeOpen(true)} style={{ alignSelf: 'flex-start', marginBottom: 16 }} accessibilityRole="button">
+                                <Text style={{ color: palette.red600, fontWeight: '700', fontSize: 13 }}>Report a problem with this job</Text>
+                            </TouchableOpacity>
+                        )}
                         {/* Why prefer me */}
                         <Text style={{ fontSize: 16, fontWeight: '800', color: colors.text, marginBottom: 12 }}>Why they applied</Text>
                         <View style={{ backgroundColor: colors.surfaceMuted, borderRadius: 16, padding: 16, borderWidth: 1, borderColor: colors.border, marginBottom: 24 }}>
@@ -219,6 +231,24 @@ export default function ApplicantDetail(): React.JSX.Element {
                                 <Text style={{ fontSize: 16, fontWeight: '800', color: '#fff' }}>Accept Applicant</Text>
                             </TouchableOpacity>
                         </>
+                    ) : workSubmitted ? (
+                        <>
+                            <TouchableOpacity
+                                onPress={() => setDisputeOpen(true)}
+                                disabled={action.isPending}
+                                style={{ flex: 1, paddingVertical: 16, borderRadius: 14, backgroundColor: palette.red100, alignItems: 'center' }}
+                            >
+                                <Text style={{ fontSize: 16, fontWeight: '800', color: palette.red700 }}>Dispute</Text>
+                            </TouchableOpacity>
+                            <TouchableOpacity
+                                onPress={handleComplete}
+                                disabled={action.isPending}
+                                style={{ flex: 2, paddingVertical: 16, borderRadius: 14, backgroundColor: palette.green600, alignItems: 'center', flexDirection: 'row', justifyContent: 'center', gap: 8 }}
+                            >
+                                <Ionicons name="checkmark-done-circle" size={18} color="#fff" />
+                                <Text style={{ fontSize: 16, fontWeight: '800', color: '#fff' }}>Confirm & Pay</Text>
+                            </TouchableOpacity>
+                        </>
                     ) : isAccepted ? (
                         <>
                             <TouchableOpacity
@@ -240,12 +270,29 @@ export default function ApplicantDetail(): React.JSX.Element {
                     ) : (
                         <View style={{ flex: 1, paddingVertical: 16, alignItems: 'center' }}>
                             <Text style={{ fontSize: 14, fontWeight: '700', color: colors.textSecondary, textTransform: 'capitalize' }}>
-                                Application {applicant.status}
+                                {applicant.status === 'disputed' ? 'Under review by Tweak support' : `Application ${applicant.status}`}
                             </Text>
                         </View>
                     )}
                 </View>
             </KeyboardAvoidingView>
+            <NoteWithPhotosSheet
+                visible={disputeOpen}
+                title="Open a dispute"
+                description="Payment stays on hold and Tweak support reviews the job. Explain what went wrong and add photos if you can."
+                placeholder="Describe the problem (at least 10 characters)"
+                submitLabel="Open dispute"
+                minLength={10}
+                tone="danger"
+                submitting={openDispute.isPending}
+                onClose={() => setDisputeOpen(false)}
+                onSubmit={({ note, photoUrls }) =>
+                    openDispute.mutate(
+                        { applicationId: applicant.id, tweakId: tweak.id, data: { reason: note, evidence_urls: photoUrls } },
+                        { onSuccess: () => setDisputeOpen(false) }
+                    )
+                }
+            />
         </ScreenWrapper>
     );
 }

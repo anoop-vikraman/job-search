@@ -19,9 +19,13 @@ from app.models.user import User
 from app.schemas.chat import ChatMessageResponse, ChatParticipant, ConversationResponse
 from app.services import notification_service
 
-# Chat opens on acceptance and stays writable after completion (follow-ups, reviews).
-# Rejected/withdrawn (incl. cancelled work) leaves the thread read-only.
-CHAT_OPEN_STATUSES = (ApplicationStatus.accepted, ApplicationStatus.completed)
+# Chat opens on acceptance and stays writable through disputes and after completion
+# (follow-ups, reviews). Rejected/withdrawn (incl. cancelled work) leaves it read-only.
+CHAT_OPEN_STATUSES = (
+    ApplicationStatus.accepted,
+    ApplicationStatus.completed,
+    ApplicationStatus.disputed,
+)
 PREVIEW_CHARS = 120
 
 K = TypeVar("K")

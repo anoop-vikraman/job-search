@@ -1,6 +1,8 @@
 import { api } from "@/lib/api";
 import type {
   Application,
+  Dispute,
+  DisputeOutcome,
   Page,
   Refund,
   Transaction,
@@ -64,4 +66,20 @@ export async function listRefunds(page: number, status?: string): Promise<Page<R
 
 export async function decideRefund(refundId: string, approve: boolean): Promise<void> {
   await api.post(`/admin/refunds/${refundId}/decide`, { approve });
+}
+
+export async function listDisputes(page: number, status?: string): Promise<Page<Dispute>> {
+  const res = await api.get<Page<Dispute>>("/admin/disputes", withPage(page, { status }));
+  return res.data;
+}
+
+export interface DisputeResolution {
+  outcome: DisputeOutcome;
+  provider_amount_minor?: number;
+  note?: string;
+}
+
+export async function resolveDispute(disputeId: string, body: DisputeResolution): Promise<Dispute> {
+  const res = await api.post<Dispute>(`/admin/disputes/${disputeId}/resolve`, body);
+  return res.data;
 }

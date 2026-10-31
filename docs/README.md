@@ -14,6 +14,7 @@ This folder documents each feature: what it does, where it lives across the thre
 | [authentication.md](./authentication.md) | Signup, login, OTP, JWT + refresh-token rotation, route protection |
 | [tweaks.md](./tweaks.md) | Posting a tweak, the create-tweak wizard, drafts, the marketplace feed |
 | [applications-and-offers.md](./applications-and-offers.md) | Applying, quotes, counter-offers, accept / reject |
+| [completion-and-disputes.md](./completion-and-disputes.md) | Provider marks work done, auto-release, disputes |
 | [chat.md](./chat.md) | Lister ↔ accepted-provider messaging, unread counts |
 | [push-notifications.md](./push-notifications.md) | Expo push delivery, device tokens, tap-to-navigate, mute settings |
 | [background-jobs.md](./background-jobs.md) | Postgres job queue, worker, periodic tasks |

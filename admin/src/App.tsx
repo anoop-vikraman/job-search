@@ -4,6 +4,7 @@ import { Navigate, Route, Routes } from "react-router-dom";
 import { AppLayout } from "@/components/layout/AppLayout";
 import { useAuthStore } from "@/features/auth/store";
 import { ApplicationsPage } from "@/pages/ApplicationsPage";
+import { DisputesPage } from "@/pages/DisputesPage";
 import { LoginPage } from "@/pages/LoginPage";
 import { RefundsPage } from "@/pages/RefundsPage";
 import { TransactionsPage } from "@/pages/TransactionsPage";
@@ -31,6 +32,7 @@ export function App(): React.JSX.Element {
         <Route path="/applications" element={<ApplicationsPage />} />
         <Route path="/transactions" element={<TransactionsPage />} />
         <Route path="/refunds" element={<RefundsPage />} />
+        <Route path="/disputes" element={<DisputesPage />} />
       </Route>
       <Route path="*" element={<Navigate to="/users" replace />} />
     </Routes>

@@ -18,6 +18,10 @@ import type { Tweak } from '@/store/useTweaksStore';
 import { useMyApplications, useTweak, useTweakApplicationsRaw, useUpdateTweak } from '@/hooks/useTweaks';
 import { CHAT_STATUSES, useStartChat } from '@/hooks/useChat';
 import { backendApplicationToLocal } from '@/utils/tweakAdapter';
+import { useOpenDispute, useSubmitWork } from '@/hooks/useWorkflow';
+import NoteWithPhotosSheet from '@/components/Work/NoteWithPhotosSheet';
+import WorkStatusBanner from '@/components/Work/WorkStatusBanner';
+import { Toast } from '@/components/UI/ToastManager';
 import { minorToMajor } from '@/utils/money';
 import { useAddToWatchlist, useRemoveFromWatchlist, useWatchlist } from '@/hooks/useWatchlist';
 import { ScheduleSlot } from '@/types/tweak';
@@ -294,6 +298,9 @@ export default function TweakDetails(): React.JSX.Element {
     const [showFullDescription, setShowFullDescription] = useState(false);
     const [showMenuModal, setShowMenuModal] = useState(false);
     const [showAppSummaryModal, setShowAppSummaryModal] = useState(false);
+    const [workSheet, setWorkSheet] = useState<'submit' | 'dispute' | null>(null);
+    const submitWork = useSubmitWork();
+    const openDispute = useOpenDispute();
 
     // Audio Playback
     const player = useAudioPlayer(tweak?.audioUri || '');
@@ -756,6 +763,27 @@ export default function TweakDetails(): React.JSX.Element {
                                 </Text>
                             </TouchableOpacity>
                         )}
+                        {/* Provider: completion + disputes for accepted work */}
+                        {!isOwnedByMe && myProviderApplication && ['accepted', 'disputed', 'completed', 'withdrawn'].includes(myProviderApplication.status) && (
+                            <View style={{ marginBottom: 10 }}>
+                                <WorkStatusBanner application={myProviderApplication} viewer="provider" />
+                                {myProviderApplication.status === 'accepted' && !myProviderApplication.work_submitted_at && (
+                                    <TouchableOpacity
+                                        onPress={() => setWorkSheet('submit')}
+                                        style={{ backgroundColor: palette.green600, paddingVertical: 14, borderRadius: 14, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 8, marginBottom: 8 }}
+                                        accessibilityRole="button"
+                                    >
+                                        <Ionicons name="checkmark-done-outline" size={20} color="#fff" />
+                                        <Text style={{ fontWeight: '800', color: '#fff', fontSize: 15 }}>Mark Work Done</Text>
+                                    </TouchableOpacity>
+                                )}
+                                {myProviderApplication.status === 'accepted' && (
+                                    <TouchableOpacity onPress={() => setWorkSheet('dispute')} style={{ alignSelf: 'center', padding: 6 }} accessibilityRole="button">
+                                        <Text style={{ color: palette.red600, fontWeight: '700', fontSize: 13 }}>Report a problem with this job</Text>
+                                    </TouchableOpacity>
+                                )}
+                            </View>
+                        )}
                         {isOwnedByMe ? (
                             <View style={{ gap: 10 }}>
                                 {/* View Applicants Button */}
@@ -894,6 +922,44 @@ export default function TweakDetails(): React.JSX.Element {
                     </View>
                 </Pressable>
             </Modal>
+            {/* ── Provider work sheets ─────────────────────────────────────── */}
+            {myProviderApplication && (
+                <>
+                    <NoteWithPhotosSheet
+                        visible={workSheet === 'submit'}
+                        title="Mark work as done"
+                        description="The lister gets a notification to confirm. Payment releases automatically if they don't respond in time."
+                        placeholder="What did you do? (optional)"
+                        submitLabel="Submit for confirmation"
+                        submitting={submitWork.isPending}
+                        onClose={() => setWorkSheet(null)}
+                        onSubmit={({ note, photoUrls }) =>
+                            submitWork.mutate(
+                                { applicationId: myProviderApplication.id, tweakId: tweak.id, data: { note: note || undefined, photo_urls: photoUrls } },
+                                { onSuccess: () => { setWorkSheet(null); Toast.success('Sent to the lister for confirmation'); } }
+                            )
+                        }
+                    />
+                    <NoteWithPhotosSheet
+                        visible={workSheet === 'dispute'}
+                        title="Report a problem"
+                        description="Payment is put on hold and Tweak support reviews what happened. Add details and any photos."
+                        placeholder="Describe the problem (at least 10 characters)"
+                        submitLabel="Open dispute"
+                        minLength={10}
+                        tone="danger"
+                        submitting={openDispute.isPending}
+                        onClose={() => setWorkSheet(null)}
+                        onSubmit={({ note, photoUrls }) =>
+                            openDispute.mutate(
+                                { applicationId: myProviderApplication.id, tweakId: tweak.id, data: { reason: note, evidence_urls: photoUrls } },
+                                { onSuccess: () => { setWorkSheet(null); Toast.success('Dispute opened. Support will review it.'); } }
+                            )
+                        }
+                    />
+                </>
+            )}
+
             {/* ── Application Summary Modal ─────────────────────────────── */}
             <Modal visible={showAppSummaryModal} transparent animationType="slide" onRequestClose={() => setShowAppSummaryModal(false)}>
                 <View style={{ flex: 1, backgroundColor: 'rgba(0,0,0,0.5)', justifyContent: 'flex-end' }}>

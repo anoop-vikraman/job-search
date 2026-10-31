@@ -3,6 +3,9 @@ import type {
     BackendApplication,
     CounterApplicationRequest,
     CreateApplicationRequest,
+    Dispute,
+    DisputeCreateRequest,
+    WorkSubmitRequest,
 } from '../types/api';
 
 export const applicationsApi = {
@@ -39,6 +42,19 @@ export const applicationsApi = {
 
     cancel: async (id: string): Promise<BackendApplication> => {
         const res = await api.post(`/api/v1/tweaks/applications/${id}/cancel`);
+        return res.data;
+    },
+    /** Provider marks the work done (starts the lister's review window). */
+    submitWork: async (id: string, data: WorkSubmitRequest): Promise<BackendApplication> => {
+        const res = await api.post(`/api/v1/tweaks/applications/${id}/submit-work`, data);
+        return res.data;
+    },
+    openDispute: async (id: string, data: DisputeCreateRequest): Promise<Dispute> => {
+        const res = await api.post(`/api/v1/tweaks/applications/${id}/dispute`, data);
+        return res.data;
+    },
+    getDispute: async (id: string): Promise<Dispute> => {
+        const res = await api.get(`/api/v1/tweaks/applications/${id}/dispute`);
         return res.data;
     },
 };

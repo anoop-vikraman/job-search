@@ -2,6 +2,7 @@ from app.models.address import Address
 from app.models.application import Application, Offer
 from app.models.chat import Conversation, Message
 from app.models.device_token import DeviceToken
+from app.models.dispute import Dispute
 from app.models.job import Job
 from app.models.notification import Notification
 from app.models.notification_preference import NotificationPreference
@@ -20,6 +21,7 @@ __all__ = [
     "Application",
     "Conversation",
     "DeviceToken",
+    "Dispute",
     "Job",
     "Message",
     "Notification",

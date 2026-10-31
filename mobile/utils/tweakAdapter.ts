@@ -116,7 +116,7 @@ export function backendApplicationToLocal(
         ? [provider.first_name, provider.last_name].filter(Boolean).join(' ').trim()
         : '';
     const localStatus: TweakApplication['status'] =
-        a.status === 'accepted' || a.status === 'completed'
+        a.status === 'accepted' || a.status === 'completed' || a.status === 'disputed'
             ? 'accepted'
             : a.status === 'rejected' || a.status === 'withdrawn'
               ? 'rejected'

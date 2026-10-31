@@ -332,6 +332,36 @@ Required by steering: rotatable refresh tokens persisted in DB.
 
 - `ck_payouts_amount_positive`; indexes `(user_id, created_at)`, `(status, created_at)`, and both txn FKs.
 
+### disputes
+| Column | Type | Null | Default | Req |
+|---|---|---|---|---|
+| id | UUID | N | `gen_random_uuid()` | R |
+| application_id | UUID | N | | R, FK `applications` **CASCADE** |
+| opened_by_user_id | UUID | N | | R, FK `users` **CASCADE** |
+| reason | TEXT | N | | R |
+| evidence | JSONB | N | `[]` | R (`[{url}]`, CHECK array) |
+| status | dispute_status (`open`,`resolved`) | N | `'open'` | R |
+| outcome | dispute_outcome (`release`,`refund`,`partial`) | Y | | R |
+| provider_amount_minor | BIGINT | Y | | R (gross to provider) |
+| admin_note | TEXT | Y | | R |
+| resolved_by_user_id | UUID | Y | | R, FK `users` SET NULL |
+| resolved_at | TIMESTAMPTZ | Y | | R |
+| created_at | TIMESTAMPTZ | N | `now()` | |
+
+- `uq_disputes_open_application (application_id) WHERE status = 'open'`; indexes on every FK and
+  `(status, created_at)`.
+- `applications` gains `work_submitted_at`, `completion_note`, `completion_photos` (JSONB array,
+  CHECK), `auto_release_at`; `application_status` gains `disputed`; `notification_type` gains
+  `work_submitted`, `dispute_opened`, `dispute_resolved`.
+
+### jobs / push_tickets / notification_preferences
+- `jobs`: `kind`, `payload` (JSONB object), `status` job_status (`queued`,`running`,`done`,`failed`),
+  `run_at`, `attempts`, `max_attempts`, `last_error`, `locked_at`, `finished_at`;
+  `ix_jobs_status_run_at (status, run_at)`.
+- `push_tickets`: `ticket_id` (unique), `token`, `created_at` (indexed).
+- `notification_preferences`: `user_id` (FK CASCADE), `type` notification_type, `push_enabled`;
+  UNIQUE `(user_id, type)`.
+
 ## A4. JSONB Schemas (Pydantic v2)
 
 All use `ConfigDict(extra="forbid", strict=True)`. Shapes are a proposal; B3 decides the final shape.

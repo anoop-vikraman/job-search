@@ -65,6 +65,9 @@ token · `403` insufficient role/access · `404` not found · `409` conflict/sta
 | POST | `/api/v1/tweaks/applications/{application_id}/accept` | user (lister) |
 | POST | `/api/v1/tweaks/applications/{application_id}/reject` | user (lister) |
 | POST | `/api/v1/tweaks/applications/{application_id}/counter` | user (lister) |
+| POST | `/api/v1/tweaks/applications/{application_id}/submit-work` | user (provider) |
+| POST | `/api/v1/tweaks/applications/{application_id}/dispute` | user (lister or provider) |
+| GET | `/api/v1/tweaks/applications/{application_id}/dispute` | user (party) |
 
 ### Wallet
 | Method | Path | Auth |
@@ -119,6 +122,8 @@ See [wallet-and-escrow.md](./wallet-and-escrow.md#adding-money-razorpay) for the
 | GET | `/api/v1/admin/transactions?page&limit` | admin |
 | GET | `/api/v1/admin/refunds?page&limit` | admin |
 | POST | `/api/v1/admin/refunds/{refund_id}/decide` | admin |
+| GET | `/api/v1/admin/disputes?status&page&limit` | admin |
+| POST | `/api/v1/admin/disputes/{dispute_id}/resolve` | admin |
 | GET | `/api/v1/admin/payouts?status&page&limit` | admin |
 | POST | `/api/v1/admin/payouts/{payout_id}/decide` | admin |
 
@@ -147,6 +152,8 @@ See [wallet-and-escrow.md](./wallet-and-escrow.md#adding-money-razorpay) for the
 | `INVALID_SIGNATURE` / `PAYMENT_MISMATCH` / `PAYMENT_NOT_CAPTURED` | Top-up verification failures |
 | `ORDER_ALREADY_PAID` | Order credited by a different payment |
 | `SIMULATED_TOPUP_DISABLED` | Legacy top-up turned off |
+| `WORK_SUBMITTED` | Lister cancel after the provider marked work done |
+| `INVALID_SPLIT` | Partial dispute amount outside 1…escrow−1 |
 
 Endpoint list generated from the live FastAPI router; see the backend `app/api/v1/` for request
 and response models.

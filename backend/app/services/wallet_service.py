@@ -167,3 +167,53 @@ async def reverse_payout(
     txn = _record(db, wallet, TxnType.payout, amount_minor, reference=reference)
     wallet.balance_minor += amount_minor
     return txn
+
+
+async def split_hold(
+    db: AsyncSession,
+    lister_user_id: uuid.UUID,
+    provider_user_id: uuid.UUID,
+    held_minor: int,
+    provider_minor: int,
+    tweak_id: uuid.UUID,
+    application_id: uuid.UUID,
+    fee_minor: int = 0,
+) -> None:
+    """Dispute settlement: `provider_minor` of the hold goes to the provider (minus
+    `fee_minor`), the rest returns to the lister. Caller commits."""
+    if not 0 <= provider_minor <= held_minor or not 0 <= fee_minor <= provider_minor:
+        raise AppError(status.HTTP_400_BAD_REQUEST, "INVALID_SPLIT", "Invalid split amounts.")
+    lister = await get_or_create_wallet(db, lister_user_id)
+    if lister.held_minor < held_minor:
+        raise AppError(status.HTTP_400_BAD_REQUEST, "NO_HELD_FUNDS", "No matching held funds.")
+    provider = await get_or_create_wallet(db, provider_user_id)
+
+    lister.held_minor -= held_minor
+    refund_minor = held_minor - provider_minor
+    # Net-zero marker for the released part (balance was debited at hold time).
+    _record(db, lister, TxnType.release, 0, tweak_id=tweak_id, application_id=application_id)
+    if refund_minor > 0:
+        _record(
+            db,
+            lister,
+            TxnType.refund,
+            refund_minor,
+            tweak_id=tweak_id,
+            application_id=application_id,
+        )
+        lister.balance_minor += refund_minor
+    if provider_minor > 0:
+        _record(
+            db,
+            provider,
+            TxnType.release,
+            provider_minor,
+            tweak_id=tweak_id,
+            application_id=application_id,
+        )
+        provider.balance_minor += provider_minor
+    if fee_minor > 0:
+        _record(
+            db, provider, TxnType.fee, -fee_minor, tweak_id=tweak_id, application_id=application_id
+        )
+        provider.balance_minor -= fee_minor

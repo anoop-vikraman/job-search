@@ -33,6 +33,19 @@ class ApplicationStatus(str, enum.Enum):
     completed = "completed"
     rejected = "rejected"
     withdrawn = "withdrawn"
+    # Escrow frozen while an admin reviews a dispute.
+    disputed = "disputed"
+
+
+class DisputeStatus(str, enum.Enum):
+    open = "open"
+    resolved = "resolved"
+
+
+class DisputeOutcome(str, enum.Enum):
+    release = "release"  # provider gets paid in full
+    refund = "refund"  # lister gets the escrow back
+    partial = "partial"  # provider gets part, lister the rest
 
 
 class NotificationType(str, enum.Enum):
@@ -45,6 +58,9 @@ class NotificationType(str, enum.Enum):
     wallet_topup = "wallet_topup"
     system = "system"
     new_message = "new_message"
+    work_submitted = "work_submitted"
+    dispute_opened = "dispute_opened"
+    dispute_resolved = "dispute_resolved"
 
 
 class TxnType(str, enum.Enum):

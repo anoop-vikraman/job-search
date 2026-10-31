@@ -6,6 +6,7 @@ export const queryKeys = {
     tweak: (id: string) => ['tweaks', 'detail', id] as const,
     tweakApplications: (id: string) => ['tweaks', id, 'applications'] as const,
     myApplications: () => ['tweaks', 'applications', 'mine'] as const,
+    dispute: (applicationId: string) => ['disputes', applicationId] as const,
     wallet: () => ['wallet'] as const,
     walletTransactions: () => ['wallet', 'transactions'] as const,
     refunds: () => ['refunds'] as const,

@@ -30,6 +30,7 @@ Durable jobs stored in Postgres (`jobs` table). No Redis or broker is needed.
 | Kind / task | Trigger | Purpose |
 |---|---|---|
 | `push` (job) | every `Notification` | Expo push delivery ([push-notifications.md](./push-notifications.md)) |
+| `auto_release` (job) | provider submits work | Release escrow if the lister doesn't respond by `auto_release_at` |
 | `push_receipts` (every 5 min) | periodic | Check Expo receipts, prune dead tokens |
 | `requeue_stale_jobs` (every 5 min) | periodic | Recover jobs from crashed workers |
 

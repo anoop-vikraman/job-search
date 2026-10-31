@@ -17,6 +17,9 @@ class Settings(BaseSettings):
 
     # Platform fee taken from the provider's payout on completion (basis points; 500 = 5%).
     PLATFORM_FEE_BPS: int = 500
+    # After the provider marks work done, escrow releases automatically unless the lister
+    # confirms or disputes within this many hours.
+    AUTO_RELEASE_HOURS: int = 72
 
     # Login/OTP throttling.
     RATE_LIMIT_MAX_ATTEMPTS: int = 5

@@ -13,10 +13,12 @@ from app.schemas.application import (
     MyApplication,
     OfferResponse,
     ProviderSummary,
+    WorkSubmit,
 )
 from app.schemas.common import CursorPage, ErrorResponse
+from app.schemas.dispute import DisputeCreate, DisputeResponse
 from app.schemas.tweak import FeedSort, TweakCreate, TweakResponse, TweakUpdate
-from app.services import application_service, tweak_service
+from app.services import application_service, dispute_service, tweak_service
 
 router = APIRouter(prefix="/tweaks", tags=["tweaks"])
 
@@ -184,6 +186,48 @@ async def complete_application(
     """Mark accepted work complete (lister only); releases escrow minus platform fee."""
     application = await application_service.complete(db, application_id, user.id)
     return ApplicationResponse.model_validate(application)
+
+
+@router.post(
+    "/applications/{application_id}/submit-work",
+    response_model=ApplicationResponse,
+    responses=ERRORS,
+)
+async def submit_work(
+    application_id: uuid.UUID, data: WorkSubmit, user: CurrentUser, db: DbSession
+) -> ApplicationResponse:
+    """Provider marks accepted work done (optional note + photos).
+
+    The lister then confirms via /complete or opens a dispute; otherwise the escrow is
+    released automatically after AUTO_RELEASE_HOURS.
+    """
+    application = await application_service.submit_work(db, application_id, user.id, data)
+    return ApplicationResponse.model_validate(application)
+
+
+@router.post(
+    "/applications/{application_id}/dispute",
+    response_model=DisputeResponse,
+    status_code=status.HTTP_201_CREATED,
+    responses=ERRORS,
+)
+async def open_dispute(
+    application_id: uuid.UUID, data: DisputeCreate, user: CurrentUser, db: DbSession
+) -> DisputeResponse:
+    """Lister or provider disputes accepted work; escrow is frozen until an admin decides."""
+    dispute = await dispute_service.open_dispute(db, application_id, user.id, data)
+    return DisputeResponse.model_validate(dispute)
+
+
+@router.get(
+    "/applications/{application_id}/dispute", response_model=DisputeResponse, responses=ERRORS
+)
+async def get_dispute(
+    application_id: uuid.UUID, user: CurrentUser, db: DbSession
+) -> DisputeResponse:
+    """Latest dispute on an application (parties only)."""
+    dispute = await dispute_service.get_for_application(db, application_id, user.id)
+    return DisputeResponse.model_validate(dispute)
 
 
 @router.post(

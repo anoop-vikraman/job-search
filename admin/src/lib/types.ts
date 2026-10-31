@@ -91,3 +91,20 @@ export interface Refund {
   processed_at: string | null;
   created_at: string;
 }
+
+export type DisputeStatus = "open" | "resolved";
+export type DisputeOutcome = "release" | "refund" | "partial";
+
+export interface Dispute {
+  id: string;
+  application_id: string;
+  opened_by_user_id: string;
+  reason: string;
+  evidence: { url: string }[];
+  status: DisputeStatus;
+  outcome: DisputeOutcome | null;
+  provider_amount_minor: number | null;
+  admin_note: string | null;
+  resolved_at: string | null;
+  created_at: string;
+}

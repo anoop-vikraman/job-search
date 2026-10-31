@@ -8,11 +8,11 @@ from sqlalchemy import ColumnElement, func, or_, select
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import InstrumentedAttribute
 
-from app.api.deps import DbSession, require_admin
+from app.api.deps import CurrentUser, DbSession, require_admin
 from app.core.errors import AppError
 from app.db.base import Base
 from app.models.application import Application
-from app.models.enums import PayoutStatus, RefundStatus, TweakStatus, UserRole
+from app.models.enums import DisputeStatus, PayoutStatus, RefundStatus, TweakStatus, UserRole
 from app.models.payment import Payout
 from app.models.refund import Refund
 from app.models.tweak import Tweak
@@ -20,12 +20,13 @@ from app.models.user import User
 from app.models.wallet import WalletTransaction
 from app.schemas.application import ApplicationResponse
 from app.schemas.common import ErrorResponse, MessageResponse, Page
+from app.schemas.dispute import DisputeResolve, DisputeResponse
 from app.schemas.payment import PayoutDecision, PayoutResponse
 from app.schemas.refund import RefundDecision, RefundResponse
 from app.schemas.tweak import TweakResponse
 from app.schemas.user import AdminBanRequest, UserProfile
 from app.schemas.wallet import TransactionResponse
-from app.services import payment_service, refund_service
+from app.services import dispute_service, payment_service, refund_service
 
 router = APIRouter(prefix="/admin", tags=["admin"], dependencies=[Depends(require_admin)])
 
@@ -166,6 +167,42 @@ async def list_refunds(
     if status_filter is not None:
         conditions.append(Refund.status == status_filter)
     return await _paginate(db, Refund, RefundResponse, page, limit, Refund.created_at, conditions)
+
+
+@router.get("/disputes", response_model=Page[DisputeResponse])
+async def list_disputes(
+    db: DbSession,
+    page: int = Query(1, ge=1),
+    limit: int = Query(20, ge=1, le=100),
+    status_filter: DisputeStatus | None = Query(None, alias="status"),
+) -> Page[DisputeResponse]:
+    """Dispute queue (admin), newest first, optionally filtered by status."""
+    rows, total = await dispute_service.list_disputes(
+        db, status_filter=status_filter, page=page, limit=limit
+    )
+    return Page(
+        items=[DisputeResponse.model_validate(d) for d in rows],
+        total=total,
+        page=page,
+        limit=limit,
+    )
+
+
+@router.post(
+    "/disputes/{dispute_id}/resolve",
+    response_model=DisputeResponse,
+    responses={
+        400: {"model": ErrorResponse},
+        404: {"model": ErrorResponse},
+        409: {"model": ErrorResponse},
+    },
+)
+async def resolve_dispute(
+    dispute_id: uuid.UUID, data: DisputeResolve, admin: CurrentUser, db: DbSession
+) -> DisputeResponse:
+    """Settle a dispute: release to the provider, refund the lister, or split the escrow."""
+    dispute = await dispute_service.resolve_dispute(db, dispute_id, admin.id, data)
+    return DisputeResponse.model_validate(dispute)
 
 
 @router.get("/payouts", response_model=Page[PayoutResponse])
