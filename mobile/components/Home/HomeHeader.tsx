@@ -1,8 +1,10 @@
 import { Ionicons } from '@expo/vector-icons';
-import { useRouter } from 'expo-router';
+import { useIsFocused } from '@react-navigation/native';
+import { useRouter, type Href } from 'expo-router';
 import React from 'react';
 import { Text, TextInput, TouchableOpacity, View } from 'react-native';
 import { palette } from '@tweak/theme';
+import { useChatUnreadCount } from '../../hooks/useChat';
 import { useTheme } from '../../themes/ThemeProvider';
 
 interface HomeHeaderProps {
@@ -13,6 +15,8 @@ interface HomeHeaderProps {
 export default function HomeHeader({ currentAddress = "Select Location", onLocationPress }: HomeHeaderProps): React.JSX.Element {
     const router = useRouter();
     const { colors, isDark } = useTheme();
+    const isFocused = useIsFocused();
+    const { data: chatUnread = 0 } = useChatUnreadCount({ poll: isFocused });
 
     return (
         <View className="px-4 pt-2 pb-4 bg-white dark:bg-slate-900 shadow-sm z-10">
@@ -34,6 +38,21 @@ export default function HomeHeader({ currentAddress = "Select Location", onLocat
                             {currentAddress}
                         </Text>
                     </View>
+                </TouchableOpacity>
+
+                {/* Messages */}
+                <TouchableOpacity
+                    onPress={() => router.push('/chat' as Href)}
+                    className="p-2 bg-gray-100 dark:bg-slate-800 rounded-full mr-2"
+                    accessibilityRole="button"
+                    accessibilityLabel={chatUnread > 0 ? `Messages, ${chatUnread} unread` : 'Messages'}
+                >
+                    <Ionicons name="chatbubbles-outline" size={22} color={isDark ? colors.text : palette.gray700} />
+                    {chatUnread > 0 && (
+                        <View style={{ position: 'absolute', top: -2, right: -2, minWidth: 18, height: 18, borderRadius: 9, backgroundColor: palette.red500, alignItems: 'center', justifyContent: 'center', paddingHorizontal: 4 }}>
+                            <Text style={{ color: '#fff', fontSize: 10, fontWeight: '800' }}>{chatUnread > 99 ? '99+' : chatUnread}</Text>
+                        </View>
+                    )}
                 </TouchableOpacity>
 
                 {/* Wallet Balance */}

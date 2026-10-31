@@ -4,6 +4,7 @@ from app.api.v1 import (
     addresses,
     admin,
     auth,
+    conversations,
     media,
     notifications,
     ratings,
@@ -24,5 +25,6 @@ api_router.include_router(wallet.router)
 api_router.include_router(refunds.router)
 api_router.include_router(ratings.router)
 api_router.include_router(notifications.router)
+api_router.include_router(conversations.router)
 api_router.include_router(media.router)
 api_router.include_router(admin.router)

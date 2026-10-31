@@ -44,6 +44,7 @@ class NotificationType(str, enum.Enum):
     refund_processed = "refund_processed"
     wallet_topup = "wallet_topup"
     system = "system"
+    new_message = "new_message"
 
 
 class TxnType(str, enum.Enum):

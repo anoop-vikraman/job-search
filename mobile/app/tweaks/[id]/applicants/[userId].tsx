@@ -13,6 +13,7 @@ import {
 } from 'react-native';
 import { ScreenWrapper } from '@/components/ScreenWrapper';
 import { useApplicationAction, useTweak, useTweakApplicationsRaw } from '@/hooks/useTweaks';
+import { CHAT_STATUSES, useStartChat } from '@/hooks/useChat';
 import { formatMinor, toMinor } from '@/utils/money';
 import { palette } from '@tweak/theme';
 import { useTheme } from '@/themes/ThemeProvider';
@@ -26,6 +27,7 @@ export default function ApplicantDetail(): React.JSX.Element {
     const { data: applicants = [] } = useTweakApplicationsRaw(id);
     const applicant = applicants.find((a) => a.id === applicationId);
     const action = useApplicationAction();
+    const startChat = useStartChat();
 
     const [counterQuote, setCounterQuote] = useState('');
 
@@ -106,7 +108,19 @@ export default function ApplicantDetail(): React.JSX.Element {
                         <Ionicons name="arrow-back" size={24} color={colors.text} />
                     </TouchableOpacity>
                     <Text style={{ fontSize: 17, fontWeight: '800', color: colors.text }}>Applicant Profile</Text>
-                    <View style={{ width: 36 }} />
+                    {CHAT_STATUSES.includes(applicant.status) ? (
+                        <TouchableOpacity
+                            onPress={() => startChat.start(applicant.id)}
+                            disabled={startChat.isPending}
+                            style={{ padding: 6 }}
+                            accessibilityRole="button"
+                            accessibilityLabel={`Message ${displayName}`}
+                        >
+                            <Ionicons name="chatbubbles-outline" size={24} color={palette.iosBlue} />
+                        </TouchableOpacity>
+                    ) : (
+                        <View style={{ width: 36 }} />
+                    )}
                 </View>
 
                 <ScrollView style={{ flex: 1 }} contentContainerStyle={{ paddingBottom: 120 }}>

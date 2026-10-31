@@ -44,6 +44,10 @@ function StandaloneTabBarInner() {
     if (['auth', 'login', 'signup', 'create-tweak', 'tweaks'].includes(currentGroup)) {
         return null;
     }
+    // Chat threads own the bottom edge (composer).
+    if (currentGroup === 'chat' && segments.length > 1) {
+        return null;
+    }
 
     const handleCreateSelect = (type: 'remote' | 'in_person') => {
         setIsMenuOpen(false);

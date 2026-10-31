@@ -15,7 +15,8 @@ import {
 import { ScreenWrapper } from '@/components/ScreenWrapper';
 import { useAuthStore } from '@/store/useAuthStore';
 import type { Tweak } from '@/store/useTweaksStore';
-import { useTweak, useUpdateTweak } from '@/hooks/useTweaks';
+import { useMyApplications, useTweak, useTweakApplicationsRaw, useUpdateTweak } from '@/hooks/useTweaks';
+import { CHAT_STATUSES, useStartChat } from '@/hooks/useChat';
 import { useAddToWatchlist, useRemoveFromWatchlist, useWatchlist } from '@/hooks/useWatchlist';
 import { ScheduleSlot } from '@/types/tweak';
 import { palette } from '@tweak/theme';
@@ -236,8 +237,17 @@ export default function TweakDetails(): React.JSX.Element {
     const addToWatchlist = useAddToWatchlist();
     const removeFromWatchlist = useRemoveFromWatchlist();
     const updateTweak = useUpdateTweak();
+    const startChat = useStartChat();
 
     const userId = user?.id || '';
+
+    // Chat: the lister talks to the accepted provider; the provider to the lister.
+    const isOwner = Boolean(tweak && tweak.createdByUserId === userId);
+    const { data: ownerApplications = [] } = useTweakApplicationsRaw(isOwner ? tweak?.id : undefined);
+    const { data: myProviderApplications = [] } = useMyApplications();
+    const chatApplicationId = isOwner
+        ? ownerApplications.find((a) => CHAT_STATUSES.includes(a.status))?.id
+        : myProviderApplications.find((a) => a.tweak_id === tweak?.id && CHAT_STATUSES.includes(a.status))?.id;
     const userSkills = user?.skills || ['Painting', 'Plumbing', 'Cleaning']; // Hardcoded sample skills
 
     // No "applied as provider" endpoint yet, so no cross-tweak conflict source.
@@ -675,6 +685,29 @@ export default function TweakDetails(): React.JSX.Element {
 
                     {/* ── Action Buttons ─────────────────────────────────────── */}
                     <View className="mt-auto pt-6 border-t border-gray-100 dark:border-slate-700">
+                        {chatApplicationId && (
+                            <TouchableOpacity
+                                onPress={() => startChat.start(chatApplicationId)}
+                                disabled={startChat.isPending}
+                                style={{
+                                    backgroundColor: palette.iosBlue,
+                                    paddingVertical: 14,
+                                    borderRadius: 14,
+                                    flexDirection: 'row',
+                                    alignItems: 'center',
+                                    justifyContent: 'center',
+                                    gap: 8,
+                                    marginBottom: 10,
+                                    opacity: startChat.isPending ? 0.7 : 1,
+                                }}
+                                accessibilityRole="button"
+                            >
+                                <Ionicons name="chatbubbles-outline" size={20} color="#fff" />
+                                <Text style={{ fontWeight: '800', color: '#fff', fontSize: 15 }}>
+                                    {isOwnedByMe ? 'Message Provider' : 'Message Lister'}
+                                </Text>
+                            </TouchableOpacity>
+                        )}
                         {isOwnedByMe ? (
                             <View style={{ gap: 10 }}>
                                 {/* View Applicants Button */}

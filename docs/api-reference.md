@@ -84,6 +84,17 @@ token · `403` insufficient role/access · `404` not found · `409` conflict/sta
 |---|---|---|
 | POST | `/api/v1/ratings` | user (party, completed tweak) |
 
+### Conversations (chat)
+| Method | Path | Auth |
+|---|---|---|
+| GET | `/api/v1/conversations?page&limit` | user (own) |
+| POST | `/api/v1/conversations` | user (lister or provider of an accepted application) |
+| GET | `/api/v1/conversations/unread-count` | user |
+| GET | `/api/v1/conversations/{conversation_id}` | user (party) |
+| GET | `/api/v1/conversations/{conversation_id}/messages?page&limit` | user (party) |
+| POST | `/api/v1/conversations/{conversation_id}/messages` | user (party) |
+| POST | `/api/v1/conversations/{conversation_id}/read` | user (party) |
+
 ### Admin
 | Method | Path | Auth |
 |---|---|---|
@@ -113,6 +124,9 @@ token · `403` insufficient role/access · `404` not found · `409` conflict/sta
 | `TWEAK_NOT_COMPLETED` / `ALREADY_RATED` | Rating rule violations |
 | `INVALID_PRICING_DATA` | Pricing payload fails validation |
 | `FORBIDDEN` | Non-admin on an admin route |
+| `LOCATION_REQUIRED` | Feed `radius_km` / `sort=distance` without `lat`+`lng` |
+| `CHAT_NOT_AVAILABLE` / `CHAT_CLOSED` | Chat before acceptance / after cancellation |
+| `CONVERSATION_ACCESS_DENIED` | Not a party to the conversation |
 
 Endpoint list generated from the live FastAPI router; see the backend `app/api/v1/` for request
 and response models.

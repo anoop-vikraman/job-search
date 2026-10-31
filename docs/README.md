@@ -14,6 +14,7 @@ This folder documents each feature: what it does, where it lives across the thre
 | [authentication.md](./authentication.md) | Signup, login, OTP, JWT + refresh-token rotation, route protection |
 | [tweaks.md](./tweaks.md) | Posting a tweak, the create-tweak wizard, drafts, the marketplace feed |
 | [applications-and-offers.md](./applications-and-offers.md) | Applying, quotes, counter-offers, accept / reject |
+| [chat.md](./chat.md) | Lister ↔ accepted-provider messaging, unread counts |
 | [wallet-and-escrow.md](./wallet-and-escrow.md) | Wallet balances, top-ups, the escrow hold/release ledger |
 | [refunds.md](./refunds.md) | Requesting and processing refunds |
 | [ratings.md](./ratings.md) | Post-completion two-way ratings and aggregates |

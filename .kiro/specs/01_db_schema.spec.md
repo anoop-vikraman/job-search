@@ -251,6 +251,38 @@ Required by steering: rotatable refresh tokens persisted in DB.
 - Service rule: only after the tweak reaches a completed state; rater and ratee must both be parties
   to the tweak (lister and accepted provider).
 
+### conversations (chat)
+| Column | Type | Null | Default | Req |
+|---|---|---|---|---|
+| id | UUID | N | `gen_random_uuid()` | R |
+| application_id | UUID | N | | R, FK `applications` **CASCADE**, UNIQUE (one thread per application) |
+| tweak_id | UUID | N | | R, FK `tweaks` **CASCADE** |
+| lister_user_id | UUID | N | | R, FK `users` **CASCADE** |
+| provider_user_id | UUID | N | | R, FK `users` **CASCADE** |
+| lister_last_read_at | TIMESTAMPTZ | Y | | R (read cursor) |
+| provider_last_read_at | TIMESTAMPTZ | Y | | R (read cursor) |
+| last_message_at | TIMESTAMPTZ | Y | | R (list ordering) |
+| created_at | TIMESTAMPTZ | N | `now()` | |
+
+- `ck_conversations_distinct_parties` (`lister_user_id <> provider_user_id`).
+- `ix_conversations_lister_last_message (lister_user_id, last_message_at)`,
+  `ix_conversations_provider_last_message (provider_user_id, last_message_at)`, `ix_conversations_tweak_id`.
+- Service rule: created only for `accepted`/`completed` applications; writable while the application
+  stays `accepted`/`completed`.
+
+### messages
+| Column | Type | Null | Default | Req |
+|---|---|---|---|---|
+| id | UUID | N | `gen_random_uuid()` | R |
+| conversation_id | UUID | N | | R, FK `conversations` **CASCADE** |
+| sender_user_id | UUID | N | | R, FK `users` **CASCADE** |
+| body | TEXT | N | | R |
+| created_at | TIMESTAMPTZ | N | `now()` (service sets wall-clock, strictly increasing per thread) | |
+
+- `ck_messages_body_length` (`char_length(body) BETWEEN 1 AND 2000`).
+- `ix_messages_conversation_created (conversation_id, created_at)`, `ix_messages_sender_user_id`.
+- `notification_type` gains `new_message`.
+
 ## A4. JSONB Schemas (Pydantic v2)
 
 All use `ConfigDict(extra="forbid", strict=True)`. Shapes are a proposal; B3 decides the final shape.

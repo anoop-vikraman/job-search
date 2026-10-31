@@ -255,6 +255,39 @@ export interface UnreadCount {
     count: number;
 }
 
+// ─── Chat ───────────────────────────────────────────────────────────────
+
+export interface ChatParticipant {
+    id: string;
+    first_name: string | null;
+    last_name: string | null;
+    profile_picture_url: string | null;
+}
+
+export interface ChatMessage {
+    id: string;
+    conversation_id: string;
+    sender_user_id: string;
+    body: string;
+    created_at: string;
+}
+
+/** One thread per accepted application, between the lister and the provider. */
+export interface Conversation {
+    id: string;
+    application_id: string;
+    tweak_id: string;
+    tweak_title: string;
+    other_user: ChatParticipant;
+    my_role: 'lister' | 'provider';
+    last_message: ChatMessage | null;
+    unread_count: number;
+    /** False once the work was cancelled; history stays readable. */
+    can_send: boolean;
+    last_message_at: string | null;
+    created_at: string;
+}
+
 // ─── Media ───────────────────────────────────────────────────────────────
 
 export interface MediaUploadResponse {
