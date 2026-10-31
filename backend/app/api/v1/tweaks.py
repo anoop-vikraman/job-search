@@ -192,8 +192,9 @@ async def list_my_applications(user: CurrentUser, db: DbSession) -> list[MyAppli
             tweak_title=tweak.title,
             tweak_category=tweak.category,
             tweak_status=tweak.status.value,
+            offer=OfferResponse.model_validate(offer) if offer is not None else None,
         )
-        for app, tweak in rows
+        for app, tweak, offer in rows
     ]
 
 

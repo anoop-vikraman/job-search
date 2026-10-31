@@ -61,6 +61,8 @@ class MyApplication(ApplicationResponse):
     tweak_title: str
     tweak_category: str
     tweak_status: str
+    # The lister's counter-offer, if they made one.
+    offer: OfferResponse | None = None
 
 
 class CounterQuoteRequest(BaseModel):

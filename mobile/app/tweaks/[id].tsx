@@ -1,7 +1,7 @@
 import { FontAwesome5, Ionicons } from '@expo/vector-icons';
 import { useAudioPlayer, useAudioPlayerStatus } from 'expo-audio';
 import { useLocalSearchParams, useRouter, type Href } from 'expo-router';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import {
     Alert,
     Image,
@@ -17,6 +17,8 @@ import { useAuthStore } from '@/store/useAuthStore';
 import type { Tweak } from '@/store/useTweaksStore';
 import { useMyApplications, useTweak, useTweakApplicationsRaw, useUpdateTweak } from '@/hooks/useTweaks';
 import { CHAT_STATUSES, useStartChat } from '@/hooks/useChat';
+import { backendApplicationToLocal } from '@/utils/tweakAdapter';
+import { minorToMajor } from '@/utils/money';
 import { useAddToWatchlist, useRemoveFromWatchlist, useWatchlist } from '@/hooks/useWatchlist';
 import { ScheduleSlot } from '@/types/tweak';
 import { palette } from '@tweak/theme';
@@ -248,10 +250,46 @@ export default function TweakDetails(): React.JSX.Element {
     const chatApplicationId = isOwner
         ? ownerApplications.find((a) => CHAT_STATUSES.includes(a.status))?.id
         : myProviderApplications.find((a) => a.tweak_id === tweak?.id && CHAT_STATUSES.includes(a.status))?.id;
-    const userSkills = user?.skills || ['Painting', 'Plumbing', 'Cleaning']; // Hardcoded sample skills
 
-    // No "applied as provider" endpoint yet, so no cross-tweak conflict source.
-    const appliedTweaks: Tweak[] = [];
+    // The provider's own (latest) application to this tweak. Non-owners can't list a
+    // tweak's applications, so it comes from GET /tweaks/applications/mine.
+    const myProviderApplication = isOwner
+        ? undefined
+        : myProviderApplications.find((a) => a.tweak_id === tweak?.id);
+
+    // Slots the provider already committed to on other tweaks: accepted work is fixed
+    // working time, pending applications are availability.
+    const appliedTweaks = useMemo<Tweak[]>(
+        () =>
+            myProviderApplications
+                .filter((a) => a.tweak_id !== tweak?.id && (a.status === 'pending' || a.status === 'accepted'))
+                .map((a) => ({
+                    id: a.tweak_id,
+                    title: a.tweak_title,
+                    description: '',
+                    category: a.tweak_category,
+                    images: [],
+                    audioUri: null,
+                    address: null,
+                    skills: [],
+                    languages: [],
+                    schedulePreference: 'few_days',
+                    scheduleData: {
+                        slotType: a.status === 'accepted' ? 'working_time' : 'availability',
+                        fewDaysSlots: a.selected_slots.map((s) => ({ date: s.date, start: s.start, end: s.end })),
+                    },
+                    pricingModel: '',
+                    pricingData: null,
+                    tweakType: '',
+                    price: 0,
+                    pricingType: '',
+                    createdAt: a.applied_at,
+                    status: 'active',
+                    createdByUserId: '',
+                })),
+        [myProviderApplications, tweak?.id]
+    );
+    const userSkills = user?.skills ?? [];
 
     const [showFullDescription, setShowFullDescription] = useState(false);
     const [showMenuModal, setShowMenuModal] = useState(false);
@@ -344,7 +382,17 @@ export default function TweakDetails(): React.JSX.Element {
     };
 
     const isOwnedByMe = tweak.createdByUserId === userId;
-    const myApplication = tweak.applications?.find(a => a.userId === userId);
+    const myApplication =
+        tweak.applications?.find(a => a.userId === userId) ??
+        (myProviderApplication
+            ? {
+                  ...backendApplicationToLocal(myProviderApplication),
+                  listerQuotedPrice:
+                      myProviderApplication.offer != null
+                          ? minorToMajor(myProviderApplication.offer.lister_quoted_price_minor)
+                          : undefined,
+              }
+            : undefined);
     const applicantsCount = tweak.applications?.length || 0;
 
     // ─── Conflict computation ─────────────────────────────────────────────────

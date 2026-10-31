@@ -2,9 +2,11 @@ import { Ionicons } from '@expo/vector-icons';
 import { useIsFocused } from '@react-navigation/native';
 import { useRouter, type Href } from 'expo-router';
 import React from 'react';
-import { Text, TextInput, TouchableOpacity, View } from 'react-native';
+import { Text, TouchableOpacity, View } from 'react-native';
 import { palette } from '@tweak/theme';
 import { useChatUnreadCount } from '../../hooks/useChat';
+import { useWallet } from '../../hooks/useWallet';
+import { formatMinor } from '../../utils/money';
 import { useTheme } from '../../themes/ThemeProvider';
 
 interface HomeHeaderProps {
@@ -17,6 +19,7 @@ export default function HomeHeader({ currentAddress = "Select Location", onLocat
     const { colors, isDark } = useTheme();
     const isFocused = useIsFocused();
     const { data: chatUnread = 0 } = useChatUnreadCount({ poll: isFocused });
+    const { data: wallet } = useWallet();
 
     return (
         <View className="px-4 pt-2 pb-4 bg-white dark:bg-slate-900 shadow-sm z-10">
@@ -61,7 +64,9 @@ export default function HomeHeader({ currentAddress = "Select Location", onLocat
                     className="flex-row items-center bg-green-50 px-3 py-2 rounded-full mr-2 border border-green-200"
                 >
                     <Ionicons name="wallet" size={16} color={palette.green600} />
-                    <Text className="ml-1 font-bold text-green-700 text-sm">₹2,450</Text>
+                    <Text className="ml-1 font-bold text-green-700 text-sm">
+                        {wallet ? formatMinor(wallet.balance_minor, wallet.currency) : '—'}
+                    </Text>
                 </TouchableOpacity>
 
                 <TouchableOpacity
@@ -74,21 +79,19 @@ export default function HomeHeader({ currentAddress = "Select Location", onLocat
                 </TouchableOpacity>
             </View>
 
-            {/* Search Bar */}
-            <View className="flex-row items-center bg-gray-100 dark:bg-slate-800 rounded-xl px-4 py-3 border border-gray-200 dark:border-slate-700">
+            {/* Search Bar: opens the marketplace with its search box focused */}
+            <TouchableOpacity
+                activeOpacity={0.8}
+                onPress={() => router.push({ pathname: '/(tabs)/apply', params: { focusSearch: String(Date.now()) } })}
+                className="flex-row items-center bg-gray-100 dark:bg-slate-800 rounded-xl px-4 py-3 border border-gray-200 dark:border-slate-700"
+                accessibilityRole="search"
+                accessibilityLabel="Search for services"
+            >
                 <Ionicons name="search" size={20} color={isDark ? colors.textMuted : palette.gray400} />
-                <TextInput
-                    placeholder="Search for Services"
-                    placeholderTextColor={isDark ? colors.textMuted : palette.gray400}
-                    className="flex-1 ml-3 text-base text-gray-900 dark:text-slate-50"
-                    editable={false} // Make it clickable if navigating to a search page
-                // onPressIn={() => router.push('/search')} 
-                />
-                <View className="h-5 w-[1px] bg-gray-300 dark:bg-slate-700 mx-2" />
-                <TouchableOpacity accessibilityRole="button" accessibilityLabel="Voice search">
-                    <Ionicons name="mic" size={20} color={palette.orange500} />
-                </TouchableOpacity>
-            </View>
+                <Text className="flex-1 ml-3 text-base" style={{ color: isDark ? colors.textMuted : palette.gray400 }}>
+                    Search for Services
+                </Text>
+            </TouchableOpacity>
         </View>
     );
 }

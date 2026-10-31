@@ -1,8 +1,8 @@
 import { CATEGORIES } from '@/constants/categories';
 import { themeColors } from '@/themes/colors';
 import { Ionicons } from '@expo/vector-icons';
-import { useRouter } from 'expo-router';
-import React, { useMemo, useState } from 'react';
+import { useLocalSearchParams, useRouter } from 'expo-router';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { ActivityIndicator, FlatList, Modal, Pressable, ScrollView, Text, TextInput, TouchableOpacity, View, type TextStyle, type ViewStyle } from 'react-native';
 import { ScreenWrapper } from '../../components/ScreenWrapper';
 import { Toast } from '../../components/UI/ToastManager';
@@ -44,6 +44,15 @@ export default function MarketPage(): React.JSX.Element {
     const { colors } = useTheme();
     const { user } = useAuthStore();
     const userId = user?.id || '';
+
+    // The home search bar navigates here with a fresh `focusSearch` value each tap.
+    const { focusSearch } = useLocalSearchParams<{ focusSearch?: string }>();
+    const searchInputRef = useRef<React.ComponentRef<typeof TextInput>>(null);
+    useEffect(() => {
+        if (!focusSearch) return;
+        const timer = setTimeout(() => searchInputRef.current?.focus(), 250);
+        return () => clearTimeout(timer);
+    }, [focusSearch]);
 
     // Search, sort & location (server-side)
     const [searchQuery, setSearchQuery] = useState('');
@@ -163,6 +172,7 @@ export default function MarketPage(): React.JSX.Element {
                     <View style={{ flex: 1, flexDirection: 'row', alignItems: 'center', backgroundColor: colors.surfaceMuted, borderRadius: 12, paddingHorizontal: 12, height: 44 }}>
                         <Ionicons name="search-outline" size={18} color={colors.textSecondary} style={{ marginRight: 8 }} />
                         <TextInput
+                            ref={searchInputRef}
                             placeholder="Search title, skill or category..."
                             value={searchQuery}
                             onChangeText={setSearchQuery}

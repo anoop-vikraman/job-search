@@ -264,17 +264,19 @@ async def list_for_tweak_detailed(
 
 async def list_for_provider(
     db: AsyncSession, provider_user_id: uuid.UUID
-) -> list[tuple[Application, Tweak]]:
-    """Applications the given provider submitted, each with the tweak's headline info."""
+) -> list[tuple[Application, Tweak, Offer | None]]:
+    """Applications the given provider submitted, with the tweak's headline and any
+    counter-offer from the lister."""
     rows = (
         await db.execute(
-            select(Application, Tweak)
+            select(Application, Tweak, Offer)
             .join(Tweak, Tweak.id == Application.tweak_id)
+            .outerjoin(Offer, Offer.application_id == Application.id)
             .where(Application.provider_user_id == provider_user_id)
             .order_by(Application.applied_at.desc())
         )
     ).all()
-    return [(a, t) for a, t in rows]
+    return [(a, t, o) for a, t, o in rows]
 
 
 def _agreed_amount(application: Application, tweak: Tweak) -> int:

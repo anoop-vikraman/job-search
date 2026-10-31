@@ -134,7 +134,8 @@ async def test_list_for_provider_returns_my_applications(db: AsyncSession) -> No
     await application_service.apply(db, tweak.id, provider.id, ApplicationCreate())
     rows = await application_service.list_for_provider(db, provider.id)
     assert len(rows) == 1
-    app, t = rows[0]
+    app, t, offer = rows[0]
+    assert offer is None
     assert app.provider_user_id == provider.id
     assert t.id == tweak.id
 

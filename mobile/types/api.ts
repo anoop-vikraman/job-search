@@ -164,6 +164,8 @@ export interface BackendMyApplication extends BackendApplication {
     tweak_title: string;
     tweak_category: string;
     tweak_status: string;
+    /** The lister's counter-offer, if any. */
+    offer: BackendOffer | null;
 }
 
 // ─── Wallet ───────────────────────────────────────────────────────────────
