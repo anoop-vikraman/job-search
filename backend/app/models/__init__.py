@@ -3,6 +3,7 @@ from app.models.application import Application, Offer
 from app.models.chat import Conversation, Message
 from app.models.device_token import DeviceToken
 from app.models.notification import Notification
+from app.models.payment import PaymentOrder, Payout
 from app.models.rating import Rating
 from app.models.refresh_token import RefreshToken
 from app.models.refund import Refund
@@ -19,6 +20,8 @@ __all__ = [
     "Message",
     "Notification",
     "Offer",
+    "PaymentOrder",
+    "Payout",
     "Rating",
     "RefreshToken",
     "Refund",

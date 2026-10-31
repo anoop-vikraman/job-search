@@ -296,6 +296,42 @@ Required by steering: rotatable refresh tokens persisted in DB.
 - `ck_device_tokens_platform_valid` (`platform IN ('ios','android','web')`).
 - `ix_device_tokens_user_id (user_id)`.
 
+### payment_orders (gateway top-ups)
+| Column | Type | Null | Default | Req |
+|---|---|---|---|---|
+| id | UUID | N | `gen_random_uuid()` | R (also the Razorpay `receipt`) |
+| user_id | UUID | N | | R, FK `users` **CASCADE** |
+| provider | VARCHAR(20) | N | `'razorpay'` | R |
+| provider_order_id | VARCHAR(64) | N | | R, UNIQUE |
+| provider_payment_id | VARCHAR(64) | Y | | R, UNIQUE (set when paid) |
+| amount_minor | BIGINT | N | | R |
+| currency | CHAR(3) | N | `'INR'` | R |
+| status | payment_status (`created`,`paid`,`failed`) | N | `'created'` | R |
+| failure_reason | TEXT | Y | | R |
+| created_at | TIMESTAMPTZ | N | `now()` | |
+| paid_at | TIMESTAMPTZ | Y | | R |
+
+- `ck_payment_orders_amount_positive`, `ix_payment_orders_user_created (user_id, created_at)`.
+- Credit rule: exactly once, via `wallet_transactions.reference = 'razorpay:{provider_payment_id}'`.
+
+### payouts (withdrawals)
+| Column | Type | Null | Default | Req |
+|---|---|---|---|---|
+| id | UUID | N | `gen_random_uuid()` | R |
+| user_id | UUID | N | | R, FK `users` **CASCADE** |
+| amount_minor | BIGINT | N | | R |
+| currency | CHAR(3) | N | `'INR'` | R |
+| upi_id | VARCHAR(100) | N | | R |
+| status | payout_status (`requested`,`paid`,`rejected`) | N | `'requested'` | R |
+| debit_txn_id | UUID | Y | | R, FK `wallet_transactions` SET NULL |
+| reversal_txn_id | UUID | Y | | R, FK `wallet_transactions` SET NULL |
+| reference | VARCHAR(120) | Y | | R (UTR when paid) |
+| failure_reason | TEXT | Y | | R |
+| created_at | TIMESTAMPTZ | N | `now()` | |
+| processed_at | TIMESTAMPTZ | Y | | R |
+
+- `ck_payouts_amount_positive`; indexes `(user_id, created_at)`, `(status, created_at)`, and both txn FKs.
+
 ## A4. JSONB Schemas (Pydantic v2)
 
 All use `ConfigDict(extra="forbid", strict=True)`. Shapes are a proposal; B3 decides the final shape.

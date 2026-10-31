@@ -70,8 +70,15 @@ token · `403` insufficient role/access · `404` not found · `409` conflict/sta
 | Method | Path | Auth |
 |---|---|---|
 | GET | `/api/v1/wallet` | user |
-| POST | `/api/v1/wallet/topup` | user |
+| POST | `/api/v1/wallet/topup` | user (simulated; dev only) |
+| POST | `/api/v1/wallet/topup/order` | user |
+| POST | `/api/v1/wallet/topup/verify` | user (order owner) |
+| POST | `/api/v1/wallet/razorpay/webhook` | none (Razorpay HMAC signature) |
+| POST | `/api/v1/wallet/payouts` | user |
+| GET | `/api/v1/wallet/payouts?page&limit` | user (own) |
 | GET | `/api/v1/wallet/transactions?page&limit` | user |
+
+See [wallet-and-escrow.md](./wallet-and-escrow.md#adding-money-razorpay) for the payment flow.
 
 ### Refunds
 | Method | Path | Auth |
@@ -112,6 +119,8 @@ token · `403` insufficient role/access · `404` not found · `409` conflict/sta
 | GET | `/api/v1/admin/transactions?page&limit` | admin |
 | GET | `/api/v1/admin/refunds?page&limit` | admin |
 | POST | `/api/v1/admin/refunds/{refund_id}/decide` | admin |
+| GET | `/api/v1/admin/payouts?status&page&limit` | admin |
+| POST | `/api/v1/admin/payouts/{payout_id}/decide` | admin |
 
 ## Common error codes
 
@@ -133,6 +142,10 @@ token · `403` insufficient role/access · `404` not found · `409` conflict/sta
 | `LOCATION_REQUIRED` | Feed `radius_km` / `sort=distance` without `lat`+`lng` |
 | `CHAT_NOT_AVAILABLE` / `CHAT_CLOSED` | Chat before acceptance / after cancellation |
 | `CONVERSATION_ACCESS_DENIED` | Not a party to the conversation |
+| `PAYMENTS_NOT_CONFIGURED` | Razorpay keys unset |
+| `INVALID_SIGNATURE` / `PAYMENT_MISMATCH` / `PAYMENT_NOT_CAPTURED` | Top-up verification failures |
+| `ORDER_ALREADY_PAID` | Order credited by a different payment |
+| `SIMULATED_TOPUP_DISABLED` | Legacy top-up turned off |
 
 Endpoint list generated from the live FastAPI router; see the backend `app/api/v1/` for request
 and response models.

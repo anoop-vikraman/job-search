@@ -31,6 +31,17 @@ class Settings(BaseSettings):
     # Optional: required only if "enhanced push security" is enabled on the EAS project.
     EXPO_ACCESS_TOKEN: str | None = None
 
+    # Razorpay (use rzp_test_ keys for sandbox). Unset keys disable gateway top-ups.
+    RAZORPAY_KEY_ID: str | None = None
+    RAZORPAY_KEY_SECRET: str | None = None
+    RAZORPAY_WEBHOOK_SECRET: str | None = None
+    RAZORPAY_API_BASE: str = "https://api.razorpay.com/v1"
+    WALLET_TOPUP_MIN_MINOR: int = 100  # ₹1
+    WALLET_TOPUP_MAX_MINOR: int = 10_000_000  # ₹1,00,000
+    PAYOUT_MIN_MINOR: int = 10_000  # ₹100
+    # Legacy POST /wallet/topup credits without payment. Turn off outside local dev.
+    WALLET_SIMULATED_TOPUP_ENABLED: bool = True
+
     @property
     def cors_origins_list(self) -> list[str]:
         return [o.strip() for o in self.CORS_ORIGINS.split(",") if o.strip()]

@@ -139,3 +139,31 @@ async def refund_hold(
     wallet.held_minor -= amount_minor
     wallet.balance_minor += amount_minor
     return txn
+
+
+async def debit_payout(
+    db: AsyncSession, user_id: uuid.UUID, amount_minor: int, reference: str
+) -> WalletTransaction:
+    """Withdrawal request: move funds out of the available balance (caller commits).
+
+    The wallet row is locked so concurrent withdrawals can't overdraw it.
+    """
+    await get_or_create_wallet(db, user_id)
+    wallet = await db.scalar(select(Wallet).where(Wallet.user_id == user_id).with_for_update())
+    if wallet is None or wallet.balance_minor < amount_minor:
+        raise AppError(
+            status.HTTP_400_BAD_REQUEST, "INSUFFICIENT_BALANCE", "Insufficient wallet balance."
+        )
+    txn = _record(db, wallet, TxnType.payout, -amount_minor, reference=reference)
+    wallet.balance_minor -= amount_minor
+    return txn
+
+
+async def reverse_payout(
+    db: AsyncSession, user_id: uuid.UUID, amount_minor: int, reference: str
+) -> WalletTransaction:
+    """Rejected withdrawal: credit the debited amount back (caller commits)."""
+    wallet = await get_or_create_wallet(db, user_id)
+    txn = _record(db, wallet, TxnType.payout, amount_minor, reference=reference)
+    wallet.balance_minor += amount_minor
+    return txn

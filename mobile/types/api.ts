@@ -174,9 +174,28 @@ export interface Wallet {
     currency: string;
 }
 
-export interface TopupRequest {
+/** A Razorpay order for a wallet top-up; the fields Checkout needs. */
+export interface TopupOrder {
+    id: string;
+    provider: string;
+    provider_order_id: string;
     amount_minor: number;
-    reference?: string;
+    currency: string;
+    key_id: string;
+    test_mode: boolean;
+}
+
+/** Values Razorpay Checkout returns to its success handler. */
+export interface RazorpaySuccess {
+    razorpay_order_id: string;
+    razorpay_payment_id: string;
+    razorpay_signature: string;
+}
+
+export interface TopupVerifyResponse {
+    status: 'created' | 'paid' | 'failed';
+    transaction: Transaction;
+    wallet: Wallet;
 }
 
 export type TransactionType =

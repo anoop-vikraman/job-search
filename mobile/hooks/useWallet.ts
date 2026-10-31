@@ -7,7 +7,13 @@ import {
 } from '@tanstack/react-query';
 
 import { walletApi } from '../api/wallet';
-import type { TopupRequest, Transaction, Wallet } from '../types/api';
+import type {
+    RazorpaySuccess,
+    TopupOrder,
+    TopupVerifyResponse,
+    Transaction,
+    Wallet,
+} from '../types/api';
 import { queryKeys } from './queryKeys';
 
 export function useWallet(): UseQueryResult<Wallet> {
@@ -27,13 +33,23 @@ export function useWalletTransactions(): UseQueryResult<Transaction[]> {
     });
 }
 
-export function useTopup(): UseMutationResult<Wallet, Error, TopupRequest> {
+/** Create a Razorpay order for `amountMinor`. */
+export function useCreateTopupOrder(): UseMutationResult<TopupOrder, Error, number> {
+    return useMutation({
+        mutationFn: (amountMinor: number) => walletApi.createTopupOrder(amountMinor),
+    });
+}
+
+/** Verify a completed Checkout payment; refreshes wallet + ledger on success. */
+export function useVerifyTopup(): UseMutationResult<TopupVerifyResponse, Error, RazorpaySuccess> {
     const qc = useQueryClient();
     return useMutation({
-        mutationFn: (data: TopupRequest) => walletApi.topup(data),
-        onSuccess: () => {
+        mutationFn: (result: RazorpaySuccess) => walletApi.verifyTopup(result),
+        onSuccess: (res) => {
+            qc.setQueryData(queryKeys.wallet(), res.wallet);
             qc.invalidateQueries({ queryKey: queryKeys.wallet() });
             qc.invalidateQueries({ queryKey: queryKeys.walletTransactions() });
+            qc.invalidateQueries({ queryKey: queryKeys.notifications() });
         },
     });
 }

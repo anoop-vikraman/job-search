@@ -63,6 +63,18 @@ class TxnStatus(str, enum.Enum):
     reversed = "reversed"
 
 
+class PaymentStatus(str, enum.Enum):
+    created = "created"
+    paid = "paid"
+    failed = "failed"
+
+
+class PayoutStatus(str, enum.Enum):
+    requested = "requested"
+    paid = "paid"
+    rejected = "rejected"
+
+
 class RefundStatus(str, enum.Enum):
     requested = "requested"
     approved = "approved"

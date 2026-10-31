@@ -12,18 +12,20 @@ from app.api.deps import DbSession, require_admin
 from app.core.errors import AppError
 from app.db.base import Base
 from app.models.application import Application
-from app.models.enums import RefundStatus, TweakStatus, UserRole
+from app.models.enums import PayoutStatus, RefundStatus, TweakStatus, UserRole
+from app.models.payment import Payout
 from app.models.refund import Refund
 from app.models.tweak import Tweak
 from app.models.user import User
 from app.models.wallet import WalletTransaction
 from app.schemas.application import ApplicationResponse
 from app.schemas.common import ErrorResponse, MessageResponse, Page
+from app.schemas.payment import PayoutDecision, PayoutResponse
 from app.schemas.refund import RefundDecision, RefundResponse
 from app.schemas.tweak import TweakResponse
 from app.schemas.user import AdminBanRequest, UserProfile
 from app.schemas.wallet import TransactionResponse
-from app.services import refund_service
+from app.services import payment_service, refund_service
 
 router = APIRouter(prefix="/admin", tags=["admin"], dependencies=[Depends(require_admin)])
 
@@ -164,6 +166,39 @@ async def list_refunds(
     if status_filter is not None:
         conditions.append(Refund.status == status_filter)
     return await _paginate(db, Refund, RefundResponse, page, limit, Refund.created_at, conditions)
+
+
+@router.get("/payouts", response_model=Page[PayoutResponse])
+async def list_payouts(
+    db: DbSession,
+    page: int = Query(1, ge=1),
+    limit: int = Query(20, ge=1, le=100),
+    status_filter: PayoutStatus | None = Query(None, alias="status"),
+) -> Page[PayoutResponse]:
+    """List withdrawal requests (admin queue), optionally filtered by status."""
+    conditions: list[ColumnElement[bool]] = []
+    if status_filter is not None:
+        conditions.append(Payout.status == status_filter)
+    return await _paginate(db, Payout, PayoutResponse, page, limit, Payout.created_at, conditions)
+
+
+@router.post(
+    "/payouts/{payout_id}/decide",
+    response_model=PayoutResponse,
+    responses={
+        400: {"model": ErrorResponse},
+        404: {"model": ErrorResponse},
+        409: {"model": ErrorResponse},
+    },
+)
+async def decide_payout(
+    payout_id: uuid.UUID, data: PayoutDecision, db: DbSession
+) -> PayoutResponse:
+    """Mark a withdrawal sent (requires the transfer reference) or reject it (re-credits)."""
+    payout = await payment_service.decide_payout(
+        db, payout_id, approve=data.approve, reference=data.reference, reason=data.reason
+    )
+    return PayoutResponse.model_validate(payout)
 
 
 @router.post(
