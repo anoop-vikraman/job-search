@@ -1,3 +1,4 @@
+import { palette } from '@tweak/theme';
 import React from 'react';
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
@@ -50,16 +51,16 @@ const styles = StyleSheet.create({
         borderWidth: 1,
     },
     containerSelected: {
-        borderColor: '#6366f1',
+        borderColor: palette.indigo500,
         borderWidth: 2,
-        shadowColor: '#000',
+        shadowColor: palette.black,
         shadowOffset: { width: 0, height: 1 },
         shadowOpacity: 0.1,
         shadowRadius: 2,
         elevation: 2,
     },
     containerUnselected: {
-        borderColor: '#e5e7eb',
+        borderColor: palette.gray200,
     },
     header: {
         paddingHorizontal: 20,
@@ -67,17 +68,17 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         justifyContent: 'space-between',
         alignItems: 'center',
-        backgroundColor: '#f9fafb',
+        backgroundColor: palette.gray50,
     },
     title: {
         fontSize: 16,
         fontWeight: 'bold',
     },
     titleSelected: {
-        color: '#6366f1',
+        color: palette.indigo500,
     },
     titleUnselected: {
-        color: '#111827',
+        color: palette.gray900,
     },
     radio: {
         width: 20,
@@ -88,11 +89,11 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
     },
     radioSelected: {
-        borderColor: '#6366f1',
-        backgroundColor: '#6366f1',
+        borderColor: palette.indigo500,
+        backgroundColor: palette.indigo500,
     },
     radioUnselected: {
-        borderColor: '#d1d5db',
+        borderColor: palette.gray300,
         backgroundColor: 'white',
     },
     radioDot: {

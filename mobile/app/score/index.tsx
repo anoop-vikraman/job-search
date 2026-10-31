@@ -3,6 +3,7 @@ import { useRouter } from 'expo-router';
 import React, { useState } from 'react';
 import { Modal, ScrollView, Text, TouchableOpacity, View } from 'react-native';
 import { ScreenWrapper } from '../../components/ScreenWrapper';
+import { palette } from '@tweak/theme';
 
 const reliabilityScore = {
     score: 0,
@@ -20,7 +21,7 @@ export default function ScorePage() {
             {/* Header */}
             <View className="flex-row justify-between items-center px-6 py-4 bg-white border-b border-gray-100">
                 <TouchableOpacity onPress={() => router.back()} accessibilityRole="button" accessibilityLabel="Go back">
-                    <Ionicons name="arrow-back" size={24} color="#111827" />
+                    <Ionicons name="arrow-back" size={24} color={palette.gray900} />
                 </TouchableOpacity>
                 <Text className="text-lg font-bold text-gray-900">Score</Text>
                 <TouchableOpacity onPress={() => router.push('/settings/terms')}>
@@ -85,7 +86,7 @@ export default function ScorePage() {
                     <Text className="font-bold text-lg mb-4">Job performance</Text>
                     <View className="items-center py-8">
                         <View className="bg-gray-100 w-16 h-16 rounded-full items-center justify-center mb-4">
-                            <Ionicons name="briefcase-outline" size={32} color="#6B7280" />
+                            <Ionicons name="briefcase-outline" size={32} color={palette.gray500} />
                         </View>
                         <Text className="font-bold text-gray-900 mb-2">No jobs yet</Text>
                         <Text className="text-gray-500 text-center mb-4">Finish a job to track your progress here</Text>
@@ -116,7 +117,7 @@ export default function ScorePage() {
                         <View className="flex-row justify-between items-center mb-4">
                             <Text className="text-xl font-bold">Reliability score</Text>
                             <TouchableOpacity onPress={() => setModalVisible(false)} accessibilityRole="button" accessibilityLabel="Close">
-                                <Ionicons name="close" size={24} color="#111827" />
+                                <Ionicons name="close" size={24} color={palette.gray900} />
                             </TouchableOpacity>
                         </View>
 

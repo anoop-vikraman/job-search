@@ -16,6 +16,7 @@ import { ScreenWrapper } from '@/components/ScreenWrapper';
 import { useAuthStore } from '@/store/useAuthStore';
 import { useTweaksStore } from '@/store/useTweaksStore';
 import { ScheduleSlot } from '@/types/tweak';
+import { palette } from '@tweak/theme';
 
 // ─── Conflict Detection Helpers ───────────────────────────────────────────────
 
@@ -109,18 +110,18 @@ function SkillBadge({
                     paddingVertical: 6,
                     borderRadius: 20,
                     borderWidth: 1,
-                    backgroundColor: matched ? '#DCFCE7' : '#F8FAFC',
-                    borderColor: matched ? '#86EFAC' : '#E2E8F0',
+                    backgroundColor: matched ? palette.green100 : palette.slate50,
+                    borderColor: matched ? palette.green300 : palette.slate200,
                 }}
             >
                 {matched && (
-                    <Ionicons name="checkmark-circle" size={13} color="#16A34A" />
+                    <Ionicons name="checkmark-circle" size={13} color={palette.green600} />
                 )}
                 <Text
                     style={{
                         fontSize: 13,
                         fontWeight: '600',
-                        color: matched ? '#16A34A' : '#475569',
+                        color: matched ? palette.green600 : palette.slate600,
                     }}
                 >
                     {skill}
@@ -138,10 +139,10 @@ function SkillBadge({
                         shadowColor: '#000', shadowOpacity: 0.15, shadowRadius: 12, elevation: 10,
                     }}>
                         <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8, marginBottom: 8 }}>
-                            <Ionicons name={matched ? 'checkmark-circle' : 'information-circle'} size={20} color={matched ? '#16A34A' : '#94A3B8'} />
-                            <Text style={{ fontSize: 15, fontWeight: '700', color: '#0F172A' }}>{skill}</Text>
+                            <Ionicons name={matched ? 'checkmark-circle' : 'information-circle'} size={20} color={matched ? palette.green600 : palette.slate400} />
+                            <Text style={{ fontSize: 15, fontWeight: '700', color: palette.slate900 }}>{skill}</Text>
                         </View>
-                        <Text style={{ color: '#475569', fontSize: 14, lineHeight: 20 }}>
+                        <Text style={{ color: palette.slate600, fontSize: 14, lineHeight: 20 }}>
                             {matched
                                 ? 'This skill matches your profile! You have a higher chance of being selected.'
                                 : "You don't have this skill listed on your profile. Consider adding it to improve your chances."}
@@ -162,9 +163,9 @@ function ConflictSlotBadge({
 }) {
     const [showTip, setShowTip] = useState(false);
 
-    const bg = conflict === 'working_time' ? '#FEF2F2' : conflict === 'availability' ? '#FFF7ED' : '#EFF6FF';
-    const border = conflict === 'working_time' ? '#FECACA' : conflict === 'availability' ? '#FED7AA' : '#BFDBFE';
-    const textColor = conflict === 'working_time' ? '#DC2626' : conflict === 'availability' ? '#EA580C' : '#1D4ED8';
+    const bg = conflict === 'working_time' ? palette.red50 : conflict === 'availability' ? palette.orange50 : palette.blue50;
+    const border = conflict === 'working_time' ? palette.red200 : conflict === 'availability' ? palette.orange200 : palette.blue200;
+    const textColor = conflict === 'working_time' ? palette.red600 : conflict === 'availability' ? palette.orange600 : palette.blue700;
     const tipText = conflict === 'working_time'
         ? 'This slot conflicts with fixed working hours of another tweak you applied for.'
         : conflict === 'availability'
@@ -208,9 +209,9 @@ function ConflictSlotBadge({
                     }}>
                         <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8, marginBottom: 8 }}>
                             <Ionicons name="warning" size={20} color={textColor} />
-                            <Text style={{ fontSize: 15, fontWeight: '700', color: '#0F172A' }}>Schedule Conflict</Text>
+                            <Text style={{ fontSize: 15, fontWeight: '700', color: palette.slate900 }}>Schedule Conflict</Text>
                         </View>
-                        <Text style={{ color: '#475569', fontSize: 14, lineHeight: 20 }}>{tipText}</Text>
+                        <Text style={{ color: palette.slate600, fontSize: 14, lineHeight: 20 }}>{tipText}</Text>
                     </View>
                 </Pressable>
             </Modal>
@@ -274,7 +275,7 @@ export default function TweakDetails() {
         return (
             <ScreenWrapper>
                 <View className="flex-1 items-center justify-center px-6">
-                    <Ionicons name="alert-circle-outline" size={64} color="#9CA3AF" />
+                    <Ionicons name="alert-circle-outline" size={64} color={palette.gray400} />
                     <Text className="text-xl font-bold text-gray-900 mt-4">Tweak Not Found</Text>
                     <Text className="text-gray-500 text-center mt-2">
                         This tweak may have been removed or doesn't exist.
@@ -375,7 +376,7 @@ export default function TweakDetails() {
             {/* ── Header ──────────────────────────────────────────────────── */}
             <View className="px-4 py-4 flex-row items-center justify-between bg-white border-b border-gray-100">
                 <TouchableOpacity onPress={() => router.back()} className="p-2 -ml-2" accessibilityRole="button" accessibilityLabel="Go back">
-                    <Ionicons name="arrow-back" size={24} color="#111827" />
+                    <Ionicons name="arrow-back" size={24} color={palette.gray900} />
                 </TouchableOpacity>
                 <Text className="text-lg font-bold text-gray-900">Tweak Details</Text>
                 <View style={{ flexDirection: 'row', alignItems: 'center', gap: 4 }}>
@@ -390,7 +391,7 @@ export default function TweakDetails() {
                             <Ionicons
                                 name={isWatchlisted ? 'bookmark' : 'bookmark-outline'}
                                 size={22}
-                                color={isWatchlisted ? '#007AFF' : '#374151'}
+                                color={isWatchlisted ? palette.iosBlue : palette.gray700}
                             />
                         </TouchableOpacity>
                     )}
@@ -401,7 +402,7 @@ export default function TweakDetails() {
                         accessibilityRole="button"
                         accessibilityLabel="More options"
                     >
-                        <Ionicons name="ellipsis-vertical" size={22} color="#374151" />
+                        <Ionicons name="ellipsis-vertical" size={22} color={palette.gray700} />
                     </TouchableOpacity>
                 </View>
             </View>
@@ -414,7 +415,7 @@ export default function TweakDetails() {
                     {/* 2. Location (if in-person) */}
                     {tweak.tweakType === 'in_person' && tweak.address && (
                         <View className="flex-row items-center mb-4">
-                            <Ionicons name="location-sharp" size={18} color="#2563EB" />
+                            <Ionicons name="location-sharp" size={18} color={palette.blue600} />
                             <Text className="text-gray-700 ml-1 text-base font-medium">{tweak.address.city}, {tweak.address.state}</Text>
                         </View>
                     )}
@@ -434,9 +435,9 @@ export default function TweakDetails() {
                     {/* ── Skill-Match Banner (Higher Chance) ────────────────── */}
                     {!isOwnedByMe && (
                         <View style={{
-                            backgroundColor: '#F0FDF4',
+                            backgroundColor: palette.green50,
                             borderWidth: 1,
-                            borderColor: '#86EFAC',
+                            borderColor: palette.green300,
                             borderRadius: 14,
                             padding: 14,
                             marginBottom: 16,
@@ -444,14 +445,14 @@ export default function TweakDetails() {
                             alignItems: 'center',
                             gap: 10,
                         }}>
-                            <View style={{ width: 36, height: 36, borderRadius: 18, backgroundColor: '#DCFCE7', alignItems: 'center', justifyContent: 'center' }}>
+                            <View style={{ width: 36, height: 36, borderRadius: 18, backgroundColor: palette.green100, alignItems: 'center', justifyContent: 'center' }}>
                                 <Text style={{ fontSize: 18 }}>⭐</Text>
                             </View>
                             <View style={{ flex: 1 }}>
-                                <Text style={{ fontSize: 13, fontWeight: '800', color: '#15803D', marginBottom: 2 }}>
+                                <Text style={{ fontSize: 13, fontWeight: '800', color: palette.green700, marginBottom: 2 }}>
                                     Higher Chance of Getting Selected!
                                 </Text>
-                                <Text style={{ fontSize: 12, color: '#166534', lineHeight: 17 }}>
+                                <Text style={{ fontSize: 12, color: palette.green800, lineHeight: 17 }}>
                                     Your rating for this job category is high. You're a great match!
                                 </Text>
                             </View>
@@ -459,7 +460,7 @@ export default function TweakDetails() {
                     )}
 
                     {/* Price Display */}
-                    <View className="bg-[#1E1B4B] rounded-2xl p-5 mb-6 w-full flex-row items-center justify-between shadow-sm">
+                    <View style={{ backgroundColor: palette.indigo950 }} className="rounded-2xl p-5 mb-6 w-full flex-row items-center justify-between shadow-sm">
                         <View className="flex-1">
                             <Text className="text-white text-xs font-medium opacity-70 mb-1 uppercase tracking-wider">
                                 Total Price
@@ -499,13 +500,13 @@ export default function TweakDetails() {
                                             const dayName = slotDate.toLocaleDateString('en-US', { weekday: 'short' });
                                             const day = slotDate.getDate();
                                             const month = slotDate.toLocaleDateString('en-US', { month: 'short' });
-                                            const bg = conflict === 'working_time' ? '#FEF2F2' : conflict === 'availability' ? '#FFF7ED' : '#FFFFFF';
-                                            const border = conflict === 'working_time' ? '#FECACA' : conflict === 'availability' ? '#FED7AA' : '#E5E7EB';
+                                            const bg = conflict === 'working_time' ? palette.red50 : conflict === 'availability' ? palette.orange50 : palette.white;
+                                            const border = conflict === 'working_time' ? palette.red200 : conflict === 'availability' ? palette.orange200 : palette.gray200;
 
                                             return (
                                                 <View key={index} style={{ backgroundColor: bg, borderWidth: 1, borderColor: border, borderRadius: 14, padding: 12, minWidth: 90, alignItems: 'center' }}>
-                                                    <Text style={{ color: '#6B7280', fontSize: 10, fontWeight: '700', textTransform: 'uppercase', marginBottom: 2 }}>{dayName}</Text>
-                                                    <Text style={{ color: '#111827', fontSize: 18, fontWeight: '800', marginBottom: 6 }}>{day} {month}</Text>
+                                                    <Text style={{ color: palette.gray500, fontSize: 10, fontWeight: '700', textTransform: 'uppercase', marginBottom: 2 }}>{dayName}</Text>
+                                                    <Text style={{ color: palette.gray900, fontSize: 18, fontWeight: '800', marginBottom: 6 }}>{day} {month}</Text>
                                                     <ConflictSlotBadge
                                                         label={`${slot.start} - ${slot.end}`}
                                                         conflict={conflict}
@@ -519,7 +520,7 @@ export default function TweakDetails() {
                                 <View>
                                     <View className="bg-white border border-gray-200 rounded-xl p-4 flex-row items-center gap-3 mb-4">
                                         <View className="w-12 h-12 bg-blue-50 rounded-full items-center justify-center">
-                                            <Ionicons name="calendar-outline" size={24} color="#2563EB" />
+                                            <Ionicons name="calendar-outline" size={24} color={palette.blue600} />
                                         </View>
                                         <View>
                                             <Text className="text-xs text-gray-500 font-medium uppercase mb-1">Date</Text>
@@ -544,9 +545,9 @@ export default function TweakDetails() {
                             {/* Conflict warning message */}
                             {hasAnyConflict && !isOwnedByMe && (
                                 <View style={{
-                                    backgroundColor: '#FFF7ED',
+                                    backgroundColor: palette.orange50,
                                     borderWidth: 1,
-                                    borderColor: '#FED7AA',
+                                    borderColor: palette.orange200,
                                     borderRadius: 12,
                                     padding: 12,
                                     marginTop: 10,
@@ -554,8 +555,8 @@ export default function TweakDetails() {
                                     alignItems: 'flex-start',
                                     gap: 8,
                                 }}>
-                                    <Ionicons name="warning" size={16} color="#EA580C" style={{ marginTop: 1 }} />
-                                    <Text style={{ fontSize: 13, color: '#9A3412', flex: 1, lineHeight: 18, fontWeight: '500' }}>
+                                    <Ionicons name="warning" size={16} color={palette.orange600} style={{ marginTop: 1 }} />
+                                    <Text style={{ fontSize: 13, color: palette.orange700, flex: 1, lineHeight: 18, fontWeight: '500' }}>
                                         {allConflicted
                                             ? 'All available slots conflict with your existing applications. You cannot apply to this tweak.'
                                             : 'Some slots conflict with tweaks you have already applied for. Tap a highlighted slot to see details.'}
@@ -591,7 +592,7 @@ export default function TweakDetails() {
                                     accessibilityRole="button"
                                     accessibilityLabel={isPlaying ? 'Pause audio' : 'Play audio'}
                                 >
-                                    <FontAwesome5 name={isPlaying ? 'pause' : 'play'} size={14} color="#374151" />
+                                    <FontAwesome5 name={isPlaying ? 'pause' : 'play'} size={14} color={palette.gray700} />
                                 </TouchableOpacity>
                                 <Text className="text-sm font-bold text-gray-900 mr-4">
                                     {formatDuration(isPlaying ? playerStatus.currentTime : playerStatus.duration)}
@@ -630,8 +631,8 @@ export default function TweakDetails() {
                                 <Text className="text-base font-bold text-gray-900">Skills Required</Text>
                                 {!isOwnedByMe && (
                                     <View style={{ flexDirection: 'row', alignItems: 'center', gap: 4 }}>
-                                        <Ionicons name="checkmark-circle" size={12} color="#16A34A" />
-                                        <Text style={{ fontSize: 11, color: '#16A34A', fontWeight: '600' }}>= matches your profile</Text>
+                                        <Ionicons name="checkmark-circle" size={12} color={palette.green600} />
+                                        <Text style={{ fontSize: 11, color: palette.green600, fontWeight: '600' }}>= matches your profile</Text>
                                     </View>
                                 )}
                             </View>
@@ -670,9 +671,9 @@ export default function TweakDetails() {
                                 <TouchableOpacity
                                     onPress={() => router.push(`/tweaks/${tweak.id}/applicants` as Href)}
                                     style={{
-                                        backgroundColor: '#EFF6FF',
+                                        backgroundColor: palette.blue50,
                                         borderWidth: 1,
-                                        borderColor: '#BFDBFE',
+                                        borderColor: palette.blue200,
                                         paddingVertical: 14,
                                         borderRadius: 14,
                                         flexDirection: 'row',
@@ -681,8 +682,8 @@ export default function TweakDetails() {
                                         gap: 8,
                                     }}
                                 >
-                                    <Ionicons name="people-outline" size={20} color="#2563EB" />
-                                    <Text style={{ fontWeight: '700', color: '#2563EB', fontSize: 15 }}>
+                                    <Ionicons name="people-outline" size={20} color={palette.blue600} />
+                                    <Text style={{ fontWeight: '700', color: palette.blue600, fontSize: 15 }}>
                                         View Applicants{applicantsCount > 0 ? ` (${applicantsCount})` : ''}
                                     </Text>
                                 </TouchableOpacity>
@@ -691,7 +692,7 @@ export default function TweakDetails() {
                                         onPress={() => router.push('/create-tweak/edit')}
                                         className="flex-1 bg-white border border-gray-300 py-4 rounded-xl flex-row items-center justify-center gap-2"
                                     >
-                                        <Ionicons name="create-outline" size={20} color="#374151" />
+                                        <Ionicons name="create-outline" size={20} color={palette.gray700} />
                                         <Text className="font-bold text-gray-700">Edit Tweak</Text>
                                     </TouchableOpacity>
                                     <TouchableOpacity
@@ -706,9 +707,9 @@ export default function TweakDetails() {
                             <TouchableOpacity
                                 onPress={() => setShowAppSummaryModal(true)}
                                 style={{
-                                    backgroundColor: '#F0F9FF',
+                                    backgroundColor: palette.sky50,
                                     borderWidth: 1,
-                                    borderColor: '#BFDBFE',
+                                    borderColor: palette.blue200,
                                     paddingVertical: 16,
                                     borderRadius: 14,
                                     flexDirection: 'row',
@@ -717,8 +718,8 @@ export default function TweakDetails() {
                                     gap: 8,
                                 }}
                             >
-                                <Ionicons name="document-text-outline" size={20} color="#007AFF" />
-                                <Text style={{ fontWeight: '800', color: '#007AFF', fontSize: 16 }}>
+                                <Ionicons name="document-text-outline" size={20} color={palette.iosBlue} />
+                                <Text style={{ fontWeight: '800', color: palette.iosBlue, fontSize: 16 }}>
                                     View Application
                                 </Text>
                             </TouchableOpacity>
@@ -730,7 +731,7 @@ export default function TweakDetails() {
                                 }}
                                 disabled={allConflicted}
                                 style={{
-                                    backgroundColor: allConflicted ? '#94A3B8' : '#007AFF',
+                                    backgroundColor: allConflicted ? palette.slate400 : palette.iosBlue,
                                     paddingVertical: 16,
                                     borderRadius: 14,
                                     flexDirection: 'row',
@@ -774,10 +775,10 @@ export default function TweakDetails() {
                                 setShowMenuModal(false);
                                 Alert.alert('Report', 'Thank you for your report. We will review this tweak.');
                             }}
-                            style={{ flexDirection: 'row', alignItems: 'center', gap: 12, paddingHorizontal: 16, paddingVertical: 14, borderBottomWidth: 1, borderBottomColor: '#F1F5F9' }}
+                            style={{ flexDirection: 'row', alignItems: 'center', gap: 12, paddingHorizontal: 16, paddingVertical: 14, borderBottomWidth: 1, borderBottomColor: palette.slate100 }}
                         >
-                            <Ionicons name="flag-outline" size={18} color="#EF4444" />
-                            <Text style={{ fontSize: 15, fontWeight: '600', color: '#EF4444' }}>Report</Text>
+                            <Ionicons name="flag-outline" size={18} color={palette.red500} />
+                            <Text style={{ fontSize: 15, fontWeight: '600', color: palette.red500 }}>Report</Text>
                         </TouchableOpacity>
                         <TouchableOpacity
                             onPress={() => {
@@ -786,8 +787,8 @@ export default function TweakDetails() {
                             }}
                             style={{ flexDirection: 'row', alignItems: 'center', gap: 12, paddingHorizontal: 16, paddingVertical: 14 }}
                         >
-                            <Ionicons name="help-circle-outline" size={18} color="#374151" />
-                            <Text style={{ fontSize: 15, fontWeight: '600', color: '#374151' }}>Support</Text>
+                            <Ionicons name="help-circle-outline" size={18} color={palette.gray700} />
+                            <Text style={{ fontSize: 15, fontWeight: '600', color: palette.gray700 }}>Support</Text>
                         </TouchableOpacity>
                     </View>
                 </Pressable>
@@ -797,60 +798,60 @@ export default function TweakDetails() {
                 <View style={{ flex: 1, backgroundColor: 'rgba(0,0,0,0.5)', justifyContent: 'flex-end' }}>
                     <View style={{ backgroundColor: '#fff', borderTopLeftRadius: 24, borderTopRightRadius: 24, padding: 24, minHeight: '60%' }}>
                         <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: 20 }}>
-                            <Text style={{ fontSize: 20, fontWeight: '800', color: '#0F172A' }}>Your Application</Text>
+                            <Text style={{ fontSize: 20, fontWeight: '800', color: palette.slate900 }}>Your Application</Text>
                             <TouchableOpacity onPress={() => setShowAppSummaryModal(false)} accessibilityRole="button" accessibilityLabel="Close">
-                                <Ionicons name="close-circle" size={28} color="#CBD5E1" />
+                                <Ionicons name="close-circle" size={28} color={palette.slate300} />
                             </TouchableOpacity>
                         </View>
 
                         <ScrollView showsVerticalScrollIndicator={false}>
                             {/* Status Badge */}
                             <View style={{ 
-                                backgroundColor: myApplication?.status === 'accepted' ? '#DCFCE7' : myApplication?.status === 'rejected' ? '#FEE2E2' : '#EFF6FF',
+                                backgroundColor: myApplication?.status === 'accepted' ? palette.green100 : myApplication?.status === 'rejected' ? palette.red100 : palette.blue50,
                                 paddingHorizontal: 12, paddingVertical: 6, borderRadius: 12, alignSelf: 'flex-start', marginBottom: 20,
                                 flexDirection: 'row', alignItems: 'center', gap: 6
                             }}>
                                 <Ionicons 
                                     name={myApplication?.status === 'accepted' ? 'checkmark-circle' : myApplication?.status === 'rejected' ? 'close-circle' : 'time'} 
                                     size={16} 
-                                    color={myApplication?.status === 'accepted' ? '#15803D' : myApplication?.status === 'rejected' ? '#B91C1C' : '#1D4ED8'} 
+                                    color={myApplication?.status === 'accepted' ? palette.green700 : myApplication?.status === 'rejected' ? palette.red700 : palette.blue700} 
                                 />
-                                <Text style={{ fontSize: 13, fontWeight: '800', color: myApplication?.status === 'accepted' ? '#15803D' : myApplication?.status === 'rejected' ? '#B91C1C' : '#1D4ED8', textTransform: 'uppercase' }}>
+                                <Text style={{ fontSize: 13, fontWeight: '800', color: myApplication?.status === 'accepted' ? palette.green700 : myApplication?.status === 'rejected' ? palette.red700 : palette.blue700, textTransform: 'uppercase' }}>
                                     {myApplication?.status || 'PENDING'}
                                 </Text>
                             </View>
 
                             {/* Pitch */}
-                            <Text style={{ fontSize: 14, fontWeight: '700', color: '#64748B', marginBottom: 8, textTransform: 'uppercase' }}>Your Pitch</Text>
-                            <View style={{ backgroundColor: '#F8FAFC', padding: 16, borderRadius: 16, borderWidth: 1, borderColor: '#E2E8F0', marginBottom: 20 }}>
-                                <Text style={{ fontSize: 15, color: '#334155', lineHeight: 22 }}>
+                            <Text style={{ fontSize: 14, fontWeight: '700', color: palette.slate500, marginBottom: 8, textTransform: 'uppercase' }}>Your Pitch</Text>
+                            <View style={{ backgroundColor: palette.slate50, padding: 16, borderRadius: 16, borderWidth: 1, borderColor: palette.slate200, marginBottom: 20 }}>
+                                <Text style={{ fontSize: 15, color: palette.slate700, lineHeight: 22 }}>
                                     {myApplication?.whyPreferMessage}
                                 </Text>
                             </View>
 
                             {/* Quote */}
-                            <Text style={{ fontSize: 14, fontWeight: '700', color: '#64748B', marginBottom: 8, textTransform: 'uppercase' }}>Your Quote</Text>
+                            <Text style={{ fontSize: 14, fontWeight: '700', color: palette.slate500, marginBottom: 8, textTransform: 'uppercase' }}>Your Quote</Text>
                             <View style={{ flexDirection: 'row', alignItems: 'center', gap: 10, marginBottom: 20 }}>
-                                <View style={{ backgroundColor: '#F1F5F9', paddingHorizontal: 16, paddingVertical: 10, borderRadius: 12 }}>
-                                    <Text style={{ fontSize: 18, fontWeight: '800', color: '#0F172A' }}>₹{myApplication?.quotedPrice || tweak.price}</Text>
+                                <View style={{ backgroundColor: palette.slate100, paddingHorizontal: 16, paddingVertical: 10, borderRadius: 12 }}>
+                                    <Text style={{ fontSize: 18, fontWeight: '800', color: palette.slate900 }}>₹{myApplication?.quotedPrice || tweak.price}</Text>
                                 </View>
                                 {myApplication?.listerQuotedPrice && (
                                     <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}>
-                                        <Ionicons name="arrow-forward" size={16} color="#94A3B8" />
-                                        <View style={{ backgroundColor: '#FFF7ED', paddingHorizontal: 12, paddingVertical: 10, borderRadius: 12, borderWidth: 1, borderColor: '#FED7AA' }}>
-                                            <Text style={{ fontSize: 16, fontWeight: '800', color: '#EA580C' }}>Counter: ₹{myApplication.listerQuotedPrice}</Text>
+                                        <Ionicons name="arrow-forward" size={16} color={palette.slate400} />
+                                        <View style={{ backgroundColor: palette.orange50, paddingHorizontal: 12, paddingVertical: 10, borderRadius: 12, borderWidth: 1, borderColor: palette.orange200 }}>
+                                            <Text style={{ fontSize: 16, fontWeight: '800', color: palette.orange600 }}>Counter: ₹{myApplication.listerQuotedPrice}</Text>
                                         </View>
                                     </View>
                                 )}
                             </View>
 
                             {/* Slots */}
-                            <Text style={{ fontSize: 14, fontWeight: '700', color: '#64748B', marginBottom: 8, textTransform: 'uppercase' }}>Selected Slots</Text>
+                            <Text style={{ fontSize: 14, fontWeight: '700', color: palette.slate500, marginBottom: 8, textTransform: 'uppercase' }}>Selected Slots</Text>
                             <View style={{ gap: 8, marginBottom: 30 }}>
                                 {myApplication?.selectedSlots.map((slot, i) => (
-                                    <View key={i} style={{ backgroundColor: '#F1F5F9', padding: 12, borderRadius: 12, flexDirection: 'row', alignItems: 'center', gap: 10 }}>
-                                        <Ionicons name="time-outline" size={16} color="#64748B" />
-                                        <Text style={{ fontSize: 14, color: '#334155', fontWeight: '600' }}>
+                                    <View key={i} style={{ backgroundColor: palette.slate100, padding: 12, borderRadius: 12, flexDirection: 'row', alignItems: 'center', gap: 10 }}>
+                                        <Ionicons name="time-outline" size={16} color={palette.slate500} />
+                                        <Text style={{ fontSize: 14, color: palette.slate700, fontWeight: '600' }}>
                                             {new Date(slot.date ?? '').toLocaleDateString('en-US', { day: 'numeric', month: 'short' })}: {slot.start} - {slot.end}
                                         </Text>
                                     </View>
@@ -860,7 +861,7 @@ export default function TweakDetails() {
 
                         <TouchableOpacity
                             onPress={() => setShowAppSummaryModal(false)}
-                            style={{ backgroundColor: '#0F172A', paddingVertical: 16, borderRadius: 16, alignItems: 'center' }}
+                            style={{ backgroundColor: palette.slate900, paddingVertical: 16, borderRadius: 16, alignItems: 'center' }}
                         >
                             <Text style={{ color: '#fff', fontWeight: '800', fontSize: 16 }}>Close</Text>
                         </TouchableOpacity>

@@ -3,6 +3,7 @@ import React from 'react';
 import { FlatList, Text, View } from 'react-native';
 
 import { ScreenWrapper } from '../../components/ScreenWrapper';
+import { palette } from '@tweak/theme';
 
 interface OfferItem {
     id: string;
@@ -32,7 +33,7 @@ export default function OffersPage(): React.JSX.Element {
                 ListEmptyComponent={
                     <View className="items-center py-24">
                         <View className="bg-gray-100 w-20 h-20 rounded-full items-center justify-center mb-4">
-                            <Ionicons name="gift-outline" size={32} color="#9CA3AF" />
+                            <Ionicons name="gift-outline" size={32} color={palette.gray400} />
                         </View>
                         <Text className="text-gray-400 font-medium">No offers available right now</Text>
                     </View>

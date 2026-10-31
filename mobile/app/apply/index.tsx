@@ -12,6 +12,7 @@ import { Tweak, useTweaksStore } from '../../store/useTweaksStore';
 import { useAuthStore } from '../../store/useAuthStore';
 import { loadDraftIntoCreateStore } from '../../utils/draftLoader';
 import TweakTile from '../../components/Tweak/TweakTile';
+import { palette } from '@tweak/theme';
 
 type TabType = 'my' | 'applied';
 
@@ -105,7 +106,7 @@ export default function TweaksListing() {
             <View style={{ flex: 1, paddingHorizontal: 16, paddingTop: 16 }}>
                 {/* Header */}
                 <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
-                    <Text style={{ fontSize: 24, fontWeight: '800', color: '#0F172A' }}>
+                    <Text style={{ fontSize: 24, fontWeight: '800', color: palette.slate900 }}>
                         {showDrafts ? 'Drafts' : 'Tweaks'}
                     </Text>
                     <TouchableOpacity
@@ -118,15 +119,15 @@ export default function TweaksListing() {
                             paddingHorizontal: 12,
                             paddingVertical: 7,
                             borderRadius: 12,
-                            backgroundColor: showDrafts ? '#FEF3C7' : '#F1F5F9',
+                            backgroundColor: showDrafts ? palette.amber100 : palette.slate100,
                         }}
                     >
                         <Ionicons
                             name={showDrafts ? 'close-circle' : 'document-text-outline'}
                             size={17}
-                            color={showDrafts ? '#B45309' : '#64748B'}
+                            color={showDrafts ? palette.amber700 : palette.slate500}
                         />
-                        <Text style={{ fontWeight: '600', fontSize: 13, color: showDrafts ? '#B45309' : '#334155' }}>
+                        <Text style={{ fontWeight: '600', fontSize: 13, color: showDrafts ? palette.amber700 : palette.slate700 }}>
                             {showDrafts ? 'Close' : `Drafts (${draftsCount})`}
                         </Text>
                     </TouchableOpacity>
@@ -138,22 +139,22 @@ export default function TweaksListing() {
                         flex: 1,
                         flexDirection: 'row',
                         alignItems: 'center',
-                        backgroundColor: '#F1F5F9',
+                        backgroundColor: palette.slate100,
                         borderRadius: 12,
                         paddingHorizontal: 12,
                         height: 44,
                     }}>
-                        <Ionicons name="search-outline" size={18} color="#64748B" style={{ marginRight: 8 }} />
+                        <Ionicons name="search-outline" size={18} color={palette.slate500} style={{ marginRight: 8 }} />
                         <TextInput
                             placeholder="Search category..."
                             value={searchQuery}
                             onChangeText={setSearchQuery}
-                            style={{ flex: 1, height: '100%', fontSize: 14, color: '#0F172A' }}
-                            placeholderTextColor="#94A3B8"
+                            style={{ flex: 1, height: '100%', fontSize: 14, color: palette.slate900 }}
+                            placeholderTextColor={palette.slate400}
                         />
                         {searchQuery.length > 0 && (
                             <TouchableOpacity onPress={() => setSearchQuery('')} accessibilityRole="button" accessibilityLabel="Clear search">
-                                <Ionicons name="close-circle" size={18} color="#94A3B8" />
+                                <Ionicons name="close-circle" size={18} color={palette.slate400} />
                             </TouchableOpacity>
                         )}
                     </View>
@@ -163,7 +164,7 @@ export default function TweaksListing() {
                         style={{
                             width: 44,
                             height: 44,
-                            backgroundColor: activeFilterCount > 0 ? `${themeColors.primary}15` : '#F1F5F9',
+                            backgroundColor: activeFilterCount > 0 ? `${themeColors.primary}15` : palette.slate100,
                             borderRadius: 12,
                             alignItems: 'center',
                             justifyContent: 'center',
@@ -175,7 +176,7 @@ export default function TweaksListing() {
                         <Ionicons
                             name="options-outline"
                             size={20}
-                            color={activeFilterCount > 0 ? themeColors.primary : '#64748B'}
+                            color={activeFilterCount > 0 ? themeColors.primary : palette.slate500}
                         />
                         {activeFilterCount > 0 && (
                             <View style={{
@@ -239,7 +240,7 @@ export default function TweaksListing() {
                             <View style={{ alignItems: 'center', justifyContent: 'center', paddingVertical: 80 }}>
                                 <View style={{
                                     width: 64, height: 64,
-                                    backgroundColor: '#F1F5F9',
+                                    backgroundColor: palette.slate100,
                                     borderRadius: 32,
                                     alignItems: 'center',
                                     justifyContent: 'center',
@@ -248,13 +249,13 @@ export default function TweaksListing() {
                                     <Ionicons
                                         name={showDrafts ? 'document-text-outline' : 'hammer-outline'}
                                         size={30}
-                                        color="#94A3B8"
+                                        color={palette.slate400}
                                     />
                                 </View>
-                                <Text style={{ color: '#64748B', fontWeight: '700', fontSize: 17 }}>
+                                <Text style={{ color: palette.slate500, fontWeight: '700', fontSize: 17 }}>
                                     {showDrafts ? 'No Drafts' : 'No Tweaks Yet'}
                                 </Text>
-                                <Text style={{ color: '#94A3B8', textAlign: 'center', marginTop: 6, paddingHorizontal: 40, fontSize: 13 }}>
+                                <Text style={{ color: palette.slate400, textAlign: 'center', marginTop: 6, paddingHorizontal: 40, fontSize: 13 }}>
                                     {showDrafts
                                         ? 'Save a tweak as draft to see it here.'
                                         : 'Go to the Create tab to post your first tweak.'}
@@ -264,8 +265,8 @@ export default function TweaksListing() {
                     />
                 ) : (
                     <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-                        <Text style={{ fontSize: 20, fontWeight: '800', color: '#0F172A' }}>Apply for Tweaks</Text>
-                        <Text style={{ color: '#64748B', marginTop: 8 }}>Coming Soon (API Integration)</Text>
+                        <Text style={{ fontSize: 20, fontWeight: '800', color: palette.slate900 }}>Apply for Tweaks</Text>
+                        <Text style={{ color: palette.slate500, marginTop: 8 }}>Coming Soon (API Integration)</Text>
                     </View>
                 )}
                 {/* Filter Modal */}
@@ -296,9 +297,9 @@ export default function TweaksListing() {
                                 paddingHorizontal: 20,
                                 paddingVertical: 18,
                                 borderBottomWidth: 1,
-                                borderBottomColor: '#F1F5F9'
+                                borderBottomColor: palette.slate100
                             }}>
-                                <Text style={{ fontSize: 18, fontWeight: '800', color: '#0F172A' }}>Filters & Sort</Text>
+                                <Text style={{ fontSize: 18, fontWeight: '800', color: palette.slate900 }}>Filters & Sort</Text>
                                 <TouchableOpacity onPress={resetFilters}>
                                     <Text style={{ color: themeColors.primary, fontWeight: '600' }}>Reset</Text>
                                 </TouchableOpacity>
@@ -306,7 +307,7 @@ export default function TweaksListing() {
 
                             <ScrollView style={{ padding: 20 }}>
                                 {/* Sort Section */}
-                                <Text style={{ fontSize: 14, fontWeight: '700', color: '#64748B', marginBottom: 12, textTransform: 'uppercase', letterSpacing: 0.5 }}>Sort By</Text>
+                                <Text style={{ fontSize: 14, fontWeight: '700', color: palette.slate500, marginBottom: 12, textTransform: 'uppercase', letterSpacing: 0.5 }}>Sort By</Text>
                                 <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 8, marginBottom: 24 }}>
                                     {[
                                         { label: 'Newest First', value: 'newest' },
@@ -323,18 +324,18 @@ export default function TweaksListing() {
                                                 paddingHorizontal: 12,
                                                 paddingVertical: 8,
                                                 borderRadius: 20,
-                                                backgroundColor: sortBy === opt.value ? themeColors.primary : '#F8FAFC',
+                                                backgroundColor: sortBy === opt.value ? themeColors.primary : palette.slate50,
                                                 borderWidth: 1,
-                                                borderColor: sortBy === opt.value ? themeColors.primary : '#E2E8F0'
+                                                borderColor: sortBy === opt.value ? themeColors.primary : palette.slate200
                                             }}
                                         >
-                                            <Text style={{ fontSize: 13, fontWeight: '600', color: sortBy === opt.value ? '#fff' : '#475569' }}>{opt.label}</Text>
+                                            <Text style={{ fontSize: 13, fontWeight: '600', color: sortBy === opt.value ? '#fff' : palette.slate600 }}>{opt.label}</Text>
                                         </TouchableOpacity>
                                     ))}
                                 </View>
 
                                 {/* Category Section */}
-                                <Text style={{ fontSize: 14, fontWeight: '700', color: '#64748B', marginBottom: 12, textTransform: 'uppercase', letterSpacing: 0.5 }}>Category</Text>
+                                <Text style={{ fontSize: 14, fontWeight: '700', color: palette.slate500, marginBottom: 12, textTransform: 'uppercase', letterSpacing: 0.5 }}>Category</Text>
                                 <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 8, marginBottom: 24 }}>
                                     {['All', ...CATEGORIES.map(c => c.name)].map(cat => (
                                         <TouchableOpacity
@@ -344,18 +345,18 @@ export default function TweaksListing() {
                                                 paddingHorizontal: 12,
                                                 paddingVertical: 8,
                                                 borderRadius: 20,
-                                                backgroundColor: filters.category === cat ? themeColors.primary : '#F8FAFC',
+                                                backgroundColor: filters.category === cat ? themeColors.primary : palette.slate50,
                                                 borderWidth: 1,
-                                                borderColor: filters.category === cat ? themeColors.primary : '#E2E8F0'
+                                                borderColor: filters.category === cat ? themeColors.primary : palette.slate200
                                             }}
                                         >
-                                            <Text style={{ fontSize: 13, fontWeight: '600', color: filters.category === cat ? '#fff' : '#475569' }}>{cat}</Text>
+                                            <Text style={{ fontSize: 13, fontWeight: '600', color: filters.category === cat ? '#fff' : palette.slate600 }}>{cat}</Text>
                                         </TouchableOpacity>
                                     ))}
                                 </View>
 
                                 {/* Type Section */}
-                                <Text style={{ fontSize: 14, fontWeight: '700', color: '#64748B', marginBottom: 12, textTransform: 'uppercase', letterSpacing: 0.5 }}>Tweak Type</Text>
+                                <Text style={{ fontSize: 14, fontWeight: '700', color: palette.slate500, marginBottom: 12, textTransform: 'uppercase', letterSpacing: 0.5 }}>Tweak Type</Text>
                                 <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 8, marginBottom: 24 }}>
                                     {[
                                         { label: 'All', value: 'All' },
@@ -369,18 +370,18 @@ export default function TweaksListing() {
                                                 paddingHorizontal: 12,
                                                 paddingVertical: 8,
                                                 borderRadius: 20,
-                                                backgroundColor: filters.tweakType === type.value ? themeColors.primary : '#F8FAFC',
+                                                backgroundColor: filters.tweakType === type.value ? themeColors.primary : palette.slate50,
                                                 borderWidth: 1,
-                                                borderColor: filters.tweakType === type.value ? themeColors.primary : '#E2E8F0'
+                                                borderColor: filters.tweakType === type.value ? themeColors.primary : palette.slate200
                                             }}
                                         >
-                                            <Text style={{ fontSize: 13, fontWeight: '600', color: filters.tweakType === type.value ? '#fff' : '#475569' }}>{type.label}</Text>
+                                            <Text style={{ fontSize: 13, fontWeight: '600', color: filters.tweakType === type.value ? '#fff' : palette.slate600 }}>{type.label}</Text>
                                         </TouchableOpacity>
                                     ))}
                                 </View>
 
                                 {/* Schedule Section */}
-                                <Text style={{ fontSize: 14, fontWeight: '700', color: '#64748B', marginBottom: 12, textTransform: 'uppercase', letterSpacing: 0.5 }}>Schedule Type</Text>
+                                <Text style={{ fontSize: 14, fontWeight: '700', color: palette.slate500, marginBottom: 12, textTransform: 'uppercase', letterSpacing: 0.5 }}>Schedule Type</Text>
                                 <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 8, marginBottom: 40 }}>
                                     {[
                                         { label: 'All', value: 'All' },
@@ -395,12 +396,12 @@ export default function TweaksListing() {
                                                 paddingHorizontal: 12,
                                                 paddingVertical: 8,
                                                 borderRadius: 20,
-                                                backgroundColor: filters.schedulePreference === s.value ? themeColors.primary : '#F8FAFC',
+                                                backgroundColor: filters.schedulePreference === s.value ? themeColors.primary : palette.slate50,
                                                 borderWidth: 1,
-                                                borderColor: filters.schedulePreference === s.value ? themeColors.primary : '#E2E8F0'
+                                                borderColor: filters.schedulePreference === s.value ? themeColors.primary : palette.slate200
                                             }}
                                         >
-                                            <Text style={{ fontSize: 13, fontWeight: '600', color: filters.schedulePreference === s.value ? '#fff' : '#475569' }}>{s.label}</Text>
+                                            <Text style={{ fontSize: 13, fontWeight: '600', color: filters.schedulePreference === s.value ? '#fff' : palette.slate600 }}>{s.label}</Text>
                                         </TouchableOpacity>
                                     ))}
                                 </View>

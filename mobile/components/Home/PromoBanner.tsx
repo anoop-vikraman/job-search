@@ -1,14 +1,15 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { Dimensions, FlatList, View } from 'react-native';
+import { palette } from '@tweak/theme';
 
 const { width: SCREEN_WIDTH } = Dimensions.get('window');
 const BANNER_ASPECT_RATIO = 16 / 9; // Adjust as needed
 const BANNER_HEIGHT = 180;
 
 const MOCK_BANNERS = [
-    { id: '1', color: '#4F46E5', title: 'Banner 1' },
-    { id: '2', color: '#10B981', title: 'Banner 2' },
-    { id: '3', color: '#F59E0B', title: 'Banner 3' },
+    { id: '1', color: palette.indigo600, title: 'Banner 1' },
+    { id: '2', color: palette.green600, title: 'Banner 2' },
+    { id: '3', color: palette.amber500, title: 'Banner 3' },
 ];
 
 export default function PromoBanner() {

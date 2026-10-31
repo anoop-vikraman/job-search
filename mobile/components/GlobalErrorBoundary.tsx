@@ -3,6 +3,7 @@ import * as Updates from 'expo-updates';
 import React from 'react';
 import { ErrorBoundary, FallbackProps } from 'react-error-boundary';
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { palette } from '@tweak/theme';
 
 const ErrorFallback = ({ error, resetErrorBoundary }: FallbackProps) => {
     const handleRestart = async () => {
@@ -29,7 +30,7 @@ const ErrorFallback = ({ error, resetErrorBoundary }: FallbackProps) => {
         <View style={styles.container}>
             <View className="bg-white rounded-[40px] w-[90%] p-8 shadow-2xl items-center">
                 <View className="bg-red-50 p-6 rounded-full mb-6">
-                    <Ionicons name="alert-circle" size={48} color="#EF4444" />
+                    <Ionicons name="alert-circle" size={48} color={palette.red500} />
                 </View>
 
                 <Text className="text-2xl font-bold text-gray-900 text-center mb-2 px-2">

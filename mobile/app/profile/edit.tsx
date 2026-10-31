@@ -9,6 +9,7 @@ import { StandardInput } from '../../components/UI/StandardInput';
 import { Toast } from '../../components/UI/ToastManager';
 import { useAuthStore } from '../../store/useAuthStore';
 import { themeColors } from '../../themes/colors';
+import { palette } from '@tweak/theme';
 
 interface ProfileFormData {
     firstName: string;
@@ -208,7 +209,7 @@ const styles = StyleSheet.create({
         paddingVertical: 16,
         backgroundColor: 'white',
         borderBottomWidth: 1,
-        borderBottomColor: '#F3F4F6',
+        borderBottomColor: palette.gray100,
     },
     backButton: {
         padding: 4,
@@ -216,7 +217,7 @@ const styles = StyleSheet.create({
     headerTitle: {
         fontSize: 18,
         fontWeight: 'bold',
-        color: '#111827',
+        color: palette.gray900,
     },
     saveButtonText: {
         color: themeColors.primary,
@@ -235,7 +236,7 @@ const styles = StyleSheet.create({
         height: 100,
         borderRadius: 50,
         marginBottom: 16,
-        backgroundColor: '#F3F4F6',
+        backgroundColor: palette.gray100,
     },
     avatarPlaceholder: {
         alignItems: 'center',
@@ -244,7 +245,7 @@ const styles = StyleSheet.create({
     changePhotoButton: {
         paddingVertical: 8,
         paddingHorizontal: 16,
-        backgroundColor: '#EEF2FF',
+        backgroundColor: palette.indigo50,
         borderRadius: 20,
     },
     changePhotoText: {
@@ -261,7 +262,7 @@ const styles = StyleSheet.create({
     label: {
         fontSize: 14,
         fontWeight: '600',
-        color: '#374151',
+        color: palette.gray700,
         marginBottom: 8,
     },
 });

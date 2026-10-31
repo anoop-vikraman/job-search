@@ -2,6 +2,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { useRouter, type Href } from 'expo-router';
 import React from 'react';
 import { Text, TouchableOpacity, View } from 'react-native';
+import { palette } from '@tweak/theme';
 
 interface MenuItem {
     icon: keyof typeof Ionicons.glyphMap;
@@ -30,10 +31,10 @@ export default function ProfileMenuList() {
             className="flex-row items-center justify-between py-4 border-b border-gray-100"
         >
             <View className="flex-row items-center">
-                <Ionicons name={item.icon} size={20} color="#6B7280" />
+                <Ionicons name={item.icon} size={20} color={palette.gray500} />
                 <Text className="ml-3 text-gray-700 font-medium">{item.label}</Text>
             </View>
-            <Ionicons name="chevron-forward" size={20} color="#9CA3AF" />
+            <Ionicons name="chevron-forward" size={20} color={palette.gray400} />
         </TouchableOpacity>
     );
 

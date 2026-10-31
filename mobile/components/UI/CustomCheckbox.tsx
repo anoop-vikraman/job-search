@@ -1,3 +1,4 @@
+import { palette } from '@tweak/theme';
 import React from 'react';
 import { StyleProp, Text, TouchableOpacity, View, ViewStyle } from 'react-native';
 import { themeColors } from '../../themes/colors';
@@ -40,7 +41,7 @@ export default function CustomCheckbox({
                 {/* Toggle/Checkbox Visual */}
                 <View
                     style={{
-                        backgroundColor: checked ? color : '#E5E7EB',
+                        backgroundColor: checked ? color : palette.gray200,
                         width: 50,
                         height: 28,
                         borderRadius: 16,
@@ -55,7 +56,7 @@ export default function CustomCheckbox({
                             height: 24,
                             borderRadius: 12,
                             backgroundColor: 'white',
-                            shadowColor: "#000",
+                            shadowColor: palette.black,
                             shadowOffset: {
                                 width: 0,
                                 height: 2,

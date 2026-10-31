@@ -1,4 +1,5 @@
 import { Ionicons } from '@expo/vector-icons';
+import { palette } from '@tweak/theme';
 import React from 'react';
 import { ActivityIndicator, Modal, Text, TouchableOpacity, View } from 'react-native';
 import { ConfirmationModalProps } from '../../types/ui';
@@ -19,21 +20,21 @@ export default function CustomConfirmationModal({
             case 'danger':
                 return {
                     icon: 'alert-circle',
-                    iconColor: '#EF4444',
+                    iconColor: palette.red500,
                     bgColor: 'bg-red-50',
                     btnColor: 'bg-red-500',
                 };
             case 'success':
                 return {
                     icon: 'checkmark-circle',
-                    iconColor: '#10B981',
+                    iconColor: palette.green600,
                     bgColor: 'bg-emerald-50',
                     btnColor: 'bg-emerald-500',
                 };
             case 'warning':
                 return {
                     icon: 'warning',
-                    iconColor: '#F59E0B',
+                    iconColor: palette.amber500,
                     bgColor: 'bg-amber-50',
                     btnColor: 'bg-amber-500',
                 };
@@ -41,7 +42,7 @@ export default function CustomConfirmationModal({
             default:
                 return {
                     icon: 'information-circle',
-                    iconColor: '#3B82F6',
+                    iconColor: palette.blue500,
                     bgColor: 'bg-blue-50',
                     btnColor: 'bg-blue-500',
                 };

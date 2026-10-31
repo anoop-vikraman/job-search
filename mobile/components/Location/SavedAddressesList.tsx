@@ -2,6 +2,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
 import React, { useEffect, useState } from 'react';
 import { Modal, Text, TouchableOpacity, View } from 'react-native';
+import { palette } from '@tweak/theme';
 import { useAppStore } from '../../store/useAppStore';
 import { themeColors } from '../../themes/colors';
 import { SavedAddressesListProps } from '../../types/location';
@@ -51,7 +52,7 @@ export default function SavedAddressesList({
                                 accessibilityRole="button"
                                 accessibilityLabel="Close"
                             >
-                                <Ionicons name="close" size={24} color="#111827" />
+                                <Ionicons name="close" size={24} color={palette.gray900} />
                             </TouchableOpacity>
                             <Text className="text-lg font-bold text-gray-900">Select Location</Text>
                         </View>
@@ -97,7 +98,7 @@ export default function SavedAddressesList({
                                     justifyContent: 'space-between',
                                     height: 64,
                                     borderRadius: 16,
-                                    backgroundColor: selectedId ? themeColors.primary : '#D1D5DB',
+                                    backgroundColor: selectedId ? themeColors.primary : palette.gray300,
                                     ...(selectedId && {
                                         elevation: 8,
                                         shadowColor: themeColors.primary,

@@ -1,4 +1,5 @@
 import { Ionicons } from '@expo/vector-icons';
+import { palette } from '@tweak/theme';
 import React from 'react';
 import { Modal, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
@@ -25,7 +26,7 @@ export default function DraftConfirmationDialog({
             <View style={styles.overlay}>
                 <View style={styles.dialog}>
                     <View style={styles.iconContainer}>
-                        <Ionicons name="save-outline" size={32} color="#6366F1" />
+                        <Ionicons name="save-outline" size={32} color={palette.indigo500} />
                     </View>
 
                     <Text style={styles.title}>Save as Draft?</Text>
@@ -79,7 +80,7 @@ const styles = StyleSheet.create({
         padding: 24,
         width: '100%',
         maxWidth: 400,
-        shadowColor: '#000',
+        shadowColor: palette.black,
         shadowOffset: { width: 0, height: 8 },
         shadowOpacity: 0.2,
         shadowRadius: 16,
@@ -92,13 +93,13 @@ const styles = StyleSheet.create({
     title: {
         fontSize: 20,
         fontWeight: 'bold',
-        color: '#111827',
+        color: palette.gray900,
         textAlign: 'center',
         marginBottom: 4,
     },
     message: {
         fontSize: 14,
-        color: '#6B7280',
+        color: palette.gray500,
         textAlign: 'center',
         lineHeight: 20,
         marginBottom: 20,
@@ -116,7 +117,7 @@ const styles = StyleSheet.create({
         gap: 8,
     },
     saveDraftButton: {
-        backgroundColor: '#6366F1',
+        backgroundColor: palette.indigo500,
     },
     saveDraftText: {
         color: 'white',
@@ -124,18 +125,18 @@ const styles = StyleSheet.create({
         fontWeight: 'bold',
     },
     discardButton: {
-        backgroundColor: '#FEE2E2',
+        backgroundColor: palette.red100,
     },
     discardText: {
-        color: '#DC2626',
+        color: palette.red600,
         fontSize: 14,
         fontWeight: '600',
     },
     cancelButton: {
-        backgroundColor: '#F3F4F6',
+        backgroundColor: palette.gray100,
     },
     cancelText: {
-        color: '#6B7280',
+        color: palette.gray500,
         fontSize: 14,
         fontWeight: '600',
     },

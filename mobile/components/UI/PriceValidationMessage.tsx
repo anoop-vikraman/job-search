@@ -1,3 +1,4 @@
+import { palette } from '@tweak/theme';
 import React from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 
@@ -17,26 +18,26 @@ export default function PriceValidationMessage({
     const getValidationState = () => {
         if (amount < minAmount) {
             return {
-                color: '#EF4444',
-                bgColor: '#FEE2E2',
-                borderColor: '#EF4444',
+                color: palette.red500,
+                bgColor: palette.red100,
+                borderColor: palette.red500,
                 message: `Too low!! Increase the amount to ₹${minAmount} at least`,
                 icon: '⚠️'
             };
         }
         if (amount < recommendedAmount) {
             return {
-                color: '#F59E0B',
-                bgColor: '#FEF3C7',
-                borderColor: '#F59E0B',
+                color: palette.amber500,
+                bgColor: palette.amber100,
+                borderColor: palette.amber500,
                 message: 'Not bad! A little extra would make this pop.',
                 icon: '💡'
             };
         }
         return {
-            color: '#10B981',
-            bgColor: '#D1FAE5',
-            borderColor: '#10B981',
+            color: palette.green600,
+            bgColor: palette.emerald100,
+            borderColor: palette.green600,
             message: 'Solid offer! You can increase this further to maximise your chances.',
             icon: '✓'
         };
@@ -53,10 +54,10 @@ export default function PriceValidationMessage({
 }
 
 export function getBorderColor(amount: number, minAmount = 200, recommendedAmount = 1000): string {
-    if (!amount || amount === 0) return '#D1D5DB';
-    if (amount < minAmount) return '#EF4444';
-    if (amount < recommendedAmount) return '#F59E0B';
-    return '#10B981';
+    if (!amount || amount === 0) return palette.gray300;
+    if (amount < minAmount) return palette.red500;
+    if (amount < recommendedAmount) return palette.amber500;
+    return palette.green600;
 }
 
 const styles = StyleSheet.create({

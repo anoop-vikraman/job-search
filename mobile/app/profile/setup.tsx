@@ -3,6 +3,7 @@ import { useRouter } from 'expo-router';
 import React, { useState } from 'react';
 import { ScrollView, Text, TouchableOpacity, View } from 'react-native';
 import { ScreenWrapper } from '../../components/ScreenWrapper';
+import { palette } from '@tweak/theme';
 
 interface SetupStep {
     id: number;
@@ -31,7 +32,7 @@ export default function ProfileSetupPage() {
             {/* Header */}
             <View className="flex-row items-center px-6 py-4 bg-white border-b border-gray-100">
                 <TouchableOpacity onPress={() => router.back()} className="mr-4" accessibilityRole="button" accessibilityLabel="Go back">
-                    <Ionicons name="arrow-back" size={24} color="#111827" />
+                    <Ionicons name="arrow-back" size={24} color={palette.gray900} />
                 </TouchableOpacity>
                 <Text className="text-lg font-bold text-gray-900">Profile setup</Text>
             </View>
@@ -74,7 +75,7 @@ export default function ProfileSetupPage() {
                                 )}
                                 {!step.completed && step.id === 2 && (
                                     <View className="flex-row items-center mt-2">
-                                        <Ionicons name="time-outline" size={14} color="#6B7280" />
+                                        <Ionicons name="time-outline" size={14} color={palette.gray500} />
                                         <Text className="text-gray-500 text-xs ml-1">3 mins</Text>
                                     </View>
                                 )}

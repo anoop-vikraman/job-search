@@ -1,3 +1,4 @@
+import { palette } from '@tweak/theme';
 import React, { useEffect, useRef, useState } from 'react';
 import {
     NativeScrollEvent,
@@ -112,7 +113,7 @@ export const WheelPicker = ({
                                 style={{
                                     fontSize: isSelected ? 20 : 16,
                                     fontWeight: isSelected ? 'bold' : 'normal',
-                                    color: isSelected ? themeColors.primary : '#9CA3AF',
+                                    color: isSelected ? themeColors.primary : palette.gray400,
                                 }}
                             >
                                 {item}

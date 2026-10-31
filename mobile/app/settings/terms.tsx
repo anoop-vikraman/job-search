@@ -3,6 +3,7 @@ import { useRouter } from 'expo-router';
 import React from 'react';
 import { ScrollView, Text, TouchableOpacity, View } from 'react-native';
 import { ScreenWrapper } from '../../components/ScreenWrapper';
+import { palette } from '@tweak/theme';
 
 export default function TermsPage() {
     const router = useRouter();
@@ -11,7 +12,7 @@ export default function TermsPage() {
         <ScreenWrapper>
             <View className="flex-row items-center px-6 py-4 bg-white border-b border-gray-100">
                 <TouchableOpacity onPress={() => router.back()} className="mr-4" accessibilityRole="button" accessibilityLabel="Go back">
-                    <Ionicons name="arrow-back" size={24} color="#111827" />
+                    <Ionicons name="arrow-back" size={24} color={palette.gray900} />
                 </TouchableOpacity>
                 <Text className="text-lg font-bold text-gray-900">Terms & Conditions</Text>
             </View>

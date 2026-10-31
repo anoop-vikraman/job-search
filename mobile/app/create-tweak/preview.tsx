@@ -22,6 +22,7 @@ import { useCreateTweakStore } from '../../store/useCreateTweakStore';
 import { useAuthStore } from '../../store/useAuthStore';
 import { Tweak, useTweaksStore } from '../../store/useTweaksStore';
 import { ScheduleSlot } from '../../types/tweak';
+import { palette } from '@tweak/theme';
 
 const { width: SCREEN_WIDTH } = Dimensions.get('window');
 
@@ -243,9 +244,9 @@ export default function TweakPreview() {
                     {/* 2. Location (if in-person) */}
                     {tweakType === 'in_person' && address && (
                         <TouchableOpacity onPress={() => setShowMapModal(true)} className="flex-row items-center mb-4">
-                            <Ionicons name="location-sharp" size={18} color="#2563EB" />
+                            <Ionicons name="location-sharp" size={18} color={palette.blue600} />
                             <Text className="text-gray-700 ml-1 text-base font-medium">{address?.city || 'Location'}, {address?.state || ''}</Text>
-                            <Ionicons name="chevron-forward" size={16} color="#9CA3AF" className="ml-1" />
+                            <Ionicons name="chevron-forward" size={16} color={palette.gray400} className="ml-1" />
                         </TouchableOpacity>
                     )}
 
@@ -259,7 +260,7 @@ export default function TweakPreview() {
                     </View>
 
                     {/* Price Display */}
-                    <View className="bg-[#1E1B4B] rounded-2xl p-5 mb-6 w-full flex-row items-center justify-between shadow-sm">
+                    <View style={{ backgroundColor: palette.indigo950 }} className="rounded-2xl p-5 mb-6 w-full flex-row items-center justify-between shadow-sm">
                         <View className="flex-1">
                             <Text className="text-white text-xs font-medium opacity-70 mb-1 uppercase tracking-wider">
                                 Total Price
@@ -323,7 +324,7 @@ export default function TweakPreview() {
                                 <View>
                                     <View className="bg-white border border-gray-200 rounded-xl p-4 flex-row items-center gap-3 mb-4">
                                         <View className="w-12 h-12 bg-blue-50 rounded-full items-center justify-center">
-                                            <Ionicons name="calendar-outline" size={24} color="#2563EB" />
+                                            <Ionicons name="calendar-outline" size={24} color={palette.blue600} />
                                         </View>
                                         <View>
                                             <Text className="text-xs text-gray-500 font-medium uppercase mb-1">Date</Text>
@@ -373,7 +374,7 @@ export default function TweakPreview() {
                                     accessibilityRole="button"
                                     accessibilityLabel={isPlaying ? "Pause audio" : "Play audio"}
                                 >
-                                    <FontAwesome5 name={isPlaying ? "pause" : "play"} size={14} color="#374151" />
+                                    <FontAwesome5 name={isPlaying ? "pause" : "play"} size={14} color={palette.gray700} />
                                 </TouchableOpacity>
 
                                 <Text className="text-sm font-bold text-gray-900 mr-4">
@@ -447,7 +448,7 @@ export default function TweakPreview() {
                             onPress={handleSaveDraft}
                             className="flex-1 bg-white border border-gray-300 py-4 rounded-xl flex-row items-center justify-center gap-1"
                         >
-                            <Ionicons name="bookmark-outline" size={16} color="#374151" />
+                            <Ionicons name="bookmark-outline" size={16} color={palette.gray700} />
                             <Text className="font-bold text-gray-700 text-sm">Draft</Text>
                         </TouchableOpacity>
 
@@ -455,13 +456,14 @@ export default function TweakPreview() {
                             onPress={handleEdit}
                             className="flex-1 bg-white border border-gray-300 py-4 rounded-xl flex-row items-center justify-center gap-1"
                         >
-                            <Ionicons name="create-outline" size={16} color="#374151" />
+                            <Ionicons name="create-outline" size={16} color={palette.gray700} />
                             <Text className="font-bold text-gray-700 text-sm">Edit</Text>
                         </TouchableOpacity>
 
                         <TouchableOpacity
                             onPress={handlePost}
-                            className="flex-[1.8] bg-[#007AFF] py-4 rounded-xl flex-row items-center justify-center gap-1 shadow-md"
+                            style={{ backgroundColor: palette.iosBlue }}
+                            className="flex-[1.8] py-4 rounded-xl flex-row items-center justify-center gap-1 shadow-md"
                         >
                             <Text className="font-bold text-white text-sm">Post</Text>
                             <Ionicons name="arrow-forward" size={16} color="white" />

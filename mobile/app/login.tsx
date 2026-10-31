@@ -9,6 +9,7 @@ import CountryCodePicker from '../components/UI/CountryCodePicker';
 import CustomButton from '../components/UI/CustomButton';
 import { Toast } from '../components/UI/ToastManager';
 import { useAuthStore } from '../store/useAuthStore';
+import { palette } from '@tweak/theme';
 
 export default function Login() {
     const { t } = useTranslation();
@@ -73,7 +74,7 @@ export default function Login() {
                     secureTextEntry={!isPasswordVisible}
                     rightComponent={
                         <TouchableOpacity onPress={() => setIsPasswordVisible(!isPasswordVisible)} accessibilityRole="button" accessibilityLabel={isPasswordVisible ? 'Hide password' : 'Show password'}>
-                            <Ionicons name={isPasswordVisible ? 'eye-off' : 'eye'} size={20} color="#6B7281" />
+                            <Ionicons name={isPasswordVisible ? 'eye-off' : 'eye'} size={20} color={palette.gray500} />
                         </TouchableOpacity>
                     }
                 />

@@ -10,6 +10,7 @@ import { FeatureFlags } from '../../constants/featureFlags';
 import { Tweak, useTweaksStore } from '../../store/useTweaksStore';
 import { useAuthStore } from '../../store/useAuthStore';
 import TweakTile from '../../components/Tweak/TweakTile';
+import { palette } from '@tweak/theme';
 
 
 
@@ -60,29 +61,29 @@ export default function MarketPage() {
             <View style={{ flex: 1, paddingHorizontal: 16, paddingTop: 16 }}>
                 {/* Header */}
                 <View style={{ marginBottom: 16 }}>
-                    <Text style={{ fontSize: 24, fontWeight: '800', color: '#0F172A' }}>Find Tweaks</Text>
-                    <Text style={{ fontSize: 13, color: '#64748B', marginTop: 2 }}>Browse available tasks near you</Text>
+                    <Text style={{ fontSize: 24, fontWeight: '800', color: palette.slate900 }}>Find Tweaks</Text>
+                    <Text style={{ fontSize: 13, color: palette.slate500, marginTop: 2 }}>Browse available tasks near you</Text>
                 </View>
 
                 {/* Search & Filter */}
                 <View style={{ flexDirection: 'row', gap: 10, marginBottom: 16 }}>
-                    <View style={{ flex: 1, flexDirection: 'row', alignItems: 'center', backgroundColor: '#F1F5F9', borderRadius: 12, paddingHorizontal: 12, height: 44 }}>
-                        <Ionicons name="search-outline" size={18} color="#64748B" style={{ marginRight: 8 }} />
+                    <View style={{ flex: 1, flexDirection: 'row', alignItems: 'center', backgroundColor: palette.slate100, borderRadius: 12, paddingHorizontal: 12, height: 44 }}>
+                        <Ionicons name="search-outline" size={18} color={palette.slate500} style={{ marginRight: 8 }} />
                         <TextInput
                             placeholder="Search tweaks..."
                             value={searchQuery}
                             onChangeText={setSearchQuery}
-                            style={{ flex: 1, height: '100%', fontSize: 14, color: '#0F172A' }}
-                            placeholderTextColor="#94A3B8"
+                            style={{ flex: 1, height: '100%', fontSize: 14, color: palette.slate900 }}
+                            placeholderTextColor={palette.slate400}
                         />
                     </View>
                     <TouchableOpacity
                         onPress={() => setIsFilterModalVisible(true)}
-                        style={{ width: 44, height: 44, backgroundColor: activeFilterCount > 0 ? `${themeColors.primary}15` : '#F1F5F9', borderRadius: 12, alignItems: 'center', justifyContent: 'center' }}
+                        style={{ width: 44, height: 44, backgroundColor: activeFilterCount > 0 ? `${themeColors.primary}15` : palette.slate100, borderRadius: 12, alignItems: 'center', justifyContent: 'center' }}
                         accessibilityRole="button"
                         accessibilityLabel="Filter"
                     >
-                        <Ionicons name="options-outline" size={20} color={activeFilterCount > 0 ? themeColors.primary : '#64748B'} />
+                        <Ionicons name="options-outline" size={20} color={activeFilterCount > 0 ? themeColors.primary : palette.slate500} />
                     </TouchableOpacity>
                 </View>
 
@@ -101,9 +102,9 @@ export default function MarketPage() {
                     )}
                     ListEmptyComponent={
                         <View style={{ alignItems: 'center', marginTop: 100 }}>
-                            <Ionicons name="search" size={48} color="#CBD5E1" />
-                            <Text style={{ fontSize: 16, fontWeight: '700', color: '#64748B', marginTop: 12 }}>No tweaks found</Text>
-                            <Text style={{ fontSize: 13, color: '#94A3B8', marginTop: 4 }}>Try adjusting your search or filters</Text>
+                            <Ionicons name="search" size={48} color={palette.slate300} />
+                            <Text style={{ fontSize: 16, fontWeight: '700', color: palette.slate500, marginTop: 12 }}>No tweaks found</Text>
+                            <Text style={{ fontSize: 13, color: palette.slate400, marginTop: 4 }}>Try adjusting your search or filters</Text>
                         </View>
                     }
                 />
@@ -115,9 +116,9 @@ export default function MarketPage() {
                             <Text style={{ fontSize: 18, fontWeight: '800', marginBottom: 20 }}>Filters</Text>
                             <TouchableOpacity
                                 onPress={() => { setIsFilterModalVisible(false); setFilters({ category: 'All', tweakType: 'All', schedulePreference: 'All' }); setSortBy('newest'); }}
-                                style={{ backgroundColor: '#F1F5F9', padding: 14, borderRadius: 12, alignItems: 'center' }}
+                                style={{ backgroundColor: palette.slate100, padding: 14, borderRadius: 12, alignItems: 'center' }}
                             >
-                                <Text style={{ fontWeight: '700', color: '#64748B' }}>Reset All Filters</Text>
+                                <Text style={{ fontWeight: '700', color: palette.slate500 }}>Reset All Filters</Text>
                             </TouchableOpacity>
                             <TouchableOpacity onPress={() => setIsFilterModalVisible(false)} style={{ backgroundColor: themeColors.primary, padding: 14, borderRadius: 12, alignItems: 'center', marginTop: 12 }}>
                                 <Text style={{ fontWeight: '800', color: '#fff' }}>Apply</Text>

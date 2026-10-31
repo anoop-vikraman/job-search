@@ -1,4 +1,5 @@
 import { Ionicons } from '@expo/vector-icons';
+import { palette } from '@tweak/theme';
 import * as Haptics from 'expo-haptics';
 import React from 'react';
 import { StyleSheet, View } from 'react-native';
@@ -128,7 +129,7 @@ export const SwipeableSlot: React.FC<SwipeableSlotProps> = ({ children, onDelete
         const bgColor = interpolateColor(
             translateY.value,
             [0, DELETE_THRESHOLD],
-            ['#FEF2F2', '#EF4444']
+            [palette.red50, palette.red500]
         );
 
         return {
@@ -148,7 +149,7 @@ export const SwipeableSlot: React.FC<SwipeableSlotProps> = ({ children, onDelete
         const iconColor = interpolateColor(
             translateY.value,
             [0, HAPTIC_TRIGGER_THRESHOLD],
-            ['#EF4444', '#FFFFFF']
+            [palette.red500, palette.white]
         );
 
         return {
@@ -191,7 +192,7 @@ const styles = StyleSheet.create({
         marginRight: 12,
         borderRadius: 16,
         borderWidth: 1,
-        borderColor: '#EF4444',
+        borderColor: palette.red500,
         borderStyle: 'dashed',
         justifyContent: 'center',
         alignItems: 'center',

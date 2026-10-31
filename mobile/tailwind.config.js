@@ -1,37 +1,25 @@
 /** @type {import('tailwindcss').Config} */
+const tokens = require("../packages/theme/tailwind-tokens.js");
+
 module.exports = {
-  // NOTE: Update this to include the paths to all of your component files.
   content: ["./app/**/*.{js,jsx,ts,tsx}", "./components/**/*.{js,jsx,ts,tsx}"],
   presets: [require("nativewind/preset")],
+  darkMode: "class",
   theme: {
     extend: {
       colors: {
-        primary: '#007AFF',
-        secondary: '#5856D6',
-        background: '#FFFFFF',
-        text: '#000000',
-        textSecondary: '#8E8E93',
-        lightGray: '#F2F2F7',
-        danger: '#FF3B30',
-        success: '#34C759',
-        warning: '#FF9500',
+        ...tokens.colors,
+        // Backwards-compatible aliases for existing class usages.
+        secondary: "#5856D6",
+        lightGray: tokens.colors.surfaceMuted,
+        danger: tokens.colors.dangerFg,
+        success: tokens.colors.successFg,
+        warning: tokens.colors.pendingFg,
       },
-      spacing: {
-        xs: 4,
-        s: 8,
-        m: 16,
-        l: 24,
-        xl: 32,
-        xxl: 48,
-      },
-      fontSize: {
-        h1: 32,
-        h2: 24,
-        h3: 20,
-        body: 16,
-        caption: 12,
-      },
+      spacing: tokens.spacing,
+      borderRadius: tokens.borderRadius,
+      fontSize: tokens.fontSize,
     },
   },
   plugins: [],
-}
+};

@@ -3,6 +3,7 @@ import { useRouter } from 'expo-router';
 import React, { useEffect, useState } from 'react';
 import { Text, TouchableOpacity, View } from 'react-native';
 import Animated, { useAnimatedStyle, useSharedValue, withRepeat, withTiming } from 'react-native-reanimated';
+import { palette } from '@tweak/theme';
 import { useCreateTweakStore } from '../../store/useCreateTweakStore';
 import { themeColors } from '../../themes/colors';
 import SavedAddressesList from '../Location/SavedAddressesList';
@@ -139,7 +140,7 @@ export default function CreateFlowHeader({
         <View className="bg-white border-b border-gray-100">
             <View className="px-6 py-4 flex-row items-center justify-between">
                 <TouchableOpacity onPress={handleBack} className="p-2 -ml-2 rounded-full active:bg-gray-100" accessibilityRole="button" accessibilityLabel="Go back">
-                    <Ionicons name="arrow-back" size={24} color="#111827" />
+                    <Ionicons name="arrow-back" size={24} color={palette.gray900} />
                 </TouchableOpacity>
 
                 <View className="flex-1 px-4">
@@ -163,8 +164,9 @@ export default function CreateFlowHeader({
 
                             {/* Active Line - Starts at container left, reaches current icon's edge */}
                             <View
-                                className="absolute left-0 h-[2px] bg-[#007AFF]"
+                                className="absolute left-0 h-[2px]"
                                 style={{
+                                    backgroundColor: palette.iosBlue,
                                     width: containerWidth > 0 && stepCount > 1
                                         ? 20 + (currentIndex * (containerWidth - 80) / (stepCount - 1))
                                         : containerWidth > 0 ? 20 : 0
@@ -185,8 +187,8 @@ export default function CreateFlowHeader({
                                                     width: 44,
                                                     height: 44,
                                                     borderRadius: 22,
-                                                    backgroundColor: '#007AFF',
-                                                    shadowColor: '#007AFF',
+                                                    backgroundColor: palette.iosBlue,
+                                                    shadowColor: palette.iosBlue,
                                                     shadowOffset: { width: 0, height: 0 },
                                                     shadowOpacity: 0.4,
                                                     shadowRadius: 8,
@@ -195,12 +197,13 @@ export default function CreateFlowHeader({
                                         )}
                                         <View className="bg-white rounded-full p-1 shadow-sm items-center justify-center">
                                             <View
-                                                className={`w-8 h-8 rounded-full items-center justify-center ${isActive ? 'bg-[#007AFF]' : 'bg-blue-50 border border-blue-100'}`}
+                                                style={isActive ? { backgroundColor: palette.iosBlue } : undefined}
+                                                className={`w-8 h-8 rounded-full items-center justify-center ${isActive ? '' : 'bg-blue-50 border border-blue-100'}`}
                                             >
                                                 <Ionicons
                                                     name={(isActive ? step.icon : `${step.icon}-outline`) as keyof typeof Ionicons.glyphMap}
                                                     size={14}
-                                                    color={isActive ? 'white' : '#007AFF'}
+                                                    color={isActive ? 'white' : palette.iosBlue}
                                                 />
                                             </View>
                                         </View>

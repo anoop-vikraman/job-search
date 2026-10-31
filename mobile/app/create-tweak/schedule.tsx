@@ -14,6 +14,7 @@ import { useConfirmationStore } from '../../store/useConfirmationStore';
 import { useCreateTweakStore } from '../../store/useCreateTweakStore';
 import { themeColors } from '../../themes/colors';
 import { ScheduleData } from '../../types/tweak';
+import { palette } from '@tweak/theme';
 
 interface DaySlot {
     date: string;
@@ -261,7 +262,7 @@ export default function SchedulePage() {
                     <View>
                         {/* Helper Text */}
                         <View className="flex-row items-center justify-center mb-2 bg-blue-50 rounded-xl p-3 border border-blue-100">
-                            <Ionicons name="information-circle" size={18} color="#3B82F6" />
+                            <Ionicons name="information-circle" size={18} color={palette.blue500} />
                             <Text className="text-sm text-blue-700 ml-2 flex-1">
                                 Tap the month/year to change them
                             </Text>
@@ -281,7 +282,7 @@ export default function SchedulePage() {
                                             </TouchableOpacity>
                                         )
                                     }
-                                    <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#1F2937' }}>
+                                    <Text style={{ fontSize: 16, fontWeight: 'bold', color: palette.gray800 }}>
                                         {dayjs().month(calMonth).year(calYear).format('MMMM YYYY')}
                                     </Text>
                                     <TouchableOpacity onPress={goNextMonth} style={{ padding: 8 }} hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }} accessibilityRole="button" accessibilityLabel="Next month">
@@ -308,7 +309,7 @@ export default function SchedulePage() {
                                     timePicker={false}
                                     styles={{
                                         weekdays: {
-                                            color: '#9CA3AF',
+                                            color: palette.gray400,
                                             fontWeight: 'bold',
                                             fontSize: 12
                                         }
@@ -330,14 +331,14 @@ export default function SchedulePage() {
 
                                             const textStyle: MutableTextStyle = {
                                                 fontSize: 14,
-                                                color: isBeforeToday ? '#D1D5DB' : '#374151',
+                                                color: isBeforeToday ? palette.gray300 : palette.gray700,
                                                 fontWeight: '500'
                                             };
 
                                             // Selected date styling
                                             if (isSelected) {
-                                                containerStyle.backgroundColor = '#01C39D';
-                                                textStyle.color = '#FFFFFF';
+                                                containerStyle.backgroundColor = palette.brand500;
+                                                textStyle.color = palette.white;
                                                 textStyle.fontWeight = 'bold';
                                             }
 
@@ -375,7 +376,7 @@ export default function SchedulePage() {
                         {selectedDate && (
                             <View className="mb-4">
                                 {/* ── Slot Type Toggle ── */}
-                                <View style={{ flexDirection: 'row', borderRadius: 14, overflow: 'hidden', borderWidth: 1, borderColor: '#E2E8F0', marginBottom: 16 }}>
+                                <View style={{ flexDirection: 'row', borderRadius: 14, overflow: 'hidden', borderWidth: 1, borderColor: palette.slate200, marginBottom: 16 }}>
                                     <TouchableOpacity
                                         onPress={() => setSlotType('availability')}
                                         style={{
@@ -385,11 +386,11 @@ export default function SchedulePage() {
                                             flexDirection: 'row',
                                             justifyContent: 'center',
                                             gap: 6,
-                                            backgroundColor: slotType === 'availability' ? '#0284C7' : '#F8FAFC',
+                                            backgroundColor: slotType === 'availability' ? palette.sky600 : palette.slate50,
                                         }}
                                     >
-                                        <Ionicons name="time-outline" size={15} color={slotType === 'availability' ? '#fff' : '#64748B'} />
-                                        <Text style={{ fontSize: 13, fontWeight: '700', color: slotType === 'availability' ? '#fff' : '#64748B' }}>Availability Window</Text>
+                                        <Ionicons name="time-outline" size={15} color={slotType === 'availability' ? '#fff' : palette.slate500} />
+                                        <Text style={{ fontSize: 13, fontWeight: '700', color: slotType === 'availability' ? '#fff' : palette.slate500 }}>Availability Window</Text>
                                     </TouchableOpacity>
                                     <TouchableOpacity
                                         onPress={() => setSlotType('working_time')}
@@ -400,18 +401,18 @@ export default function SchedulePage() {
                                             flexDirection: 'row',
                                             justifyContent: 'center',
                                             gap: 6,
-                                            backgroundColor: slotType === 'working_time' ? '#7C3AED' : '#F8FAFC',
+                                            backgroundColor: slotType === 'working_time' ? palette.violet600 : palette.slate50,
                                         }}
                                     >
-                                        <Ionicons name="briefcase-outline" size={15} color={slotType === 'working_time' ? '#fff' : '#64748B'} />
-                                        <Text style={{ fontSize: 13, fontWeight: '700', color: slotType === 'working_time' ? '#fff' : '#64748B' }}>Working Time</Text>
+                                        <Ionicons name="briefcase-outline" size={15} color={slotType === 'working_time' ? '#fff' : palette.slate500} />
+                                        <Text style={{ fontSize: 13, fontWeight: '700', color: slotType === 'working_time' ? '#fff' : palette.slate500 }}>Working Time</Text>
                                     </TouchableOpacity>
                                 </View>
 
                                 {/* ── Hint text ── */}
-                                <View style={{ backgroundColor: slotType === 'working_time' ? '#F5F3FF' : '#F0F9FF', borderRadius: 10, padding: 10, marginBottom: 14, flexDirection: 'row', gap: 6, alignItems: 'flex-start' }}>
-                                    <Ionicons name="information-circle-outline" size={15} color={slotType === 'working_time' ? '#7C3AED' : '#0284C7'} style={{ marginTop: 1 }} />
-                                    <Text style={{ fontSize: 12, color: slotType === 'working_time' ? '#5B21B6' : '#0369A1', flex: 1 }}>
+                                <View style={{ backgroundColor: slotType === 'working_time' ? palette.violet50 : palette.sky50, borderRadius: 10, padding: 10, marginBottom: 14, flexDirection: 'row', gap: 6, alignItems: 'flex-start' }}>
+                                    <Ionicons name="information-circle-outline" size={15} color={slotType === 'working_time' ? palette.violet600 : palette.sky600} style={{ marginTop: 1 }} />
+                                    <Text style={{ fontSize: 12, color: slotType === 'working_time' ? palette.violet900 : palette.sky700, flex: 1 }}>
                                         {slotType === 'working_time'
                                             ? 'Set the exact hours you will work. The worker must be available for the full duration.'
                                             : 'Indicate windows when you are free. The worker can choose when to come within these times.'}
@@ -466,7 +467,7 @@ export default function SchedulePage() {
                                                         accessibilityRole="button"
                                                         accessibilityLabel="Remove time slot"
                                                     >
-                                                        <Ionicons name="close" size={16} color="#EF4444" />
+                                                        <Ionicons name="close" size={16} color={palette.red500} />
                                                     </TouchableOpacity>
                                                 </View>
                                             </View>
@@ -487,7 +488,7 @@ export default function SchedulePage() {
                                 ) : (
                                     /* Working Time: single slot editor */
                                     <View className="bg-white p-4 rounded-3xl border border-purple-100 mb-4">
-                                        <Text style={{ fontSize: 13, fontWeight: '700', color: '#7C3AED', marginBottom: 14 }}>Working Hours</Text>
+                                        <Text style={{ fontSize: 13, fontWeight: '700', color: palette.violet600, marginBottom: 14 }}>Working Hours</Text>
                                         <View className="flex-row items-center gap-3">
                                             <View className="flex-1">
                                                 <Text className="text-xs font-bold text-gray-400 mb-1 ml-1 tracking-wider">START TIME</Text>
@@ -533,7 +534,7 @@ export default function SchedulePage() {
                                             </TouchableOpacity>
                                         )
                                     }
-                                    <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#1F2937' }}>
+                                    <Text style={{ fontSize: 16, fontWeight: 'bold', color: palette.gray800 }}>
                                         {dayjs().month(calMonth).year(calYear).format('MMMM YYYY')}
                                     </Text>
                                     <TouchableOpacity onPress={goNextMonth} style={{ padding: 8 }} hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }} accessibilityRole="button" accessibilityLabel="Next month">
@@ -576,7 +577,7 @@ export default function SchedulePage() {
                                     timePicker={false}
                                     styles={{
                                         weekdays: {
-                                            color: '#9CA3AF',
+                                            color: palette.gray400,
                                             fontWeight: 'bold',
                                             fontSize: 12
                                         }
@@ -599,19 +600,19 @@ export default function SchedulePage() {
 
                                             const textStyle: MutableTextStyle = {
                                                 fontSize: 14,
-                                                color: isBeforeToday ? '#D1D5DB' : '#374151',
+                                                color: isBeforeToday ? palette.gray300 : palette.gray700,
                                             };
 
                                             // Deadline date styling
                                             if (isDeadline) {
-                                                containerStyle.backgroundColor = '#01C39D';
-                                                textStyle.color = '#FFFFFF';
+                                                containerStyle.backgroundColor = palette.brand500;
+                                                textStyle.color = palette.white;
                                                 textStyle.fontWeight = 'bold';
                                             }
                                             // Slot dates (non-deadline) styling
                                             else if (slot) {
                                                 containerStyle.borderWidth = 1;
-                                                containerStyle.borderColor = slot.status === 'modified' ? '#10B981' : '#01C39D';
+                                                containerStyle.borderColor = slot.status === 'modified' ? palette.green600 : palette.brand500;
                                                 textStyle.fontWeight = '600';
                                             }
 
@@ -657,7 +658,7 @@ export default function SchedulePage() {
                             {selectedDate && (
                                 <View className="bg-gray-50/80 border-t border-gray-100 py-2 items-center">
                                     <Text className="text-[10px] text-gray-500 font-bold uppercase tracking-widest">
-                                        Deadline: <Text style={{ color: '#01C39D' }}>{selectedDate.format('MMMM DD, YYYY')}</Text>
+                                        Deadline: <Text style={{ color: palette.brand500 }}>{selectedDate.format('MMMM DD, YYYY')}</Text>
                                     </Text>
                                 </View>
                             )}
@@ -668,7 +669,7 @@ export default function SchedulePage() {
                             <View className="mb-4" style={{ overflow: 'visible' }}>
                                 <Text className="text-sm font-bold text-gray-500 mb-2 text-center">Availability Schedule</Text>
                                 <View className="flex-row items-center justify-center mb-4 gap-1">
-                                    <Ionicons name="arrow-up" size={10} color="#9CA3AF" />
+                                    <Ionicons name="arrow-up" size={10} color={palette.gray400} />
                                     <Text className="text-[9px] text-gray-400 font-bold uppercase tracking-wider">Slide up to delete</Text>
                                 </View>
                                 <ScrollView
@@ -697,7 +698,7 @@ export default function SchedulePage() {
                                                     className={`mr-3 p-4 mt-3 rounded-2xl bg-white border mb-1 shadow-sm w-32 ${isActive ? 'bg-purple-50' : ''
                                                         }`}
                                                     style={{
-                                                        borderColor: isActive ? themeColors.primary : (slot.status === 'modified' ? '#10B981' : '#01C39D'),
+                                                        borderColor: isActive ? themeColors.primary : (slot.status === 'modified' ? palette.green600 : palette.brand500),
                                                         borderWidth: isActive ? 2 : 1
                                                     }}
                                                 >
@@ -716,7 +717,7 @@ export default function SchedulePage() {
                                                         accessibilityRole="button"
                                                         accessibilityLabel="Remove day"
                                                     >
-                                                        <Ionicons name="close" size={12} color="#EF4444" />
+                                                        <Ionicons name="close" size={12} color={palette.red500} />
                                                     </Pressable>
                                                     <Text className="text-gray-500 text-xs font-bold uppercase mb-1">{slotDate.format('ddd')}</Text>
                                                     <Text className="text-gray-900 text-xl font-bold mb-2">{slotDate.format('DD MMM')}</Text>
@@ -798,7 +799,7 @@ export default function SchedulePage() {
                                                     borderRadius: 12,
                                                     borderWidth: 1.5,
                                                     borderColor: themeColors.primary,
-                                                    backgroundColor: '#F0F9FF',
+                                                    backgroundColor: palette.sky50,
                                                 }}
                                             >
                                                 <Ionicons name="copy-outline" size={15} color={themeColors.primary} />
@@ -827,7 +828,7 @@ export default function SchedulePage() {
                                             </TouchableOpacity>
                                         )
                                     }
-                                    <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#1F2937' }}>
+                                    <Text style={{ fontSize: 16, fontWeight: 'bold', color: palette.gray800 }}>
                                         {dayjs().month(calMonth).year(calYear).format('MMMM YYYY')}
                                     </Text>
                                     <TouchableOpacity onPress={goNextMonth} style={{ padding: 8 }} hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }} accessibilityRole="button" accessibilityLabel="Next month">
@@ -844,7 +845,7 @@ export default function SchedulePage() {
                                     timePicker={false}
                                     styles={{
                                         weekdays: {
-                                            color: '#9CA3AF',
+                                            color: palette.gray400,
                                             fontWeight: 'bold',
                                             fontSize: 12
                                         }
@@ -869,7 +870,7 @@ export default function SchedulePage() {
 
                                             const textStyle: MutableTextStyle = {
                                                 fontSize: 14,
-                                                color: isBeforeToday ? '#D1D5DB' : '#374151',
+                                                color: isBeforeToday ? palette.gray300 : palette.gray700,
                                             };
 
                                             // Selected Slot Styling (Background Color)
@@ -878,9 +879,9 @@ export default function SchedulePage() {
                                                 if (activeFewDaysSlot === slotIndex) {
                                                     containerStyle.backgroundColor = themeColors.primary;
                                                 } else {
-                                                    containerStyle.backgroundColor = slot.status === 'modified' ? '#10B981' : '#01C39D';
+                                                    containerStyle.backgroundColor = slot.status === 'modified' ? palette.green600 : palette.brand500;
                                                 }
-                                                textStyle.color = '#FFFFFF';
+                                                textStyle.color = palette.white;
                                                 textStyle.fontWeight = 'bold';
                                             }
 
@@ -944,7 +945,7 @@ export default function SchedulePage() {
                             <View style={{ overflow: 'visible' }}>
                                 <Text className="text-sm font-bold text-gray-500 mb-2 text-center">Slots</Text>
                                 <View className="flex-row items-center justify-center mb-4 gap-1">
-                                    <Ionicons name="arrow-up" size={10} color="#9CA3AF" />
+                                    <Ionicons name="arrow-up" size={10} color={palette.gray400} />
                                     <Text className="text-[9px] text-gray-400 font-bold uppercase tracking-wider">Slide up to delete</Text>
                                 </View>
 
@@ -976,7 +977,7 @@ export default function SchedulePage() {
                                                     className={`mr-3 p-4 mt-3 rounded-2xl bg-white border mb-1 shadow-sm w-32 ${isActive ? 'bg-purple-50' : ''
                                                         }`}
                                                     style={{
-                                                        borderColor: isActive ? themeColors.primary : (slot.status === 'modified' ? '#10B981' : '#01C39D'),
+                                                        borderColor: isActive ? themeColors.primary : (slot.status === 'modified' ? palette.green600 : palette.brand500),
                                                         borderWidth: isActive ? 2 : 1
                                                     }}
                                                 >
@@ -994,7 +995,7 @@ export default function SchedulePage() {
                                                         accessibilityRole="button"
                                                         accessibilityLabel="Remove day"
                                                     >
-                                                        <Ionicons name="close" size={12} color="#EF4444" />
+                                                        <Ionicons name="close" size={12} color={palette.red500} />
                                                     </Pressable>
 
 
@@ -1017,35 +1018,35 @@ export default function SchedulePage() {
                                 </ScrollView>
 
                                 {/* ── Slot Type Toggle (few_days) ── */}
-                                <View style={{ flexDirection: 'row', borderRadius: 14, overflow: 'hidden', borderWidth: 1, borderColor: '#E2E8F0', marginBottom: 12 }}>
+                                <View style={{ flexDirection: 'row', borderRadius: 14, overflow: 'hidden', borderWidth: 1, borderColor: palette.slate200, marginBottom: 12 }}>
                                     <TouchableOpacity
                                         onPress={() => setSlotType('availability')}
                                         style={{
                                             flex: 1, paddingVertical: 10, alignItems: 'center',
                                             flexDirection: 'row', justifyContent: 'center', gap: 5,
-                                            backgroundColor: slotType === 'availability' ? '#0284C7' : '#F8FAFC',
+                                            backgroundColor: slotType === 'availability' ? palette.sky600 : palette.slate50,
                                         }}
                                     >
-                                        <Ionicons name="time-outline" size={14} color={slotType === 'availability' ? '#fff' : '#64748B'} />
-                                        <Text style={{ fontSize: 12, fontWeight: '700', color: slotType === 'availability' ? '#fff' : '#64748B' }}>Availability</Text>
+                                        <Ionicons name="time-outline" size={14} color={slotType === 'availability' ? '#fff' : palette.slate500} />
+                                        <Text style={{ fontSize: 12, fontWeight: '700', color: slotType === 'availability' ? '#fff' : palette.slate500 }}>Availability</Text>
                                     </TouchableOpacity>
                                     <TouchableOpacity
                                         onPress={() => setSlotType('working_time')}
                                         style={{
                                             flex: 1, paddingVertical: 10, alignItems: 'center',
                                             flexDirection: 'row', justifyContent: 'center', gap: 5,
-                                            backgroundColor: slotType === 'working_time' ? '#7C3AED' : '#F8FAFC',
+                                            backgroundColor: slotType === 'working_time' ? palette.violet600 : palette.slate50,
                                         }}
                                     >
-                                        <Ionicons name="briefcase-outline" size={14} color={slotType === 'working_time' ? '#fff' : '#64748B'} />
-                                        <Text style={{ fontSize: 12, fontWeight: '700', color: slotType === 'working_time' ? '#fff' : '#64748B' }}>Working Time</Text>
+                                        <Ionicons name="briefcase-outline" size={14} color={slotType === 'working_time' ? '#fff' : palette.slate500} />
+                                        <Text style={{ fontSize: 12, fontWeight: '700', color: slotType === 'working_time' ? '#fff' : palette.slate500 }}>Working Time</Text>
                                     </TouchableOpacity>
                                 </View>
 
                                 {/* Hint text */}
-                                <View style={{ backgroundColor: slotType === 'working_time' ? '#F5F3FF' : '#F0F9FF', borderRadius: 10, padding: 9, marginBottom: 14, flexDirection: 'row', gap: 6, alignItems: 'flex-start' }}>
-                                    <Ionicons name="information-circle-outline" size={14} color={slotType === 'working_time' ? '#7C3AED' : '#0284C7'} style={{ marginTop: 1 }} />
-                                    <Text style={{ fontSize: 11, color: slotType === 'working_time' ? '#5B21B6' : '#0369A1', flex: 1 }}>
+                                <View style={{ backgroundColor: slotType === 'working_time' ? palette.violet50 : palette.sky50, borderRadius: 10, padding: 9, marginBottom: 14, flexDirection: 'row', gap: 6, alignItems: 'flex-start' }}>
+                                    <Ionicons name="information-circle-outline" size={14} color={slotType === 'working_time' ? palette.violet600 : palette.sky600} style={{ marginTop: 1 }} />
+                                    <Text style={{ fontSize: 11, color: slotType === 'working_time' ? palette.violet900 : palette.sky700, flex: 1 }}>
                                         {slotType === 'working_time'
                                             ? 'One fixed schedule that applies to all selected days.'
                                             : 'Set availability windows per day. Use "Apply to All" to sync all days.'}
@@ -1110,12 +1111,12 @@ export default function SchedulePage() {
                                                     paddingVertical: 10,
                                                     borderRadius: 12,
                                                     borderWidth: 1.5,
-                                                    borderColor: slotType === 'working_time' ? '#7C3AED' : '#0284C7',
-                                                    backgroundColor: slotType === 'working_time' ? '#F5F3FF' : '#F0F9FF',
+                                                    borderColor: slotType === 'working_time' ? palette.violet600 : palette.sky600,
+                                                    backgroundColor: slotType === 'working_time' ? palette.violet50 : palette.sky50,
                                                 }}
                                             >
-                                                <Ionicons name="copy-outline" size={15} color={slotType === 'working_time' ? '#7C3AED' : '#0284C7'} />
-                                                <Text style={{ fontSize: 13, fontWeight: '700', color: slotType === 'working_time' ? '#7C3AED' : '#0284C7' }}>Apply to All Days</Text>
+                                                <Ionicons name="copy-outline" size={15} color={slotType === 'working_time' ? palette.violet600 : palette.sky600} />
+                                                <Text style={{ fontSize: 13, fontWeight: '700', color: slotType === 'working_time' ? palette.violet600 : palette.sky600 }}>Apply to All Days</Text>
                                             </TouchableOpacity>
                                         )}
                                     </View>

@@ -1,3 +1,4 @@
+import { palette } from '@tweak/theme';
 import React from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 
@@ -25,19 +26,19 @@ const styles = StyleSheet.create({
     label: {
         fontSize: 12,
         fontWeight: '600',
-        color: '#6B7280',
+        color: palette.gray500,
         textTransform: 'uppercase',
         letterSpacing: 0.8,
         marginBottom: 6,
     },
     value: {
         fontSize: 16,
-        color: '#111827',
+        color: palette.gray900,
         fontWeight: '500',
         lineHeight: 24,
     },
     valueHighlight: {
-        color: '#6366F1',
+        color: palette.indigo500,
         fontWeight: 'bold',
     },
 });

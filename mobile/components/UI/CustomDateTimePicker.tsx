@@ -1,5 +1,6 @@
 import { Ionicons } from '@expo/vector-icons';
 import DateTimePicker, { DateTimePickerEvent } from '@react-native-community/datetimepicker';
+import { palette } from '@tweak/theme';
 import React, { useState } from 'react';
 import { Platform, StyleProp, Text, TouchableOpacity, View, ViewStyle } from 'react-native';
 
@@ -119,7 +120,7 @@ export default function CustomDateTimePicker({
                 <Text className={`text-base ${!value ? 'text-gray-400' : 'text-gray-800'}`}>
                     {value ? formatDate(value) : placeholder}
                 </Text>
-                <Ionicons name="calendar-outline" size={20} color="#6B7280" />
+                <Ionicons name="calendar-outline" size={20} color={palette.gray500} />
             </TouchableOpacity>
 
             {/* Picker Logic */}

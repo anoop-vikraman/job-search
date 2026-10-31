@@ -4,6 +4,7 @@ import React from 'react';
 import { FlatList, Text, TouchableOpacity, View } from 'react-native';
 
 import { ScreenWrapper } from '../../components/ScreenWrapper';
+import { palette } from '@tweak/theme';
 
 interface WalletTransaction {
     id: string;
@@ -30,7 +31,7 @@ export default function WalletPage(): React.JSX.Element {
                     accessibilityRole="button"
                     accessibilityLabel="Go back"
                 >
-                    <Ionicons name="arrow-back" size={24} color="#111827" />
+                    <Ionicons name="arrow-back" size={24} color={palette.gray900} />
                 </TouchableOpacity>
                 <Text className="text-lg font-bold text-gray-900">Wallet</Text>
             </View>
@@ -59,7 +60,7 @@ export default function WalletPage(): React.JSX.Element {
                 ListEmptyComponent={
                     <View className="items-center py-16">
                         <View className="bg-gray-100 w-20 h-20 rounded-full items-center justify-center mb-4">
-                            <Ionicons name="receipt-outline" size={32} color="#9CA3AF" />
+                            <Ionicons name="receipt-outline" size={32} color={palette.gray400} />
                         </View>
                         <Text className="text-gray-400 font-medium">No transactions yet</Text>
                     </View>

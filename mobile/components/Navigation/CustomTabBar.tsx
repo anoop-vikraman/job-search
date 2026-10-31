@@ -4,6 +4,7 @@ import { useRouter } from 'expo-router';
 import React from 'react';
 import { Dimensions, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import Svg, { Path } from 'react-native-svg';
+import { palette } from '@tweak/theme';
 
 import { useCreateTweakStore } from '../../store/useCreateTweakStore';
 
@@ -55,7 +56,7 @@ export default function CustomTabBar({ state, descriptors, navigation }: BottomT
     return (
         <View style={styles.container}>
             <Svg width={width} height={TAB_HEIGHT} style={styles.svg}>
-                <Path d={getPath()} fill="white" stroke="#E5E7EB" strokeWidth={1} />
+                <Path d={getPath()} fill="white" stroke={palette.gray200} strokeWidth={1} />
             </Svg>
 
             <View style={styles.content}>
@@ -129,8 +130,8 @@ export default function CustomTabBar({ state, descriptors, navigation }: BottomT
                         style={styles.menuItem}
                         onPress={() => handleCreateSelect('remote')}
                     >
-                        <View style={[styles.menuIconContainer, { backgroundColor: '#DBEAFE' }]}>
-                            <Ionicons name="laptop-outline" size={20} color="#3B82F6" />
+                        <View style={[styles.menuIconContainer, { backgroundColor: palette.blue100 }]}>
+                            <Ionicons name="laptop-outline" size={20} color={palette.blue500} />
                         </View>
                         <Text style={styles.menuText}>Remote Tweak</Text>
                     </TouchableOpacity>
@@ -141,8 +142,8 @@ export default function CustomTabBar({ state, descriptors, navigation }: BottomT
                         style={styles.menuItem}
                         onPress={() => handleCreateSelect('in_person')}
                     >
-                        <View style={[styles.menuIconContainer, { backgroundColor: '#FFEDD5' }]}>
-                            <Ionicons name="location" size={20} color="#F97316" />
+                        <View style={[styles.menuIconContainer, { backgroundColor: palette.orange100 }]}>
+                            <Ionicons name="location" size={20} color={palette.orange500} />
                         </View>
                         <Text style={styles.menuText}>Onsite Tweak</Text>
                     </TouchableOpacity>
@@ -200,11 +201,11 @@ const TabItem = ({ name, options, isFocused, onPress }: TabItemProps) => {
             <Ionicons
                 name={iconName}
                 size={24}
-                color={isFocused ? '#7C3AED' : '#9CA3AF'}
+                color={isFocused ? palette.violet600 : palette.gray400}
             />
             <Text style={[
                 styles.tabLabel,
-                { color: isFocused ? '#7C3AED' : '#9CA3AF' }
+                { color: isFocused ? palette.violet600 : palette.gray400 }
             ]}>
                 {label}
             </Text>
@@ -225,7 +226,7 @@ const styles = StyleSheet.create({
         position: 'absolute',
         top: 0,
         left: 0,
-        shadowColor: "#000",
+        shadowColor: palette.black,
         shadowOffset: { width: 0, height: -2 },
         shadowOpacity: 0.1,
         shadowRadius: 4,
@@ -257,21 +258,21 @@ const styles = StyleSheet.create({
         width: CENTER_BUTTON_RADIUS * 2,
         height: CENTER_BUTTON_RADIUS * 2,
         borderRadius: CENTER_BUTTON_RADIUS,
-        backgroundColor: '#7C3AED',
+        backgroundColor: palette.violet600,
         justifyContent: 'center',
         alignItems: 'center',
-        shadowColor: "#7C3AED",
+        shadowColor: palette.violet600,
         shadowOffset: { width: 0, height: 4 },
         shadowOpacity: 0.3,
         shadowRadius: 8,
         elevation: 5,
         borderWidth: 4,
-        borderColor: '#F3F4F6',
+        borderColor: palette.gray100,
         zIndex: 20,
     },
     centerButtonActive: {
         transform: [{ rotate: '45deg' }],
-        backgroundColor: '#6D28D9',
+        backgroundColor: palette.violet700,
     },
     overlay: {
         position: 'absolute',
@@ -290,7 +291,7 @@ const styles = StyleSheet.create({
         backgroundColor: 'white',
         borderRadius: 16,
         padding: 8,
-        shadowColor: "#000",
+        shadowColor: palette.black,
         shadowOffset: { width: 0, height: 4 },
         shadowOpacity: 0.15,
         shadowRadius: 12,
@@ -315,11 +316,11 @@ const styles = StyleSheet.create({
     menuText: {
         fontSize: 14,
         fontWeight: '600',
-        color: '#1F2937',
+        color: palette.gray800,
     },
     menuDivider: {
         height: 1,
-        backgroundColor: '#F3F4F6',
+        backgroundColor: palette.gray100,
         marginHorizontal: 8,
     },
     menuArrow: {
@@ -334,6 +335,6 @@ const styles = StyleSheet.create({
         borderLeftColor: 'transparent',
         borderRightColor: 'transparent',
         borderTopColor: 'white',
-        shadowColor: "#000", // Shadow for arrow is tricky, simpler to ignore or use image
+        shadowColor: palette.black, // Shadow for arrow is tricky, simpler to ignore or use image
     },
 });

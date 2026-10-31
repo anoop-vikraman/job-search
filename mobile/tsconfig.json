@@ -5,6 +5,9 @@
     "paths": {
       "@/*": [
         "./*"
+      ],
+      "@tweak/theme": [
+        "../packages/theme/src/index.ts"
       ]
     }
   },

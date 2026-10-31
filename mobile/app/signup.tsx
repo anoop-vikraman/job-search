@@ -9,6 +9,7 @@ import { Text, TouchableOpacity, View } from 'react-native';
 import { authApi } from '../api/auth';
 import { ScreenWrapper } from '../components/ScreenWrapper';
 import CustomButton from '../components/UI/CustomButton';
+import { palette } from '@tweak/theme';
 
 export default function SignUp() {
     const { t } = useTranslation();
@@ -111,7 +112,7 @@ export default function SignUp() {
                     secureTextEntry={!isPasswordVisible}
                     rightComponent={
                         <TouchableOpacity onPress={() => setIsPasswordVisible(!isPasswordVisible)} accessibilityRole="button" accessibilityLabel={isPasswordVisible ? 'Hide password' : 'Show password'}>
-                            <Ionicons name={isPasswordVisible ? 'eye-off' : 'eye'} size={20} color="#6B7280" />
+                            <Ionicons name={isPasswordVisible ? 'eye-off' : 'eye'} size={20} color={palette.gray500} />
                         </TouchableOpacity>
                     }
                 />

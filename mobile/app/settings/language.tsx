@@ -3,6 +3,7 @@ import { useRouter } from 'expo-router';
 import React from 'react';
 import { ScrollView, Text, TouchableOpacity, View } from 'react-native';
 import { ScreenWrapper } from '../../components/ScreenWrapper';
+import { palette } from '@tweak/theme';
 
 const LANGUAGES = [
     { code: 'en', name: 'English', nativeName: 'English' },
@@ -28,7 +29,7 @@ export default function LanguageSettings() {
             {/* Header */}
             <View className="flex-row items-center px-6 py-4 bg-white border-b border-gray-100">
                 <TouchableOpacity onPress={() => router.back()} className="mr-4" accessibilityRole="button" accessibilityLabel="Go back">
-                    <Ionicons name="arrow-back" size={24} color="#111827" />
+                    <Ionicons name="arrow-back" size={24} color={palette.gray900} />
                 </TouchableOpacity>
                 <Text className="text-lg font-bold text-gray-900">Language</Text>
             </View>
@@ -45,7 +46,7 @@ export default function LanguageSettings() {
                             <Text className="text-gray-500 text-sm">{language.name}</Text>
                         </View>
                         {selectedLanguage === language.code && (
-                            <Ionicons name="checkmark-circle" size={24} color="#10B981" />
+                            <Ionicons name="checkmark-circle" size={24} color={palette.green600} />
                         )}
                     </TouchableOpacity>
                 ))}

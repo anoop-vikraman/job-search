@@ -14,6 +14,7 @@ import CustomConfirmationModal from '../../components/UI/CustomConfirmationModal
 import CustomDatePicker from '../../components/UI/CustomDatePicker';
 import PasswordStrengthMeter from '../../components/UI/PasswordStrengthMeter';
 import { FeatureFlags } from '../../constants/featureFlags';
+import { palette } from '@tweak/theme';
 
 const maxDate = new Date();
 maxDate.setFullYear(maxDate.getFullYear() - 18);
@@ -168,7 +169,7 @@ export default function CreatePassword() {
                                 error={errors.password?.message}
                                 rightComponent={
                                     <TouchableOpacity onPress={() => setIsPasswordVisible(!isPasswordVisible)} accessibilityRole="button" accessibilityLabel={isPasswordVisible ? 'Hide password' : 'Show password'}>
-                                        <Ionicons name={isPasswordVisible ? 'eye-off' : 'eye'} size={20} color="#6B7280" />
+                                        <Ionicons name={isPasswordVisible ? 'eye-off' : 'eye'} size={20} color={palette.gray500} />
                                     </TouchableOpacity>
                                 }
                             />
@@ -191,7 +192,7 @@ export default function CreatePassword() {
                                     secureTextEntry={!isConfirmPasswordVisible}
                                     rightComponent={
                                         <TouchableOpacity onPress={() => setIsConfirmPasswordVisible(!isConfirmPasswordVisible)} accessibilityRole="button" accessibilityLabel={isConfirmPasswordVisible ? 'Hide password' : 'Show password'}>
-                                            <Ionicons name={isConfirmPasswordVisible ? 'eye-off' : 'eye'} size={20} color="#6B7280" />
+                                            <Ionicons name={isConfirmPasswordVisible ? 'eye-off' : 'eye'} size={20} color={palette.gray500} />
                                         </TouchableOpacity>
                                     }
                                 />
@@ -206,11 +207,11 @@ export default function CreatePassword() {
                                 </Text>
                                 {isMatch ? (
                                     <View className="bg-emerald-100 rounded-full p-0.5">
-                                        <Ionicons name="checkmark" size={12} color="#10B981" />
+                                        <Ionicons name="checkmark" size={12} color={palette.green600} />
                                     </View>
                                 ) : (
                                     <View className="bg-red-100 rounded-full p-0.5">
-                                        <Ionicons name="close" size={12} color="#EF4444" />
+                                        <Ionicons name="close" size={12} color={palette.red500} />
                                     </View>
                                 )}
                             </View>

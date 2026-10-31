@@ -4,6 +4,7 @@ import React from 'react';
 import { Text, TouchableOpacity, View } from 'react-native';
 import { ScreenWrapper } from '../../components/ScreenWrapper';
 import { useCreateTweakStore } from '../../store/useCreateTweakStore';
+import { palette } from '@tweak/theme';
 
 export default function CreateTweakIndex() {
     const router = useRouter();
@@ -29,7 +30,7 @@ export default function CreateTweakIndex() {
             {/* Header */}
             <View className="px-6 py-4 flex-row items-center justify-between bg-white border-b border-gray-100">
                 <TouchableOpacity onPress={() => router.back()} className="p-2 -ml-2 rounded-full active:bg-gray-100" accessibilityRole="button" accessibilityLabel="Close">
-                    <Ionicons name="close" size={24} color="#111827" />
+                    <Ionicons name="close" size={24} color={palette.gray900} />
                 </TouchableOpacity>
                 <Text className="text-lg font-bold text-gray-900">Step 1 of 8</Text>
                 <TouchableOpacity onPress={() => router.back()}>
@@ -48,7 +49,7 @@ export default function CreateTweakIndex() {
                         onPress={() => handleSelect('in_person')}
                     >
                         <View className="bg-orange-100 w-12 h-12 rounded-full items-center justify-center mb-4">
-                            <Ionicons name="location" size={24} color="#F97316" />
+                            <Ionicons name="location" size={24} color={palette.orange500} />
                         </View>
                         <Text className="text-xl font-bold text-gray-900 mb-2">On-site</Text>
                         <Text className="text-gray-500">
@@ -62,7 +63,7 @@ export default function CreateTweakIndex() {
                         onPress={() => handleSelect('remote')}
                     >
                         <View className="bg-blue-100 w-12 h-12 rounded-full items-center justify-center mb-4">
-                            <Ionicons name="laptop-outline" size={24} color="#3B82F6" />
+                            <Ionicons name="laptop-outline" size={24} color={palette.blue500} />
                         </View>
                         <Text className="text-xl font-bold text-gray-900 mb-2">Remote</Text>
                         <Text className="text-gray-500">

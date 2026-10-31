@@ -5,6 +5,7 @@ import { Text, TouchableOpacity, View } from 'react-native';
 import CreateFlowHeader from '../../components/create-tweak/CreateFlowHeader';
 import { ScreenWrapper } from '../../components/ScreenWrapper';
 import { SchedulePreference, useCreateTweakStore } from '../../store/useCreateTweakStore';
+import { palette } from '@tweak/theme';
 
 export default function PreferencesPage() {
     const router = useRouter();
@@ -29,7 +30,7 @@ export default function PreferencesPage() {
                 <View className="gap-4">
                     <PreferenceCard
                         icon="calendar"
-                        color="#3B82F6"
+                        color={palette.blue500}
                         title="Single Day Job"
                         desc="Best for quick tasks done in one visit."
                         onPress={() => handleSelect('one_day')}
@@ -37,7 +38,7 @@ export default function PreferencesPage() {
 
                     <PreferenceCard
                         icon="hourglass"
-                        color="#F97316"
+                        color={palette.orange500}
                         title="Flexible Deadline"
                         desc="Task must be completed by a specific date."
                         onPress={() => handleSelect('deadline')}
@@ -45,7 +46,7 @@ export default function PreferencesPage() {
 
                     <PreferenceCard
                         icon="calendar-number"
-                        color="#10B981"
+                        color={palette.green600}
                         title="Multi-day Project"
                         desc="Ideal for larger jobs spanning several days."
                         onPress={() => handleSelect('few_days')}

@@ -1,4 +1,5 @@
 import { Entypo } from '@expo/vector-icons';
+import { palette } from '@tweak/theme';
 import React, { useEffect, useRef, useState } from 'react';
 import { themeColors } from '../../themes/colors';
 
@@ -89,8 +90,8 @@ export default function CustomFloatingLabel({
             animatedValue.value,
             [0, 1],
             [
-                error ? '#FF3B30' : '#666',
-                error ? '#FF3B30' : isFocused ? themeColors.primary : '#666'
+                error ? palette.iosRed : palette.gray500,
+                error ? palette.iosRed : isFocused ? themeColors.primary : palette.gray500
             ]
         );
 
@@ -113,7 +114,7 @@ export default function CustomFloatingLabel({
                 !!error && styles.inputError
             ]}>
                 {leftComponent && (
-                    <View style={{ paddingRight: 8, borderRightWidth: 1, borderRightColor: '#E5E7EB', marginRight: 10, height: '60%', alignItems: 'center', justifyContent: 'center' }}>
+                    <View style={{ paddingRight: 8, borderRightWidth: 1, borderRightColor: palette.gray200, marginRight: 10, height: '60%', alignItems: 'center', justifyContent: 'center' }}>
                         {leftComponent}
                     </View>
                 )}
@@ -144,7 +145,7 @@ export default function CustomFloatingLabel({
                         <Entypo
                             name={isVisible ? 'lock-open' : 'lock'}
                             size={20}
-                            color={isVisible ? '#FF3B30' : '#000'}
+                            color={isVisible ? palette.iosRed : palette.black}
                         />
                     </Pressable>
                 ) : null}
@@ -179,9 +180,9 @@ const styles = StyleSheet.create({
     inputContainer: {
         height: 55,
         borderWidth: 1,
-        borderColor: '#BBB',
+        borderColor: palette.gray300,
         borderRadius: 12,
-        backgroundColor: '#fff',
+        backgroundColor: palette.white,
         flexDirection: 'row',
         alignItems: 'center',
         paddingHorizontal: 15,
@@ -196,12 +197,12 @@ const styles = StyleSheet.create({
         borderWidth: 2,
     },
     inputError: {
-        borderColor: '#FF3B30',
+        borderColor: palette.iosRed,
         borderWidth: 2,
     },
     label: {
         position: 'absolute',
-        backgroundColor: '#fff',
+        backgroundColor: palette.white,
         paddingHorizontal: 4,
         fontSize: 16,
     },
@@ -209,7 +210,7 @@ const styles = StyleSheet.create({
         flex: 1,
         height: '100%',
         fontSize: 16,
-        color: '#000',
+        color: palette.black,
         paddingVertical: 0,
     },
     inputMultiline: {
@@ -222,7 +223,7 @@ const styles = StyleSheet.create({
         paddingLeft: 10,
     },
     errorText: {
-        color: '#FF3B30',
+        color: palette.iosRed,
         fontSize: 13,
         fontWeight: '500',
         marginTop: 4,
@@ -233,6 +234,6 @@ const styles = StyleSheet.create({
         bottom: 8,
         left: 10,
         fontSize: 11,
-        color: '#666',
+        color: palette.gray500,
     }
 });

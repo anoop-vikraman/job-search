@@ -1,6 +1,7 @@
 import { Ionicons } from '@expo/vector-icons';
 import React from 'react';
 import { Text, View } from 'react-native';
+import { palette } from '@tweak/theme';
 
 const stats = { tweaksCreated: 0, tweaksCompleted: 0, rating: 0, totalReviews: 0 };
 
@@ -14,7 +15,7 @@ export default function ProfileStats() {
                     {/* Tweaks Created */}
                     <View className="items-center flex-1">
                         <View className="bg-orange-100 w-12 h-12 rounded-full items-center justify-center mb-2">
-                            <Ionicons name="add-circle" size={24} color="#F97316" />
+                            <Ionicons name="add-circle" size={24} color={palette.orange500} />
                         </View>
                         <Text className="text-2xl font-bold text-gray-900">{tweaksCreated}</Text>
                         <Text className="text-xs text-gray-500 text-center">Tweaks{'\n'}Created</Text>
@@ -26,7 +27,7 @@ export default function ProfileStats() {
                     {/* Tweaks Completed */}
                     <View className="items-center flex-1">
                         <View className="bg-green-100 w-12 h-12 rounded-full items-center justify-center mb-2">
-                            <Ionicons name="checkmark-circle" size={24} color="#10B981" />
+                            <Ionicons name="checkmark-circle" size={24} color={palette.green600} />
                         </View>
                         <Text className="text-2xl font-bold text-gray-900">{tweaksCompleted}</Text>
                         <Text className="text-xs text-gray-500 text-center">Tweaks{'\n'}Completed</Text>
@@ -38,7 +39,7 @@ export default function ProfileStats() {
                     {/* Rating */}
                     <View className="items-center flex-1">
                         <View className="bg-yellow-100 w-12 h-12 rounded-full items-center justify-center mb-2">
-                            <Ionicons name="star" size={24} color="#F59E0B" />
+                            <Ionicons name="star" size={24} color={palette.amber500} />
                         </View>
                         <Text className="text-2xl font-bold text-gray-900">{rating.toFixed(1)}</Text>
                         <Text className="text-xs text-gray-500 text-center">{totalReviews} Reviews</Text>

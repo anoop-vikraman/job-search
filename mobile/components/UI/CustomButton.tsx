@@ -1,5 +1,6 @@
 import React from 'react';
 import { ActivityIndicator, Text, TouchableOpacity } from 'react-native';
+import { palette } from '@tweak/theme';
 
 import { CustomButtonProps } from '../../types/ui';
 
@@ -50,7 +51,7 @@ export default function CustomButton({
                 return {
                     container: `${selectedColor.bg} border ${selectedColor.border}`,
                     text: 'text-white',
-                    loader: '#FFFFFF'
+                    loader: palette.white
                 };
         }
     };
@@ -65,7 +66,7 @@ export default function CustomButton({
             {...props}
         >
             {loading ? (
-                <ActivityIndicator color={variant === 'filled' ? '#FFFFFF' : loaderColor} size="small" />
+                <ActivityIndicator color={variant === 'filled' ? palette.white : loaderColor} size="small" />
             ) : (
                 <Text className={`font-bold text-lg text-center ${colorTextClasses} ${textClassName || ''}`}>
                     {children}

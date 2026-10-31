@@ -1,4 +1,5 @@
 import { Ionicons } from '@expo/vector-icons';
+import { palette } from '@tweak/theme';
 import React from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 import Animated, { SlideInUp, SlideOutUp } from 'react-native-reanimated';
@@ -31,11 +32,11 @@ const styles = StyleSheet.create({
         top: 0,
         left: 0,
         right: 0,
-        backgroundColor: '#EF4444', // Red-500
+        backgroundColor: palette.red500, // Red-500
         zIndex: 9999, // Highest z-index to sit on top of everything
         alignItems: 'center',
         paddingBottom: 12,
-        shadowColor: '#000',
+        shadowColor: palette.black,
         shadowOffset: { width: 0, height: 2 },
         shadowOpacity: 0.2,
         shadowRadius: 4,

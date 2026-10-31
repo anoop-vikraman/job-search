@@ -1,3 +1,4 @@
+import { palette } from '@tweak/theme';
 import React from 'react';
 import { StyleProp, Text, TouchableOpacity, View, ViewStyle } from 'react-native';
 import { themeColors } from '../../themes/colors';
@@ -37,7 +38,7 @@ export default function CustomToggleButton({
                             className={`flex-1 py-3 rounded-md items-center justify-center`}
                             style={{
                                 backgroundColor: isSelected ? 'white' : 'transparent',
-                                shadowColor: '#000',
+                                shadowColor: palette.black,
                                 shadowOffset: { width: 0, height: 1 },
                                 shadowOpacity: isSelected ? 0.1 : 0,
                                 shadowRadius: 1,
@@ -47,7 +48,7 @@ export default function CustomToggleButton({
                         >
                             <Text
                                 className={`text-base font-medium ${isSelected ? 'text-primary' : 'text-gray-500'}`}
-                                style={{ color: isSelected ? themeColors.primary : '#6B7280' }}
+                                style={{ color: isSelected ? themeColors.primary : palette.gray500 }}
                             >
                                 {option.label}
                             </Text>

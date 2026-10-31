@@ -1,3 +1,4 @@
+import { palette } from '@tweak/theme';
 import React, { useEffect, useState } from 'react';
 import { StyleProp, StyleSheet, Text, TextStyle, View, ViewStyle } from 'react-native';
 import Animated, {
@@ -49,7 +50,7 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
     },
     text: {
-        color: '#9CA3AF',
+        color: palette.gray400,
         fontSize: 16,
     }
 });

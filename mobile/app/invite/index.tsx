@@ -4,6 +4,7 @@ import React from 'react';
 import { ScrollView, Share, Text, TouchableOpacity, View } from 'react-native';
 import { ScreenWrapper } from '../../components/ScreenWrapper';
 import { useConfirmationStore } from '../../store/useConfirmationStore';
+import { palette } from '@tweak/theme';
 
 const referralData = { totalEarnings: 0, friendsInvited: 0, referralLink: '' };
 
@@ -43,7 +44,7 @@ export default function InvitePage() {
             {/* Header */}
             <View className="flex-row items-center px-6 py-4 bg-white border-b border-gray-100">
                 <TouchableOpacity onPress={() => router.back()} className="mr-4" accessibilityRole="button" accessibilityLabel="Go back">
-                    <Ionicons name="arrow-back" size={24} color="#111827" />
+                    <Ionicons name="arrow-back" size={24} color={palette.gray900} />
                 </TouchableOpacity>
                 <Text className="text-lg font-bold text-gray-900">Invite Friends</Text>
             </View>
@@ -57,11 +58,11 @@ export default function InvitePage() {
                     {/* Referral Link */}
                     <View className="bg-white rounded-xl p-4 flex-row items-center justify-between mb-4 border border-purple-200">
                         <View className="flex-row items-center flex-1 mr-2">
-                            <Ionicons name="link" size={20} color="#8B5CF6" />
+                            <Ionicons name="link" size={20} color={palette.purple500} />
                             <Text className="text-gray-600 text-sm ml-2 flex-1" numberOfLines={1}>{referralLink}</Text>
                         </View>
                         <TouchableOpacity onPress={copyLink} accessibilityRole="button" accessibilityLabel="Copy link">
-                            <Ionicons name="copy" size={20} color="#8B5CF6" />
+                            <Ionicons name="copy" size={20} color={palette.purple500} />
                         </TouchableOpacity>
                     </View>
 
@@ -109,7 +110,7 @@ export default function InvitePage() {
                     className="flex-row items-center justify-end"
                 >
                     <Text className="text-purple-600 font-semibold mr-1">Referral Terms</Text>
-                    <Ionicons name="chevron-forward" size={16} color="#8B5CF6" />
+                    <Ionicons name="chevron-forward" size={16} color={palette.purple500} />
                 </TouchableOpacity>
             </ScrollView>
         </ScreenWrapper>

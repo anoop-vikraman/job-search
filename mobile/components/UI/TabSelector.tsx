@@ -1,3 +1,4 @@
+import { palette } from '@tweak/theme';
 import React from 'react';
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
@@ -31,7 +32,7 @@ export default function TabSelector({ options, selected, onSelect }: TabSelector
 const styles = StyleSheet.create({
     container: {
         flexDirection: 'row',
-        backgroundColor: '#F3F4F6',
+        backgroundColor: palette.gray100,
         borderRadius: 12,
         padding: 4,
         marginBottom: 16,
@@ -44,8 +45,8 @@ const styles = StyleSheet.create({
         alignItems: 'center',
     },
     tabActive: {
-        backgroundColor: '#FFFFFF',
-        shadowColor: '#000',
+        backgroundColor: palette.white,
+        shadowColor: palette.black,
         shadowOffset: { width: 0, height: 1 },
         shadowOpacity: 0.1,
         shadowRadius: 2,
@@ -54,9 +55,9 @@ const styles = StyleSheet.create({
     tabText: {
         fontSize: 14,
         fontWeight: '600',
-        color: '#6B7280',
+        color: palette.gray500,
     },
     tabTextActive: {
-        color: '#6366F1',
+        color: palette.indigo500,
     },
 });

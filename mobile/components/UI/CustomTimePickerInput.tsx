@@ -1,4 +1,5 @@
 import { Ionicons } from '@expo/vector-icons';
+import { palette } from '@tweak/theme';
 import React, { useState } from 'react';
 import { Text, TouchableOpacity, View } from 'react-native';
 import ThemeTimePicker from './ThemeTimePicker';
@@ -69,7 +70,7 @@ export default function CustomTimePickerInput({ value, onChange, placeholder = "
                 <Text className={`font-bold text-base ${value ? 'text-gray-900' : 'text-gray-400'}`}>
                     {displayValue || placeholder}
                 </Text>
-                <Ionicons name="time-outline" size={20} color={hasError ? '#EF4444' : '#9CA3AF'} />
+                <Ionicons name="time-outline" size={20} color={hasError ? palette.red500 : palette.gray400} />
             </TouchableOpacity>
 
             {visible && (

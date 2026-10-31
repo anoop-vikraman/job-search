@@ -3,6 +3,7 @@ import React from 'react';
 import { FlatList, Text, View } from 'react-native';
 
 import { ScreenWrapper } from '../../components/ScreenWrapper';
+import { palette } from '@tweak/theme';
 
 interface NotificationItem {
     id: string;
@@ -24,7 +25,7 @@ export default function NotificationsPage(): React.JSX.Element {
                 <Ionicons
                     name="checkmark-done-circle-outline"
                     size={24}
-                    color="#6B7280"
+                    color={palette.gray500}
                     accessibilityLabel="Mark all as read"
                 />
             </View>
@@ -37,7 +38,7 @@ export default function NotificationsPage(): React.JSX.Element {
                 ListEmptyComponent={
                     <View className="items-center py-24">
                         <View className="bg-gray-100 w-20 h-20 rounded-full items-center justify-center mb-4">
-                            <Ionicons name="notifications-off-outline" size={32} color="#9CA3AF" />
+                            <Ionicons name="notifications-off-outline" size={32} color={palette.gray400} />
                         </View>
                         <Text className="text-gray-400 font-medium">No notifications yet</Text>
                     </View>

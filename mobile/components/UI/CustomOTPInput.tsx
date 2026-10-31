@@ -1,3 +1,4 @@
+import { palette } from '@tweak/theme';
 import React, { useRef, useState } from 'react';
 import { Pressable, StyleSheet, Text, TextInput, View } from 'react-native';
 import { themeColors } from '../../themes/colors';
@@ -85,9 +86,9 @@ const styles = StyleSheet.create({
         width: 45,
         height: 55,
         borderWidth: 1,
-        borderColor: '#F3F4F6', // gray-100
+        borderColor: palette.gray100, // gray-100
         borderRadius: 16, // rounded-2xl
-        backgroundColor: '#F9FAFB', // gray-50
+        backgroundColor: palette.gray50, // gray-50
         justifyContent: 'center',
         alignItems: 'center',
     },
@@ -96,11 +97,11 @@ const styles = StyleSheet.create({
         borderWidth: 1.5,
     },
     boxError: {
-        borderColor: '#EF4444', // red-500
+        borderColor: palette.red500, // red-500
     },
     digit: {
         fontSize: 24,
         fontWeight: '600',
-        color: '#000000',
+        color: palette.black,
     },
 });

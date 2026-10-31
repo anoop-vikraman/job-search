@@ -1,6 +1,7 @@
 import { Ionicons } from '@expo/vector-icons';
 import React, { useState } from 'react';
 import { FlatList, Modal, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import { palette } from '@tweak/theme';
 import countryCodes from '../../constants/countryCodes.json';
 import { themeColors } from '../../themes/colors';
 
@@ -28,7 +29,7 @@ export default function CountryCodePicker({ selectedCode, onSelect, disabled = f
                 disabled={disabled}
             >
                 <Text className="text-base text-gray-900 font-medium mr-1">{selectedCode}</Text>
-                {!disabled && <Ionicons name="chevron-down" size={16} color="#666" />}
+                {!disabled && <Ionicons name="chevron-down" size={16} color={palette.gray500} />}
             </TouchableOpacity>
 
             <Modal visible={visible} animationType="slide" presentationStyle="pageSheet">
@@ -36,19 +37,19 @@ export default function CountryCodePicker({ selectedCode, onSelect, disabled = f
                     <View className="flex-row justify-between items-center px-4 mb-4">
                         <Text className="text-xl font-bold text-gray-900">Select Country Code</Text>
                         <TouchableOpacity onPress={() => setVisible(false)} className="p-2" accessibilityRole="button" accessibilityLabel="Close">
-                            <Ionicons name="close" size={24} color="#000" />
+                            <Ionicons name="close" size={24} color={palette.black} />
                         </TouchableOpacity>
                     </View>
 
                     <View className="px-4 mb-4">
                         <View className="flex-row items-center bg-gray-100 rounded-xl px-4 py-3">
-                            <Ionicons name="search" size={20} color="#9CA3AF" />
+                            <Ionicons name="search" size={20} color={palette.gray400} />
                             <TextInput
                                 className="flex-1 ml-3 text-base text-gray-900"
                                 placeholder="Search country or code"
                                 value={search}
                                 onChangeText={setSearch}
-                                placeholderTextColor="#9CA3AF"
+                                placeholderTextColor={palette.gray400}
                             />
                         </View>
                     </View>
@@ -72,7 +73,7 @@ export default function CountryCodePicker({ selectedCode, onSelect, disabled = f
                                     </View>
                                 </View>
                                 <Text className={`text-base font-bold ${selectedCode === item.dial_code ? 'text-primary' : 'text-gray-500'}`}
-                                    style={{ color: selectedCode === item.dial_code ? themeColors.primary : '#6B7280' }}
+                                    style={{ color: selectedCode === item.dial_code ? themeColors.primary : palette.gray500 }}
                                 >
                                     {item.dial_code}
                                 </Text>

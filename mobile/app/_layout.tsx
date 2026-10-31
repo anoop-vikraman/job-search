@@ -9,6 +9,7 @@ import '../utils/crashHandler'; // Initialize Crash Handler
 import '../utils/i18n';
 
 import GlobalErrorBoundary from "@/components/GlobalErrorBoundary";
+import { ThemeProvider } from "@/themes/ThemeProvider";
 import StandaloneTabBar from "@/components/Navigation/StandaloneTabBar";
 import GlobalConfirmationModal from "@/components/UI/GlobalConfirmationModal";
 import GlobalFatalErrorModal from "@/components/UI/GlobalFatalErrorModal";
@@ -75,9 +76,11 @@ function AppContent() {
 export default function RootLayout() {
   return (
     <GlobalErrorBoundary>
-      <SafeAreaProvider>
-        <AppContent />
-      </SafeAreaProvider>
+      <ThemeProvider>
+        <SafeAreaProvider>
+          <AppContent />
+        </SafeAreaProvider>
+      </ThemeProvider>
     </GlobalErrorBoundary>
   );
 }

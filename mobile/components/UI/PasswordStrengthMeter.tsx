@@ -1,3 +1,4 @@
+import { palette } from '@tweak/theme';
 import React, { useEffect, useState } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 
@@ -45,10 +46,10 @@ export default function PasswordStrengthMeter({
     };
 
     const getBarColor = (index: number) => {
-        if (index >= strength) return '#E5E7EB'; // gray-200
-        if (strength <= 2) return '#EF4444'; // red-500
-        if (strength <= 4) return '#F59E0B'; // amber-500
-        return '#10B981'; // green-500
+        if (index >= strength) return palette.gray200; // gray-200
+        if (strength <= 2) return palette.red500; // red-500
+        if (strength <= 4) return palette.amber500; // amber-500
+        return palette.green600; // green-500
     };
 
     return (

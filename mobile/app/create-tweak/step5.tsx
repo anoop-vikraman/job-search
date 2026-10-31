@@ -10,6 +10,7 @@ import DataRow from '../../components/UI/DataRow';
 import DraftConfirmationDialog from '../../components/UI/DraftConfirmationDialog';
 import SectionCard from '../../components/UI/SectionCard';
 import { themeColors } from '../../themes/colors';
+import { palette } from '@tweak/theme';
 
 export default function CreateTweakStep5() {
     const router = useRouter();
@@ -209,7 +210,7 @@ export default function CreateTweakStep5() {
                         style={styles.draftButton}
                         variant="outlined"
                     >
-                        <Ionicons name="bookmark-outline" size={20} color="#6366F1" />
+                        <Ionicons name="bookmark-outline" size={20} color={palette.indigo500} />
                         <Text style={styles.draftButtonText}>Save as Draft</Text>
                     </CustomButton>
 
@@ -266,13 +267,13 @@ export default function CreateTweakStep5() {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: '#F9FAFB',
+        backgroundColor: palette.gray50,
     },
     header: {
         paddingHorizontal: 24,
         paddingVertical: 16,
         borderBottomWidth: 1,
-        borderBottomColor: '#F3F4F6',
+        borderBottomColor: palette.gray100,
         flexDirection: 'row',
         alignItems: 'center',
         backgroundColor: 'white',
@@ -281,7 +282,7 @@ const styles = StyleSheet.create({
         marginRight: 16,
         padding: 4,
         borderRadius: 999,
-        backgroundColor: '#F9FAFB',
+        backgroundColor: palette.gray50,
     },
     headerTextContainer: {
         flex: 1,
@@ -289,12 +290,12 @@ const styles = StyleSheet.create({
     headerTitle: {
         fontSize: 20,
         fontWeight: 'bold',
-        color: '#111827',
+        color: palette.gray900,
     },
     headerSubtitle: {
         fontSize: 12,
         fontWeight: 'bold',
-        color: '#6366F1',
+        color: palette.indigo500,
         letterSpacing: 1.2,
     },
     scrollContent: {
@@ -308,13 +309,13 @@ const styles = StyleSheet.create({
     title: {
         fontSize: 32,
         fontWeight: 'bold',
-        color: '#111827',
+        color: palette.gray900,
         marginBottom: 8,
         lineHeight: 38,
     },
     subtitle: {
         fontSize: 16,
-        color: '#6B7280',
+        color: palette.gray500,
         lineHeight: 24,
     },
     actionSection: {
@@ -329,11 +330,11 @@ const styles = StyleSheet.create({
         paddingVertical: 14,
         borderRadius: 12,
         borderWidth: 2,
-        borderColor: '#6366F1',
+        borderColor: palette.indigo500,
         backgroundColor: 'white',
     },
     draftButtonText: {
-        color: '#6366F1',
+        color: palette.indigo500,
         fontSize: 16,
         fontWeight: 'bold',
     },
@@ -344,7 +345,7 @@ const styles = StyleSheet.create({
         gap: 8,
         paddingVertical: 14,
         borderRadius: 12,
-        backgroundColor: '#6366F1',
+        backgroundColor: palette.indigo500,
         shadowColor: '#000',
         shadowOffset: { width: 0, height: 4 },
         shadowOpacity: 0.2,

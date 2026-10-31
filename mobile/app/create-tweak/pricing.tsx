@@ -7,6 +7,7 @@ import { ScreenWrapper } from '../../components/ScreenWrapper';
 import CustomButton from '../../components/UI/CustomButton';
 import { useConfirmationStore } from '../../store/useConfirmationStore';
 import { PricingModel, useCreateTweakStore } from '../../store/useCreateTweakStore';
+import { palette } from '@tweak/theme';
 
 interface PricingCardProps {
     title: string;
@@ -171,7 +172,7 @@ export default function PricingDetailsPage() {
                 <Text className="text-gray-500">Choose the pricing structure that fits best.</Text>
                 {showValidation && hasPriceInMind === null && (
                     <View className="bg-red-50 p-3 rounded-xl border border-red-100 mt-4 flex-row items-center">
-                        <Ionicons name="alert-circle" size={18} color="#EF4444" />
+                        <Ionicons name="alert-circle" size={18} color={palette.red500} />
                         <Text className="text-red-600 font-bold ml-2 text-sm">Please select an option below</Text>
                     </View>
                 )}
@@ -193,7 +194,7 @@ export default function PricingDetailsPage() {
                             <Ionicons
                                 name={hasPriceInMind === true ? "checkmark-circle" : "ellipse-outline"}
                                 size={22}
-                                color={hasPriceInMind === true ? "#01C39D" : "#9CA3AF"}
+                                color={hasPriceInMind === true ? palette.brand500 : palette.gray400}
                                 className="mr-2"
                             />
                             <Text className={`font-bold text-lg ${hasPriceInMind === true ? 'text-primary' : 'text-gray-500'}`}>Yes</Text>
@@ -213,7 +214,7 @@ export default function PricingDetailsPage() {
                             <Ionicons
                                 name={hasPriceInMind === false ? "checkmark-circle" : "ellipse-outline"}
                                 size={22}
-                                color={hasPriceInMind === false ? "#01C39D" : "#9CA3AF"}
+                                color={hasPriceInMind === false ? palette.brand500 : palette.gray400}
                                 className="mr-2"
                             />
                             <Text className={`font-bold text-lg ${hasPriceInMind === false ? 'text-primary' : 'text-gray-500'}`}>No</Text>
@@ -227,7 +228,7 @@ export default function PricingDetailsPage() {
                         <View className="absolute -bottom-10 -left-10 w-32 h-32 bg-primary/5 rounded-full" />
 
                         <View className="w-20 h-20 bg-primary/10 rounded-3xl items-center justify-center mb-6 rotate-3">
-                            <Ionicons name="sparkles" size={40} color="#01C39D" />
+                            <Ionicons name="sparkles" size={40} color={palette.brand500} />
                         </View>
 
                         <Text className="text-2xl font-black text-gray-900 text-center leading-tight mb-4 px-2">
@@ -249,7 +250,7 @@ export default function PricingDetailsPage() {
                             title="Per Hour"
                             description="Pay based on the time spent on the task."
                             icon="time"
-                            color="#3B82F6"
+                            color={palette.blue500}
                             isSelected={pricingModel === 'hourly'}
                             onSelect={() => handleSelectModel('hourly')}
                         >
@@ -280,7 +281,7 @@ export default function PricingDetailsPage() {
                             title="Per Quantity"
                             description="Pay based on the number of items (e.g., 5 boxes moved)."
                             icon="copy"
-                            color="#10B981"
+                            color={palette.green600}
                             isSelected={pricingModel === 'quantity'}
                             onSelect={() => handleSelectModel('quantity')}
                         >
@@ -351,7 +352,7 @@ export default function PricingDetailsPage() {
                             title="Fixed Price"
                             description="One flat fee for the entire job."
                             icon="pricetag"
-                            color="#8B5CF6"
+                            color={palette.purple500}
                             isSelected={pricingModel === 'fixed'}
                             onSelect={() => handleSelectModel('fixed')}
                         >

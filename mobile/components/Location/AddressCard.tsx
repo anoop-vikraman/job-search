@@ -1,6 +1,7 @@
 import { Ionicons } from '@expo/vector-icons';
 import React from 'react';
 import { Text, TouchableOpacity, View } from 'react-native';
+import { palette } from '@tweak/theme';
 import { themeColors } from '../../themes/colors';
 
 import { AddressCardProps } from '../../types/location';
@@ -29,7 +30,7 @@ export default function AddressCard({
                 style={{
                     backgroundColor: selected ? themeColors.primary + '08' : 'white',
                     ...(!selected && {
-                        shadowColor: "#000",
+                        shadowColor: palette.black,
                         shadowOffset: { width: 0, height: 2 },
                         shadowOpacity: 0.05,
                         shadowRadius: 3.84,
@@ -85,7 +86,7 @@ export default function AddressCard({
                         backgroundColor: 'white',
                         borderRadius: 12,
                         padding: 8,
-                        shadowColor: "#000",
+                        shadowColor: palette.black,
                         shadowOffset: { width: 0, height: 4 },
                         shadowOpacity: 0.15,
                         shadowRadius: 10,
@@ -93,7 +94,7 @@ export default function AddressCard({
                         zIndex: 100,
                         flexDirection: 'row',
                         borderWidth: 1,
-                        borderColor: '#F3F4F6'
+                        borderColor: palette.gray100
                     }}
                 >
                     <TouchableOpacity
@@ -108,7 +109,7 @@ export default function AddressCard({
                         onPress={onDelete}
                         className="flex-row items-center px-3 py-2"
                     >
-                        <Ionicons name="trash-outline" size={16} color="#EF4444" />
+                        <Ionicons name="trash-outline" size={16} color={palette.red500} />
                         <Text className="ml-2 text-red-500 font-bold text-sm">Delete</Text>
                     </TouchableOpacity>
                 </View>

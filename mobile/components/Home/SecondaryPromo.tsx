@@ -1,11 +1,12 @@
 import { Ionicons } from '@expo/vector-icons';
 import React from 'react';
 import { ScrollView, Text, View } from 'react-native';
+import { palette } from '@tweak/theme';
 
 const PROMO_ITEMS: { title: string; sub: string; color: string; icon: keyof typeof Ionicons.glyphMap; iconColor: string }[] = [
-    { title: 'Premium', sub: 'Get more visibility', color: 'bg-purple-100', icon: 'star', iconColor: '#8B5CF6' },
-    { title: 'Streak', sub: '3 Day Streak!', color: 'bg-red-100', icon: 'flame', iconColor: '#EF4444' },
-    { title: 'Referral', sub: 'Invite friends', color: 'bg-green-100', icon: 'people', iconColor: '#10B981' },
+    { title: 'Premium', sub: 'Get more visibility', color: 'bg-purple-100', icon: 'star', iconColor: palette.purple500 },
+    { title: 'Streak', sub: '3 Day Streak!', color: 'bg-red-100', icon: 'flame', iconColor: palette.red500 },
+    { title: 'Referral', sub: 'Invite friends', color: 'bg-green-100', icon: 'people', iconColor: palette.green600 },
 ];
 
 export default function SecondaryPromo() {

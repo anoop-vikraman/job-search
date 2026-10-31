@@ -21,6 +21,7 @@ import Animated, {
     withSpring,
     withTiming
 } from 'react-native-reanimated';
+import { palette } from '@tweak/theme';
 import { useConfirmationStore } from '../../store/useConfirmationStore';
 import { themeColors } from '../../themes/colors';
 
@@ -480,7 +481,7 @@ export default function CustomVoiceRecorder({ uri, onRecordingComplete, label = 
             <View className="flex-row items-center bg-white border border-gray-200 rounded-2xl px-2 py-2 gap-2 min-h-[56px]">
                 {/* Delete Button */}
                 <TouchableOpacity onPress={confirmDelete} className="p-2" accessibilityRole="button" accessibilityLabel="Delete recording">
-                    <MaterialCommunityIcons name="delete-outline" size={24} color="#6B7280" />
+                    <MaterialCommunityIcons name="delete-outline" size={24} color={palette.gray500} />
                 </TouchableOpacity>
 
                 {/* Playback Controls */}
@@ -494,7 +495,7 @@ export default function CustomVoiceRecorder({ uri, onRecordingComplete, label = 
 
                 {/* Waveform */}
                 <View className="flex-1">
-                    {renderWaveform(themeColors.primary, '#D1D5DB', false)}
+                    {renderWaveform(themeColors.primary, palette.gray300, false)}
                 </View>
 
                 {/* Timer */}
@@ -512,7 +513,7 @@ export default function CustomVoiceRecorder({ uri, onRecordingComplete, label = 
                 {/* Red Mic Icon */}
                 <View className="w-10 h-10 bg-red-100 rounded-full justify-center items-center">
                     <Animated.View style={blinkStyle}>
-                        <Ionicons name="mic" size={20} color="#EF4444" />
+                        <Ionicons name="mic" size={20} color={palette.red500} />
                     </Animated.View>
                 </View>
 
@@ -521,12 +522,12 @@ export default function CustomVoiceRecorder({ uri, onRecordingComplete, label = 
 
                 {/* Waveform */}
                 <View className="flex-1 mx-2">
-                    {renderWaveform('#EF4444', '#FCA5A5', true)}
+                    {renderWaveform(palette.red500, palette.red300, true)}
                 </View>
 
                 {/* Delete Button */}
                 <TouchableOpacity onPress={cancelRecording} className="p-2" accessibilityRole="button" accessibilityLabel="Delete recording">
-                    <MaterialCommunityIcons name="delete-outline" size={24} color="#EF4444" />
+                    <MaterialCommunityIcons name="delete-outline" size={24} color={palette.red500} />
                 </TouchableOpacity>
 
                 {/* Stop Button */}
@@ -558,7 +559,7 @@ export default function CustomVoiceRecorder({ uri, onRecordingComplete, label = 
                                 width: 8,
                                 height: 8,
                                 borderRadius: 4,
-                                backgroundColor: '#EF4444'
+                                backgroundColor: palette.red500
                             }]}
                         />
                         <Text className="text-sm text-gray-900 font-mono font-bold">{durationStr}</Text>
@@ -572,7 +573,7 @@ export default function CustomVoiceRecorder({ uri, onRecordingComplete, label = 
                             style={[cancelAnimatedStyle]}
                             className="flex-row items-center gap-1"
                         >
-                            <Entypo name="chevron-left" size={20} color="#9CA3AF" />
+                            <Entypo name="chevron-left" size={20} color={palette.gray400} />
                             <Text className="text-gray-400 text-sm">Slide to cancel</Text>
                         </Animated.View>
 
@@ -580,7 +581,7 @@ export default function CustomVoiceRecorder({ uri, onRecordingComplete, label = 
                         <Animated.View
                             style={[deleteIconAnimatedStyle, { position: 'absolute' }]}
                         >
-                            <MaterialCommunityIcons name="delete" size={28} color="#EF4444" />
+                            <MaterialCommunityIcons name="delete" size={28} color={palette.red500} />
                         </Animated.View>
                     </View>
                 )}
@@ -625,9 +626,9 @@ export default function CustomVoiceRecorder({ uri, onRecordingComplete, label = 
                     pointerEvents="none"
                 >
                     <View className="bg-white p-2 rounded-full shadow-lg border border-gray-200 mb-1">
-                        <MaterialCommunityIcons name="lock-open-outline" size={20} color="#374151" />
+                        <MaterialCommunityIcons name="lock-open-outline" size={20} color={palette.gray700} />
                     </View>
-                    <Entypo name="chevron-up" size={18} color="#9CA3AF" />
+                    <Entypo name="chevron-up" size={18} color={palette.gray400} />
                 </Animated.View>
             )}
         </View>

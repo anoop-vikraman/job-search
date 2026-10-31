@@ -1,6 +1,7 @@
 import { Ionicons } from '@expo/vector-icons';
 import React from 'react';
 import { Text, View } from 'react-native';
+import { palette } from '@tweak/theme';
 import { themeColors } from '../../themes/colors';
 import CustomButton from '../UI/CustomButton';
 
@@ -46,7 +47,7 @@ export default function LocationConfirmSheet({
             </View>
 
             <View className="bg-orange-50/80 p-3 rounded-xl flex-row items-center mb-5 border border-orange-100/50">
-                <Ionicons name="flash" size={14} color="#f59e0b" />
+                <Ionicons name="flash" size={14} color={palette.amber500} />
                 <Text className="text-orange-800 text-[10px] ml-2 font-medium">
                     Applicants will navigate exactly to this pin.
                 </Text>

@@ -4,6 +4,7 @@ import React from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import { StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import { z } from 'zod';
+import { palette } from '@tweak/theme';
 import ActionSheetModal from '../UI/ActionSheetModal';
 import CustomButton from '../UI/CustomButton';
 import { StandardInput } from '../UI/StandardInput';
@@ -251,7 +252,7 @@ export default function LocationAddressModal({
                                                 opt.value === 'Friends' ? 'people' : 'location'
                                     }
                                     size={18}
-                                    color={saveAs === opt.value ? 'white' : '#666'}
+                                    color={saveAs === opt.value ? 'white' : palette.gray500}
                                     style={{ marginRight: 8 }}
                                 />
                                 <Text style={[
@@ -310,7 +311,7 @@ export default function LocationAddressModal({
                         )}
                     />
                     <View className="flex-row items-center mt-2 px-1">
-                        <Ionicons name="lock-closed" size={12} color="#999" />
+                        <Ionicons name="lock-closed" size={12} color={palette.gray400} />
                         <Text className="text-gray-400 text-[10px] ml-1">
                             Only visible to confirmed applicants.
                         </Text>
@@ -340,9 +341,9 @@ const styles = StyleSheet.create({
         borderWidth: 2,
     },
     chipActive: {
-        backgroundColor: '#6366f1',
-        borderColor: '#6366f1',
-        shadowColor: '#6366f1',
+        backgroundColor: palette.indigo500,
+        borderColor: palette.indigo500,
+        shadowColor: palette.indigo500,
         shadowOffset: { width: 0, height: 4 },
         shadowOpacity: 0.3,
         shadowRadius: 8,
@@ -350,7 +351,7 @@ const styles = StyleSheet.create({
     },
     chipInactive: {
         backgroundColor: 'white',
-        borderColor: '#f3f4f6',
+        borderColor: palette.gray100,
     },
     chipText: {
         fontWeight: 'bold',
@@ -359,6 +360,6 @@ const styles = StyleSheet.create({
         color: 'white',
     },
     chipTextInactive: {
-        color: '#374151',
+        color: palette.gray700,
     },
 });

@@ -2,6 +2,7 @@ import { Ionicons } from '@expo/vector-icons';
 import DateTimePicker, { DateTimePickerEvent } from '@react-native-community/datetimepicker';
 import React, { useState } from 'react';
 import { Modal, Platform, StyleProp, Text, TouchableOpacity, TouchableWithoutFeedback, View, ViewStyle } from 'react-native';
+import { palette } from '@tweak/theme';
 import { themeColors } from '../../themes/colors';
 
 interface Props {
@@ -69,7 +70,7 @@ export default function CustomDatePicker({
                 onPress={handleOpen}
                 className="flex-row items-center border rounded-2xl px-4 py-3 bg-gray-50 h-[52px] justify-between"
                 style={{
-                    borderColor: value ? themeColors.primary : '#F3F4F6',
+                    borderColor: value ? themeColors.primary : palette.gray100,
                     borderWidth: 1
                 }}
             >
@@ -79,7 +80,7 @@ export default function CustomDatePicker({
                 <Ionicons
                     name="calendar-outline"
                     size={20}
-                    color={value ? themeColors.primary : "#6B7280"}
+                    color={value ? themeColors.primary : palette.gray500}
                 />
             </TouchableOpacity>
 
@@ -108,7 +109,7 @@ export default function CustomDatePicker({
                                             }}
                                             minimumDate={minimumDate}
                                             maximumDate={maximumDate}
-                                            textColor="#000000"
+                                            textColor={palette.black}
                                         />
                                     </View>
 

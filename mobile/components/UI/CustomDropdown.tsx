@@ -1,4 +1,5 @@
 import { AntDesign, Ionicons } from '@expo/vector-icons';
+import { palette } from '@tweak/theme';
 import React, { useState } from 'react';
 import {
     Modal,
@@ -112,7 +113,7 @@ export default function CustomDropdown({
 
     return (
         <View style={[{ width: '100%', marginBottom: 16 }, containerStyle]}>
-            <Text style={{ color: '#9CA3AF', fontSize: 10, fontWeight: 'bold', marginBottom: 4, textTransform: 'uppercase', letterSpacing: 1.5, paddingHorizontal: 4 }}>
+            <Text style={{ color: palette.gray400, fontSize: 10, fontWeight: 'bold', marginBottom: 4, textTransform: 'uppercase', letterSpacing: 1.5, paddingHorizontal: 4 }}>
                 {label}
             </Text>
 
@@ -122,11 +123,11 @@ export default function CustomDropdown({
                     flexDirection: 'row',
                     alignItems: 'center',
                     borderWidth: 1,
-                    borderColor: '#F3F4F6',
+                    borderColor: palette.gray100,
                     borderRadius: 16,
                     paddingHorizontal: 8,
                     paddingVertical: 8,
-                    backgroundColor: '#F9FAFB',
+                    backgroundColor: palette.gray50,
                     minHeight: 52,
                     justifyContent: 'space-between'
                 }}
@@ -163,7 +164,7 @@ export default function CustomDropdown({
                             );
                         })
                     ) : (
-                        <Text style={{ fontSize: 16, marginLeft: 8, paddingVertical: 8, color: (!value || (Array.isArray(value) && value.length === 0)) ? '#9CA3AF' : '#1F2937' }}>
+                        <Text style={{ fontSize: 16, marginLeft: 8, paddingVertical: 8, color: (!value || (Array.isArray(value) && value.length === 0)) ? palette.gray400 : palette.gray800 }}>
                             {getDisplayValue() || placeholder}
                         </Text>
                     )}
@@ -171,7 +172,7 @@ export default function CustomDropdown({
 
                 {(!Array.isArray(value) || value.length === 0) && (
                     <View style={{ marginLeft: 8, paddingRight: 4 }}>
-                        <Ionicons name="chevron-down" size={18} color="#6B7280" />
+                        <Ionicons name="chevron-down" size={18} color={palette.gray500} />
                     </View>
                 )}
             </TouchableOpacity>
@@ -191,20 +192,20 @@ export default function CustomDropdown({
                                 <View className="flex-row justify-between items-center px-6 py-4 border-b border-gray-100">
                                     <Text className="text-lg font-bold" style={{ color: themeColors.primary }}>{label}</Text>
                                     <TouchableOpacity onPress={() => setVisible(false)} accessibilityRole="button" accessibilityLabel="Close">
-                                        <AntDesign name="close" size={24} color="#374151" />
+                                        <AntDesign name="close" size={24} color={palette.gray700} />
                                     </TouchableOpacity>
                                 </View>
 
                                 {/* Search Bar */}
                                 <View className="px-4 py-2">
                                     <View className="flex-row items-center bg-gray-100 rounded-lg px-3 py-2">
-                                        <Ionicons name="search" size={20} color="#9CA3AF" />
+                                        <Ionicons name="search" size={20} color={palette.gray400} />
                                         <TextInput
                                             className="flex-1 ml-2 text-base text-gray-800"
                                             placeholder="Search..."
                                             value={searchText}
                                             onChangeText={setSearchText}
-                                            placeholderTextColor="#9CA3AF"
+                                            placeholderTextColor={palette.gray400}
                                             autoFocus={true} // Auto focus
                                             onSubmitEditing={handleSearchSubmit} // Enter to select
                                             returnKeyType="done"
@@ -225,7 +226,7 @@ export default function CustomDropdown({
                                                     onPress={() => handleSelect(item.value)}
                                                     className={`flex-row justify-between items-center py-4 border-b border-gray-50 ${active ? 'bg-blue-50/50 -mx-4 px-4' : ''}`}
                                                 >
-                                                    <Text className="text-base" style={active ? { fontWeight: 'bold', color: themeColors.primary } : { color: '#374151' }}>
+                                                    <Text className="text-base" style={active ? { fontWeight: 'bold', color: themeColors.primary } : { color: palette.gray700 }}>
                                                         {item.label}
                                                     </Text>
                                                     {active && (

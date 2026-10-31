@@ -16,6 +16,7 @@ import { FeatureFlags } from '../../constants/featureFlags';
 import { useAppStore } from '../../store/useAppStore';
 import { useConfirmationStore } from '../../store/useConfirmationStore';
 import { useCreateTweakStore } from '../../store/useCreateTweakStore';
+import { palette } from '@tweak/theme';
 
 const schema = z.object({
     description: z.string().min(1, 'Please enter a description for your tweak'),
@@ -262,7 +263,7 @@ export default function DetailsPage() {
                         <View className="bg-white rounded-t-3xl p-6">
                             <Text className="text-lg font-bold text-gray-900 mb-2">Add Custom Skill</Text>
                             <View className="bg-yellow-50 p-4 rounded-xl border border-yellow-100 flex-row items-start mb-4">
-                                <Ionicons name="alert-circle" size={20} color="#EAB308" style={{ marginTop: 2 }} />
+                                <Ionicons name="alert-circle" size={20} color={palette.yellow500} style={{ marginTop: 2 }} />
                                 <Text className="text-yellow-800 ml-2 flex-1 text-sm">
                                     Your suggestion will be reviewed. You can add multiple skills separated by commas (e.g. Painting, Masonry).
                                 </Text>

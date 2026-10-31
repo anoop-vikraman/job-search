@@ -2,6 +2,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
 import React from 'react';
 import { Text, TouchableOpacity, View } from 'react-native';
+import { palette } from '@tweak/theme';
 import { useCreateTweakStore } from '../../store/useCreateTweakStore';
 
 export default function ServiceGrid() {
@@ -29,7 +30,7 @@ export default function ServiceGrid() {
                     className="flex-1 bg-white p-4 rounded-3xl shadow-sm border border-gray-100 min-h-[160px] justify-between"
                 >
                     <View className="bg-blue-100 w-12 h-12 rounded-full items-center justify-center mb-2">
-                        <Ionicons name="laptop-outline" size={24} color="#3B82F6" />
+                        <Ionicons name="laptop-outline" size={24} color={palette.blue500} />
                     </View>
                     <View>
                         <Text className="text-xl font-bold text-gray-900 leading-6 mb-1">Remote{'\n'}Tweak</Text>
@@ -43,7 +44,7 @@ export default function ServiceGrid() {
                     className="flex-1 bg-white p-4 rounded-3xl shadow-sm border border-gray-100 min-h-[160px] justify-between"
                 >
                     <View className="bg-orange-100 w-12 h-12 rounded-full items-center justify-center mb-2">
-                        <Ionicons name="location" size={24} color="#F97316" />
+                        <Ionicons name="location" size={24} color={palette.orange500} />
                     </View>
                     <View>
                         <Text className="text-xl font-bold text-gray-900 leading-6 mb-1">On-site{'\n'}Tweak</Text>
@@ -59,7 +60,7 @@ export default function ServiceGrid() {
                     className="flex-1 bg-white p-4 rounded-3xl shadow-sm border border-gray-100 min-h-[160px] justify-between"
                 >
                     <View className="bg-purple-100 w-12 h-12 rounded-full items-center justify-center mb-2">
-                        <Ionicons name="search" size={24} color="#9333EA" />
+                        <Ionicons name="search" size={24} color={palette.purple600} />
                     </View>
                     <View>
                         <Text className="text-lg font-bold text-gray-900 leading-5 mb-1">Apply for{'\n'}Tweaks</Text>
@@ -73,7 +74,7 @@ export default function ServiceGrid() {
                     className="flex-1 bg-white p-4 rounded-3xl shadow-sm border border-gray-100 min-h-[160px] justify-between"
                 >
                     <View className="bg-green-100 w-12 h-12 rounded-full items-center justify-center mb-2">
-                        <Ionicons name="briefcase" size={24} color="#10B981" />
+                        <Ionicons name="briefcase" size={24} color={palette.green600} />
                     </View>
                     <View>
                         <Text className="text-lg font-bold text-gray-900 leading-5 mb-1">Permanent{'\n'}Jobs</Text>

@@ -1,4 +1,5 @@
 import { Ionicons } from '@expo/vector-icons';
+import { palette } from '@tweak/theme';
 import React, { useEffect, useState } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 import Animated, { FadeInUp, FadeOutUp } from 'react-native-reanimated';
@@ -50,10 +51,10 @@ export default function ToastManager() {
 
     const getColors = () => {
         switch (currentToast.type) {
-            case 'success': return { bg: '#10B981', icon: 'checkmark-circle' };
-            case 'error': return { bg: '#EF4444', icon: 'alert-circle' };
-            case 'warning': return { bg: '#F59E0B', icon: 'warning' };
-            case 'info': default: return { bg: '#3B82F6', icon: 'information-circle' };
+            case 'success': return { bg: palette.green600, icon: 'checkmark-circle' };
+            case 'error': return { bg: palette.red500, icon: 'alert-circle' };
+            case 'warning': return { bg: palette.amber500, icon: 'warning' };
+            case 'info': default: return { bg: palette.blue500, icon: 'information-circle' };
         }
     };
 
@@ -89,7 +90,7 @@ const styles = StyleSheet.create({
         paddingVertical: 12,
         borderRadius: 50,
         gap: 10,
-        shadowColor: '#000',
+        shadowColor: palette.black,
         shadowOffset: { width: 0, height: 4 },
         shadowOpacity: 0.15,
         shadowRadius: 8,

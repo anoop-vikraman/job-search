@@ -4,6 +4,7 @@ import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import ActionSheetModal from '../UI/ActionSheetModal';
 import CustomButton from '../UI/CustomButton';
 
+import { palette } from '@tweak/theme';
 import { SourceSurveyModalProps } from '../../types/auth';
 import { StandardInput } from '../UI/StandardInput';
 
@@ -71,12 +72,12 @@ export default function SourceSurveyModal({
                             className="w-full flex-row items-center border border-gray-100 bg-gray-50/50 rounded-2xl p-4"
                         >
                             <View className="bg-white p-2 rounded-xl mr-4 shadow-sm">
-                                <Ionicons name={source.icon} size={20} color="#6366f1" />
+                                <Ionicons name={source.icon} size={20} color={palette.indigo500} />
                             </View>
                             <Text className="text-gray-700 text-lg font-medium flex-1">
                                 {source.label}
                             </Text>
-                            <Ionicons name="chevron-forward" size={20} color="#CBD5E1" />
+                            <Ionicons name="chevron-forward" size={20} color={palette.slate300} />
                         </TouchableOpacity>
                     ))}
                 </View>

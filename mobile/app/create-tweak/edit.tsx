@@ -19,6 +19,7 @@ import { useConfirmationStore } from '../../store/useConfirmationStore';
 import { PricingModel, SchedulePreference, useCreateTweakStore } from '../../store/useCreateTweakStore';
 import { themeColors } from '../../themes/colors';
 import { ScheduleSlot } from '../../types/tweak';
+import { palette } from '@tweak/theme';
 
 type MutableViewStyle = { -readonly [K in keyof ViewStyle]: ViewStyle[K] };
 type MutableTextStyle = { -readonly [K in keyof TextStyle]: TextStyle[K] };
@@ -31,15 +32,15 @@ interface DaySlot {
 }
 
 const CATEGORIES: { name: string; icon: keyof typeof Ionicons.glyphMap; color: string }[] = [
-    { name: 'Plumbing', icon: 'water', color: '#3B82F6' },
-    { name: 'Electrical', icon: 'flash', color: '#F59E0B' },
-    { name: 'Cleaning', icon: 'sparkles', color: '#10B981' },
-    { name: 'Moving', icon: 'car', color: '#6366F1' },
-    { name: 'Painting', icon: 'color-palette', color: '#EC4899' },
-    { name: 'Writing', icon: 'document-text', color: '#8B5CF6' },
-    { name: 'Design', icon: 'brush', color: '#F97316' },
-    { name: 'Coding', icon: 'code-slash', color: '#14B8A6' },
-    { name: 'Others', icon: 'add', color: '#9CA3AF' }
+    { name: 'Plumbing', icon: 'water', color: palette.blue500 },
+    { name: 'Electrical', icon: 'flash', color: palette.amber500 },
+    { name: 'Cleaning', icon: 'sparkles', color: palette.green600 },
+    { name: 'Moving', icon: 'car', color: palette.indigo500 },
+    { name: 'Painting', icon: 'color-palette', color: palette.pink500 },
+    { name: 'Writing', icon: 'document-text', color: palette.purple500 },
+    { name: 'Design', icon: 'brush', color: palette.orange500 },
+    { name: 'Coding', icon: 'code-slash', color: palette.teal500 },
+    { name: 'Others', icon: 'add', color: palette.gray400 }
 ];
 
 const SKILLS_LIST = [
@@ -270,8 +271,8 @@ export default function EditTweak() {
             case 'type':
                 return (
                     <View style={{ width: SCREEN_WIDTH, paddingHorizontal: 24, flex: 1 }}>
-                        <Text style={{ fontSize: 24, fontWeight: 'bold', color: '#111827', marginBottom: 4 }}>How should this be done?</Text>
-                        <Text style={{ color: '#6B7280', marginBottom: 24 }}>Physical presence or online?</Text>
+                        <Text style={{ fontSize: 24, fontWeight: 'bold', color: palette.gray900, marginBottom: 4 }}>How should this be done?</Text>
+                        <Text style={{ color: palette.gray500, marginBottom: 24 }}>Physical presence or online?</Text>
                         <View style={{ gap: 16 }}>
                             <TouchableOpacity
                                 onPress={() => setLocalTweakType('in_person')}
@@ -280,20 +281,20 @@ export default function EditTweak() {
                                     padding: 24,
                                     borderRadius: 32,
                                     borderWidth: 2,
-                                    borderColor: localTweakType === 'in_person' ? '#01C39D' : '#F3F4F6',
-                                    backgroundColor: localTweakType === 'in_person' ? '#01C39D' + '08' : 'white',
+                                    borderColor: localTweakType === 'in_person' ? palette.brand500 : palette.gray100,
+                                    backgroundColor: localTweakType === 'in_person' ? palette.brand500 + '08' : 'white',
                                     overflow: 'hidden',
                                     elevation: localTweakType === 'in_person' ? 0 : 1,
                                     shadowColor: '#000', shadowOffset: { width: 0, height: 1 }, shadowOpacity: localTweakType === 'in_person' ? 0 : 0.05, shadowRadius: 2
                                 }}
                             >
                                 <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                                    <View style={{ backgroundColor: '#FFEDD5', width: 56, height: 56, borderRadius: 28, alignItems: 'center', justifyContent: 'center', marginRight: 20 }}>
-                                        <Ionicons name="location" size={28} color="#F97316" />
+                                    <View style={{ backgroundColor: palette.orange100, width: 56, height: 56, borderRadius: 28, alignItems: 'center', justifyContent: 'center', marginRight: 20 }}>
+                                        <Ionicons name="location" size={28} color={palette.orange500} />
                                     </View>
                                     <View style={{ flex: 1 }}>
-                                        <Text style={{ fontSize: 20, fontWeight: 'bold', color: localTweakType === 'in_person' ? '#01C39D' : '#111827' }}>On-site</Text>
-                                        <Text style={{ color: '#6B7280', fontSize: 13, marginTop: 4 }}>Requires physical presence at a specific location.</Text>
+                                        <Text style={{ fontSize: 20, fontWeight: 'bold', color: localTweakType === 'in_person' ? palette.brand500 : palette.gray900 }}>On-site</Text>
+                                        <Text style={{ color: palette.gray500, fontSize: 13, marginTop: 4 }}>Requires physical presence at a specific location.</Text>
                                     </View>
 
                                     <View style={{
@@ -301,8 +302,8 @@ export default function EditTweak() {
                                         height: 24,
                                         borderRadius: 12,
                                         borderWidth: 2,
-                                        borderColor: localTweakType === 'in_person' ? '#01C39D' : '#D1D5DB',
-                                        backgroundColor: localTweakType === 'in_person' ? '#01C39D' : 'white',
+                                        borderColor: localTweakType === 'in_person' ? palette.brand500 : palette.gray300,
+                                        backgroundColor: localTweakType === 'in_person' ? palette.brand500 : 'white',
                                         alignItems: 'center',
                                         justifyContent: 'center'
                                     }}>
@@ -320,20 +321,20 @@ export default function EditTweak() {
                                     padding: 24,
                                     borderRadius: 32,
                                     borderWidth: 2,
-                                    borderColor: localTweakType === 'remote' ? '#01C39D' : '#F3F4F6',
-                                    backgroundColor: localTweakType === 'remote' ? '#01C39D' + '08' : 'white',
+                                    borderColor: localTweakType === 'remote' ? palette.brand500 : palette.gray100,
+                                    backgroundColor: localTweakType === 'remote' ? palette.brand500 + '08' : 'white',
                                     overflow: 'hidden',
                                     elevation: localTweakType === 'remote' ? 0 : 1,
                                     shadowColor: '#000', shadowOffset: { width: 0, height: 1 }, shadowOpacity: localTweakType === 'remote' ? 0 : 0.05, shadowRadius: 2
                                 }}
                             >
                                 <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                                    <View style={{ backgroundColor: '#DBEAFE', width: 56, height: 56, borderRadius: 28, alignItems: 'center', justifyContent: 'center', marginRight: 20 }}>
-                                        <Ionicons name="laptop-outline" size={28} color="#3B82F6" />
+                                    <View style={{ backgroundColor: palette.blue100, width: 56, height: 56, borderRadius: 28, alignItems: 'center', justifyContent: 'center', marginRight: 20 }}>
+                                        <Ionicons name="laptop-outline" size={28} color={palette.blue500} />
                                     </View>
                                     <View style={{ flex: 1 }}>
-                                        <Text style={{ fontSize: 20, fontWeight: 'bold', color: localTweakType === 'remote' ? '#01C39D' : '#111827' }}>Remote</Text>
-                                        <Text style={{ color: '#6B7280', fontSize: 13, marginTop: 4 }}>Work can be done digitally from anywhere.</Text>
+                                        <Text style={{ fontSize: 20, fontWeight: 'bold', color: localTweakType === 'remote' ? palette.brand500 : palette.gray900 }}>Remote</Text>
+                                        <Text style={{ color: palette.gray500, fontSize: 13, marginTop: 4 }}>Work can be done digitally from anywhere.</Text>
                                     </View>
 
                                     <View style={{
@@ -341,8 +342,8 @@ export default function EditTweak() {
                                         height: 24,
                                         borderRadius: 12,
                                         borderWidth: 2,
-                                        borderColor: localTweakType === 'remote' ? '#01C39D' : '#D1D5DB',
-                                        backgroundColor: localTweakType === 'remote' ? '#01C39D' : 'white',
+                                        borderColor: localTweakType === 'remote' ? palette.brand500 : palette.gray300,
+                                        backgroundColor: localTweakType === 'remote' ? palette.brand500 : 'white',
                                         alignItems: 'center',
                                         justifyContent: 'center'
                                     }}>
@@ -358,13 +359,13 @@ export default function EditTweak() {
             case 'location':
                 return (
                     <View style={{ width: SCREEN_WIDTH, paddingHorizontal: 24, flex: 1 }}>
-                        <Text style={{ fontSize: 24, fontWeight: 'bold', color: '#111827', marginBottom: 4 }}>Where is the tweak?</Text>
-                        <Text style={{ color: '#6B7280', marginBottom: 24 }}>Choose a saved address or add a new one.</Text>
+                        <Text style={{ fontSize: 24, fontWeight: 'bold', color: palette.gray900, marginBottom: 4 }}>Where is the tweak?</Text>
+                        <Text style={{ color: palette.gray500, marginBottom: 24 }}>Choose a saved address or add a new one.</Text>
                         {localTweakType === 'remote' ? (
-                            <View style={{ backgroundColor: '#DBEAFE', padding: 24, borderRadius: 24, borderWidth: 1, borderColor: '#BFDBFE', alignItems: 'center' }}>
+                            <View style={{ backgroundColor: palette.blue100, padding: 24, borderRadius: 24, borderWidth: 1, borderColor: palette.blue200, alignItems: 'center' }}>
                                 <Ionicons name="information-circle-outline" size={40} color={themeColors.primary} />
                                 <Text style={{ fontSize: 20, fontWeight: 'bold', color: themeColors.primary, marginTop: 16 }}>Remote Tweak</Text>
-                                <Text style={{ color: '#1E40AF', textAlign: 'center', marginTop: 8 }}>
+                                <Text style={{ color: palette.blue800, textAlign: 'center', marginTop: 8 }}>
                                     No physical address needed for digital or remote tasks.
                                 </Text>
                             </View>
@@ -386,8 +387,8 @@ export default function EditTweak() {
             case 'category':
                 return (
                     <View style={{ width: SCREEN_WIDTH, paddingHorizontal: 24, flex: 1 }}>
-                        <Text style={{ fontSize: 24, fontWeight: 'bold', color: '#111827', marginBottom: 4 }}>Select category</Text>
-                        <Text style={{ color: '#6B7280', marginBottom: 24 }}>What best describes this task?</Text>
+                        <Text style={{ fontSize: 24, fontWeight: 'bold', color: palette.gray900, marginBottom: 4 }}>Select category</Text>
+                        <Text style={{ color: palette.gray500, marginBottom: 24 }}>What best describes this task?</Text>
                         <View style={{ flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'space-between' }}>
                             {CATEGORIES.map((cat) => (
                                 <TouchableOpacity
@@ -396,11 +397,11 @@ export default function EditTweak() {
                                     activeOpacity={0.9}
                                     style={{
                                         width: '48%',
-                                        backgroundColor: localCategory === cat.name ? '#01C39D' + '08' : 'white',
+                                        backgroundColor: localCategory === cat.name ? palette.brand500 + '08' : 'white',
                                         padding: 16,
                                         borderRadius: 20,
                                         borderWidth: 2,
-                                        borderColor: localCategory === cat.name ? '#01C39D' : '#F3F4F6',
+                                        borderColor: localCategory === cat.name ? palette.brand500 : palette.gray100,
                                         marginBottom: 16,
                                         overflow: 'hidden',
                                         elevation: localCategory === cat.name ? 0 : 1,
@@ -412,12 +413,12 @@ export default function EditTweak() {
                                             <Ionicons name={cat.icon} size={20} color={cat.color} />
                                         </View>
                                         {localCategory === cat.name && (
-                                            <View style={{ width: 22, height: 22, borderRadius: 11, backgroundColor: '#01C39D', alignItems: 'center', justifyContent: 'center' }}>
+                                            <View style={{ width: 22, height: 22, borderRadius: 11, backgroundColor: palette.brand500, alignItems: 'center', justifyContent: 'center' }}>
                                                 <Ionicons name="checkmark" size={14} color="white" />
                                             </View>
                                         )}
                                     </View>
-                                    <Text style={{ fontWeight: 'bold', color: localCategory === cat.name ? '#01C39D' : '#374151', fontSize: 14 }}>{cat.name}</Text>
+                                    <Text style={{ fontWeight: 'bold', color: localCategory === cat.name ? palette.brand500 : palette.gray700, fontSize: 14 }}>{cat.name}</Text>
                                 </TouchableOpacity>
                             ))}
                         </View>
@@ -426,8 +427,8 @@ export default function EditTweak() {
             case 'details':
                 return (
                     <View style={{ width: SCREEN_WIDTH, paddingHorizontal: 24, flex: 1 }}>
-                        <Text style={{ fontSize: 24, fontWeight: 'bold', color: '#111827', marginBottom: 4 }}>Tweak Details</Text>
-                        <Text style={{ color: '#6B7280', marginBottom: 24 }}>Describe what needs to be done.</Text>
+                        <Text style={{ fontSize: 24, fontWeight: 'bold', color: palette.gray900, marginBottom: 4 }}>Tweak Details</Text>
+                        <Text style={{ color: palette.gray500, marginBottom: 24 }}>Describe what needs to be done.</Text>
                         <View style={{ marginBottom: 32 }}>
                             <CustomLabelledField
                                 label="Task Description"
@@ -442,14 +443,14 @@ export default function EditTweak() {
                             />
                         </View>
                         <View style={{ marginBottom: 32 }}>
-                            <Text style={{ fontSize: 10, fontWeight: 'bold', color: '#9CA3AF', textTransform: 'uppercase', letterSpacing: 1.5, marginBottom: 12 }}>Voice Instructions</Text>
+                            <Text style={{ fontSize: 10, fontWeight: 'bold', color: palette.gray400, textTransform: 'uppercase', letterSpacing: 1.5, marginBottom: 12 }}>Voice Instructions</Text>
                             <CustomVoiceRecorder
                                 uri={localAudioUri}
                                 onRecordingComplete={setLocalAudioUri}
                             />
                         </View>
                         <View style={{ marginBottom: 32 }}>
-                            <Text style={{ fontSize: 10, fontWeight: 'bold', color: '#9CA3AF', textTransform: 'uppercase', letterSpacing: 1.5, marginBottom: 12 }}>Photos</Text>
+                            <Text style={{ fontSize: 10, fontWeight: 'bold', color: palette.gray400, textTransform: 'uppercase', letterSpacing: 1.5, marginBottom: 12 }}>Photos</Text>
                             <CustomImageUploader
                                 images={localImages}
                                 onImagesChange={setLocalImages}
@@ -479,13 +480,13 @@ export default function EditTweak() {
             case 'timeline':
                 return (
                     <View style={{ width: SCREEN_WIDTH, paddingHorizontal: 24, flex: 1 }}>
-                        <Text style={{ fontSize: 24, fontWeight: 'bold', color: '#111827', marginBottom: 4 }}>Select Timeline</Text>
-                        <Text style={{ color: '#6B7280', marginBottom: 32 }}>Choose a scheduling preference.</Text>
+                        <Text style={{ fontSize: 24, fontWeight: 'bold', color: palette.gray900, marginBottom: 4 }}>Select Timeline</Text>
+                        <Text style={{ color: palette.gray500, marginBottom: 32 }}>Choose a scheduling preference.</Text>
                         <View style={{ gap: 16 }}>
                             {([
-                                { id: 'one_day', icon: 'calendar', title: 'Single Day Job', description: 'Best for quick tasks done in one visit.', color: '#3B82F6' },
-                                { id: 'deadline', icon: 'timer-outline', title: 'By a Deadline', description: 'Task must be completed by a specific date.', color: '#EC4899' },
-                                { id: 'few_days', icon: 'calendar-number-outline', title: 'Multi-day Project', description: 'Ideal for larger jobs spanning several days.', color: '#10B981' },
+                                { id: 'one_day', icon: 'calendar', title: 'Single Day Job', description: 'Best for quick tasks done in one visit.', color: palette.blue500 },
+                                { id: 'deadline', icon: 'timer-outline', title: 'By a Deadline', description: 'Task must be completed by a specific date.', color: palette.pink500 },
+                                { id: 'few_days', icon: 'calendar-number-outline', title: 'Multi-day Project', description: 'Ideal for larger jobs spanning several days.', color: palette.green600 },
                             ] as { id: string; icon: keyof typeof Ionicons.glyphMap; title: string; description: string; color: string }[]).map((item) => (
                                 <TouchableOpacity
                                     key={item.id}
@@ -506,10 +507,10 @@ export default function EditTweak() {
                                         flexDirection: 'row',
                                         alignItems: 'center',
                                         padding: 20,
-                                        backgroundColor: localSchedulePreference === item.id ? '#01C39D' + '08' : 'white',
+                                        backgroundColor: localSchedulePreference === item.id ? palette.brand500 + '08' : 'white',
                                         borderRadius: 24,
                                         borderWidth: 2,
-                                        borderColor: localSchedulePreference === item.id ? '#01C39D' : '#F3F4F6',
+                                        borderColor: localSchedulePreference === item.id ? palette.brand500 : palette.gray100,
                                         marginBottom: 16,
                                         overflow: 'hidden',
                                         elevation: localSchedulePreference === item.id ? 0 : 1,
@@ -520,8 +521,8 @@ export default function EditTweak() {
                                         <Ionicons name={item.icon} size={22} color={item.color} />
                                     </View>
                                     <View style={{ flex: 1 }}>
-                                        <Text style={{ fontSize: 16, fontWeight: 'bold', color: localSchedulePreference === item.id ? '#01C39D' : '#111827' }}>{item.title}</Text>
-                                        <Text style={{ fontSize: 12, color: '#6B7280', marginTop: 2 }}>{item.description}</Text>
+                                        <Text style={{ fontSize: 16, fontWeight: 'bold', color: localSchedulePreference === item.id ? palette.brand500 : palette.gray900 }}>{item.title}</Text>
+                                        <Text style={{ fontSize: 12, color: palette.gray500, marginTop: 2 }}>{item.description}</Text>
                                     </View>
 
                                     <View style={{
@@ -529,8 +530,8 @@ export default function EditTweak() {
                                         height: 24,
                                         borderRadius: 12,
                                         borderWidth: 2,
-                                        borderColor: localSchedulePreference === item.id ? '#01C39D' : '#D1D5DB',
-                                        backgroundColor: localSchedulePreference === item.id ? '#01C39D' : 'white',
+                                        borderColor: localSchedulePreference === item.id ? palette.brand500 : palette.gray300,
+                                        backgroundColor: localSchedulePreference === item.id ? palette.brand500 : 'white',
                                         alignItems: 'center',
                                         justifyContent: 'center'
                                     }}>
@@ -549,26 +550,26 @@ export default function EditTweak() {
                         case 'one_day':
                             return (
                                 <View>
-                                    <View style={{ backgroundColor: '#EFF6FF', padding: 12, borderRadius: 16, borderWidth: 1, borderColor: '#BFDBFE', flexDirection: 'row', alignItems: 'center', marginBottom: 12 }}>
-                                        <Ionicons name="information-circle" size={18} color="#3B82F6" />
-                                        <Text style={{ fontSize: 13, color: '#1E40AF', marginLeft: 8, flex: 1 }}>
+                                    <View style={{ backgroundColor: palette.blue50, padding: 12, borderRadius: 16, borderWidth: 1, borderColor: palette.blue200, flexDirection: 'row', alignItems: 'center', marginBottom: 12 }}>
+                                        <Ionicons name="information-circle" size={18} color={palette.blue500} />
+                                        <Text style={{ fontSize: 13, color: palette.blue800, marginLeft: 8, flex: 1 }}>
                                             Tap the month/year to change them
                                         </Text>
                                     </View>
 
-                                    <View style={{ backgroundColor: 'white', borderRadius: 24, borderWidth: 1, borderColor: showValidation && !selectedDate ? '#EF4444' : '#F3F4F6', marginBottom: 16, overflow: 'hidden', elevation: 1, shadowColor: '#000', shadowOffset: { width: 0, height: 1 }, shadowOpacity: 0.05, shadowRadius: 2 }}>
+                                    <View style={{ backgroundColor: 'white', borderRadius: 24, borderWidth: 1, borderColor: showValidation && !selectedDate ? palette.red500 : palette.gray100, marginBottom: 16, overflow: 'hidden', elevation: 1, shadowColor: '#000', shadowOffset: { width: 0, height: 1 }, shadowOpacity: 0.05, shadowRadius: 2 }}>
                                         <View style={{ paddingHorizontal: 16, paddingBottom: 16 }}>
                                             <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: 8, paddingTop: 12, paddingBottom: 4 }}>
                                                 {isCurrentMonth ? <View style={{ width: 36 }} /> : (
                                                     <TouchableOpacity onPress={goPrevMonth} style={{ padding: 8 }} accessibilityRole="button" accessibilityLabel="Previous month">
-                                                        <Ionicons name="chevron-back" size={20} color="#01C39D" />
+                                                        <Ionicons name="chevron-back" size={20} color={palette.brand500} />
                                                     </TouchableOpacity>
                                                 )}
-                                                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#1F2937' }}>
+                                                <Text style={{ fontSize: 16, fontWeight: 'bold', color: palette.gray800 }}>
                                                     {dayjs().month(calMonth).year(calYear).format('MMMM YYYY')}
                                                 </Text>
                                                 <TouchableOpacity onPress={goNextMonth} style={{ padding: 8 }} accessibilityRole="button" accessibilityLabel="Next month">
-                                                    <Ionicons name="chevron-forward" size={20} color="#01C39D" />
+                                                    <Ionicons name="chevron-forward" size={20} color={palette.brand500} />
                                                 </TouchableOpacity>
                                             </View>
                                             <DateTimePicker
@@ -606,18 +607,18 @@ export default function EditTweak() {
 
                                                         const textStyle: MutableTextStyle = {
                                                             fontSize: 14,
-                                                            color: isBeforeToday ? '#D1D5DB' : '#374151',
+                                                            color: isBeforeToday ? palette.gray300 : palette.gray700,
                                                             fontWeight: '500'
                                                         };
 
                                                         if (isSelected) {
-                                                            containerStyle.backgroundColor = '#01C39D';
-                                                            textStyle.color = '#FFFFFF';
+                                                            containerStyle.backgroundColor = palette.brand500;
+                                                            textStyle.color = palette.white;
                                                             textStyle.fontWeight = 'bold';
                                                         } else if (isToday) {
                                                             containerStyle.borderWidth = 1;
-                                                            containerStyle.borderColor = '#01C39D';
-                                                            textStyle.color = '#01C39D';
+                                                            containerStyle.borderColor = palette.brand500;
+                                                            textStyle.color = palette.brand500;
                                                             textStyle.fontWeight = 'bold';
                                                         }
 
@@ -641,9 +642,9 @@ export default function EditTweak() {
                                             />
                                         </View>
                                         {selectedDate && (
-                                            <View style={{ backgroundColor: '#F9FAFB', borderTopWidth: 1, borderTopColor: '#F3F4F6', paddingVertical: 8, alignItems: 'center' }}>
-                                                <Text style={{ fontSize: 10, color: '#6B7280', fontWeight: 'bold', textTransform: 'uppercase', letterSpacing: 1.2 }}>
-                                                    Selected: <Text style={{ color: '#01C39D' }}>{selectedDate.format('MMMM DD, YYYY')}</Text>
+                                            <View style={{ backgroundColor: palette.gray50, borderTopWidth: 1, borderTopColor: palette.gray100, paddingVertical: 8, alignItems: 'center' }}>
+                                                <Text style={{ fontSize: 10, color: palette.gray500, fontWeight: 'bold', textTransform: 'uppercase', letterSpacing: 1.2 }}>
+                                                    Selected: <Text style={{ color: palette.brand500 }}>{selectedDate.format('MMMM DD, YYYY')}</Text>
                                                 </Text>
                                             </View>
                                         )}
@@ -654,23 +655,23 @@ export default function EditTweak() {
                                             {timeSlots.length === 0 ? (
                                                 <TouchableOpacity
                                                     onPress={() => setTimeSlots([{ start: '09:00', end: '17:00' }])}
-                                                    style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'center', paddingVertical: 16, backgroundColor: 'white', borderRadius: 20, borderWidth: 2, borderStyle: 'dashed', borderColor: '#E5E7EB' }}
+                                                    style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'center', paddingVertical: 16, backgroundColor: 'white', borderRadius: 20, borderWidth: 2, borderStyle: 'dashed', borderColor: palette.gray200 }}
                                                 >
-                                                    <View style={{ backgroundColor: '#01C39D', borderRadius: 8, padding: 6, marginRight: 10 }}>
+                                                    <View style={{ backgroundColor: palette.brand500, borderRadius: 8, padding: 6, marginRight: 10 }}>
                                                         <Ionicons name="time" size={18} color="white" />
                                                     </View>
-                                                    <Text style={{ color: '#01C39D', fontWeight: 'bold' }}>Add Available Time</Text>
+                                                    <Text style={{ color: palette.brand500, fontWeight: 'bold' }}>Add Available Time</Text>
                                                 </TouchableOpacity>
                                             ) : (
                                                 <View>
                                                     {timeSlots.map((slot, index) => (
                                                         <View key={index} style={{
-                                                            marginBottom: 12, padding: 16, borderRadius: 20, backgroundColor: 'white', borderWidth: 1, borderColor: '#F3F4F6',
+                                                            marginBottom: 12, padding: 16, borderRadius: 20, backgroundColor: 'white', borderWidth: 1, borderColor: palette.gray100,
                                                             elevation: 1, shadowColor: '#000', shadowOffset: { width: 0, height: 1 }, shadowOpacity: 0.05, shadowRadius: 2
                                                         }}>
                                                             <View style={{ flexDirection: 'row', alignItems: 'center', gap: 12 }}>
                                                                 <View style={{ flex: 1 }}>
-                                                                    <Text style={{ fontSize: 10, fontWeight: 'bold', color: '#9CA3AF', marginBottom: 4, letterSpacing: 1 }}>START</Text>
+                                                                    <Text style={{ fontSize: 10, fontWeight: 'bold', color: palette.gray400, marginBottom: 4, letterSpacing: 1 }}>START</Text>
                                                                     <CustomTimePickerInput
                                                                         value={slot.start}
                                                                         onChange={(t) => {
@@ -680,9 +681,9 @@ export default function EditTweak() {
                                                                         }}
                                                                     />
                                                                 </View>
-                                                                <Text style={{ marginTop: 20, color: '#D1D5DB' }}>-</Text>
+                                                                <Text style={{ marginTop: 20, color: palette.gray300 }}>-</Text>
                                                                 <View style={{ flex: 1 }}>
-                                                                    <Text style={{ fontSize: 10, fontWeight: 'bold', color: '#9CA3AF', marginBottom: 4, letterSpacing: 1 }}>END</Text>
+                                                                    <Text style={{ fontSize: 10, fontWeight: 'bold', color: palette.gray400, marginBottom: 4, letterSpacing: 1 }}>END</Text>
                                                                     <CustomTimePickerInput
                                                                         value={slot.end}
                                                                         onChange={(t) => {
@@ -702,16 +703,16 @@ export default function EditTweak() {
                                                                         width: 32,
                                                                         height: 32,
                                                                         borderRadius: 10,
-                                                                        backgroundColor: '#FEF2F2',
+                                                                        backgroundColor: palette.red50,
                                                                         justifyContent: 'center',
                                                                         alignItems: 'center',
                                                                         borderWidth: 1,
-                                                                        borderColor: '#FEE2E2'
+                                                                        borderColor: palette.red100
                                                                     }}
                                                                     accessibilityRole="button"
                                                                     accessibilityLabel="Remove time slot"
                                                                 >
-                                                                    <Ionicons name="close" size={18} color="#EF4444" />
+                                                                    <Ionicons name="close" size={18} color={palette.red500} />
                                                                 </TouchableOpacity>
                                                             </View>
                                                         </View>
@@ -719,10 +720,10 @@ export default function EditTweak() {
                                                     {timeSlots.length < 3 && (
                                                         <TouchableOpacity
                                                             onPress={() => setTimeSlots([...timeSlots, { start: '09:00', end: '17:00' }])}
-                                                            style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'center', paddingVertical: 12, backgroundColor: '#01C39D' + '08', borderRadius: 16, borderWidth: 1, borderColor: '#01C39D' + '30', borderStyle: 'dashed' }}
+                                                            style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'center', paddingVertical: 12, backgroundColor: palette.brand500 + '08', borderRadius: 16, borderWidth: 1, borderColor: palette.brand500 + '30', borderStyle: 'dashed' }}
                                                         >
-                                                            <Ionicons name="add" size={18} color="#01C39D" style={{ marginRight: 6 }} />
-                                                            <Text style={{ color: '#01C39D', fontWeight: 'bold', fontSize: 14 }}>Add Another Slot</Text>
+                                                            <Ionicons name="add" size={18} color={palette.brand500} style={{ marginRight: 6 }} />
+                                                            <Text style={{ color: palette.brand500, fontWeight: 'bold', fontSize: 14 }}>Add Another Slot</Text>
                                                         </TouchableOpacity>
                                                     )}
                                                 </View>
@@ -734,19 +735,19 @@ export default function EditTweak() {
                         case 'deadline':
                             return (
                                 <View>
-                                    <View style={{ backgroundColor: 'white', borderRadius: 24, borderWidth: 1, borderColor: showValidation && !selectedDate ? '#EF4444' : '#F3F4F6', marginBottom: 16, overflow: 'hidden', elevation: 1 }}>
+                                    <View style={{ backgroundColor: 'white', borderRadius: 24, borderWidth: 1, borderColor: showValidation && !selectedDate ? palette.red500 : palette.gray100, marginBottom: 16, overflow: 'hidden', elevation: 1 }}>
                                         <View style={{ paddingHorizontal: 16, paddingBottom: 16 }}>
                                             <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: 8, paddingTop: 12, paddingBottom: 4 }}>
                                                 {isCurrentMonth ? <View style={{ width: 36 }} /> : (
                                                     <TouchableOpacity onPress={goPrevMonth} style={{ padding: 8 }} accessibilityRole="button" accessibilityLabel="Previous month">
-                                                        <Ionicons name="chevron-back" size={20} color="#01C39D" />
+                                                        <Ionicons name="chevron-back" size={20} color={palette.brand500} />
                                                     </TouchableOpacity>
                                                 )}
-                                                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#1F2937' }}>
+                                                <Text style={{ fontSize: 16, fontWeight: 'bold', color: palette.gray800 }}>
                                                     {dayjs().month(calMonth).year(calYear).format('MMMM YYYY')}
                                                 </Text>
                                                 <TouchableOpacity onPress={goNextMonth} style={{ padding: 8 }} accessibilityRole="button" accessibilityLabel="Next month">
-                                                    <Ionicons name="chevron-forward" size={20} color="#01C39D" />
+                                                    <Ionicons name="chevron-forward" size={20} color={palette.brand500} />
                                                 </TouchableOpacity>
                                             </View>
                                             <DateTimePicker
@@ -799,22 +800,22 @@ export default function EditTweak() {
 
                                                         const textStyle: MutableTextStyle = {
                                                             fontSize: 14,
-                                                            color: isBeforeToday ? '#D1D5DB' : '#374151',
+                                                            color: isBeforeToday ? palette.gray300 : palette.gray700,
                                                             fontWeight: '500'
                                                         };
 
                                                         if (isDeadline) {
-                                                            containerStyle.backgroundColor = '#01C39D';
-                                                            textStyle.color = '#FFFFFF';
+                                                            containerStyle.backgroundColor = palette.brand500;
+                                                            textStyle.color = palette.white;
                                                             textStyle.fontWeight = 'bold';
                                                         } else if (slot) {
                                                             containerStyle.borderWidth = 1;
-                                                            containerStyle.borderColor = slot.status === 'modified' ? '#10B981' : '#01C39D';
+                                                            containerStyle.borderColor = slot.status === 'modified' ? palette.green600 : palette.brand500;
                                                             textStyle.fontWeight = '600';
                                                         } else if (isToday) {
                                                             containerStyle.borderWidth = 1;
-                                                            containerStyle.borderColor = '#01C39D';
-                                                            textStyle.color = '#01C39D';
+                                                            containerStyle.borderColor = palette.brand500;
+                                                            textStyle.color = palette.brand500;
                                                             textStyle.fontWeight = 'bold';
                                                         }
 
@@ -853,9 +854,9 @@ export default function EditTweak() {
                                             />
                                         </View>
                                         {selectedDate && (
-                                            <View style={{ backgroundColor: '#F0FDF4', borderTopWidth: 1, borderTopColor: '#DCFCE7', paddingVertical: 8, alignItems: 'center' }}>
-                                                <Text style={{ fontSize: 10, color: '#166534', fontWeight: 'bold', textTransform: 'uppercase' }}>
-                                                    Deadline: <Text style={{ color: '#01C39D' }}>{selectedDate.format('MMMM DD, YYYY')}</Text>
+                                            <View style={{ backgroundColor: palette.green50, borderTopWidth: 1, borderTopColor: palette.green100, paddingVertical: 8, alignItems: 'center' }}>
+                                                <Text style={{ fontSize: 10, color: palette.green800, fontWeight: 'bold', textTransform: 'uppercase' }}>
+                                                    Deadline: <Text style={{ color: palette.brand500 }}>{selectedDate.format('MMMM DD, YYYY')}</Text>
                                                 </Text>
                                             </View>
                                         )}
@@ -864,8 +865,8 @@ export default function EditTweak() {
                                     {deadlineSlots.length > 0 && (
                                         <View>
                                             <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'center', marginBottom: 4, gap: 4 }}>
-                                                <Ionicons name="arrow-up" size={10} color="#9CA3AF" />
-                                                <Text style={{ fontSize: 9, color: '#9CA3AF', fontWeight: 'bold', textTransform: 'uppercase', letterSpacing: 1 }}>Slide up to delete</Text>
+                                                <Ionicons name="arrow-up" size={10} color={palette.gray400} />
+                                                <Text style={{ fontSize: 9, color: palette.gray400, fontWeight: 'bold', textTransform: 'uppercase', letterSpacing: 1 }}>Slide up to delete</Text>
                                             </View>
                                             <ScrollView horizontal showsHorizontalScrollIndicator={false} style={{ marginBottom: 16 }} contentContainerStyle={{ paddingBottom: 8, paddingRight: 20 }}>
                                                 {deadlineSlots.map((slot, index) => {
@@ -886,8 +887,8 @@ export default function EditTweak() {
                                                                 onPress={() => setActiveDeadlineSlot(index)}
                                                                 style={{
                                                                     marginRight: 12, padding: 12, borderRadius: 20, borderWidth: isActive ? 2 : 1, width: 120,
-                                                                    borderColor: isActive ? '#01C39D' : (slot.status === 'modified' ? '#10B981' : '#01C39D'),
-                                                                    backgroundColor: isActive ? '#01C39D' + '05' : 'white',
+                                                                    borderColor: isActive ? palette.brand500 : (slot.status === 'modified' ? palette.green600 : palette.brand500),
+                                                                    backgroundColor: isActive ? palette.brand500 + '05' : 'white',
                                                                     elevation: isActive ? 0 : 1,
                                                                     shadowColor: '#000', shadowOffset: { width: 0, height: 1 }, shadowOpacity: isActive ? 0 : 0.05, shadowRadius: 2,
                                                                     overflow: 'hidden',
@@ -895,15 +896,15 @@ export default function EditTweak() {
                                                                     marginBottom: 2
                                                                 }}
                                                             >
-                                                                <Text style={{ fontSize: 10, fontWeight: 'bold', color: '#6B7280', textTransform: 'uppercase', marginBottom: 2 }}>{slotDate.format('ddd')}</Text>
-                                                                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#1F2937', marginBottom: 6 }}>{slotDate.format('DD MMM')}</Text>
+                                                                <Text style={{ fontSize: 10, fontWeight: 'bold', color: palette.gray500, textTransform: 'uppercase', marginBottom: 2 }}>{slotDate.format('ddd')}</Text>
+                                                                <Text style={{ fontSize: 16, fontWeight: 'bold', color: palette.gray800, marginBottom: 6 }}>{slotDate.format('DD MMM')}</Text>
 
                                                                 <View>
-                                                                    <Text style={{ fontSize: 11, color: '#4B5563' }}>{dayjs(slot.date + ' ' + slot.start).format('hh:mm a')}</Text>
-                                                                    <Text style={{ fontSize: 11, color: '#4B5563' }}>{dayjs(slot.date + ' ' + slot.end).format('hh:mm a')}</Text>
+                                                                    <Text style={{ fontSize: 11, color: palette.gray600 }}>{dayjs(slot.date + ' ' + slot.start).format('hh:mm a')}</Text>
+                                                                    <Text style={{ fontSize: 11, color: palette.gray600 }}>{dayjs(slot.date + ' ' + slot.end).format('hh:mm a')}</Text>
                                                                 </View>
                                                                 {slot.status === 'modified' && (
-                                                                    <View style={{ position: 'absolute', top: 8, right: 8, width: 6, height: 6, borderRadius: 3, backgroundColor: '#10B981' }} />
+                                                                    <View style={{ position: 'absolute', top: 8, right: 8, width: 6, height: 6, borderRadius: 3, backgroundColor: palette.green600 }} />
                                                                 )}
                                                             </TouchableOpacity>
                                                         </SwipeableSlot>
@@ -912,7 +913,7 @@ export default function EditTweak() {
                                             </ScrollView>
 
                                             {activeDeadlineSlot !== null && deadlineSlots[activeDeadlineSlot] && (
-                                                <View style={{ backgroundColor: '#F9FAFB', padding: 16, borderRadius: 20, borderWidth: 1, borderColor: '#F3F4F6' }}>
+                                                <View style={{ backgroundColor: palette.gray50, padding: 16, borderRadius: 20, borderWidth: 1, borderColor: palette.gray100 }}>
                                                     <Text style={{ fontWeight: 'bold', marginBottom: 12 }}>Edit {dayjs(deadlineSlots[activeDeadlineSlot].date).format('MMM DD')}</Text>
                                                     <View style={{ flexDirection: 'row', alignItems: 'center', gap: 12 }}>
                                                         <View style={{ flex: 1 }}>
@@ -947,19 +948,19 @@ export default function EditTweak() {
                         case 'few_days':
                             return (
                                 <View>
-                                    <View style={{ backgroundColor: 'white', borderRadius: 24, borderWidth: 1, borderColor: showValidation && fewDaysSlots.length === 0 ? '#EF4444' : '#F3F4F6', marginBottom: 16, overflow: 'hidden', elevation: 1 }}>
+                                    <View style={{ backgroundColor: 'white', borderRadius: 24, borderWidth: 1, borderColor: showValidation && fewDaysSlots.length === 0 ? palette.red500 : palette.gray100, marginBottom: 16, overflow: 'hidden', elevation: 1 }}>
                                         <View style={{ paddingHorizontal: 16, paddingBottom: 16 }}>
                                             <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: 8, paddingTop: 12, paddingBottom: 4 }}>
                                                 {isCurrentMonth ? <View style={{ width: 36 }} /> : (
                                                     <TouchableOpacity onPress={goPrevMonth} style={{ padding: 8 }} accessibilityRole="button" accessibilityLabel="Previous month">
-                                                        <Ionicons name="chevron-back" size={20} color="#01C39D" />
+                                                        <Ionicons name="chevron-back" size={20} color={palette.brand500} />
                                                     </TouchableOpacity>
                                                 )}
-                                                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#1F2937' }}>
+                                                <Text style={{ fontSize: 16, fontWeight: 'bold', color: palette.gray800 }}>
                                                     {dayjs().month(calMonth).year(calYear).format('MMMM YYYY')}
                                                 </Text>
                                                 <TouchableOpacity onPress={goNextMonth} style={{ padding: 8 }} accessibilityRole="button" accessibilityLabel="Next month">
-                                                    <Ionicons name="chevron-forward" size={20} color="#01C39D" />
+                                                    <Ionicons name="chevron-forward" size={20} color={palette.brand500} />
                                                 </TouchableOpacity>
                                             </View>
                                             <DateTimePicker
@@ -990,16 +991,16 @@ export default function EditTweak() {
 
                                                         const textStyle: MutableTextStyle = {
                                                             fontSize: 14,
-                                                            color: isSelected ? 'white' : (isBeforeToday ? '#D1D5DB' : '#374151'),
+                                                            color: isSelected ? 'white' : (isBeforeToday ? palette.gray300 : palette.gray700),
                                                             fontWeight: isSelected || isToday ? 'bold' : 'normal'
                                                         };
 
                                                         if (isSelected) {
-                                                            containerStyle.backgroundColor = '#01C39D';
+                                                            containerStyle.backgroundColor = palette.brand500;
                                                         } else if (isToday) {
                                                             containerStyle.borderWidth = 1;
-                                                            containerStyle.borderColor = '#01C39D';
-                                                            textStyle.color = '#01C39D';
+                                                            containerStyle.borderColor = palette.brand500;
+                                                            textStyle.color = palette.brand500;
                                                         }
 
                                                         return (
@@ -1033,8 +1034,8 @@ export default function EditTweak() {
                                     {fewDaysSlots.length > 0 && (
                                         <View>
                                             <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'center', marginBottom: 4, gap: 4 }}>
-                                                <Ionicons name="arrow-up" size={10} color="#9CA3AF" />
-                                                <Text style={{ fontSize: 9, color: '#9CA3AF', fontWeight: 'bold', textTransform: 'uppercase', letterSpacing: 1 }}>Slide up to delete</Text>
+                                                <Ionicons name="arrow-up" size={10} color={palette.gray400} />
+                                                <Text style={{ fontSize: 9, color: palette.gray400, fontWeight: 'bold', textTransform: 'uppercase', letterSpacing: 1 }}>Slide up to delete</Text>
                                             </View>
                                             <ScrollView horizontal showsHorizontalScrollIndicator={false} style={{ marginBottom: 16 }} contentContainerStyle={{ paddingBottom: 8, paddingRight: 20 }}>
                                                 {fewDaysSlots.map((slot, index) => {
@@ -1055,8 +1056,8 @@ export default function EditTweak() {
                                                                 onPress={() => setActiveFewDaysSlot(index)}
                                                                 style={{
                                                                     marginRight: 12, padding: 12, borderRadius: 20, borderWidth: isActive ? 2 : 1, width: 120,
-                                                                    borderColor: isActive ? '#01C39D' : (slot.status === 'modified' ? '#10B981' : '#01C39D'),
-                                                                    backgroundColor: isActive ? '#01C39D' + '05' : 'white',
+                                                                    borderColor: isActive ? palette.brand500 : (slot.status === 'modified' ? palette.green600 : palette.brand500),
+                                                                    backgroundColor: isActive ? palette.brand500 + '05' : 'white',
                                                                     elevation: isActive ? 0 : 1,
                                                                     shadowColor: '#000', shadowOffset: { width: 0, height: 1 }, shadowOpacity: isActive ? 0 : 0.05, shadowRadius: 2,
                                                                     overflow: 'hidden',
@@ -1064,20 +1065,20 @@ export default function EditTweak() {
                                                                     marginBottom: 2
                                                                 }}
                                                             >
-                                                                <Text style={{ fontSize: 10, fontWeight: 'bold', color: '#6B7280', textTransform: 'uppercase', marginBottom: 2 }}>{slotDate.format('ddd')}</Text>
-                                                                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#1F2937', marginBottom: 6 }}>{slotDate.format('DD MMM')}</Text>
+                                                                <Text style={{ fontSize: 10, fontWeight: 'bold', color: palette.gray500, textTransform: 'uppercase', marginBottom: 2 }}>{slotDate.format('ddd')}</Text>
+                                                                <Text style={{ fontSize: 16, fontWeight: 'bold', color: palette.gray800, marginBottom: 6 }}>{slotDate.format('DD MMM')}</Text>
 
                                                                 <View>
-                                                                    <Text style={{ fontSize: 11, color: '#4B5563' }}>{dayjs(slot.date + ' ' + slot.start).format('hh:mm a')}</Text>
-                                                                    <Text style={{ fontSize: 11, color: '#4B5563' }}>{dayjs(slot.date + ' ' + slot.end).format('hh:mm a')}</Text>
+                                                                    <Text style={{ fontSize: 11, color: palette.gray600 }}>{dayjs(slot.date + ' ' + slot.start).format('hh:mm a')}</Text>
+                                                                    <Text style={{ fontSize: 11, color: palette.gray600 }}>{dayjs(slot.date + ' ' + slot.end).format('hh:mm a')}</Text>
                                                                 </View>
 
-                                                                <View style={{ marginTop: 8, backgroundColor: '#F3F4F6', borderRadius: 8, paddingVertical: 2, alignItems: 'center' }}>
-                                                                    <Text style={{ fontSize: 10, fontWeight: 'bold', color: '#4B5563' }}>{hours.toFixed(1)}h</Text>
+                                                                <View style={{ marginTop: 8, backgroundColor: palette.gray100, borderRadius: 8, paddingVertical: 2, alignItems: 'center' }}>
+                                                                    <Text style={{ fontSize: 10, fontWeight: 'bold', color: palette.gray600 }}>{hours.toFixed(1)}h</Text>
                                                                 </View>
 
                                                                 {slot.status === 'modified' && (
-                                                                    <View style={{ position: 'absolute', top: 8, right: 8, width: 6, height: 6, borderRadius: 3, backgroundColor: '#10B981' }} />
+                                                                    <View style={{ position: 'absolute', top: 8, right: 8, width: 6, height: 6, borderRadius: 3, backgroundColor: palette.green600 }} />
                                                                 )}
                                                             </TouchableOpacity>
                                                         </SwipeableSlot>
@@ -1086,7 +1087,7 @@ export default function EditTweak() {
                                             </ScrollView>
 
                                             {activeFewDaysSlot !== null && fewDaysSlots[activeFewDaysSlot] && (
-                                                <View style={{ backgroundColor: '#F9FAFB', padding: 16, borderRadius: 20, borderWidth: 1, borderColor: '#F3F4F6' }}>
+                                                <View style={{ backgroundColor: palette.gray50, padding: 16, borderRadius: 20, borderWidth: 1, borderColor: palette.gray100 }}>
                                                     <Text style={{ fontWeight: 'bold', marginBottom: 12 }}>Edit {dayjs(fewDaysSlots[activeFewDaysSlot].date).format('MMM DD')}</Text>
                                                     <View style={{ flexDirection: 'row', alignItems: 'center', gap: 12 }}>
                                                         <View style={{ flex: 1 }}>
@@ -1125,8 +1126,8 @@ export default function EditTweak() {
 
                 return (
                     <View style={{ width: SCREEN_WIDTH, paddingHorizontal: 24, flex: 1 }}>
-                        <Text style={{ fontSize: 24, fontWeight: 'bold', color: '#111827', marginBottom: 4 }}>Schedule Details</Text>
-                        <Text style={{ color: '#6B7280', marginBottom: 24 }}>Set the exact days and times.</Text>
+                        <Text style={{ fontSize: 24, fontWeight: 'bold', color: palette.gray900, marginBottom: 4 }}>Schedule Details</Text>
+                        <Text style={{ color: palette.gray500, marginBottom: 24 }}>Set the exact days and times.</Text>
                         {renderSchedulePicker()}
                     </View>
                 );
@@ -1144,8 +1145,8 @@ export default function EditTweak() {
                     }) => (
                         <View
                             style={{
-                                borderRadius: 24, backgroundColor: isSelected ? '#01C39D' + '08' : 'white', borderWidth: 2, marginBottom: 16,
-                                borderColor: isSelected ? '#01C39D' : '#F3F4F6',
+                                borderRadius: 24, backgroundColor: isSelected ? palette.brand500 + '08' : 'white', borderWidth: 2, marginBottom: 16,
+                                borderColor: isSelected ? palette.brand500 : palette.gray100,
                                 overflow: 'hidden',
                                 elevation: isSelected ? 0 : 1,
                                 shadowColor: '#000', shadowOffset: { width: 0, height: 1 }, shadowOpacity: isSelected ? 0 : 0.05, shadowRadius: 2
@@ -1160,8 +1161,8 @@ export default function EditTweak() {
                                     <Ionicons name={icon} size={22} color={color} />
                                 </View>
                                 <View style={{ flex: 1 }}>
-                                    <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#111827' }}>{title}</Text>
-                                    <Text style={{ fontSize: 12, color: '#6B7280', marginTop: 2 }}>{description}</Text>
+                                    <Text style={{ fontSize: 16, fontWeight: 'bold', color: palette.gray900 }}>{title}</Text>
+                                    <Text style={{ fontSize: 12, color: palette.gray500, marginTop: 2 }}>{description}</Text>
                                 </View>
 
                                 <View style={{
@@ -1169,8 +1170,8 @@ export default function EditTweak() {
                                     height: 24,
                                     borderRadius: 12,
                                     borderWidth: 2,
-                                    borderColor: isSelected ? '#01C39D' : '#D1D5DB',
-                                    backgroundColor: isSelected ? '#01C39D' : 'white',
+                                    borderColor: isSelected ? palette.brand500 : palette.gray300,
+                                    backgroundColor: isSelected ? palette.brand500 : 'white',
                                     alignItems: 'center',
                                     justifyContent: 'center'
                                 }}>
@@ -1189,87 +1190,87 @@ export default function EditTweak() {
 
                     return (
                         <View>
-                            <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#374151', marginBottom: 16 }}>Do you have a price in mind?</Text>
+                            <Text style={{ fontSize: 18, fontWeight: 'bold', color: palette.gray700, marginBottom: 16 }}>Do you have a price in mind?</Text>
                             <View style={{ flexDirection: 'row', gap: 12, marginBottom: 24 }}>
                                 <TouchableOpacity
                                     onPress={() => setHasPriceInMind(true)}
-                                    style={{ flex: 1, padding: 16, borderRadius: 20, borderWidth: 2, alignItems: 'center', borderColor: hasPriceInMind === true ? themeColors.primary : '#F3F4F6', backgroundColor: hasPriceInMind === true ? themeColors.primary + '08' : 'white' }}
+                                    style={{ flex: 1, padding: 16, borderRadius: 20, borderWidth: 2, alignItems: 'center', borderColor: hasPriceInMind === true ? themeColors.primary : palette.gray100, backgroundColor: hasPriceInMind === true ? themeColors.primary + '08' : 'white' }}
                                 >
-                                    <Text style={{ fontWeight: 'bold', color: hasPriceInMind === true ? themeColors.primary : '#6B7280' }}>Yes</Text>
+                                    <Text style={{ fontWeight: 'bold', color: hasPriceInMind === true ? themeColors.primary : palette.gray500 }}>Yes</Text>
                                 </TouchableOpacity>
                                 <TouchableOpacity
                                     onPress={() => { setHasPriceInMind(false); setLocalPricingModel('quote'); }}
-                                    style={{ flex: 1, padding: 16, borderRadius: 20, borderWidth: 2, alignItems: 'center', borderColor: hasPriceInMind === false ? themeColors.primary : '#F3F4F6', backgroundColor: hasPriceInMind === false ? themeColors.primary + '08' : 'white' }}
+                                    style={{ flex: 1, padding: 16, borderRadius: 20, borderWidth: 2, alignItems: 'center', borderColor: hasPriceInMind === false ? themeColors.primary : palette.gray100, backgroundColor: hasPriceInMind === false ? themeColors.primary + '08' : 'white' }}
                                 >
-                                    <Text style={{ fontWeight: 'bold', color: hasPriceInMind === false ? themeColors.primary : '#6B7280' }}>No</Text>
+                                    <Text style={{ fontWeight: 'bold', color: hasPriceInMind === false ? themeColors.primary : palette.gray500 }}>No</Text>
                                 </TouchableOpacity>
                             </View>
 
                             {hasPriceInMind === false && (
-                                <View style={{ padding: 24, backgroundColor: '#F0FDF4', borderRadius: 24, borderWidth: 1, borderColor: '#DCFCE7', alignItems: 'center' }}>
-                                    <Ionicons name="sparkles" size={40} color="#10B981" />
-                                    <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#166534', marginTop: 12 }}>Applicants will Quote</Text>
-                                    <Text style={{ textAlign: 'center', color: '#15803D', marginTop: 8 }}>They will propose their fee and you can choose the best offer.</Text>
+                                <View style={{ padding: 24, backgroundColor: palette.green50, borderRadius: 24, borderWidth: 1, borderColor: palette.green100, alignItems: 'center' }}>
+                                    <Ionicons name="sparkles" size={40} color={palette.green600} />
+                                    <Text style={{ fontSize: 18, fontWeight: 'bold', color: palette.green800, marginTop: 12 }}>Applicants will Quote</Text>
+                                    <Text style={{ textAlign: 'center', color: palette.green700, marginTop: 8 }}>They will propose their fee and you can choose the best offer.</Text>
                                 </View>
                             )}
 
                             {hasPriceInMind === true && (
                                 <View>
                                     <PricingOption
-                                        id="hourly" title="Per Hour" description="Pay for time spent." icon="time" color="#3B82F6"
+                                        id="hourly" title="Per Hour" description="Pay for time spent." icon="time" color={palette.blue500}
                                         isSelected={localPricingModel === 'hourly'} onSelect={() => setLocalPricingModel('hourly')}
                                     >
                                         <View style={{ marginTop: 8 }}>
-                                            <Text style={{ fontSize: 11, fontWeight: '700', color: '#6B7280', marginBottom: 8, letterSpacing: 0.5 }}>HOURLY RATE</Text>
-                                            <View style={{ flexDirection: 'row', alignItems: 'center', backgroundColor: 'white', borderRadius: 16, paddingHorizontal: 16, height: 56, borderWidth: 2, borderColor: '#F3F4F6' }}>
-                                                <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#111827', marginRight: 8 }}>₹</Text>
-                                                <TextInput value={hourlyRate} onChangeText={setHourlyRate} keyboardType="numeric" style={{ flex: 1, fontSize: 18, fontWeight: 'bold', color: '#111827' }} placeholder="0" />
+                                            <Text style={{ fontSize: 11, fontWeight: '700', color: palette.gray500, marginBottom: 8, letterSpacing: 0.5 }}>HOURLY RATE</Text>
+                                            <View style={{ flexDirection: 'row', alignItems: 'center', backgroundColor: 'white', borderRadius: 16, paddingHorizontal: 16, height: 56, borderWidth: 2, borderColor: palette.gray100 }}>
+                                                <Text style={{ fontSize: 18, fontWeight: 'bold', color: palette.gray900, marginRight: 8 }}>₹</Text>
+                                                <TextInput value={hourlyRate} onChangeText={setHourlyRate} keyboardType="numeric" style={{ flex: 1, fontSize: 18, fontWeight: 'bold', color: palette.gray900 }} placeholder="0" />
                                             </View>
                                         </View>
                                     </PricingOption>
 
                                     <PricingOption
-                                        id="quantity" title="By Quantity" description="Pay per unit/item." icon="cube" color="#10B981"
+                                        id="quantity" title="By Quantity" description="Pay per unit/item." icon="cube" color={palette.green600}
                                         isSelected={localPricingModel === 'quantity'} onSelect={() => setLocalPricingModel('quantity')}
                                     >
                                         <View style={{ marginTop: 8, gap: 16 }}>
                                             <View>
-                                                <Text style={{ fontSize: 11, fontWeight: '700', color: '#6B7280', marginBottom: 8, letterSpacing: 0.5 }}>ITEM NAME</Text>
+                                                <Text style={{ fontSize: 11, fontWeight: '700', color: palette.gray500, marginBottom: 8, letterSpacing: 0.5 }}>ITEM NAME</Text>
                                                 <TextInput
                                                     value={quantityName}
                                                     onChangeText={setQuantityName}
-                                                    style={{ backgroundColor: 'white', borderRadius: 16, paddingHorizontal: 16, height: 56, borderWidth: 2, borderColor: '#F3F4F6', fontSize: 16, fontWeight: 'bold', color: '#111827' }}
+                                                    style={{ backgroundColor: 'white', borderRadius: 16, paddingHorizontal: 16, height: 56, borderWidth: 2, borderColor: palette.gray100, fontSize: 16, fontWeight: 'bold', color: palette.gray900 }}
                                                     placeholder="e.g. Page, Bag, Box"
                                                 />
                                             </View>
                                             <View style={{ flexDirection: 'row', gap: 12 }}>
                                                 <View style={{ flex: 1 }}>
-                                                    <Text style={{ fontSize: 11, fontWeight: '700', color: '#6B7280', marginBottom: 8, letterSpacing: 0.5 }}>QUANTITY</Text>
+                                                    <Text style={{ fontSize: 11, fontWeight: '700', color: palette.gray500, marginBottom: 8, letterSpacing: 0.5 }}>QUANTITY</Text>
                                                     <TextInput
                                                         value={quantityCount}
                                                         onChangeText={setQuantityCount}
                                                         keyboardType="numeric"
-                                                        style={{ backgroundColor: 'white', borderRadius: 16, paddingHorizontal: 16, height: 56, borderWidth: 2, borderColor: '#F3F4F6', fontSize: 16, fontWeight: 'bold', color: '#111827' }}
+                                                        style={{ backgroundColor: 'white', borderRadius: 16, paddingHorizontal: 16, height: 56, borderWidth: 2, borderColor: palette.gray100, fontSize: 16, fontWeight: 'bold', color: palette.gray900 }}
                                                         placeholder="1"
                                                     />
                                                 </View>
                                                 <View style={{ flex: 1 }}>
-                                                    <Text style={{ fontSize: 11, fontWeight: '700', color: '#6B7280', marginBottom: 8, letterSpacing: 0.5 }}>PRICE PER ITEM</Text>
-                                                    <View style={{ flexDirection: 'row', alignItems: 'center', backgroundColor: 'white', borderRadius: 16, paddingHorizontal: 16, height: 56, borderWidth: 2, borderColor: '#F3F4F6' }}>
-                                                        <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#111827', marginRight: 4 }}>₹</Text>
+                                                    <Text style={{ fontSize: 11, fontWeight: '700', color: palette.gray500, marginBottom: 8, letterSpacing: 0.5 }}>PRICE PER ITEM</Text>
+                                                    <View style={{ flexDirection: 'row', alignItems: 'center', backgroundColor: 'white', borderRadius: 16, paddingHorizontal: 16, height: 56, borderWidth: 2, borderColor: palette.gray100 }}>
+                                                        <Text style={{ fontSize: 16, fontWeight: 'bold', color: palette.gray900, marginRight: 4 }}>₹</Text>
                                                         <TextInput
                                                             value={quantityPricePerItem}
                                                             onChangeText={setQuantityPricePerItem}
                                                             keyboardType="numeric"
-                                                            style={{ flex: 1, fontSize: 16, fontWeight: 'bold', color: '#111827' }}
+                                                            style={{ flex: 1, fontSize: 16, fontWeight: 'bold', color: palette.gray900 }}
                                                             placeholder="0"
                                                         />
                                                     </View>
                                                 </View>
                                             </View>
-                                            <View style={{ padding: 16, backgroundColor: '#01C39D' + '08', borderRadius: 16, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', borderWidth: 1, borderColor: '#01C39D' + '20' }}>
-                                                <Text style={{ color: '#6B7280', fontSize: 14, fontWeight: '500' }}>Total Cost</Text>
-                                                <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#01C39D' }}>
+                                            <View style={{ padding: 16, backgroundColor: palette.brand500 + '08', borderRadius: 16, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', borderWidth: 1, borderColor: palette.brand500 + '20' }}>
+                                                <Text style={{ color: palette.gray500, fontSize: 14, fontWeight: '500' }}>Total Cost</Text>
+                                                <Text style={{ fontSize: 20, fontWeight: 'bold', color: palette.brand500 }}>
                                                     ₹{(parseFloat(quantityCount || '0') * parseFloat(quantityPricePerItem || '0')).toLocaleString()}
                                                 </Text>
                                             </View>
@@ -1277,14 +1278,14 @@ export default function EditTweak() {
                                     </PricingOption>
 
                                     <PricingOption
-                                        id="fixed" title="Fixed Price" description="One flat fee." icon="pricetag" color="#8B5CF6"
+                                        id="fixed" title="Fixed Price" description="One flat fee." icon="pricetag" color={palette.purple500}
                                         isSelected={localPricingModel === 'fixed'} onSelect={() => setLocalPricingModel('fixed')}
                                     >
                                         <View style={{ marginTop: 8 }}>
-                                            <Text style={{ fontSize: 11, fontWeight: '700', color: '#6B7280', marginBottom: 8, letterSpacing: 0.5 }}>TOTAL AMOUNT</Text>
-                                            <View style={{ flexDirection: 'row', alignItems: 'center', backgroundColor: 'white', borderRadius: 16, paddingHorizontal: 16, height: 56, borderWidth: 2, borderColor: '#F3F4F6' }}>
-                                                <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#111827', marginRight: 8 }}>₹</Text>
-                                                <TextInput value={fixedPrice} onChangeText={setFixedPrice} keyboardType="numeric" style={{ flex: 1, fontSize: 18, fontWeight: 'bold', color: '#111827' }} placeholder="0" />
+                                            <Text style={{ fontSize: 11, fontWeight: '700', color: palette.gray500, marginBottom: 8, letterSpacing: 0.5 }}>TOTAL AMOUNT</Text>
+                                            <View style={{ flexDirection: 'row', alignItems: 'center', backgroundColor: 'white', borderRadius: 16, paddingHorizontal: 16, height: 56, borderWidth: 2, borderColor: palette.gray100 }}>
+                                                <Text style={{ fontSize: 18, fontWeight: 'bold', color: palette.gray900, marginRight: 8 }}>₹</Text>
+                                                <TextInput value={fixedPrice} onChangeText={setFixedPrice} keyboardType="numeric" style={{ flex: 1, fontSize: 18, fontWeight: 'bold', color: palette.gray900 }} placeholder="0" />
                                             </View>
                                         </View>
                                     </PricingOption>
@@ -1296,8 +1297,8 @@ export default function EditTweak() {
 
                 return (
                     <View style={{ width: SCREEN_WIDTH, paddingHorizontal: 24, flex: 1 }}>
-                        <Text style={{ fontSize: 24, fontWeight: 'bold', color: '#111827', marginBottom: 4 }}>Pricing</Text>
-                        <Text style={{ color: '#6B7280', marginBottom: 24 }}>Set the compensation for this task.</Text>
+                        <Text style={{ fontSize: 24, fontWeight: 'bold', color: palette.gray900, marginBottom: 4 }}>Pricing</Text>
+                        <Text style={{ color: palette.gray500, marginBottom: 24 }}>Set the compensation for this task.</Text>
                         {renderPricingEditor()}
                     </View>
                 );
@@ -1458,7 +1459,7 @@ export default function EditTweak() {
             </View>
 
             {/* Stepper Row - Improved spacing and dynamic coloring */}
-            <View style={{ height: 68, borderBottomWidth: 1, borderBottomColor: '#F3F4F6', backgroundColor: 'white' }}>
+            <View style={{ height: 68, borderBottomWidth: 1, borderBottomColor: palette.gray100, backgroundColor: 'white' }}>
                 <ScrollView
                     ref={stepperRef}
                     horizontal={true}
@@ -1471,14 +1472,14 @@ export default function EditTweak() {
                         const hasError = invalidSteps.includes(card.id);
 
                         // Icon and Background Color Logic
-                        let backgroundColor = '#F9FAFB';
-                        let borderColor = '#F3F4F6';
-                        let iconColor = '#9CA3AF';
+                        let backgroundColor: string = palette.gray50;
+                        let borderColor: string = palette.gray100;
+                        let iconColor: string = palette.gray400;
 
                         if (hasError) {
-                            backgroundColor = '#FEF2F2';
-                            borderColor = '#FECACA';
-                            iconColor = '#EF4444';
+                            backgroundColor = palette.red50;
+                            borderColor = palette.red200;
+                            iconColor = palette.red500;
                         } else if (isActive) {
                             backgroundColor = themeColors.primary;
                             borderColor = themeColors.primary;
@@ -1516,7 +1517,7 @@ export default function EditTweak() {
                                                 transform: [{ scale: 1.05 }]
                                             }),
                                             ...(hasError && !isActive && {
-                                                shadowColor: '#EF4444',
+                                                shadowColor: palette.red500,
                                                 shadowOffset: { width: 0, height: 2 },
                                                 shadowOpacity: 0.1,
                                                 shadowRadius: 4,
@@ -1551,18 +1552,18 @@ export default function EditTweak() {
                     <View style={{ flexDirection: 'row', alignItems: 'center', gap: 12, paddingHorizontal: 24, marginTop: 32, marginBottom: 40 }}>
                         <TouchableOpacity
                             onPress={() => currentIndex > 0 ? scrollToStep(currentIndex - 1) : router.back()}
-                            style={{ width: 56, height: 56, borderRadius: 16, backgroundColor: '#F3F4F6', alignItems: 'center', justifyContent: 'center' }}
+                            style={{ width: 56, height: 56, borderRadius: 16, backgroundColor: palette.gray100, alignItems: 'center', justifyContent: 'center' }}
                             accessibilityRole="button"
                             accessibilityLabel="Previous step"
                         >
-                            <Ionicons name="chevron-back" size={24} color="#374151" />
+                            <Ionicons name="chevron-back" size={24} color={palette.gray700} />
                         </TouchableOpacity>
 
                         <TouchableOpacity
                             onPress={handleSaveAsDraft}
-                            style={{ flex: 1, height: 56, borderRadius: 16, borderWidth: 1, borderColor: '#D1D5DB', alignItems: 'center', justifyContent: 'center' }}
+                            style={{ flex: 1, height: 56, borderRadius: 16, borderWidth: 1, borderColor: palette.gray300, alignItems: 'center', justifyContent: 'center' }}
                         >
-                            <Text style={{ fontWeight: 'bold', color: '#374151', fontSize: 13 }}>Save Draft</Text>
+                            <Text style={{ fontWeight: 'bold', color: palette.gray700, fontSize: 13 }}>Save Draft</Text>
                         </TouchableOpacity>
 
                         <TouchableOpacity
@@ -1623,7 +1624,7 @@ const styles = StyleSheet.create({
         paddingHorizontal: 24,
         paddingVertical: 12,
         borderBottomWidth: 1,
-        borderBottomColor: '#F3F4F6',
+        borderBottomColor: palette.gray100,
         flexDirection: 'row',
         alignItems: 'center',
         backgroundColor: 'white',
@@ -1632,7 +1633,7 @@ const styles = StyleSheet.create({
         marginRight: 16,
         padding: 4,
         borderRadius: 999,
-        backgroundColor: '#F9FAFB',
+        backgroundColor: palette.gray50,
     },
     headerTextContainer: {
         flex: 1,
@@ -1640,11 +1641,11 @@ const styles = StyleSheet.create({
     headerTitle: {
         fontSize: 20,
         fontWeight: 'bold',
-        color: '#111827',
+        color: palette.gray900,
     },
     headerSubtitle: {
         fontSize: 12,
-        color: '#6B7280',
+        color: palette.gray500,
     },
     categoryCard: {
         flexDirection: 'row',
@@ -1654,7 +1655,7 @@ const styles = StyleSheet.create({
         backgroundColor: 'white',
         borderRadius: 12,
         borderWidth: 1,
-        borderColor: '#E5E7EB',
+        borderColor: palette.gray200,
     },
     footer: {
         position: 'absolute',
@@ -1664,7 +1665,7 @@ const styles = StyleSheet.create({
         padding: 20,
         backgroundColor: 'white',
         borderTopWidth: 1,
-        borderTopColor: '#E5E7EB',
+        borderTopColor: palette.gray200,
     },
     saveButton: {
         flexDirection: 'row',

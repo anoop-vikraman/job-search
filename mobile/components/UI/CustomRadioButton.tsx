@@ -1,3 +1,4 @@
+import { palette } from '@tweak/theme';
 import React from 'react';
 import { StyleProp, Text, TextStyle, TouchableOpacity, View, ViewStyle } from 'react-native';
 import { themeColors } from '../../themes/colors';
@@ -37,7 +38,7 @@ export function CustomRadioButton({
                     >
                         <View
                             className={`w-5 h-5 rounded-full border items-center justify-center mr-2 ${isSelected ? 'border-primary' : 'border-gray-400'}`}
-                            style={{ borderColor: isSelected ? themeColors.primary : '#9CA3AF' }}
+                            style={{ borderColor: isSelected ? themeColors.primary : palette.gray400 }}
                         >
                             {isSelected && (
                                 <View

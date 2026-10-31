@@ -1,6 +1,7 @@
 import React from 'react';
 import { Dimensions, Text, View } from 'react-native';
 import Svg, { Defs, LinearGradient, Path, Stop } from 'react-native-svg';
+import { palette } from '@tweak/theme';
 import { themeColors } from '../../themes/colors';
 
 const { width } = Dimensions.get('window');
@@ -54,7 +55,7 @@ export default function PriceRecommendationGraph({
     // So we will use a visual approximation: high at center (0.5), low at edges
     const markerY = graphHeight - (Math.sin(progress * Math.PI) * graphHeight * 0.9);
 
-    const activeColor = isGoodPrice ? '#22c55e' : themeColors.primary; // Green if good, Orange/Primary if not
+    const activeColor = isGoodPrice ? palette.green500 : themeColors.primary; // Green if good, Orange/Primary if not
 
     return (
         <View className="bg-white rounded-3xl p-6 shadow-sm border border-gray-100 items-center">
@@ -63,7 +64,7 @@ export default function PriceRecommendationGraph({
                 Recommended Price your Tweak
             </Text>
 
-            <Text className="text-3xl font-extrabold text-[#96c41e] mb-4">
+            <Text style={{ color: palette.lime }} className="text-3xl font-extrabold mb-4">
                 {currencySymbol}{recommendedPrice}
             </Text>
 
@@ -86,9 +87,9 @@ export default function PriceRecommendationGraph({
                 <Svg height={graphHeight} width={graphWidth} style={{ overflow: 'visible' }}>
                     <Defs>
                         <LinearGradient id="grad" x1="0" y1="0" x2="1" y2="0">
-                            <Stop offset="0" stopColor="#dbeafe" stopOpacity="0.3" />
-                            <Stop offset="0.5" stopColor="#96c41e" stopOpacity="0.8" />
-                            <Stop offset="1" stopColor="#dbeafe" stopOpacity="0.3" />
+                            <Stop offset="0" stopColor={palette.blue100} stopOpacity="0.3" />
+                            <Stop offset="0.5" stopColor={palette.lime} stopOpacity="0.8" />
+                            <Stop offset="1" stopColor={palette.blue100} stopOpacity="0.3" />
                         </LinearGradient>
                     </Defs>
 
@@ -96,7 +97,7 @@ export default function PriceRecommendationGraph({
                     <Path
                         d={path}
                         fill="url(#grad)"
-                        stroke="#96c41e"
+                        stroke={palette.lime}
                         strokeWidth="2"
                     />
 
@@ -144,13 +145,13 @@ export default function PriceRecommendationGraph({
 
             <Text className="text-center text-xs text-gray-500 mt-6 px-4">
                 Our analytics show that similar Tweaks near your area have better chance of getting filled at
-                <Text className="font-bold text-[#22c55e]"> {currencySymbol}{recommendedPrice}</Text>
+                <Text style={{ color: palette.green500 }} className="font-bold"> {currencySymbol}{recommendedPrice}</Text>
             </Text>
 
             {/* "Use Recommended Price" Button */}
             {!isGoodPrice && (
                 <View className="mt-4 w-full px-4">
-                    <View className="bg-[#10b981] rounded-full py-2 items-center">
+                    <View style={{ backgroundColor: palette.green600 }} className="rounded-full py-2 items-center">
                         <Text className="text-white font-bold text-sm">Use Recommended Price</Text>
                     </View>
                 </View>

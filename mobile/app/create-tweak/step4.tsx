@@ -16,6 +16,7 @@ import { useConfirmationStore } from '../../store/useConfirmationStore';
 import { themeColors } from '../../themes/colors';
 
 import { DurationTab, PricingType } from '../../types/tweak';
+import { palette } from '@tweak/theme';
 
 const MIN_AMOUNT = 200;
 const RECOMMENDED_AMOUNT = 1000;
@@ -223,7 +224,7 @@ export default function CreateTweakStep4() {
                                         onChangeText={onChange}
                                         placeholder="0"
                                         keyboardType="numeric"
-                                        placeholderTextColor="#9CA3AF"
+                                        placeholderTextColor={palette.gray400}
                                     />
                                 )}
                             />
@@ -257,7 +258,7 @@ export default function CreateTweakStep4() {
                                             onChangeText={onChange}
                                             placeholder="0"
                                             keyboardType="numeric"
-                                            placeholderTextColor="#9CA3AF"
+                                            placeholderTextColor={palette.gray400}
                                         />
                                     )}
                                 />
@@ -275,7 +276,7 @@ export default function CreateTweakStep4() {
                                         value={value}
                                         onChangeText={onChange}
                                         placeholder="e.g., hour, item"
-                                        placeholderTextColor="#9CA3AF"
+                                        placeholderTextColor={palette.gray400}
                                     />
                                 )}
                             />
@@ -294,7 +295,7 @@ export default function CreateTweakStep4() {
                                     onChangeText={onChange}
                                     placeholder="Enter estimated quantity"
                                     keyboardType="numeric"
-                                    placeholderTextColor="#9CA3AF"
+                                    placeholderTextColor={palette.gray400}
                                 />
                             )}
                         />
@@ -346,7 +347,7 @@ export default function CreateTweakStep4() {
                                                 onChangeText={onChange}
                                                 placeholder="Enter total hours"
                                                 keyboardType="numeric"
-                                                placeholderTextColor="#9CA3AF"
+                                                placeholderTextColor={palette.gray400}
                                             />
                                         )}
                                     />
@@ -366,7 +367,7 @@ export default function CreateTweakStep4() {
                                                     onChangeText={onChange}
                                                     placeholder="0"
                                                     keyboardType="numeric"
-                                                    placeholderTextColor="#9CA3AF"
+                                                    placeholderTextColor={palette.gray400}
                                                 />
                                             )}
                                         />
@@ -391,7 +392,7 @@ export default function CreateTweakStep4() {
                         ) : (
                             <>
                                 <View style={styles.infoBadge}>
-                                    <Ionicons name="calendar-outline" size={16} color="#6366F1" />
+                                    <Ionicons name="calendar-outline" size={16} color={palette.indigo500} />
                                     <Text style={styles.infoBadgeText}>
                                         Duration: {numberOfDays} {numberOfDays === 1 ? 'day' : 'days'}
                                     </Text>
@@ -411,7 +412,7 @@ export default function CreateTweakStep4() {
                                                     onChangeText={onChange}
                                                     placeholder="0"
                                                     keyboardType="numeric"
-                                                    placeholderTextColor="#9CA3AF"
+                                                    placeholderTextColor={palette.gray400}
                                                 />
                                             )}
                                         />
@@ -457,13 +458,13 @@ export default function CreateTweakStep4() {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: '#F9FAFB',
+        backgroundColor: palette.gray50,
     },
     header: {
         paddingHorizontal: 24,
         paddingVertical: 16,
         borderBottomWidth: 1,
-        borderBottomColor: '#F3F4F6',
+        borderBottomColor: palette.gray100,
         flexDirection: 'row',
         alignItems: 'center',
         backgroundColor: 'white',
@@ -472,7 +473,7 @@ const styles = StyleSheet.create({
         marginRight: 16,
         padding: 4,
         borderRadius: 999,
-        backgroundColor: '#F9FAFB',
+        backgroundColor: palette.gray50,
     },
     headerTextContainer: {
         flex: 1,
@@ -480,12 +481,12 @@ const styles = StyleSheet.create({
     headerTitle: {
         fontSize: 20,
         fontWeight: 'bold',
-        color: '#111827',
+        color: palette.gray900,
     },
     headerSubtitle: {
         fontSize: 12,
         fontWeight: 'bold',
-        color: '#6366F1',
+        color: palette.indigo500,
         letterSpacing: 1.2,
     },
     scrollContent: {
@@ -499,13 +500,13 @@ const styles = StyleSheet.create({
     title: {
         fontSize: 32,
         fontWeight: 'bold',
-        color: '#111827',
+        color: palette.gray900,
         marginBottom: 8,
         lineHeight: 38,
     },
     subtitle: {
         fontSize: 16,
-        color: '#6B7280',
+        color: palette.gray500,
     },
     inputContainer: {
         marginBottom: 16,
@@ -513,7 +514,7 @@ const styles = StyleSheet.create({
     inputLabel: {
         fontSize: 12,
         fontWeight: '600',
-        color: '#6B7280',
+        color: palette.gray500,
         marginBottom: 8,
         marginLeft: 4,
         letterSpacing: 0.8,
@@ -530,14 +531,14 @@ const styles = StyleSheet.create({
     currencySymbol: {
         fontSize: 20,
         fontWeight: 'bold',
-        color: '#111827',
+        color: palette.gray900,
         marginRight: 8,
     },
     priceInput: {
         flex: 1,
         fontSize: 20,
         fontWeight: '600',
-        color: '#111827',
+        color: palette.gray900,
     },
     quantityRow: {
         flexDirection: 'row',
@@ -551,7 +552,7 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         alignItems: 'center',
         borderWidth: 1,
-        borderColor: '#D1D5DB',
+        borderColor: palette.gray300,
         borderRadius: 12,
         paddingHorizontal: 12,
         backgroundColor: 'white',
@@ -561,52 +562,52 @@ const styles = StyleSheet.create({
         flex: 1,
         fontSize: 16,
         fontWeight: '600',
-        color: '#111827',
+        color: palette.gray900,
     },
     perText: {
         fontSize: 14,
-        color: '#6B7280',
+        color: palette.gray500,
         marginHorizontal: 12,
         marginBottom: 12,
         fontWeight: '500',
     },
     unitInput: {
         borderWidth: 1,
-        borderColor: '#D1D5DB',
+        borderColor: palette.gray300,
         borderRadius: 12,
         paddingHorizontal: 16,
         paddingVertical: 12,
         fontSize: 16,
-        color: '#111827',
+        color: palette.gray900,
         backgroundColor: 'white',
         height: 48,
     },
     standardInput: {
         borderWidth: 1,
-        borderColor: '#D1D5DB',
+        borderColor: palette.gray300,
         borderRadius: 12,
         paddingHorizontal: 16,
         paddingVertical: 12,
         fontSize: 16,
-        color: '#111827',
+        color: palette.gray900,
         backgroundColor: 'white',
         height: 48,
     },
     infoBadge: {
         flexDirection: 'row',
         alignItems: 'center',
-        backgroundColor: '#EEF2FF',
+        backgroundColor: palette.indigo50,
         paddingHorizontal: 12,
         paddingVertical: 10,
         borderRadius: 12,
         marginBottom: 16,
         borderWidth: 1,
-        borderColor: '#C7D2FE',
+        borderColor: palette.indigo100,
     },
     infoBadgeText: {
         fontSize: 14,
         fontWeight: '600',
-        color: '#6366F1',
+        color: palette.indigo500,
         marginLeft: 8,
     },
     footer: {
@@ -626,7 +627,7 @@ const styles = StyleSheet.create({
         shadowOpacity: 0.2,
         shadowRadius: 8,
         elevation: 8,
-        backgroundColor: '#6366F1',
+        backgroundColor: palette.indigo500,
     },
     nextButtonText: {
         color: 'white',

@@ -2,6 +2,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { useRouter, type Href } from 'expo-router';
 import React from 'react';
 import { Text, TouchableOpacity, View } from 'react-native';
+import { palette } from '@tweak/theme';
 
 interface QuickAction {
     icon: keyof typeof Ionicons.glyphMap;
@@ -15,10 +16,10 @@ export default function ProfileQuickActions() {
     const router = useRouter();
 
     const actions: QuickAction[] = [
-        { icon: 'trending-up', label: 'Score', color: '#8B5CF6', bg: '#EDE9FE', route: '/score' },
-        { icon: 'wallet', label: 'Wallet', color: '#10B981', bg: '#D1FAE5', route: '/wallet' },
-        { icon: 'receipt', label: 'Refunds', color: '#3B82F6', bg: '#DBEAFE', route: '/refunds' },
-        { icon: 'location', label: 'Address', color: '#F97316', bg: '#FED7AA', route: '/profile/edit' },
+        { icon: 'trending-up', label: 'Score', color: palette.purple500, bg: palette.violet100, route: '/score' },
+        { icon: 'wallet', label: 'Wallet', color: palette.green600, bg: palette.emerald100, route: '/wallet' },
+        { icon: 'receipt', label: 'Refunds', color: palette.blue500, bg: palette.blue100, route: '/refunds' },
+        { icon: 'location', label: 'Address', color: palette.orange500, bg: palette.orange200, route: '/profile/edit' },
     ];
 
     return (

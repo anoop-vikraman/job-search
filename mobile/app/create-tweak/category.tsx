@@ -7,6 +7,7 @@ import { ScreenWrapper } from '../../components/ScreenWrapper';
 import { CATEGORIES } from '../../constants/categories';
 import { useCreateTweakStore } from '../../store/useCreateTweakStore';
 import { themeColors } from '../../themes/colors';
+import { palette } from '@tweak/theme';
 
 export default function CategoryPage() {
     const router = useRouter();
@@ -49,13 +50,13 @@ export default function CategoryPage() {
                 {/* Search */}
                 <View className="px-6 py-4">
                     <View className="flex-row items-center bg-gray-100 rounded-xl px-4 py-3 border border-transparent focus:border-gray-300">
-                        <Ionicons name="search" size={20} color="#9CA3AF" />
+                        <Ionicons name="search" size={20} color={palette.gray400} />
                         <TextInput
                             placeholder="Search categories..."
                             value={search}
                             onChangeText={setSearch}
                             className="flex-1 ml-3 text-base text-gray-900"
-                            placeholderTextColor="#9CA3AF"
+                            placeholderTextColor={palette.gray400}
                         />
                     </View>
                 </View>
@@ -82,7 +83,7 @@ export default function CategoryPage() {
                                         <Ionicons
                                             name={cat.icon as keyof typeof Ionicons.glyphMap}
                                             size={20}
-                                            color={isSelected ? themeColors.primary : '#4B5563'}
+                                            color={isSelected ? themeColors.primary : palette.gray600}
                                         />
                                     </View>
                                     <Text className={`font-bold text-sm ${isSelected ? 'text-primary' : 'text-gray-900'
@@ -101,7 +102,7 @@ export default function CategoryPage() {
                 <View className="absolute bottom-0 left-0 right-0 bg-white p-6 rounded-t-3xl shadow-2xl border-t border-gray-100 z-10">
                     <Text className="text-lg font-bold text-gray-900 mb-2">Suggest a new category</Text>
                     <View className="bg-yellow-50 p-4 rounded-xl border border-yellow-100 flex-row items-start mb-4">
-                        <Ionicons name="alert-circle" size={20} color="#EAB308" style={{ marginTop: 2 }} />
+                        <Ionicons name="alert-circle" size={20} color={palette.yellow500} style={{ marginTop: 2 }} />
                         <Text className="text-yellow-800 ml-2 flex-1 text-sm">
                             Your suggestion will be reviewed. Until approved, your tweak will be listed under "Other".
                         </Text>

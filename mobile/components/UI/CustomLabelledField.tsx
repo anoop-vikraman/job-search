@@ -1,4 +1,5 @@
 import { themeColors } from '@/themes/colors';
+import { palette } from '@tweak/theme';
 import React, { useRef, useState } from 'react';
 import { KeyboardTypeOptions, StyleProp, Text, TextInput, TouchableWithoutFeedback, View, ViewStyle } from 'react-native';
 import ScrollingPlaceholder from './ScrollingPlaceholder';
@@ -46,8 +47,8 @@ export default function CustomLabelledField({
     return (
         <View style={[{ width: '100%', marginBottom: 16 }, containerStyle]}>
             {/* Label matched to StandardInput */}
-            <Text style={{ color: '#9CA3AF', fontSize: 10, fontWeight: 'bold', marginBottom: 4, textTransform: 'uppercase', letterSpacing: 1.5, paddingHorizontal: 4 }}>
-                {label} {required && <Text style={{ color: '#EF4444' }}>*</Text>}
+            <Text style={{ color: palette.gray400, fontSize: 10, fontWeight: 'bold', marginBottom: 4, textTransform: 'uppercase', letterSpacing: 1.5, paddingHorizontal: 4 }}>
+                {label} {required && <Text style={{ color: palette.red500 }}>*</Text>}
             </Text>
 
             <TouchableWithoutFeedback onPress={() => inputRef.current?.focus()}>
@@ -58,7 +59,7 @@ export default function CustomLabelledField({
                         borderWidth: 1,
                         position: 'relative',
                         backgroundColor: themeColors.primary + '08',
-                        borderColor: error ? '#EF4444' : isFocused ? themeColors.primary : '#F3F4F6',
+                        borderColor: error ? palette.red500 : isFocused ? themeColors.primary : palette.gray100,
                         ...(multiline ? { paddingVertical: 12, minHeight: 80 } : { height: 56, justifyContent: 'center' })
                     }}
                 >
@@ -68,7 +69,7 @@ export default function CustomLabelledField({
                         value={value}
                         onChangeText={onChangeText}
                         placeholder={placeholder}
-                        placeholderTextColor="#999"
+                        placeholderTextColor={palette.gray400}
                         secureTextEntry={secureTextEntry}
                         keyboardType={keyboardType}
                         multiline={multiline}

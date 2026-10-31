@@ -1,6 +1,7 @@
 import { CATEGORIES, getCategoryMeta } from '@/constants/categories';
 import { themeColors } from '@/themes/colors';
 import { Ionicons } from '@expo/vector-icons';
+import { palette } from '@tweak/theme';
 import dayjs from 'dayjs';
 import React from 'react';
 import { Image, ScrollView, Text, TouchableOpacity, View } from 'react-native';
@@ -10,13 +11,13 @@ import { ScheduleSlot } from '../../types/tweak';
 // ─── Constants ──────────────────────────────────────────────────────────────
 
 const SCHEDULE_LABELS: Record<string, { label: string; color: string; bg: string }> = {
-    one_day: { label: 'Single Day', color: '#3B82F6', bg: '#EFF6FF' },
-    deadline: { label: 'Deadline', color: '#F97316', bg: '#FFF7ED' },
-    few_days: { label: 'Multi-Day', color: '#10B981', bg: '#ECFDF5' },
+    one_day: { label: 'Single Day', color: palette.blue500, bg: palette.blue50 },
+    deadline: { label: 'Deadline', color: palette.orange500, bg: palette.orange50 },
+    few_days: { label: 'Multi-Day', color: palette.green600, bg: palette.emerald50 },
 };
 
 export function getScheduleMeta(pref: string) {
-    return SCHEDULE_LABELS[pref] ?? { label: pref, color: '#6B7280', bg: '#F3F4F6' };
+    return SCHEDULE_LABELS[pref] ?? { label: pref, color: palette.gray500, bg: palette.gray100 };
 }
 
 // ─── Helpers ────────────────────────────────────────────────────────────────
@@ -115,8 +116,8 @@ export default function TweakTile({
 
     const showSlotBadge = item.schedulePreference === 'few_days' && slotType != null;
     const slotBadge = slotType === 'working_time'
-        ? { label: 'Fixed Work Time', color: '#7C3AED', bg: '#F5F3FF' }
-        : { label: 'Availability', color: '#0284C7', bg: '#F0F9FF' };
+        ? { label: 'Fixed Work Time', color: palette.violet600, bg: palette.violet50 }
+        : { label: 'Availability', color: palette.sky600, bg: palette.sky50 };
 
     // Find application by current user
     const myApplication = currentUserId ? item.applications?.find(a => a.userId === currentUserId) : null;
@@ -129,11 +130,11 @@ export default function TweakTile({
             onPress={onPress}
             activeOpacity={0.75}
             style={{
-                backgroundColor: '#FFFFFF',
+                backgroundColor: palette.white,
                 borderRadius: 18,
                 marginBottom: 14,
                 borderWidth: 1,
-                borderColor: '#E2E8F0',
+                borderColor: palette.slate200,
                 borderLeftWidth: 4,
                 borderLeftColor: scheduleMeta.color,
             }}
@@ -142,7 +143,7 @@ export default function TweakTile({
                 {hasImage ? (
                     <Image
                         source={{ uri: item.images[0]?.uri }}
-                        style={{ width: 68, height: 68, borderRadius: 12, backgroundColor: '#F1F5F9', alignSelf: 'center' }}
+                        style={{ width: 68, height: 68, borderRadius: 12, backgroundColor: palette.slate100, alignSelf: 'center' }}
                     />
                 ) : (
                     <View
@@ -163,7 +164,7 @@ export default function TweakTile({
                 <View style={{ flex: 1 }}>
                     <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 5 }}>
                         <Text
-                            style={{ fontSize: 16, fontWeight: '800', color: '#0F172A', flex: 1, marginRight: 8 }}
+                            style={{ fontSize: 16, fontWeight: '800', color: palette.slate900, flex: 1, marginRight: 8 }}
                             numberOfLines={1}
                         >
                             {item.category || 'Uncategorized'}
@@ -172,17 +173,17 @@ export default function TweakTile({
                         <View style={{ alignItems: 'flex-end', gap: 4 }}>
                             {/* Price / Status */}
                             {item.status === 'draft' ? (
-                                <View style={{ backgroundColor: '#FEF3C7', paddingHorizontal: 7, paddingVertical: 3, borderRadius: 8 }}>
-                                    <Text style={{ fontSize: 9, fontWeight: '800', color: '#B45309', letterSpacing: 0.5 }}>DRAFT</Text>
+                                <View style={{ backgroundColor: palette.amber100, paddingHorizontal: 7, paddingVertical: 3, borderRadius: 8 }}>
+                                    <Text style={{ fontSize: 9, fontWeight: '800', color: palette.amber700, letterSpacing: 0.5 }}>DRAFT</Text>
                                 </View>
                             ) : appStatus ? (
                                 <View style={{ 
-                                    backgroundColor: appStatus === 'accepted' ? '#DCFCE7' : appStatus === 'rejected' ? '#FEE2E2' : '#EFF6FF', 
+                                    backgroundColor: appStatus === 'accepted' ? palette.green100 : appStatus === 'rejected' ? palette.red100 : palette.blue50, 
                                     paddingHorizontal: 7, paddingVertical: 3, borderRadius: 8 
                                 }}>
                                     <Text style={{ 
                                         fontSize: 9, fontWeight: '800', 
-                                        color: appStatus === 'accepted' ? '#15803D' : appStatus === 'rejected' ? '#B91C1C' : '#1D4ED8',
+                                        color: appStatus === 'accepted' ? palette.green700 : appStatus === 'rejected' ? palette.red700 : palette.blue700,
                                         letterSpacing: 0.5 
                                     }}>
                                         {appStatus.toUpperCase()}
@@ -230,7 +231,7 @@ export default function TweakTile({
                         )}
 
                         <View style={{
-                            backgroundColor: isOnsite ? '#F0F9FF' : '#F5F3FF',
+                            backgroundColor: isOnsite ? palette.sky50 : palette.violet50,
                             paddingHorizontal: 7,
                             paddingVertical: 3,
                             borderRadius: 20,
@@ -241,9 +242,9 @@ export default function TweakTile({
                             <Ionicons
                                 name={isOnsite ? 'location-outline' : 'globe-outline'}
                                 size={10}
-                                color={isOnsite ? '#0284C7' : '#7C3AED'}
+                                color={isOnsite ? palette.sky600 : palette.violet600}
                             />
-                            <Text style={{ fontSize: 10, fontWeight: '700', color: isOnsite ? '#0284C7' : '#7C3AED' }}>
+                            <Text style={{ fontSize: 10, fontWeight: '700', color: isOnsite ? palette.sky600 : palette.violet600 }}>
                                 {isOnsite ? 'Onsite' : 'Remote'}
                             </Text>
                         </View>
@@ -280,15 +281,15 @@ export default function TweakTile({
                                 <View
                                     key={idx}
                                     style={{
-                                        backgroundColor: '#F8FAFC',
+                                        backgroundColor: palette.slate50,
                                         borderWidth: 1,
-                                        borderColor: '#E2E8F0',
+                                        borderColor: palette.slate200,
                                         paddingHorizontal: 7,
                                         paddingVertical: 2,
                                         borderRadius: 20,
                                     }}
                                 >
-                                    <Text style={{ fontSize: 10, fontWeight: '600', color: '#475569' }}>{skill}</Text>
+                                    <Text style={{ fontSize: 10, fontWeight: '600', color: palette.slate600 }}>{skill}</Text>
                                 </View>
                             ))}
                         </ScrollView>
@@ -299,7 +300,7 @@ export default function TweakTile({
             {/* ── BOTTOM BAR ── */}
             <View style={{
                 borderTopWidth: 1,
-                borderTopColor: '#F1F5F9',
+                borderTopColor: palette.slate100,
                 paddingHorizontal: 14,
                 paddingVertical: 9,
                 flexDirection: 'row',
@@ -308,23 +309,23 @@ export default function TweakTile({
             }}>
                 {/* Date */}
                 <View style={{ flexDirection: 'row', alignItems: 'center', gap: 3 }}>
-                    <Ionicons name="calendar-clear-outline" size={11} color="#94A3B8" />
-                    <Text style={{ fontSize: 11, color: '#475569', fontWeight: '600' }}>{dateText}</Text>
+                    <Ionicons name="calendar-clear-outline" size={11} color={palette.slate400} />
+                    <Text style={{ fontSize: 11, color: palette.slate600, fontWeight: '600' }}>{dateText}</Text>
                 </View>
 
                 {/* Days count */}
                 {daysText && (
                     <View style={{ flexDirection: 'row', alignItems: 'center', gap: 3 }}>
-                        <Ionicons name="layers-outline" size={11} color="#94A3B8" />
-                        <Text style={{ fontSize: 11, color: '#475569', fontWeight: '600' }}>{daysText}</Text>
+                        <Ionicons name="layers-outline" size={11} color={palette.slate400} />
+                        <Text style={{ fontSize: 11, color: palette.slate600, fontWeight: '600' }}>{daysText}</Text>
                     </View>
                 )}
 
                 {/* Hours */}
                 {hoursText && (
                     <View style={{ flexDirection: 'row', alignItems: 'center', gap: 3 }}>
-                        <Ionicons name="time-outline" size={11} color="#94A3B8" />
-                        <Text style={{ fontSize: 11, color: '#475569', fontWeight: '600' }}>{hoursText}</Text>
+                        <Ionicons name="time-outline" size={11} color={palette.slate400} />
+                        <Text style={{ fontSize: 11, color: palette.slate600, fontWeight: '600' }}>{hoursText}</Text>
                     </View>
                 )}
 
@@ -335,26 +336,26 @@ export default function TweakTile({
                     <TouchableOpacity 
                         onPress={onViewApplicants}
                         style={{ 
-                            backgroundColor: '#EFF6FF', 
+                            backgroundColor: palette.blue50, 
                             paddingHorizontal: 10, 
                             paddingVertical: 5, 
                             borderRadius: 8,
                             borderWidth: 1,
-                            borderColor: '#BFDBFE',
+                            borderColor: palette.blue200,
                             flexDirection: 'row',
                             alignItems: 'center',
                             gap: 4
                         }}
                     >
-                        <Ionicons name="people" size={12} color="#2563EB" />
-                        <Text style={{ fontSize: 11, color: '#2563EB', fontWeight: '800' }}>
+                        <Ionicons name="people" size={12} color={palette.blue600} />
+                        <Text style={{ fontSize: 11, color: palette.blue600, fontWeight: '800' }}>
                             Applicants ({applicantsCount})
                         </Text>
                     </TouchableOpacity>
                 ) : canShowAddress ? (
                     <View style={{ flexDirection: 'row', alignItems: 'center', gap: 3 }}>
-                        <Ionicons name="home-outline" size={11} color="#94A3B8" />
-                        <Text style={{ fontSize: 11, color: '#475569', fontWeight: '600' }}>{addressLabel}</Text>
+                        <Ionicons name="home-outline" size={11} color={palette.slate400} />
+                        <Text style={{ fontSize: 11, color: palette.slate600, fontWeight: '600' }}>{addressLabel}</Text>
                     </View>
                 ) : null}
             </View>

@@ -13,6 +13,7 @@ import {
     View,
     ViewStyle
 } from 'react-native';
+import { palette } from '@tweak/theme';
 import { useConfirmationStore } from '../../store/useConfirmationStore';
 import { themeColors } from '../../themes/colors';
 
@@ -189,8 +190,8 @@ export default function CustomImageUploader({
                     borderStyle: 'dashed',
                     borderRadius: 24,
                     height: 128,
-                    backgroundColor: '#EFF6FF',
-                    borderColor: images.length > 0 ? themeColors.primary : '#BFDBFE'
+                    backgroundColor: palette.blue50,
+                    borderColor: images.length > 0 ? themeColors.primary : palette.blue200
                 }}
             >
                 {images.length === 0 ? (
@@ -199,7 +200,7 @@ export default function CustomImageUploader({
                         style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}
                     >
                         <View style={{ alignItems: 'center', justifyContent: 'center' }}>
-                            <View style={{ width: 40, height: 40, backgroundColor: 'white', borderRadius: 20, justifyContent: 'center', alignItems: 'center', marginBottom: 8, elevation: 1, shadowColor: '#000', shadowOffset: { width: 0, height: 1 }, shadowOpacity: 0.05, shadowRadius: 2 }}>
+                            <View style={{ width: 40, height: 40, backgroundColor: 'white', borderRadius: 20, justifyContent: 'center', alignItems: 'center', marginBottom: 8, elevation: 1, shadowColor: palette.black, shadowOffset: { width: 0, height: 1 }, shadowOpacity: 0.05, shadowRadius: 2 }}>
                                 <AntDesign name="upload" size={20} color={themeColors.primary} />
                             </View>
                             <Text style={{ color: themeColors.primary, fontWeight: 'bold' }}>Tap to Upload Images</Text>
@@ -223,7 +224,7 @@ export default function CustomImageUploader({
                                 <Image source={{ uri: img.uri }} className="w-full h-full" resizeMode="cover" />
                                 {showThumbnailFeature && img.isThumbnail && (
                                     <View className="absolute top-1 right-1 bg-white rounded-full p-1 shadow-sm">
-                                        <Entypo name="star" size={12} color="#FFD700" />
+                                        <Entypo name="star" size={12} color={palette.gold} />
                                     </View>
                                 )}
                             </Pressable>

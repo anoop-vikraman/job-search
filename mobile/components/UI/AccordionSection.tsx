@@ -1,6 +1,7 @@
 import { Ionicons } from '@expo/vector-icons';
 import React from 'react';
 import { LayoutAnimation, Platform, StyleSheet, Text, TouchableOpacity, UIManager, View } from 'react-native';
+import { palette } from '@tweak/theme';
 import { themeColors } from '../../themes/colors';
 
 if (Platform.OS === 'android' && UIManager.setLayoutAnimationEnabledExperimental) {
@@ -49,13 +50,13 @@ export default function AccordionSection({
                 <View style={styles.headerRight}>
                     {isCompleted && !isExpanded && (
                         <View style={styles.checkmark}>
-                            <Ionicons name="checkmark-circle" size={20} color="#10B981" />
+                            <Ionicons name="checkmark-circle" size={20} color={palette.green600} />
                         </View>
                     )}
                     <Ionicons
                         name={isExpanded ? 'chevron-up' : 'chevron-down'}
                         size={20}
-                        color={isExpanded ? themeColors.primary : '#9CA3AF'}
+                        color={isExpanded ? themeColors.primary : palette.gray400}
                     />
                 </View>
             </TouchableOpacity>
@@ -75,7 +76,7 @@ const styles = StyleSheet.create({
         backgroundColor: 'white',
         borderRadius: 16,
         borderWidth: 1,
-        borderColor: '#E5E7EB',
+        borderColor: palette.gray200,
         overflow: 'hidden',
     },
     header: {
@@ -86,9 +87,9 @@ const styles = StyleSheet.create({
         backgroundColor: 'white',
     },
     headerExpanded: {
-        backgroundColor: '#F9FAFB',
+        backgroundColor: palette.gray50,
         borderBottomWidth: 1,
-        borderBottomColor: '#E5E7EB',
+        borderBottomColor: palette.gray200,
     },
     headerLeft: {
         flexDirection: 'row',
@@ -100,7 +101,7 @@ const styles = StyleSheet.create({
         width: 40,
         height: 40,
         borderRadius: 20,
-        backgroundColor: '#EEF2FF',
+        backgroundColor: palette.indigo50,
         justifyContent: 'center',
         alignItems: 'center',
     },
@@ -110,7 +111,7 @@ const styles = StyleSheet.create({
     title: {
         fontSize: 16,
         fontWeight: '600',
-        color: '#111827',
+        color: palette.gray900,
         flex: 1,
     },
     titleExpanded: {

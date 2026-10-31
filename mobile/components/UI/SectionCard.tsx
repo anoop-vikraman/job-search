@@ -1,4 +1,5 @@
 import { Ionicons } from '@expo/vector-icons';
+import { palette } from '@tweak/theme';
 import React from 'react';
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
@@ -12,14 +13,14 @@ export default function SectionCard({ children, onEdit, title }: SectionCardProp
     return (
         <View style={styles.container}>
             {title && (
-                <View style={{ marginBottom: 12, paddingBottom: 8, borderBottomWidth: 1, borderBottomColor: '#F3F4F6' }}>
-                    <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#111827' }}>{title}</Text>
+                <View style={{ marginBottom: 12, paddingBottom: 8, borderBottomWidth: 1, borderBottomColor: palette.gray100 }}>
+                    <Text style={{ fontSize: 16, fontWeight: 'bold', color: palette.gray900 }}>{title}</Text>
                 </View>
             )}
 
             {onEdit && (
                 <TouchableOpacity style={styles.editButton} onPress={onEdit} activeOpacity={0.7}>
-                    <Ionicons name="pencil" size={16} color="#6366F1" />
+                    <Ionicons name="pencil" size={16} color={palette.indigo500} />
                     <Text style={styles.editText}>Edit</Text>
                 </TouchableOpacity>
             )}
@@ -37,8 +38,8 @@ const styles = StyleSheet.create({
         padding: 20,
         marginBottom: 16,
         borderTopWidth: 3,
-        borderTopColor: '#E5E7EB',
-        shadowColor: '#000',
+        borderTopColor: palette.gray200,
+        shadowColor: palette.black,
         shadowOffset: { width: 0, height: 1 },
         shadowOpacity: 0.05,
         shadowRadius: 2,
@@ -53,14 +54,14 @@ const styles = StyleSheet.create({
         gap: 4,
         paddingHorizontal: 12,
         paddingVertical: 6,
-        backgroundColor: '#EEF2FF',
+        backgroundColor: palette.indigo50,
         borderRadius: 8,
         zIndex: 10,
     },
     editText: {
         fontSize: 14,
         fontWeight: '600',
-        color: '#6366F1',
+        color: palette.indigo500,
     },
     content: {
         paddingRight: 80, // Space for edit button

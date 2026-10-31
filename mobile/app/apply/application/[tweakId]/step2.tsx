@@ -17,6 +17,7 @@ import { ScreenWrapper } from '@/components/ScreenWrapper';
 import { useAuthStore } from '@/store/useAuthStore';
 import { Tweak, TweakApplication, useTweaksStore } from '@/store/useTweaksStore';
 import { ScheduleSlot } from '@/types/tweak';
+import { palette } from '@tweak/theme';
 
 // ─── Conflict Detection (same logic as details page) ─────────────────────────
 
@@ -95,13 +96,13 @@ function SlotItem({
     onPress: () => void;
     onConflictInfo: () => void;
 }) {
-    const conflictBg = conflict === 'working_time' ? '#FEF2F2' : '#FFF7ED';
-    const conflictBorder = conflict === 'working_time' ? '#FECACA' : '#FED7AA';
-    const conflictText = conflict === 'working_time' ? '#DC2626' : '#EA580C';
+    const conflictBg = conflict === 'working_time' ? palette.red50 : palette.orange50;
+    const conflictBorder = conflict === 'working_time' ? palette.red200 : palette.orange200;
+    const conflictText = conflict === 'working_time' ? palette.red600 : palette.orange600;
 
-    const bg = conflict ? conflictBg : selected ? '#DCFCE7' : '#F8FAFC';
-    const border = conflict ? conflictBorder : selected ? '#86EFAC' : '#E2E8F0';
-    const textColor = conflict ? conflictText : selected ? '#15803D' : '#475569';
+    const bg = conflict ? conflictBg : selected ? palette.green100 : palette.slate50;
+    const border = conflict ? conflictBorder : selected ? palette.green300 : palette.slate200;
+    const textColor = conflict ? conflictText : selected ? palette.green700 : palette.slate600;
 
     return (
         <Pressable
@@ -122,9 +123,9 @@ function SlotItem({
                 {conflict ? (
                     <Ionicons name="warning" size={16} color={conflictText} />
                 ) : selected ? (
-                    <Ionicons name="checkmark-circle" size={16} color="#16A34A" />
+                    <Ionicons name="checkmark-circle" size={16} color={palette.green600} />
                 ) : (
-                    <Ionicons name="time-outline" size={16} color="#94A3B8" />
+                    <Ionicons name="time-outline" size={16} color={palette.slate400} />
                 )}
                 <View>
                     {dateLabel && <Text style={{ fontSize: 11, color: textColor, fontWeight: '600', marginBottom: 1, opacity: 0.7 }}>{dateLabel}</Text>}
@@ -161,7 +162,7 @@ export default function ApplyStep2() {
         return (
             <ScreenWrapper>
                 <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
-                    <Text style={{ color: '#64748B' }}>Tweak not found.</Text>
+                    <Text style={{ color: palette.slate500 }}>Tweak not found.</Text>
                 </View>
             </ScreenWrapper>
         );
@@ -263,36 +264,36 @@ export default function ApplyStep2() {
                 <View style={{
                     flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between',
                     paddingHorizontal: 16, paddingVertical: 14,
-                    backgroundColor: '#fff', borderBottomWidth: 1, borderBottomColor: '#F1F5F9',
+                    backgroundColor: '#fff', borderBottomWidth: 1, borderBottomColor: palette.slate100,
                 }}>
                     <TouchableOpacity onPress={() => router.back()} style={{ padding: 6 }} accessibilityRole="button" accessibilityLabel="Go back">
-                        <Ionicons name="arrow-back" size={24} color="#111827" />
+                        <Ionicons name="arrow-back" size={24} color={palette.gray900} />
                     </TouchableOpacity>
-                    <Text style={{ fontSize: 17, fontWeight: '800', color: '#0F172A' }}>Apply for Tweak</Text>
+                    <Text style={{ fontSize: 17, fontWeight: '800', color: palette.slate900 }}>Apply for Tweak</Text>
                     <View style={{ width: 36 }} />
                 </View>
 
                 {/* Step indicator */}
-                <View style={{ flexDirection: 'row', alignItems: 'center', paddingHorizontal: 20, paddingVertical: 12, backgroundColor: '#fff', borderBottomWidth: 1, borderBottomColor: '#F1F5F9', gap: 8 }}>
-                    <View style={{ flex: 1, height: 4, borderRadius: 4, backgroundColor: '#007AFF' }} />
-                    <View style={{ flex: 1, height: 4, borderRadius: 4, backgroundColor: '#007AFF' }} />
-                    <Text style={{ fontSize: 12, fontWeight: '700', color: '#64748B', marginLeft: 4 }}>Step 2 / 2</Text>
+                <View style={{ flexDirection: 'row', alignItems: 'center', paddingHorizontal: 20, paddingVertical: 12, backgroundColor: '#fff', borderBottomWidth: 1, borderBottomColor: palette.slate100, gap: 8 }}>
+                    <View style={{ flex: 1, height: 4, borderRadius: 4, backgroundColor: palette.iosBlue }} />
+                    <View style={{ flex: 1, height: 4, borderRadius: 4, backgroundColor: palette.iosBlue }} />
+                    <Text style={{ fontSize: 12, fontWeight: '700', color: palette.slate500, marginLeft: 4 }}>Step 2 / 2</Text>
                 </View>
 
                 <ScrollView style={{ flex: 1 }} contentContainerStyle={{ padding: 20, paddingBottom: 40 }} keyboardShouldPersistTaps="handled">
 
                     {/* Slot selection */}
-                    <Text style={{ fontSize: 20, fontWeight: '900', color: '#0F172A', marginBottom: 6 }}>
+                    <Text style={{ fontSize: 20, fontWeight: '900', color: palette.slate900, marginBottom: 6 }}>
                         Choose Your Preferred Slots
                     </Text>
-                    <Text style={{ fontSize: 14, color: '#64748B', marginBottom: 16, lineHeight: 20 }}>
+                    <Text style={{ fontSize: 14, color: palette.slate500, marginBottom: 16, lineHeight: 20 }}>
                         Select the time slots you're available for. Tap a conflicting slot (orange/red) for details.
                     </Text>
 
                     {slots.length === 0 ? (
-                        <View style={{ backgroundColor: '#F8FAFC', borderRadius: 12, padding: 16, alignItems: 'center', marginBottom: 24 }}>
-                            <Ionicons name="calendar-outline" size={32} color="#94A3B8" />
-                            <Text style={{ color: '#64748B', marginTop: 8, textAlign: 'center' }}>No specific time slots defined for this tweak.</Text>
+                        <View style={{ backgroundColor: palette.slate50, borderRadius: 12, padding: 16, alignItems: 'center', marginBottom: 24 }}>
+                            <Ionicons name="calendar-outline" size={32} color={palette.slate400} />
+                            <Text style={{ color: palette.slate500, marginTop: 8, textAlign: 'center' }}>No specific time slots defined for this tweak.</Text>
                         </View>
                     ) : (
                         <View style={{ marginBottom: 24 }}>
@@ -308,7 +309,7 @@ export default function ApplyStep2() {
                                 />
                             ))}
                             {selectedSlots.length === 0 && (
-                                <Text style={{ fontSize: 12, color: '#EF4444', marginTop: 4 }}>
+                                <Text style={{ fontSize: 12, color: palette.red500, marginTop: 4 }}>
                                     * Please select at least one slot
                                 </Text>
                             )}
@@ -317,56 +318,56 @@ export default function ApplyStep2() {
 
                     {/* Price Quote */}
                     <View style={{ marginBottom: 24 }}>
-                        <Text style={{ fontSize: 17, fontWeight: '800', color: '#0F172A', marginBottom: 6 }}>
+                        <Text style={{ fontSize: 17, fontWeight: '800', color: palette.slate900, marginBottom: 6 }}>
                             {isQuoteModel ? 'Your Quoted Price *' : 'Counter Quote (Optional)'}
                         </Text>
-                        <Text style={{ fontSize: 13, color: '#64748B', marginBottom: 12 }}>
+                        <Text style={{ fontSize: 13, color: palette.slate500, marginBottom: 12 }}>
                             {isQuoteModel
                                 ? 'This tweak requires you to set a price. Enter your best quote.'
                                 : `The listed price is ₹${tweak.pricingModel !== 'quote' ? (tweak.pricingData?.price || tweak.price || '—') : '—'}. You can suggest a different price.`}
                         </Text>
                         <View style={{
                             flexDirection: 'row', alignItems: 'center',
-                            borderWidth: 1.5, borderColor: quotedPrice ? '#007AFF' : '#E2E8F0',
-                            borderRadius: 14, backgroundColor: '#FAFAFA', paddingHorizontal: 16,
+                            borderWidth: 1.5, borderColor: quotedPrice ? palette.iosBlue : palette.slate200,
+                            borderRadius: 14, backgroundColor: palette.gray50, paddingHorizontal: 16,
                         }}>
-                            <Text style={{ fontSize: 20, fontWeight: '700', color: '#0F172A', marginRight: 8 }}>₹</Text>
+                            <Text style={{ fontSize: 20, fontWeight: '700', color: palette.slate900, marginRight: 8 }}>₹</Text>
                             <TextInput
                                 value={quotedPrice}
                                 onChangeText={(t) => setQuotedPrice(t.replace(/[^0-9.]/g, ''))}
                                 placeholder="0.00"
-                                placeholderTextColor="#94A3B8"
+                                placeholderTextColor={palette.slate400}
                                 keyboardType="decimal-pad"
-                                style={{ flex: 1, fontSize: 18, fontWeight: '600', color: '#0F172A', paddingVertical: 14 }}
+                                style={{ flex: 1, fontSize: 18, fontWeight: '600', color: palette.slate900, paddingVertical: 14 }}
                             />
                         </View>
                     </View>
 
                     {/* Summary of step 1 message */}
                     <View style={{
-                        backgroundColor: '#F8FAFC',
+                        backgroundColor: palette.slate50,
                         borderWidth: 1,
-                        borderColor: '#E2E8F0',
+                        borderColor: palette.slate200,
                         borderRadius: 14,
                         padding: 14,
                         marginBottom: 16,
                     }}>
-                        <Text style={{ fontSize: 12, fontWeight: '700', color: '#64748B', marginBottom: 6, textTransform: 'uppercase', letterSpacing: 0.5 }}>
+                        <Text style={{ fontSize: 12, fontWeight: '700', color: palette.slate500, marginBottom: 6, textTransform: 'uppercase', letterSpacing: 0.5 }}>
                             Your Pitch (Step 1)
                         </Text>
-                        <Text style={{ fontSize: 14, color: '#334155', lineHeight: 20 }} numberOfLines={3}>
+                        <Text style={{ fontSize: 14, color: palette.slate700, lineHeight: 20 }} numberOfLines={3}>
                             {whyMessage || '—'}
                         </Text>
                     </View>
                 </ScrollView>
 
                 {/* Bottom CTA */}
-                <View style={{ padding: 16, backgroundColor: '#fff', borderTopWidth: 1, borderTopColor: '#F1F5F9' }}>
+                <View style={{ padding: 16, backgroundColor: '#fff', borderTopWidth: 1, borderTopColor: palette.slate100 }}>
                     <TouchableOpacity
                         onPress={handleApply}
                         disabled={!canApply || applying}
                         style={{
-                            backgroundColor: canApply ? '#007AFF' : '#CBD5E1',
+                            backgroundColor: canApply ? palette.iosBlue : palette.slate300,
                             paddingVertical: 16,
                             borderRadius: 14,
                             flexDirection: 'row',
@@ -394,17 +395,17 @@ export default function ApplyStep2() {
                         shadowColor: '#000', shadowOpacity: 0.15, shadowRadius: 12, elevation: 10,
                     }}>
                         <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8, marginBottom: 10 }}>
-                            <Ionicons name="warning" size={20} color={conflictTip.type === 'working_time' ? '#DC2626' : '#EA580C'} />
-                            <Text style={{ fontSize: 15, fontWeight: '700', color: '#0F172A' }}>Schedule Conflict</Text>
+                            <Ionicons name="warning" size={20} color={conflictTip.type === 'working_time' ? palette.red600 : palette.orange600} />
+                            <Text style={{ fontSize: 15, fontWeight: '700', color: palette.slate900 }}>Schedule Conflict</Text>
                         </View>
-                        <Text style={{ color: '#475569', fontSize: 14, lineHeight: 20 }}>
+                        <Text style={{ color: palette.slate600, fontSize: 14, lineHeight: 20 }}>
                             {conflictTip.type === 'working_time'
                                 ? 'This slot conflicts with fixed working hours of another tweak you already applied for. Consider deselecting it.'
                                 : 'This slot overlaps with the availability window of another tweak you applied for. You may still select it, but conflicts can reduce acceptance chances.'}
                         </Text>
                         <TouchableOpacity
                             onPress={() => setConflictTip({ visible: false, type: null })}
-                            style={{ marginTop: 16, backgroundColor: '#007AFF', paddingVertical: 10, borderRadius: 10, alignItems: 'center' }}
+                            style={{ marginTop: 16, backgroundColor: palette.iosBlue, paddingVertical: 10, borderRadius: 10, alignItems: 'center' }}
                         >
                             <Text style={{ color: '#fff', fontWeight: '700' }}>Got it</Text>
                         </TouchableOpacity>

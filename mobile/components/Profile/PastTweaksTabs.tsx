@@ -1,6 +1,7 @@
 import { Ionicons } from '@expo/vector-icons';
 import React, { useState } from 'react';
 import { ScrollView, Text, TouchableOpacity, View } from 'react-native';
+import { palette } from '@tweak/theme';
 
 interface PastTweak { id: string; title: string; status: string; date: string; amount: number; rating?: number }
 
@@ -32,7 +33,7 @@ export default function PastTweaksTabs() {
                                 key={i}
                                 name={i < tweak.rating! ? 'star' : 'star-outline'}
                                 size={16}
-                                color="#F59E0B"
+                                color={palette.amber500}
                             />
                         ))}
                     </View>

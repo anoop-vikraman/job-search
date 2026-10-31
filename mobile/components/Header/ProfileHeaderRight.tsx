@@ -2,6 +2,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
 import React from 'react';
 import { Image, TouchableOpacity, View } from 'react-native';
+import { palette } from '@tweak/theme';
 import { useAuthStore } from '../../store/useAuthStore';
 import { themeColors } from '../../themes/colors';
 
@@ -22,18 +23,18 @@ export default function ProfileHeaderRight() {
             {user?.profilePictureUrl ? (
                 <Image
                     source={{ uri: user.profilePictureUrl }}
-                    style={{ width: 32, height: 32, borderRadius: 16, borderWidth: 1, borderColor: '#E5E7EB' }}
+                    style={{ width: 32, height: 32, borderRadius: 16, borderWidth: 1, borderColor: palette.gray200 }}
                 />
             ) : (
                 <View style={{
                     width: 32,
                     height: 32,
                     borderRadius: 16,
-                    backgroundColor: '#EEF2FF',
+                    backgroundColor: palette.indigo50,
                     alignItems: 'center',
                     justifyContent: 'center',
                     borderWidth: 1,
-                    borderColor: '#C7D2FE'
+                    borderColor: palette.indigo100
                 }}>
                     <Ionicons name="person" size={18} color={themeColors.primary} />
                 </View>

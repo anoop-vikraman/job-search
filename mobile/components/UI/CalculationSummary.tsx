@@ -1,5 +1,6 @@
 import React from 'react';
 import { StyleSheet, Text, View } from 'react-native';
+import { palette } from '@tweak/theme';
 
 interface CalculationSummaryProps {
     label: string;
@@ -23,26 +24,26 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         paddingHorizontal: 16,
         paddingVertical: 12,
-        backgroundColor: '#F9FAFB',
+        backgroundColor: palette.gray50,
         borderRadius: 12,
         marginTop: 12,
     },
     containerHighlight: {
-        backgroundColor: '#EEF2FF',
+        backgroundColor: palette.indigo50,
         borderWidth: 1,
-        borderColor: '#C7D2FE',
+        borderColor: palette.indigo100,
     },
     label: {
         fontSize: 14,
-        color: '#6B7280',
+        color: palette.gray500,
         fontWeight: '500',
     },
     value: {
         fontSize: 18,
         fontWeight: 'bold',
-        color: '#111827',
+        color: palette.gray900,
     },
     valueHighlight: {
-        color: '#6366F1',
+        color: palette.indigo500,
     },
 });
