@@ -1,3 +1,4 @@
+import enum
 import uuid
 from typing import Any
 
@@ -58,3 +59,12 @@ class TweakResponse(ORMModel):
     price_minor: int | None
     currency: str
     created_at: UtcDatetime
+    # Only set on the feed when the caller passes lat/lng and the tweak has a geocoded address.
+    distance_km: float | None = None
+
+
+class FeedSort(str, enum.Enum):
+    newest = "newest"
+    price_asc = "price_asc"
+    price_desc = "price_desc"
+    distance = "distance"

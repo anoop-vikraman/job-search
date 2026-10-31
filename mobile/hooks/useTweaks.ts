@@ -1,4 +1,5 @@
 import {
+    keepPreviousData,
     useMutation,
     useQuery,
     useQueryClient,
@@ -6,7 +7,7 @@ import {
     type UseQueryResult,
 } from '@tanstack/react-query';
 
-import { tweaksApi } from '../api/tweaks';
+import { tweaksApi, type TweakFeedParams } from '../api/tweaks';
 import { applicationsApi } from '../api/applications';
 import type {
     BackendApplication,
@@ -22,12 +23,19 @@ import {
 } from '../utils/tweakAdapter';
 import { queryKeys } from './queryKeys';
 
-/** Feed of tweaks from other users (GET /tweaks), mapped to the local shape. */
-export function useTweaksFeed(category?: string): UseQueryResult<Tweak[]> {
+export type TweakFeedFilters = Omit<TweakFeedParams, 'page' | 'limit'>;
+
+/**
+ * Feed of tweaks from other users (GET /tweaks), mapped to the local shape.
+ * Search, location radius and sort run server-side; the previous page stays on
+ * screen while a new filter combination loads.
+ */
+export function useTweaksFeed(filters: TweakFeedFilters = {}): UseQueryResult<Tweak[]> {
     return useQuery({
-        queryKey: queryKeys.tweaksFeed(category),
+        queryKey: queryKeys.tweaksFeed(filters),
+        placeholderData: keepPreviousData,
         queryFn: async (): Promise<Tweak[]> => {
-            const page = await tweaksApi.feed({ page: 1, limit: 50, category });
+            const page = await tweaksApi.feed({ page: 1, limit: 50, ...filters });
             return page.items.map((t) => backendTweakToLocal(t));
         },
     });

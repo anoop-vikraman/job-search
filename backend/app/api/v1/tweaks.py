@@ -14,7 +14,7 @@ from app.schemas.application import (
     ProviderSummary,
 )
 from app.schemas.common import ErrorResponse, Page
-from app.schemas.tweak import TweakCreate, TweakResponse, TweakUpdate
+from app.schemas.tweak import FeedSort, TweakCreate, TweakResponse, TweakUpdate
 from app.services import application_service, tweak_service
 
 router = APIRouter(prefix="/tweaks", tags=["tweaks"])
@@ -27,20 +27,46 @@ ERRORS: dict[int | str, dict[str, Any]] = {
 }
 
 
-@router.get("", response_model=Page[TweakResponse])
+@router.get(
+    "",
+    response_model=Page[TweakResponse],
+    status_code=status.HTTP_200_OK,
+    responses={422: {"model": ErrorResponse}},
+)
 async def list_tweaks(
     user: CurrentUser,
     db: DbSession,
     page: int = Query(1, ge=1),
     limit: int = Query(20, ge=1, le=100),
     category: str | None = None,
+    search: str | None = Query(None, max_length=100),
+    lat: float | None = Query(None, ge=-90, le=90),
+    lng: float | None = Query(None, ge=-180, le=180),
+    radius_km: float | None = Query(None, gt=0, le=500),
+    sort: FeedSort = FeedSort.newest,
 ) -> Page[TweakResponse]:
-    """Marketplace feed: active tweaks not owned by the viewer."""
+    """Marketplace feed: active tweaks not owned by the viewer.
+
+    `search` matches title, description, category and skills (case-insensitive).
+    Passing `lat`/`lng` adds `distance_km` to each item; `radius_km` and `sort=distance`
+    require them.
+    """
     rows, total = await tweak_service.list_feed(
-        db, viewer_id=user.id, page=page, limit=limit, category=category
+        db,
+        viewer_id=user.id,
+        page=page,
+        limit=limit,
+        category=category,
+        search=search,
+        lat=lat,
+        lng=lng,
+        radius_km=radius_km,
+        sort=sort,
     )
     return Page(
-        items=[TweakResponse.model_validate(t) for t in rows],
+        items=[
+            TweakResponse.model_validate(t).model_copy(update={"distance_km": d}) for t, d in rows
+        ],
         total=total,
         page=page,
         limit=limit,

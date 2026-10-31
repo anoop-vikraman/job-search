@@ -64,7 +64,12 @@ export interface BackendTweak {
     price_minor: number | null;
     currency: string;
     created_at: string;
+    /** Feed only: km from the caller's lat/lng; null when either side lacks coordinates. */
+    distance_km?: number | null;
 }
+
+/** Feed ordering accepted by GET /tweaks. `distance` requires lat/lng. */
+export type FeedSort = 'newest' | 'price_asc' | 'price_desc' | 'distance';
 
 /** Body for creating a tweak. */
 export interface CreateTweakRequest {

@@ -1,61 +1,153 @@
 import { CATEGORIES } from '@/constants/categories';
 import { themeColors } from '@/themes/colors';
 import { Ionicons } from '@expo/vector-icons';
-import dayjs from 'dayjs';
 import { useRouter } from 'expo-router';
 import React, { useMemo, useState } from 'react';
-import { FlatList, Modal, Pressable, ScrollView, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import { ActivityIndicator, FlatList, Modal, Pressable, ScrollView, Text, TextInput, TouchableOpacity, View, type TextStyle, type ViewStyle } from 'react-native';
 import { ScreenWrapper } from '../../components/ScreenWrapper';
+import { Toast } from '../../components/UI/ToastManager';
 import { useAuthStore } from '../../store/useAuthStore';
-import { useTweaksFeed } from '../../hooks/useTweaks';
+import { useTweaksFeed, type TweakFeedFilters } from '../../hooks/useTweaks';
+import { useCurrentLocation } from '../../hooks/useCurrentLocation';
+import { useDebouncedValue } from '../../hooks/useDebouncedValue';
+import type { FeedSort } from '../../types/api';
 import TweakTile from '../../components/Tweak/TweakTile';
 import { useTheme } from '@/themes/ThemeProvider';
 
+const SORT_OPTIONS: { label: string; value: FeedSort; icon: keyof typeof Ionicons.glyphMap }[] = [
+    { label: 'Newest', value: 'newest', icon: 'time-outline' },
+    { label: 'Nearest', value: 'distance', icon: 'navigate-outline' },
+    { label: 'Price ↑', value: 'price_asc', icon: 'trending-up-outline' },
+    { label: 'Price ↓', value: 'price_desc', icon: 'trending-down-outline' },
+];
 
+const RADIUS_OPTIONS: { label: string; value: number | null }[] = [
+    { label: 'Any', value: null },
+    { label: '5 km', value: 5 },
+    { label: '10 km', value: 10 },
+    { label: '25 km', value: 25 },
+    { label: '50 km', value: 50 },
+];
+
+const DEFAULT_RADIUS_KM = 25;
+
+interface ClientFilters {
+    category: string;
+    tweakType: string;
+    schedulePreference: string;
+}
+
+const DEFAULT_FILTERS: ClientFilters = { category: 'All', tweakType: 'All', schedulePreference: 'All' };
 
 export default function MarketPage(): React.JSX.Element {
     const router = useRouter();
     const { colors } = useTheme();
     const { user } = useAuthStore();
     const userId = user?.id || '';
-    const { data: feedTweaks = [] } = useTweaksFeed();
 
-    // Search & Filter State
+    // Search, sort & location (server-side)
     const [searchQuery, setSearchQuery] = useState('');
+    const debouncedSearch = useDebouncedValue(searchQuery.trim());
+    const [sortBy, setSortBy] = useState<FeedSort>('newest');
+    const [nearMe, setNearMe] = useState(false);
+    const [radiusKm, setRadiusKm] = useState<number | null>(DEFAULT_RADIUS_KM);
+    const location = useCurrentLocation();
+    const coords = nearMe ? location.coords : null;
+
+    // Filters (category server-side; type/schedule client-side on the fetched page)
     const [isFilterModalVisible, setIsFilterModalVisible] = useState(false);
-    const [filters, setFilters] = useState({
-        category: 'All',
-        tweakType: 'All',
-        schedulePreference: 'All',
-    });
-    const [sortBy, setSortBy] = useState('newest');
+    const [filters, setFilters] = useState<ClientFilters>(DEFAULT_FILTERS);
+
+    const feedFilters = useMemo<TweakFeedFilters>(
+        () => ({
+            search: debouncedSearch || undefined,
+            category: filters.category !== 'All' ? filters.category : undefined,
+            sort: sortBy === 'distance' && !coords ? 'newest' : sortBy,
+            ...(coords
+                ? { lat: coords.lat, lng: coords.lng, radius_km: radiusKm ?? undefined }
+                : {}),
+        }),
+        [debouncedSearch, filters.category, sortBy, coords, radiusKm]
+    );
+
+    const { data: feedTweaks = [], isFetching, isRefetching, refetch } = useTweaksFeed(feedFilters);
 
     const marketTweaks = useMemo(() => {
-        // Exclude the current user's own tweaks; only show active ones.
-        let data = feedTweaks.filter((t) => t.createdByUserId !== userId && t.status === 'active');
-
-        // Search
-        if (searchQuery.trim()) {
-            const query = searchQuery.toLowerCase();
-            data = data.filter(t => (t.category || '').toLowerCase().includes(query) || (t.description || '').toLowerCase().includes(query));
-        }
-
-        // Filter
-        if (filters.category !== 'All') data = data.filter(t => t.category === filters.category);
-        if (filters.tweakType !== 'All') data = data.filter(t => t.tweakType === filters.tweakType);
-        if (filters.schedulePreference !== 'All') data = data.filter(t => t.schedulePreference === filters.schedulePreference);
-
-        // Sort
-        data = [...data].sort((a, b) => {
-            if (sortBy === 'newest') return dayjs(b.createdAt).valueOf() - dayjs(a.createdAt).valueOf();
-            if (sortBy === 'oldest') return dayjs(a.createdAt).valueOf() - dayjs(b.createdAt).valueOf();
-            return 0;
-        });
-
+        let data = feedTweaks.filter((t) => t.createdByUserId !== userId);
+        if (filters.tweakType !== 'All') data = data.filter((t) => t.tweakType === filters.tweakType);
+        if (filters.schedulePreference !== 'All') data = data.filter((t) => t.schedulePreference === filters.schedulePreference);
         return data;
-    }, [feedTweaks, userId, searchQuery, filters, sortBy]);
+    }, [feedTweaks, userId, filters.tweakType, filters.schedulePreference]);
 
-    const activeFilterCount = Object.values(filters).filter(v => v !== 'All').length + (sortBy !== 'newest' ? 1 : 0);
+    const enableNearMe = async (): Promise<boolean> => {
+        setNearMe(true);
+        const result = await location.locate();
+        if (result.error) {
+            setNearMe(false);
+            Toast.warning(
+                result.error === 'denied'
+                    ? 'Allow location access to see tweaks near you.'
+                    : 'Could not get your location. Please try again.'
+            );
+            return false;
+        }
+        return true;
+    };
+
+    const toggleNearMe = async (): Promise<void> => {
+        if (nearMe) {
+            setNearMe(false);
+            location.clear();
+            if (sortBy === 'distance') setSortBy('newest');
+            return;
+        }
+        if (await enableNearMe()) setSortBy('distance');
+    };
+
+    const selectSort = async (value: FeedSort): Promise<void> => {
+        if (value === 'distance' && !nearMe && !(await enableNearMe())) return;
+        setSortBy(value);
+    };
+
+    const resetFilters = (): void => {
+        setFilters(DEFAULT_FILTERS);
+        setRadiusKm(DEFAULT_RADIUS_KM);
+    };
+
+    const activeFilterCount =
+        Object.values(filters).filter((v) => v !== 'All').length +
+        (nearMe && radiusKm !== DEFAULT_RADIUS_KM ? 1 : 0);
+
+    const subtitle = coords
+        ? radiusKm != null
+            ? `Within ${radiusKm} km of you`
+            : 'Sorted by distance from you'
+        : 'Browse available tasks';
+
+    const chip = (active: boolean): ViewStyle => ({
+        flexDirection: 'row',
+        alignItems: 'center',
+        gap: 4,
+        paddingHorizontal: 12,
+        paddingVertical: 7,
+        borderRadius: 20,
+        backgroundColor: active ? themeColors.primary : colors.surfaceMuted,
+        borderWidth: 1,
+        borderColor: active ? themeColors.primary : colors.border,
+    });
+    const chipText = (active: boolean): TextStyle => ({
+        fontSize: 13,
+        fontWeight: '600',
+        color: active ? '#fff' : colors.textSecondary,
+    });
+    const sectionLabel: TextStyle = {
+        fontSize: 14,
+        fontWeight: '700',
+        color: colors.textSecondary,
+        marginBottom: 12,
+        textTransform: 'uppercase',
+        letterSpacing: 0.5,
+    };
 
     return (
         <ScreenWrapper>
@@ -63,20 +155,30 @@ export default function MarketPage(): React.JSX.Element {
                 {/* Header */}
                 <View style={{ marginBottom: 16 }}>
                     <Text style={{ fontSize: 24, fontWeight: '800', color: colors.text }}>Find Tweaks</Text>
-                    <Text style={{ fontSize: 13, color: colors.textSecondary, marginTop: 2 }}>Browse available tasks near you</Text>
+                    <Text style={{ fontSize: 13, color: colors.textSecondary, marginTop: 2 }}>{subtitle}</Text>
                 </View>
 
                 {/* Search & Filter */}
-                <View style={{ flexDirection: 'row', gap: 10, marginBottom: 16 }}>
+                <View style={{ flexDirection: 'row', gap: 10, marginBottom: 12 }}>
                     <View style={{ flex: 1, flexDirection: 'row', alignItems: 'center', backgroundColor: colors.surfaceMuted, borderRadius: 12, paddingHorizontal: 12, height: 44 }}>
                         <Ionicons name="search-outline" size={18} color={colors.textSecondary} style={{ marginRight: 8 }} />
                         <TextInput
-                            placeholder="Search tweaks..."
+                            placeholder="Search title, skill or category..."
                             value={searchQuery}
                             onChangeText={setSearchQuery}
+                            returnKeyType="search"
+                            autoCorrect={false}
+                            maxLength={100}
                             style={{ flex: 1, height: '100%', fontSize: 14, color: colors.text }}
                             placeholderTextColor={colors.textMuted}
                         />
+                        {isFetching && !isRefetching ? (
+                            <ActivityIndicator size="small" color={colors.textMuted} />
+                        ) : searchQuery.length > 0 ? (
+                            <TouchableOpacity onPress={() => setSearchQuery('')} accessibilityRole="button" accessibilityLabel="Clear search">
+                                <Ionicons name="close-circle" size={18} color={colors.textMuted} />
+                            </TouchableOpacity>
+                        ) : null}
                     </View>
                     <TouchableOpacity
                         onPress={() => setIsFilterModalVisible(true)}
@@ -85,7 +187,48 @@ export default function MarketPage(): React.JSX.Element {
                         accessibilityLabel="Filter"
                     >
                         <Ionicons name="options-outline" size={20} color={activeFilterCount > 0 ? themeColors.primary : colors.textSecondary} />
+                        {activeFilterCount > 0 && (
+                            <View style={{ position: 'absolute', top: -4, right: -4, backgroundColor: themeColors.primary, borderRadius: 10, minWidth: 18, height: 18, justifyContent: 'center', alignItems: 'center', paddingHorizontal: 4, borderWidth: 2, borderColor: colors.surface }}>
+                                <Text style={{ color: '#fff', fontSize: 10, fontWeight: 'bold' }}>{activeFilterCount}</Text>
+                            </View>
+                        )}
                     </TouchableOpacity>
+                </View>
+
+                {/* Near me + sort */}
+                <View style={{ marginBottom: 14 }}>
+                    <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ gap: 8 }}>
+                        <TouchableOpacity
+                            onPress={toggleNearMe}
+                            style={chip(nearMe)}
+                            accessibilityRole="switch"
+                            accessibilityState={{ checked: nearMe }}
+                            accessibilityLabel="Near me"
+                        >
+                            {location.status === 'locating' ? (
+                                <ActivityIndicator size="small" color={nearMe ? '#fff' : colors.textSecondary} />
+                            ) : (
+                                <Ionicons name="locate-outline" size={14} color={nearMe ? '#fff' : colors.textSecondary} />
+                            )}
+                            <Text style={chipText(nearMe)}>Near me</Text>
+                        </TouchableOpacity>
+                        <View style={{ width: 1, backgroundColor: colors.border, marginVertical: 4 }} />
+                        {SORT_OPTIONS.map((opt) => {
+                            const active = sortBy === opt.value;
+                            return (
+                                <TouchableOpacity
+                                    key={opt.value}
+                                    onPress={() => selectSort(opt.value)}
+                                    style={chip(active)}
+                                    accessibilityRole="button"
+                                    accessibilityState={{ selected: active }}
+                                >
+                                    <Ionicons name={opt.icon} size={13} color={active ? '#fff' : colors.textSecondary} />
+                                    <Text style={chipText(active)}>{opt.label}</Text>
+                                </TouchableOpacity>
+                            );
+                        })}
+                    </ScrollView>
                 </View>
 
                 {/* Market List */}
@@ -94,6 +237,8 @@ export default function MarketPage(): React.JSX.Element {
                     keyExtractor={(item) => item.id}
                     showsVerticalScrollIndicator={false}
                     contentContainerStyle={{ paddingBottom: 100 }}
+                    refreshing={isRefetching}
+                    onRefresh={refetch}
                     renderItem={({ item }) => (
                         <TweakTile
                             item={item}
@@ -102,29 +247,100 @@ export default function MarketPage(): React.JSX.Element {
                         />
                     )}
                     ListEmptyComponent={
-                        <View style={{ alignItems: 'center', marginTop: 100 }}>
-                            <Ionicons name="search" size={48} color={colors.textMuted} />
-                            <Text style={{ fontSize: 16, fontWeight: '700', color: colors.textSecondary, marginTop: 12 }}>No tweaks found</Text>
-                            <Text style={{ fontSize: 13, color: colors.textMuted, marginTop: 4 }}>Try adjusting your search or filters</Text>
-                        </View>
+                        isFetching ? undefined : (
+                            <View style={{ alignItems: 'center', marginTop: 100 }}>
+                                <Ionicons name={coords ? 'navigate-outline' : 'search'} size={48} color={colors.textMuted} />
+                                <Text style={{ fontSize: 16, fontWeight: '700', color: colors.textSecondary, marginTop: 12 }}>No tweaks found</Text>
+                                <Text style={{ fontSize: 13, color: colors.textMuted, marginTop: 4, textAlign: 'center', paddingHorizontal: 32 }}>
+                                    {coords && radiusKm != null
+                                        ? 'Try a larger distance or a different search.'
+                                        : 'Try adjusting your search or filters'}
+                                </Text>
+                            </View>
+                        )
                     }
                 />
 
-                {/* Simple Filter Modal (Placeholder for logic) */}
-                <Modal visible={isFilterModalVisible} animationType="slide" transparent={true}>
+                {/* Filter Modal */}
+                <Modal
+                    visible={isFilterModalVisible}
+                    animationType="slide"
+                    transparent={true}
+                    onRequestClose={() => setIsFilterModalVisible(false)}
+                >
                     <Pressable style={{ flex: 1, backgroundColor: 'rgba(0,0,0,0.5)', justifyContent: 'flex-end' }} onPress={() => setIsFilterModalVisible(false)}>
-                        <View style={{ backgroundColor: colors.surface, borderTopLeftRadius: 24, borderTopRightRadius: 24, padding: 20 }}>
-                            <Text style={{ fontSize: 18, fontWeight: '800', marginBottom: 20, color: colors.text }}>Filters</Text>
-                            <TouchableOpacity
-                                onPress={() => { setIsFilterModalVisible(false); setFilters({ category: 'All', tweakType: 'All', schedulePreference: 'All' }); setSortBy('newest'); }}
-                                style={{ backgroundColor: colors.surfaceMuted, padding: 14, borderRadius: 12, alignItems: 'center' }}
-                            >
-                                <Text style={{ fontWeight: '700', color: colors.textSecondary }}>Reset All Filters</Text>
-                            </TouchableOpacity>
-                            <TouchableOpacity onPress={() => setIsFilterModalVisible(false)} style={{ backgroundColor: themeColors.primary, padding: 14, borderRadius: 12, alignItems: 'center', marginTop: 12 }}>
-                                <Text style={{ fontWeight: '800', color: '#fff' }}>Apply</Text>
-                            </TouchableOpacity>
-                        </View>
+                        <Pressable style={{ backgroundColor: colors.surface, borderTopLeftRadius: 24, borderTopRightRadius: 24, maxHeight: '85%', paddingBottom: 30 }}>
+                            <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', paddingHorizontal: 20, paddingVertical: 18, borderBottomWidth: 1, borderBottomColor: colors.border }}>
+                                <Text style={{ fontSize: 18, fontWeight: '800', color: colors.text }}>Filters</Text>
+                                <TouchableOpacity onPress={resetFilters}>
+                                    <Text style={{ color: themeColors.primary, fontWeight: '600' }}>Reset</Text>
+                                </TouchableOpacity>
+                            </View>
+
+                            <ScrollView style={{ padding: 20 }}>
+                                {/* Distance */}
+                                <Text style={sectionLabel}>Distance</Text>
+                                {nearMe ? (
+                                    <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 8, marginBottom: 24 }}>
+                                        {RADIUS_OPTIONS.map((opt) => (
+                                            <TouchableOpacity key={opt.label} onPress={() => setRadiusKm(opt.value)} style={chip(radiusKm === opt.value)}>
+                                                <Text style={chipText(radiusKm === opt.value)}>{opt.label}</Text>
+                                            </TouchableOpacity>
+                                        ))}
+                                    </View>
+                                ) : (
+                                    <TouchableOpacity onPress={toggleNearMe} style={[chip(false), { alignSelf: 'flex-start', marginBottom: 24 }]}>
+                                        <Ionicons name="locate-outline" size={14} color={colors.textSecondary} />
+                                        <Text style={chipText(false)}>Turn on Near me to filter by distance</Text>
+                                    </TouchableOpacity>
+                                )}
+
+                                {/* Category */}
+                                <Text style={sectionLabel}>Category</Text>
+                                <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 8, marginBottom: 24 }}>
+                                    {['All', ...CATEGORIES.map((c) => c.name)].map((cat) => (
+                                        <TouchableOpacity key={cat} onPress={() => setFilters({ ...filters, category: cat })} style={chip(filters.category === cat)}>
+                                            <Text style={chipText(filters.category === cat)}>{cat}</Text>
+                                        </TouchableOpacity>
+                                    ))}
+                                </View>
+
+                                {/* Type */}
+                                <Text style={sectionLabel}>Tweak Type</Text>
+                                <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 8, marginBottom: 24 }}>
+                                    {[
+                                        { label: 'All', value: 'All' },
+                                        { label: 'Onsite', value: 'in_person' },
+                                        { label: 'Remote', value: 'remote' },
+                                    ].map((type) => (
+                                        <TouchableOpacity key={type.value} onPress={() => setFilters({ ...filters, tweakType: type.value })} style={chip(filters.tweakType === type.value)}>
+                                            <Text style={chipText(filters.tweakType === type.value)}>{type.label}</Text>
+                                        </TouchableOpacity>
+                                    ))}
+                                </View>
+
+                                {/* Schedule */}
+                                <Text style={sectionLabel}>Schedule Type</Text>
+                                <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 8, marginBottom: 40 }}>
+                                    {[
+                                        { label: 'All', value: 'All' },
+                                        { label: 'Single Day', value: 'one_day' },
+                                        { label: 'Deadline', value: 'deadline' },
+                                        { label: 'Multi-Day', value: 'few_days' },
+                                    ].map((s) => (
+                                        <TouchableOpacity key={s.value} onPress={() => setFilters({ ...filters, schedulePreference: s.value })} style={chip(filters.schedulePreference === s.value)}>
+                                            <Text style={chipText(filters.schedulePreference === s.value)}>{s.label}</Text>
+                                        </TouchableOpacity>
+                                    ))}
+                                </View>
+                            </ScrollView>
+
+                            <View style={{ paddingHorizontal: 20, paddingTop: 10 }}>
+                                <TouchableOpacity onPress={() => setIsFilterModalVisible(false)} style={{ backgroundColor: themeColors.primary, paddingVertical: 14, borderRadius: 14, alignItems: 'center' }}>
+                                    <Text style={{ color: '#fff', fontSize: 16, fontWeight: '800' }}>Apply Filters</Text>
+                                </TouchableOpacity>
+                            </View>
+                        </Pressable>
                     </Pressable>
                 </Modal>
             </View>

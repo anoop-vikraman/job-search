@@ -30,6 +30,13 @@ export function calculateHours(start: string, end: string): number {
     return ((eh * 60 + em) - (sh * 60 + sm)) / 60;
 }
 
+/** "850 m", "4.2 km", "37 km". */
+export function formatDistance(km: number): string {
+    if (km < 1) return `${Math.max(10, Math.round((km * 1000) / 10) * 10)} m`;
+    if (km < 10) return `${km.toFixed(1)} km`;
+    return `${Math.round(km)} km`;
+}
+
 export interface DateDisplay {
     dateText: string;
     daysText: string | null;
@@ -328,6 +335,16 @@ export default function TweakTile({
                     <View style={{ flexDirection: 'row', alignItems: 'center', gap: 3 }}>
                         <Ionicons name="time-outline" size={11} color={isDark ? colors.textMuted : palette.slate400} />
                         <Text style={{ fontSize: 11, color: isDark ? colors.textSecondary : palette.slate600, fontWeight: '600' }}>{hoursText}</Text>
+                    </View>
+                )}
+
+                {/* Distance (feed with location only) */}
+                {item.distanceKm != null && (
+                    <View style={{ flexDirection: 'row', alignItems: 'center', gap: 3 }}>
+                        <Ionicons name="navigate-outline" size={11} color={isDark ? colors.textMuted : palette.slate400} />
+                        <Text style={{ fontSize: 11, color: isDark ? colors.textSecondary : palette.slate600, fontWeight: '600' }}>
+                            {formatDistance(item.distanceKm)}
+                        </Text>
                     </View>
                 )}
 

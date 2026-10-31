@@ -30,6 +30,7 @@ class Tweak(Base):
         CheckConstraint("jsonb_typeof(media) = 'array'", name="media_array"),
         CheckConstraint("price_minor IS NULL OR price_minor >= 0", name="price_nonneg"),
         Index("ix_tweaks_feed", "status", "category", "created_at"),
+        Index("ix_tweaks_feed_price", "status", "price_minor"),
     )
 
     id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)

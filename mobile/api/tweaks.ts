@@ -4,6 +4,7 @@ import type {
     BackendMyApplication,
     BackendTweak,
     CreateTweakRequest,
+    FeedSort,
     Page,
     UpdateTweakRequest,
 } from '../types/api';
@@ -12,6 +13,12 @@ export interface TweakFeedParams {
     page?: number;
     limit?: number;
     category?: string;
+    /** Matches title, description, category and skills (case-insensitive). */
+    search?: string;
+    lat?: number;
+    lng?: number;
+    radius_km?: number;
+    sort?: FeedSort;
 }
 
 export const tweaksApi = {

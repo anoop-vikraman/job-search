@@ -1,6 +1,7 @@
 // Centralized TanStack Query keys so invalidation stays consistent across hooks.
 export const queryKeys = {
-    tweaksFeed: (category?: string) => ['tweaks', 'feed', category ?? 'all'] as const,
+    // Prefix ['tweaks', 'feed'] is invalidated after create/delete; the filters object keys the cache.
+    tweaksFeed: (filters: object = {}) => ['tweaks', 'feed', filters] as const,
     tweaksMine: () => ['tweaks', 'mine'] as const,
     tweak: (id: string) => ['tweaks', 'detail', id] as const,
     tweakApplications: (id: string) => ['tweaks', id, 'applications'] as const,

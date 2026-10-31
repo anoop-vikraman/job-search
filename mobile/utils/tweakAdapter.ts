@@ -95,6 +95,7 @@ export function backendTweakToLocal(
         price: derivePrice(b.pricing_model, pricingData, b.price_minor),
         pricingType: b.pricing_model,
         createdAt: b.created_at,
+        distanceKm: b.distance_km ?? null,
         status,
         createdByUserId: b.created_by_user_id,
         applications: applications?.map(backendApplicationToLocal),

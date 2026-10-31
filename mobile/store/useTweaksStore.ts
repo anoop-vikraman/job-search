@@ -37,6 +37,7 @@ export interface Tweak {
     price: number;
     pricingType: string; // 'hourly' | 'quantity' | 'fixed'
     createdAt: string;
+    distanceKm?: number | null; // Feed only, when the viewer shared their location
     status: 'active' | 'draft' | 'closed';
     createdByUserId: string; // Link to AuthStore user.id
     appliedBy?: string[]; // IDs of users who applied

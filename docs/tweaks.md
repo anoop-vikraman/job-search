@@ -35,8 +35,23 @@ data → pricing → preview**. Backing state is the `useCreateTweakStore` Zusta
 
 ## The marketplace feed
 
-- `GET /api/v1/tweaks` returns a **paginated** feed of `active` tweaks **not owned by the viewer**,
-  newest first, optionally filtered by `category`. Rendered with `FlatList` in `app/apply/*`.
+- `GET /api/v1/tweaks` returns a **paginated** feed of `active` tweaks **not owned by the viewer**.
+  Rendered in `app/apply/market.tsx`. Query params:
+
+  | Param | Meaning |
+  |---|---|
+  | `category` | Exact category match |
+  | `search` | Case-insensitive substring over title, description, category and skills (max 100 chars; `%`/`_` are literal) |
+  | `lat`, `lng` | Viewer position. Must be sent together. Adds `distance_km` (haversine, from the tweak's address coordinates) to each item |
+  | `radius_km` | `0 < r ≤ 500`. Keeps tweaks within `r` km. Tweaks with no geocoded address are excluded. Requires `lat`/`lng` |
+  | `sort` | `newest` (default), `price_asc`, `price_desc` (unpriced `quote` tweaks last), `distance` (requires `lat`/`lng`; un-geocoded last) |
+
+  `radius_km` or `sort=distance` without a location returns `422 LOCATION_REQUIRED`. `distance_km` is
+  `null` when no location was sent or the tweak has no coordinates.
+- Mobile: the search box is debounced (350 ms) and sent as `search`. "Near me" uses `expo-location`
+  (foreground permission, position rounded to ~110 m) and switches the sort to `distance` with a
+  25 km default radius (changeable in Filters). Tweak type and schedule filters are applied
+  client-side to the fetched page.
 - `GET /api/v1/tweaks/mine` returns the caller's own tweaks (any status) for the "My Tweaks" tab.
 
 ## Pricing validation
@@ -56,7 +71,7 @@ before deriving `price_minor`. Invalid shapes return `422 INVALID_PRICING_DATA`.
 
 | Method | Path | Notes |
 |---|---|---|
-| GET | `/api/v1/tweaks?page&limit&category` | Marketplace feed (paginated) |
+| GET | `/api/v1/tweaks?page&limit&category&search&lat&lng&radius_km&sort` | Marketplace feed (paginated) |
 | GET | `/api/v1/tweaks/mine` | Caller's own tweaks |
 | POST | `/api/v1/tweaks` | Create (draft or active) |
 | GET | `/api/v1/tweaks/{id}` | Fetch one |

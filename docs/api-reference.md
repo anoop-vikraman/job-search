@@ -51,7 +51,7 @@ token · `403` insufficient role/access · `404` not found · `409` conflict/sta
 ### Tweaks
 | Method | Path | Auth |
 |---|---|---|
-| GET | `/api/v1/tweaks?page&limit&category` | user — marketplace feed |
+| GET | `/api/v1/tweaks?page&limit&category&search&lat&lng&radius_km&sort` | user — marketplace feed (see [tweaks.md](./tweaks.md#the-marketplace-feed)) |
 | GET | `/api/v1/tweaks/mine` | user |
 | POST | `/api/v1/tweaks` | user |
 | GET | `/api/v1/tweaks/{tweak_id}` | user |
