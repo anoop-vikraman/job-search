@@ -7,6 +7,7 @@ import { palette } from '@tweak/theme';
 import { useCreateTweakStore } from '../../store/useCreateTweakStore';
 import { themeColors } from '../../themes/colors';
 import SavedAddressesList from '../Location/SavedAddressesList';
+import { useTheme } from '@/themes/ThemeProvider';
 
 const STEPS = [
     { id: 'start', icon: 'grid' },
@@ -31,6 +32,7 @@ export default function CreateFlowHeader({
     hideAddress = false
 }: CreateFlowHeaderProps): React.JSX.Element {
     const router = useRouter();
+    const { colors, isDark } = useTheme();
     const tweakType = useCreateTweakStore((state) => state.tweakType);
     const address = useCreateTweakStore((state) => state.address);
     const setAddress = useCreateTweakStore((state) => state.setAddress);
@@ -123,7 +125,7 @@ export default function CreateFlowHeader({
                             <Text numberOfLines={1} className="font-bold text-sm text-primary mr-1">{title}</Text>
                             <Ionicons name="chevron-down" size={12} color={themeColors.primary} />
                         </View>
-                        <Text numberOfLines={1} className="text-[10px] text-gray-500">
+                        <Text numberOfLines={1} className="text-[10px] text-gray-500 dark:text-slate-400">
                             {subtitle}
                         </Text>
                     </View>
@@ -132,15 +134,15 @@ export default function CreateFlowHeader({
         }
 
         return (
-            <Text className="text-lg font-bold text-gray-900">{stepLabel || "Create Tweak"}</Text>
+            <Text className="text-lg font-bold text-gray-900 dark:text-slate-50">{stepLabel || "Create Tweak"}</Text>
         );
     };
 
     return (
-        <View className="bg-white border-b border-gray-100">
+        <View className="bg-white dark:bg-slate-900 border-b border-gray-100 dark:border-slate-700">
             <View className="px-6 py-4 flex-row items-center justify-between">
                 <TouchableOpacity onPress={handleBack} className="p-2 -ml-2 rounded-full active:bg-gray-100" accessibilityRole="button" accessibilityLabel="Go back">
-                    <Ionicons name="arrow-back" size={24} color={palette.gray900} />
+                    <Ionicons name="arrow-back" size={24} color={isDark ? colors.text : palette.gray900} />
                 </TouchableOpacity>
 
                 <View className="flex-1 px-4">
@@ -152,7 +154,7 @@ export default function CreateFlowHeader({
 
             {/* Stepper Progress Bar - Hidden on Review/Preview Page (progress === 1.0) */}
             {progress < 1.0 && (
-                <View className="bg-white px-6 pb-6 pt-2">
+                <View className="bg-white dark:bg-slate-900 px-6 pb-6 pt-2">
                     <View
                         className="h-10 justify-center"
                         onLayout={(e) => setContainerWidth(e.nativeEvent.layout.width)}
@@ -160,7 +162,7 @@ export default function CreateFlowHeader({
                         {/* Progress Track Container */}
                         <View className="absolute left-0 right-0 h-full justify-center">
                             {/* Background Line */}
-                            <View className="h-[2px] bg-gray-100 w-full" />
+                            <View className="h-[2px] bg-gray-100 dark:bg-slate-700 w-full" />
 
                             {/* Active Line - Starts at container left, reaches current icon's edge */}
                             <View
@@ -195,7 +197,7 @@ export default function CreateFlowHeader({
                                                 }, glowStyle]}
                                             />
                                         )}
-                                        <View className="bg-white rounded-full p-1 shadow-sm items-center justify-center">
+                                        <View className="bg-white dark:bg-slate-900 rounded-full p-1 shadow-sm items-center justify-center">
                                             <View
                                                 style={isActive ? { backgroundColor: palette.iosBlue } : undefined}
                                                 className={`w-8 h-8 rounded-full items-center justify-center ${isActive ? '' : 'bg-blue-50 border border-blue-100'}`}

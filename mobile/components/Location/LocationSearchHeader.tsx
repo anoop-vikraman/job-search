@@ -16,7 +16,7 @@ export default function LocationSearchHeader({ onSearch }: LocationSearchHeaderP
             <View className="absolute top-12 left-4 z-10">
                 <TouchableOpacity
                     onPress={() => router.back()}
-                    className="bg-white p-2 rounded-full shadow-md"
+                    className="bg-white dark:bg-slate-900 p-2 rounded-full shadow-md"
                     accessibilityRole="button"
                     accessibilityLabel="Go back"
                 >
@@ -26,7 +26,7 @@ export default function LocationSearchHeader({ onSearch }: LocationSearchHeaderP
 
             {/* Search Bar Overlay */}
             <View className="absolute top-12 left-16 right-4 z-10">
-                <View className="bg-white flex-row items-center px-4 py-3 rounded-xl shadow-lg border border-gray-100">
+                <View className="bg-white dark:bg-slate-900 flex-row items-center px-4 py-3 rounded-xl shadow-lg border border-gray-100 dark:border-slate-700">
                     <Ionicons name="search" size={20} color={palette.gray400} />
                     <TextInput
                         className="ml-2 flex-1 text-base py-0"

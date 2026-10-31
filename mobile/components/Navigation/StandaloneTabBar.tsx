@@ -7,6 +7,7 @@ import Svg, { Path } from 'react-native-svg';
 import { palette } from '@tweak/theme';
 
 import { useCreateTweakStore } from '../../store/useCreateTweakStore';
+import { useTheme } from '../../themes/ThemeProvider';
 
 const { width, height } = Dimensions.get('window');
 const TAB_HEIGHT = 80;
@@ -31,6 +32,7 @@ const TABS: TabConfig[] = [
 
 // Inner component that safely uses navigation hooks (only rendered when context exists)
 function StandaloneTabBarInner() {
+    const { colors, isDark } = useTheme();
     const router = useRouter();
     const segments = useSegments() as string[];
     const [isMenuOpen, setIsMenuOpen] = React.useState(false);
@@ -87,7 +89,7 @@ function StandaloneTabBarInner() {
     return (
         <View style={styles.container}>
             <Svg width={width} height={TAB_HEIGHT} style={styles.svg}>
-                <Path d={getPath()} fill="white" stroke={palette.gray200} strokeWidth={1} />
+                <Path d={getPath()} fill={isDark ? colors.surface : 'white'} stroke={isDark ? colors.border : palette.gray200} strokeWidth={1} />
             </Svg>
 
             <View style={styles.content}>
@@ -128,7 +130,7 @@ function StandaloneTabBarInner() {
 
             {/* Create Menu */}
             {isMenuOpen && (
-                <View style={styles.menuContainer}>
+                <View style={[styles.menuContainer, isDark && { backgroundColor: colors.surface }]}>
                     <TouchableOpacity
                         style={styles.menuItem}
                         onPress={() => handleCreateSelect('remote')}
@@ -136,10 +138,10 @@ function StandaloneTabBarInner() {
                         <View style={[styles.menuIconContainer, { backgroundColor: palette.blue100 }]}>
                             <Ionicons name="laptop-outline" size={20} color={palette.blue500} />
                         </View>
-                        <Text style={styles.menuText}>Remote Tweak</Text>
+                        <Text style={[styles.menuText, isDark && { color: colors.text }]}>Remote Tweak</Text>
                     </TouchableOpacity>
 
-                    <View style={styles.menuDivider} />
+                    <View style={[styles.menuDivider, isDark && { backgroundColor: colors.border }]} />
 
                     <TouchableOpacity
                         style={styles.menuItem}
@@ -148,17 +150,17 @@ function StandaloneTabBarInner() {
                         <View style={[styles.menuIconContainer, { backgroundColor: palette.orange100 }]}>
                             <Ionicons name="location" size={20} color={palette.orange500} />
                         </View>
-                        <Text style={styles.menuText}>Onsite Tweak</Text>
+                        <Text style={[styles.menuText, isDark && { color: colors.text }]}>Onsite Tweak</Text>
                     </TouchableOpacity>
 
                     {/* Arrow pointing down */}
-                    <View style={styles.menuArrow} />
+                    <View style={[styles.menuArrow, isDark && { borderTopColor: colors.surface }]} />
                 </View>
             )}
 
             {/* Center Floating Button (CREATE) */}
             <TouchableOpacity
-                style={[styles.centerButton, isMenuOpen && styles.centerButtonActive]}
+                style={[styles.centerButton, isDark && { borderColor: colors.border }, isMenuOpen && styles.centerButtonActive]}
                 activeOpacity={0.8}
                 onPress={() => setIsMenuOpen(!isMenuOpen)}
                 accessibilityRole="button"
@@ -195,16 +197,17 @@ interface TabItemProps {
 }
 
 const TabItem = ({ label, iconName, isFocused, onPress }: TabItemProps) => {
+    const { colors, isDark } = useTheme();
     return (
         <TouchableOpacity onPress={onPress} style={styles.tabItem}>
             <Ionicons
                 name={iconName}
                 size={24}
-                color={isFocused ? palette.iosBlue : palette.gray400}
+                color={isFocused ? palette.iosBlue : isDark ? colors.textMuted : palette.gray400}
             />
             <Text style={[
                 styles.tabLabel,
-                { color: isFocused ? palette.iosBlue : palette.gray400 }
+                { color: isFocused ? palette.iosBlue : isDark ? colors.textMuted : palette.gray400 }
             ]}>
                 {label}
             </Text>

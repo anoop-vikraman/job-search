@@ -3,7 +3,7 @@ import { useRouter } from 'expo-router';
 import React, { useState } from 'react';
 import { Modal, ScrollView, Text, TouchableOpacity, View } from 'react-native';
 import { ScreenWrapper } from '../../components/ScreenWrapper';
-import { palette } from '@tweak/theme';
+import { useTheme } from '@/themes/ThemeProvider';
 
 const reliabilityScore = {
     score: 0,
@@ -13,26 +13,27 @@ const reliabilityScore = {
 
 export default function ScorePage(): React.JSX.Element {
     const router = useRouter();
+    const { colors } = useTheme();
     const [modalVisible, setModalVisible] = useState(false);
     const { score, positiveActs, negativeActs } = reliabilityScore;
 
     return (
         <ScreenWrapper>
             {/* Header */}
-            <View className="flex-row justify-between items-center px-6 py-4 bg-white border-b border-gray-100">
+            <View className="flex-row justify-between items-center px-6 py-4 bg-white dark:bg-slate-900 border-b border-gray-100 dark:border-slate-700">
                 <TouchableOpacity onPress={() => router.back()} accessibilityRole="button" accessibilityLabel="Go back">
-                    <Ionicons name="arrow-back" size={24} color={palette.gray900} />
+                    <Ionicons name="arrow-back" size={24} color={colors.text} />
                 </TouchableOpacity>
-                <Text className="text-lg font-bold text-gray-900">Score</Text>
+                <Text className="text-lg font-bold text-gray-900 dark:text-slate-50">Score</Text>
                 <TouchableOpacity onPress={() => router.push('/settings/terms')}>
-                    <Text className="text-sm text-gray-600">Offense policy</Text>
+                    <Text className="text-sm text-gray-600 dark:text-slate-300">Offense policy</Text>
                 </TouchableOpacity>
             </View>
 
             <ScrollView className="flex-1 px-6 py-4">
                 {/* Offense Tracker */}
-                <View className="bg-white rounded-2xl p-6 mb-4 shadow-sm border border-gray-100">
-                    <Text className="font-bold text-lg mb-4">Offense tracker</Text>
+                <View className="bg-white dark:bg-slate-900 rounded-2xl p-6 mb-4 shadow-sm border border-gray-100 dark:border-slate-700">
+                    <Text className="font-bold text-lg mb-4 text-gray-900 dark:text-slate-50">Offense tracker</Text>
                     <View className="flex-row items-center bg-green-50 p-4 rounded-xl">
                         <View className="flex-1">
                             <Text className="font-bold text-gray-900 mb-1">Great job!</Text>
@@ -82,14 +83,14 @@ export default function ScorePage(): React.JSX.Element {
                 </View>
 
                 {/* Job Performance */}
-                <View className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100">
-                    <Text className="font-bold text-lg mb-4">Job performance</Text>
+                <View className="bg-white dark:bg-slate-900 rounded-2xl p-6 shadow-sm border border-gray-100 dark:border-slate-700">
+                    <Text className="font-bold text-lg mb-4 text-gray-900 dark:text-slate-50">Job performance</Text>
                     <View className="items-center py-8">
-                        <View className="bg-gray-100 w-16 h-16 rounded-full items-center justify-center mb-4">
-                            <Ionicons name="briefcase-outline" size={32} color={palette.gray500} />
+                        <View className="bg-gray-100 dark:bg-slate-800 w-16 h-16 rounded-full items-center justify-center mb-4">
+                            <Ionicons name="briefcase-outline" size={32} color={colors.textSecondary} />
                         </View>
-                        <Text className="font-bold text-gray-900 mb-2">No jobs yet</Text>
-                        <Text className="text-gray-500 text-center mb-4">Finish a job to track your progress here</Text>
+                        <Text className="font-bold text-gray-900 dark:text-slate-50 mb-2">No jobs yet</Text>
+                        <Text className="text-gray-500 dark:text-slate-400 text-center mb-4">Finish a job to track your progress here</Text>
                         <TouchableOpacity
                             onPress={() => router.push('/apply')}
                             className="bg-gray-900 px-6 py-3 rounded-xl"
@@ -113,11 +114,11 @@ export default function ScorePage(): React.JSX.Element {
                         activeOpacity={1}
                         onPress={() => setModalVisible(false)}
                     />
-                    <View className="bg-white rounded-t-3xl p-6 max-h-[80%]">
+                    <View className="bg-white dark:bg-slate-900 rounded-t-3xl p-6 max-h-[80%]">
                         <View className="flex-row justify-between items-center mb-4">
-                            <Text className="text-xl font-bold">Reliability score</Text>
+                            <Text className="text-xl font-bold text-gray-900 dark:text-slate-50">Reliability score</Text>
                             <TouchableOpacity onPress={() => setModalVisible(false)} accessibilityRole="button" accessibilityLabel="Close">
-                                <Ionicons name="close" size={24} color={palette.gray900} />
+                                <Ionicons name="close" size={24} color={colors.text} />
                             </TouchableOpacity>
                         </View>
 
@@ -130,22 +131,22 @@ export default function ScorePage(): React.JSX.Element {
                                 </View>
                             </View>
 
-                            <Text className="text-center text-gray-600 mb-6">Reliability score = <Text className="text-green-600 font-semibold">Positive acts</Text> - <Text className="text-red-600 font-semibold">Negative acts</Text></Text>
+                            <Text className="text-center text-gray-600 dark:text-slate-300 mb-6">Reliability score = <Text className="text-green-600 font-semibold">Positive acts</Text> - <Text className="text-red-600 font-semibold">Negative acts</Text></Text>
 
                             {/* Positive Acts */}
-                            <Text className="font-bold text-gray-900 mb-3">Positive acts</Text>
+                            <Text className="font-bold text-gray-900 dark:text-slate-50 mb-3">Positive acts</Text>
                             {positiveActs.map((act, index) => (
-                                <View key={index} className="flex-row justify-between items-center py-3 border-b border-gray-100">
-                                    <Text className="text-gray-700">{act.name}</Text>
+                                <View key={index} className="flex-row justify-between items-center py-3 border-b border-gray-100 dark:border-slate-700">
+                                    <Text className="text-gray-700 dark:text-slate-300">{act.name}</Text>
                                     <Text className="text-green-600 font-semibold">+{act.points}</Text>
                                 </View>
                             ))}
 
                             {/* Negative Acts */}
-                            <Text className="font-bold text-gray-900 mt-6 mb-3">Negative acts</Text>
+                            <Text className="font-bold text-gray-900 dark:text-slate-50 mt-6 mb-3">Negative acts</Text>
                             {negativeActs.map((act, index) => (
-                                <View key={index} className="flex-row justify-between items-center py-3 border-b border-gray-100">
-                                    <Text className="text-gray-700">{act.name}</Text>
+                                <View key={index} className="flex-row justify-between items-center py-3 border-b border-gray-100 dark:border-slate-700">
+                                    <Text className="text-gray-700 dark:text-slate-300">{act.name}</Text>
                                     <Text className="text-red-600 font-semibold">{act.points}</Text>
                                 </View>
                             ))}

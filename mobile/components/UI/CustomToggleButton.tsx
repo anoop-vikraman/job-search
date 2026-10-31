@@ -2,6 +2,7 @@ import { palette } from '@tweak/theme';
 import React from 'react';
 import { StyleProp, Text, TouchableOpacity, View, ViewStyle } from 'react-native';
 import { themeColors } from '../../themes/colors';
+import { useTheme } from '../../themes/ThemeProvider';
 
 interface Option {
     label: string;
@@ -23,12 +24,13 @@ export default function CustomToggleButton({
     onChange,
     containerStyle
 }: Props): React.JSX.Element {
+    const { colors, isDark } = useTheme();
     return (
         <View style={containerStyle}>
             {label && (
-                <Text className="text-gray-700 text-base mb-3">{label}</Text>
+                <Text className="text-gray-700 dark:text-slate-300 text-base mb-3">{label}</Text>
             )}
-            <View className="flex-row bg-gray-100 rounded-lg p-1">
+            <View className="flex-row bg-gray-100 dark:bg-slate-800 rounded-lg p-1">
                 {options.map((option, index) => {
                     const isSelected = value === option.value;
                     return (
@@ -37,7 +39,7 @@ export default function CustomToggleButton({
                             onPress={() => onChange(option.value)}
                             className={`flex-1 py-3 rounded-md items-center justify-center`}
                             style={{
-                                backgroundColor: isSelected ? 'white' : 'transparent',
+                                backgroundColor: isSelected ? (isDark ? colors.surface : 'white') : 'transparent',
                                 shadowColor: palette.black,
                                 shadowOffset: { width: 0, height: 1 },
                                 shadowOpacity: isSelected ? 0.1 : 0,
@@ -48,7 +50,7 @@ export default function CustomToggleButton({
                         >
                             <Text
                                 className={`text-base font-medium ${isSelected ? 'text-primary' : 'text-gray-500'}`}
-                                style={{ color: isSelected ? themeColors.primary : palette.gray500 }}
+                                style={{ color: isSelected ? themeColors.primary : isDark ? colors.textSecondary : palette.gray500 }}
                             >
                                 {option.label}
                             </Text>

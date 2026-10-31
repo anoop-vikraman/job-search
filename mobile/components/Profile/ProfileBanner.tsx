@@ -110,17 +110,17 @@ export default function ProfileBanner({ onImageSelected }: ProfileBannerProps): 
                     activeOpacity={1}
                     onPress={() => setUploadModalVisible(false)}
                 >
-                    <View className="bg-white w-3/4 rounded-2xl p-6 items-center shadow-xl">
-                        <Text className="text-lg font-bold text-gray-800 mb-6">Upload Profile Picture</Text>
+                    <View className="bg-white dark:bg-slate-900 w-3/4 rounded-2xl p-6 items-center shadow-xl">
+                        <Text className="text-lg font-bold text-gray-800 dark:text-slate-50 mb-6">Upload Profile Picture</Text>
 
                         <TouchableOpacity
                             onPress={handleCamera}
-                            className="flex-row items-center w-full py-4 border-b border-gray-100"
+                            className="flex-row items-center w-full py-4 border-b border-gray-100 dark:border-slate-700"
                         >
                             <View className="w-10 h-10 bg-blue-50 rounded-full items-center justify-center mr-4">
                                 <Ionicons name="camera" size={20} color={themeColors.primary} />
                             </View>
-                            <Text className="text-base text-gray-700 font-medium">Take Photo</Text>
+                            <Text className="text-base text-gray-700 dark:text-slate-300 font-medium">Take Photo</Text>
                         </TouchableOpacity>
 
                         <TouchableOpacity
@@ -130,7 +130,7 @@ export default function ProfileBanner({ onImageSelected }: ProfileBannerProps): 
                             <View className="w-10 h-10 bg-purple-50 rounded-full items-center justify-center mr-4">
                                 <Ionicons name="images" size={20} color={themeColors.secondary} />
                             </View>
-                            <Text className="text-base text-gray-700 font-medium">Choose from Gallery</Text>
+                            <Text className="text-base text-gray-700 dark:text-slate-300 font-medium">Choose from Gallery</Text>
                         </TouchableOpacity>
                     </View>
                 </TouchableOpacity>

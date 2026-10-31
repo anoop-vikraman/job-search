@@ -2,6 +2,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { palette } from '@tweak/theme';
 import React from 'react';
 import { Modal, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { useTheme } from '../../themes/ThemeProvider';
 
 interface DraftConfirmationDialogProps {
     visible: boolean;
@@ -16,6 +17,7 @@ export default function DraftConfirmationDialog({
     onDiscard,
     onCancel
 }: DraftConfirmationDialogProps): React.JSX.Element {
+    const { colors, isDark } = useTheme();
     return (
         <Modal
             visible={visible}
@@ -24,13 +26,13 @@ export default function DraftConfirmationDialog({
             onRequestClose={onCancel}
         >
             <View style={styles.overlay}>
-                <View style={styles.dialog}>
+                <View style={[styles.dialog, isDark && { backgroundColor: colors.surface }]}>
                     <View style={styles.iconContainer}>
                         <Ionicons name="save-outline" size={32} color={palette.indigo500} />
                     </View>
 
-                    <Text style={styles.title}>Save as Draft?</Text>
-                    <Text style={styles.message}>
+                    <Text style={[styles.title, isDark && { color: colors.text }]}>Save as Draft?</Text>
+                    <Text style={[styles.message, isDark && { color: colors.textSecondary }]}>
                         You haven't finished creating this tweak. Would you like to save your progress?
                     </Text>
 
@@ -53,11 +55,11 @@ export default function DraftConfirmationDialog({
                         </TouchableOpacity>
 
                         <TouchableOpacity
-                            style={[styles.button, styles.cancelButton]}
+                            style={[styles.button, styles.cancelButton, isDark && { backgroundColor: colors.surfaceMuted }]}
                             onPress={onCancel}
                             activeOpacity={0.8}
                         >
-                            <Text style={styles.cancelText}>Cancel</Text>
+                            <Text style={[styles.cancelText, isDark && { color: colors.textSecondary }]}>Cancel</Text>
                         </TouchableOpacity>
                     </View>
                 </View>

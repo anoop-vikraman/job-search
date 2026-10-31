@@ -6,6 +6,7 @@ import { themeColors } from '../../themes/colors';
 import { Address } from '../../types/location';
 import CustomConfirmationModal from '../UI/CustomConfirmationModal';
 import AddressCard from './AddressCard';
+import { useTheme } from '@/themes/ThemeProvider';
 
 interface AddressListViewProps {
     onSelect: (address: Address) => void;
@@ -21,6 +22,7 @@ export default function AddressListView({
     onEditAddress,
 }: AddressListViewProps): React.JSX.Element {
     const { savedAddresses, removeAddress } = useAppStore();
+    const { colors, isDark } = useTheme();
 
     const [deleteModalVisible, setDeleteModalVisible] = React.useState(false);
     const [addressToDelete, setAddressToDelete] = React.useState<Address | null>(null);
@@ -62,7 +64,7 @@ export default function AddressListView({
                             <View className="bg-primary/10 p-1.5 rounded-lg mr-2">
                                 <Ionicons name="bookmark" size={12} color={themeColors.primary} />
                             </View>
-                            <Text className="text-gray-400 text-[10px] font-bold uppercase tracking-widest">Your Saved Locations</Text>
+                            <Text className="text-gray-400 dark:text-slate-400 text-[10px] font-bold uppercase tracking-widest">Your Saved Locations</Text>
                         </View>
 
                         {savedAddresses.map((addr) => (
@@ -109,11 +111,11 @@ export default function AddressListView({
                 {/* Empty State */}
                 {savedAddresses.length === 0 && (
                     <View className="items-center justify-center py-20">
-                        <View className="bg-gray-50 p-8 rounded-[40px] mb-6">
-                            <Ionicons name="location-outline" size={64} color="#ddd" />
+                        <View className="bg-gray-50 dark:bg-slate-800 p-8 rounded-[40px] mb-6">
+                            <Ionicons name="location-outline" size={64} color={isDark ? colors.textMuted : '#ddd'} />
                         </View>
-                        <Text className="text-gray-900 font-bold text-lg mb-2">No addresses found</Text>
-                        <Text className="text-gray-400 text-center px-10 text-sm leading-5">
+                        <Text className="text-gray-900 dark:text-slate-50 font-bold text-lg mb-2">No addresses found</Text>
+                        <Text className="text-gray-400 dark:text-slate-400 text-center px-10 text-sm leading-5">
                             You haven't saved any locations yet. Add a new address to get started!
                         </Text>
                     </View>

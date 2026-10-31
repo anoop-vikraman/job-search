@@ -13,6 +13,7 @@ import CustomDateTimePicker from '../../components/UI/CustomDateTimePicker';
 import CustomLabelledField from '../../components/UI/CustomLabelledField';
 import SelectableCard from '../../components/UI/SelectableCard';
 import { themeColors } from '../../themes/colors';
+import { useTheme } from '@/themes/ThemeProvider';
 
 import { TimeSlot } from '../../types/tweak';
 
@@ -52,6 +53,7 @@ type FormInput = z.input<typeof schema>;
 export default function CreateTweakStep3(): React.JSX.Element {
     const router = useRouter();
     const params = useLocalSearchParams();
+    const { colors, isDark } = useTheme();
 
     const { control, handleSubmit, watch, setValue, formState: { errors } } = useForm<FormInput, unknown, FormData>({
         resolver: zodResolver(schema),
@@ -142,8 +144,8 @@ export default function CreateTweakStep3(): React.JSX.Element {
 
         if (dateStr && !startTimeStr && !endTimeStr) {
             return (
-                <Text className="text-xs text-gray-500 font-medium mt-2 text-center">
-                    Tweak will start on <Text className="font-bold text-gray-900">{dateStr}</Text>
+                <Text className="text-xs text-gray-500 dark:text-slate-400 font-medium mt-2 text-center">
+                    Tweak will start on <Text className="font-bold text-gray-900 dark:text-slate-50">{dateStr}</Text>
                 </Text>
             );
         }
@@ -174,10 +176,10 @@ export default function CreateTweakStep3(): React.JSX.Element {
             }
 
             return (
-                <Text className="text-xs text-gray-500 font-medium mt-2 text-center">
-                    Tweak will <Text className="font-bold text-gray-900">{timeText}</Text>
+                <Text className="text-xs text-gray-500 dark:text-slate-400 font-medium mt-2 text-center">
+                    Tweak will <Text className="font-bold text-gray-900 dark:text-slate-50">{timeText}</Text>
                     {` on `}
-                    <Text className="font-bold text-gray-900">{dateStr}</Text>
+                    <Text className="font-bold text-gray-900 dark:text-slate-50">{dateStr}</Text>
                 </Text>
             );
         }
@@ -219,13 +221,13 @@ export default function CreateTweakStep3(): React.JSX.Element {
 
     return (
         <ScreenWrapper scrollable contentContainerStyle={{ flexGrow: 1 }}>
-            <View className="px-6 py-4 border-b border-gray-100 flex-row items-center bg-white relative justify-between">
+            <View className="px-6 py-4 border-b border-gray-100 dark:border-slate-700 flex-row items-center bg-white dark:bg-slate-900 relative justify-between">
                 <View className="flex-row items-center flex-1">
-                    <TouchableOpacity onPress={() => router.back()} className="mr-4 p-1 rounded-full bg-gray-50" accessibilityRole="button" accessibilityLabel="Go back">
-                        <Ionicons name="arrow-back" size={24} color={themeColors.text} />
+                    <TouchableOpacity onPress={() => router.back()} className="mr-4 p-1 rounded-full bg-gray-50 dark:bg-slate-800" accessibilityRole="button" accessibilityLabel="Go back">
+                        <Ionicons name="arrow-back" size={24} color={isDark ? colors.text : themeColors.text} />
                     </TouchableOpacity>
                     <View>
-                        <Text className="text-xl font-bold text-gray-900">Create Tweak</Text>
+                        <Text className="text-xl font-bold text-gray-900 dark:text-slate-50">Create Tweak</Text>
                         <Text className="text-primary text-xs font-bold uppercase tracking-wider">Step 3 of 4</Text>
                     </View>
                 </View>
@@ -244,11 +246,11 @@ export default function CreateTweakStep3(): React.JSX.Element {
 
             <View className="px-6 py-6 pb-32">
                 <View className="mb-8">
-                    <Text className="text-3xl font-bold text-gray-900 mb-2 leading-tight">
+                    <Text className="text-3xl font-bold text-gray-900 dark:text-slate-50 mb-2 leading-tight">
                         {showAlternativeFlow ? "Choose one that fits your need" : "When & Where"}
                     </Text>
                     {!showAlternativeFlow && (
-                        <Text className="text-gray-500 text-base">
+                        <Text className="text-gray-500 dark:text-slate-400 text-base">
                             Tell us when you need this done.
                         </Text>
                     )}
@@ -280,46 +282,46 @@ export default function CreateTweakStep3(): React.JSX.Element {
                             <View className="flex-row flex-wrap gap-2 mb-6 mt-2">
                                 <TouchableOpacity
                                     onPress={() => setActiveChip('allDay')}
-                                    className={`px-3 py-1.5 rounded-full border ${activeChip === 'allDay' ? 'bg-gray-900 border-gray-900' : 'bg-white border-gray-300'}`}
+                                    className={`px-3 py-1.5 rounded-full border ${activeChip === 'allDay' ? 'bg-gray-900 border-gray-900' : 'bg-white dark:bg-slate-900 border-gray-300 dark:border-slate-700'}`}
                                 >
-                                    <Text className={`text-xs font-bold ${activeChip === 'allDay' ? 'text-white' : 'text-gray-600'}`}>All day</Text>
+                                    <Text className={`text-xs font-bold ${activeChip === 'allDay' ? 'text-white' : 'text-gray-600 dark:text-slate-300'}`}>All day</Text>
                                 </TouchableOpacity>
 
                                 <TouchableOpacity
                                     onPress={() => setActiveChip('startAfter')}
-                                    className={`px-3 py-1.5 rounded-full border ${activeChip === 'startAfter' ? 'bg-gray-900 border-gray-900' : 'bg-white border-gray-300'}`}
+                                    className={`px-3 py-1.5 rounded-full border ${activeChip === 'startAfter' ? 'bg-gray-900 border-gray-900' : 'bg-white dark:bg-slate-900 border-gray-300 dark:border-slate-700'}`}
                                 >
-                                    <Text className={`text-xs font-bold ${activeChip === 'startAfter' ? 'text-white' : 'text-gray-600'}`}>Start After</Text>
+                                    <Text className={`text-xs font-bold ${activeChip === 'startAfter' ? 'text-white' : 'text-gray-600 dark:text-slate-300'}`}>Start After</Text>
                                 </TouchableOpacity>
 
                                 <TouchableOpacity
                                     onPress={() => setActiveChip('endBefore')}
-                                    className={`px-3 py-1.5 rounded-full border ${activeChip === 'endBefore' ? 'bg-gray-900 border-gray-900' : 'bg-white border-gray-300'}`}
+                                    className={`px-3 py-1.5 rounded-full border ${activeChip === 'endBefore' ? 'bg-gray-900 border-gray-900' : 'bg-white dark:bg-slate-900 border-gray-300 dark:border-slate-700'}`}
                                 >
-                                    <Text className={`text-xs font-bold ${activeChip === 'endBefore' ? 'text-white' : 'text-gray-600'}`}>End Before</Text>
+                                    <Text className={`text-xs font-bold ${activeChip === 'endBefore' ? 'text-white' : 'text-gray-600 dark:text-slate-300'}`}>End Before</Text>
                                 </TouchableOpacity>
 
                                 {isWindowedVisible && (
                                     <TouchableOpacity
                                         onPress={() => setActiveChip('windowed')}
-                                        className={`px-3 py-1.5 rounded-full border ${activeChip === 'windowed' ? 'bg-gray-900 border-gray-900' : 'bg-white border-gray-300'}`}
+                                        className={`px-3 py-1.5 rounded-full border ${activeChip === 'windowed' ? 'bg-gray-900 border-gray-900' : 'bg-white dark:bg-slate-900 border-gray-300 dark:border-slate-700'}`}
                                     >
-                                        <Text className={`text-xs font-bold ${activeChip === 'windowed' ? 'text-white' : 'text-gray-600'}`}>Windowed</Text>
+                                        <Text className={`text-xs font-bold ${activeChip === 'windowed' ? 'text-white' : 'text-gray-600 dark:text-slate-300'}`}>Windowed</Text>
                                     </TouchableOpacity>
                                 )}
                             </View>
 
                             {/* DYNAMIC CONTENT AREA */}
-                            <View className="bg-gray-50 rounded-xl p-4 border border-gray-100">
+                            <View className="bg-gray-50 dark:bg-slate-800 rounded-xl p-4 border border-gray-100 dark:border-slate-700">
 
                                 {activeChip === 'allDay' && (
                                     <View>
                                         <View className="flex-row items-center gap-2 mb-2">
                                             <Ionicons name="checkmark-circle" size={20} color={themeColors.primary} />
-                                            <Text className="text-sm font-bold text-gray-800">Great! Flexible time attracts more applicants.</Text>
+                                            <Text className="text-sm font-bold text-gray-800 dark:text-slate-50">Great! Flexible time attracts more applicants.</Text>
                                         </View>
-                                        <Text className="text-xs text-gray-500">
-                                            Tweak will be done <Text className="font-bold text-gray-900">anytime</Text> on <Text className="font-bold text-gray-900">{oneDayDate ? formatDateShort(oneDayDate) : 'this day'}</Text>.
+                                        <Text className="text-xs text-gray-500 dark:text-slate-400">
+                                            Tweak will be done <Text className="font-bold text-gray-900 dark:text-slate-50">anytime</Text> on <Text className="font-bold text-gray-900 dark:text-slate-50">{oneDayDate ? formatDateShort(oneDayDate) : 'this day'}</Text>.
                                         </Text>
                                     </View>
                                 )}
@@ -348,8 +350,8 @@ export default function CreateTweakStep3(): React.JSX.Element {
                                         >
                                             <Text className="text-primary text-xs font-bold">+ Add a Finish Before time also?</Text>
                                         </TouchableOpacity>
-                                        <Text className="text-xs text-gray-400 mt-4 text-center">
-                                            Tweak will start after <Text className="font-bold text-gray-600">{altStartTime ? formatTime(altStartTime) : '...'}</Text> on {oneDayDate ? formatDateShort(oneDayDate) : 'this day'}.
+                                        <Text className="text-xs text-gray-400 dark:text-slate-400 mt-4 text-center">
+                                            Tweak will start after <Text className="font-bold text-gray-600 dark:text-slate-300">{altStartTime ? formatTime(altStartTime) : '...'}</Text> on {oneDayDate ? formatDateShort(oneDayDate) : 'this day'}.
                                         </Text>
                                     </View>
                                 )}
@@ -378,8 +380,8 @@ export default function CreateTweakStep3(): React.JSX.Element {
                                         >
                                             <Text className="text-primary text-xs font-bold">+ Add a Start After time also?</Text>
                                         </TouchableOpacity>
-                                        <Text className="text-xs text-gray-400 mt-4 text-center">
-                                            Tweak will end before <Text className="font-bold text-gray-600">{altEndTime ? formatTime(altEndTime) : '...'}</Text> on {oneDayDate ? formatDateShort(oneDayDate) : 'this day'}.
+                                        <Text className="text-xs text-gray-400 dark:text-slate-400 mt-4 text-center">
+                                            Tweak will end before <Text className="font-bold text-gray-600 dark:text-slate-300">{altEndTime ? formatTime(altEndTime) : '...'}</Text> on {oneDayDate ? formatDateShort(oneDayDate) : 'this day'}.
                                         </Text>
                                     </View>
                                 )}
@@ -418,8 +420,8 @@ export default function CreateTweakStep3(): React.JSX.Element {
                                                 />
                                             </View>
                                         </View>
-                                        <Text className="text-xs text-gray-400 mt-4 text-center">
-                                            Tweak will start after <Text className="font-bold text-gray-600">{altStartTime ? formatTime(altStartTime) : '...'}</Text> and end before <Text className="font-bold text-gray-600">{altEndTime ? formatTime(altEndTime) : '...'}</Text> on {oneDayDate ? formatDateShort(oneDayDate) : 'this day'}.
+                                        <Text className="text-xs text-gray-400 dark:text-slate-400 mt-4 text-center">
+                                            Tweak will start after <Text className="font-bold text-gray-600 dark:text-slate-300">{altStartTime ? formatTime(altStartTime) : '...'}</Text> and end before <Text className="font-bold text-gray-600 dark:text-slate-300">{altEndTime ? formatTime(altEndTime) : '...'}</Text> on {oneDayDate ? formatDateShort(oneDayDate) : 'this day'}.
                                         </Text>
                                     </View>
                                 )}
@@ -433,7 +435,7 @@ export default function CreateTweakStep3(): React.JSX.Element {
                             onSelect={() => setValue('selectedType', 'flexible')}
                         >
                             <View className="flex-row items-center gap-2 mb-2">
-                                <Text className="text-gray-500 text-sm">Sometime before</Text>
+                                <Text className="text-gray-500 dark:text-slate-400 text-sm">Sometime before</Text>
                                 <View className="flex-1">
                                     <Controller
                                         control={control}
@@ -450,8 +452,8 @@ export default function CreateTweakStep3(): React.JSX.Element {
                                     />
                                 </View>
                             </View>
-                            <Text className="text-xs text-center text-gray-500">
-                                Tweak shall be taken up sometime before <Text className="font-bold text-gray-900">{flexibleDate ? formatDateShort(flexibleDate) : 'this date'}</Text> (deadline).
+                            <Text className="text-xs text-center text-gray-500 dark:text-slate-400">
+                                Tweak shall be taken up sometime before <Text className="font-bold text-gray-900 dark:text-slate-50">{flexibleDate ? formatDateShort(flexibleDate) : 'this date'}</Text> (deadline).
                             </Text>
                         </SelectableCard>
                     </>
@@ -482,17 +484,17 @@ export default function CreateTweakStep3(): React.JSX.Element {
                                     <TouchableOpacity
                                         key={slot}
                                         onPress={() => setValue('timeSlot', slot)}
-                                        className={`px-4 py-2 rounded-full border ${timeSlot === slot ? 'bg-gray-600 border-gray-600' : 'bg-white border-gray-300'}`}
+                                        className={`px-4 py-2 rounded-full border ${timeSlot === slot ? 'bg-gray-600 border-gray-600' : 'bg-white dark:bg-slate-900 border-gray-300 dark:border-slate-700'}`}
                                     >
-                                        <Text className={`text-xs font-bold ${timeSlot === slot ? 'text-white' : 'text-gray-500'}`}>
+                                        <Text className={`text-xs font-bold ${timeSlot === slot ? 'text-white' : 'text-gray-500 dark:text-slate-400'}`}>
                                             {slot === 'anytime' ? 'Anytime' : slot === 'before6pm' ? 'Before 6 PM' : 'After 6 PM'}
                                         </Text>
                                     </TouchableOpacity>
                                 ))}
                             </View>
 
-                            <Text className="text-xs text-gray-500 font-medium italic">
-                                Tweak shall be taken up <Text className="font-bold text-gray-700">{timeSlot === 'anytime' ? 'anytime' : timeSlot === 'before6pm' ? 'before 6 PM' : 'after 6 PM'}</Text> on <Text className="font-bold text-gray-700">{oneDayDate ? formatDateShort(oneDayDate) : 'this day'}</Text>.
+                            <Text className="text-xs text-gray-500 dark:text-slate-400 font-medium italic">
+                                Tweak shall be taken up <Text className="font-bold text-gray-700 dark:text-slate-300">{timeSlot === 'anytime' ? 'anytime' : timeSlot === 'before6pm' ? 'before 6 PM' : 'after 6 PM'}</Text> on <Text className="font-bold text-gray-700 dark:text-slate-300">{oneDayDate ? formatDateShort(oneDayDate) : 'this day'}</Text>.
                             </Text>
                         </SelectableCard>
 
@@ -515,7 +517,7 @@ export default function CreateTweakStep3(): React.JSX.Element {
                                 )}
                             />
                             <Text className="text-xs text-textSecondary font-medium italic mt-[-8px]">
-                                Tweak shall be taken up sometime before <Text className="font-bold text-gray-700">{flexibleDate ? formatDateShort(flexibleDate) : 'this date'}</Text>.
+                                Tweak shall be taken up sometime before <Text className="font-bold text-gray-700 dark:text-slate-300">{flexibleDate ? formatDateShort(flexibleDate) : 'this date'}</Text>.
                             </Text>
                         </SelectableCard>
 
@@ -570,7 +572,7 @@ export default function CreateTweakStep3(): React.JSX.Element {
                             )}
 
                             <Text className="text-xs text-textSecondary font-medium italic mt-[-8px]">
-                                Tweak will start on <Text className="font-bold text-gray-700">{fixedStartDate ? formatDateTimeShort(fixedStartDate) : '...'}</Text> and ends on <Text className="font-bold text-gray-700">{fixedEndDate ? formatDateTimeShort(fixedEndDate) : '...'}</Text>.
+                                Tweak will start on <Text className="font-bold text-gray-700 dark:text-slate-300">{fixedStartDate ? formatDateTimeShort(fixedStartDate) : '...'}</Text> and ends on <Text className="font-bold text-gray-700 dark:text-slate-300">{fixedEndDate ? formatDateTimeShort(fixedEndDate) : '...'}</Text>.
                             </Text>
                         </SelectableCard>
                     </>
@@ -578,7 +580,7 @@ export default function CreateTweakStep3(): React.JSX.Element {
 
 
                 <TouchableOpacity className="mb-6 items-center">
-                    <Text className="text-xs text-gray-500">
+                    <Text className="text-xs text-gray-500 dark:text-slate-400">
                         Doesn't this match what you had in mind? <Text className="text-primary font-bold">Try Advanced Selector</Text>
                     </Text>
                 </TouchableOpacity>

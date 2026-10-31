@@ -3,6 +3,7 @@ import { useRouter, type Href } from 'expo-router';
 import React from 'react';
 import { Text, TouchableOpacity, View } from 'react-native';
 import { palette } from '@tweak/theme';
+import { useTheme } from '../../themes/ThemeProvider';
 
 interface MenuItem {
     icon: keyof typeof Ionicons.glyphMap;
@@ -12,6 +13,7 @@ interface MenuItem {
 
 export default function ProfileMenuList(): React.JSX.Element {
     const router = useRouter();
+    const { colors, isDark } = useTheme();
 
     const supportItems: MenuItem[] = [
         { icon: 'people', label: 'Invite a Friend', route: '/invite' },
@@ -28,27 +30,27 @@ export default function ProfileMenuList(): React.JSX.Element {
         <TouchableOpacity
             key={item.label}
             onPress={() => router.push(item.route as Href)}
-            className="flex-row items-center justify-between py-4 border-b border-gray-100"
+            className="flex-row items-center justify-between py-4 border-b border-gray-100 dark:border-slate-700"
         >
             <View className="flex-row items-center">
-                <Ionicons name={item.icon} size={20} color={palette.gray500} />
-                <Text className="ml-3 text-gray-700 font-medium">{item.label}</Text>
+                <Ionicons name={item.icon} size={20} color={isDark ? colors.textSecondary : palette.gray500} />
+                <Text className="ml-3 text-gray-700 dark:text-slate-300 font-medium">{item.label}</Text>
             </View>
-            <Ionicons name="chevron-forward" size={20} color={palette.gray400} />
+            <Ionicons name="chevron-forward" size={20} color={isDark ? colors.textMuted : palette.gray400} />
         </TouchableOpacity>
     );
 
     return (
         <View className="px-6 py-4">
             {/* Support Section */}
-            <View className="bg-white rounded-2xl p-4 shadow-sm border border-gray-100 mb-4">
-                <Text className="text-gray-500 font-semibold text-xs uppercase mb-2">Support</Text>
+            <View className="bg-white dark:bg-slate-900 rounded-2xl p-4 shadow-sm border border-gray-100 dark:border-slate-700 mb-4">
+                <Text className="text-gray-500 dark:text-slate-400 font-semibold text-xs uppercase mb-2">Support</Text>
                 {supportItems.map(renderItem)}
             </View>
 
             {/* Legal Section */}
-            <View className="bg-white rounded-2xl p-4 shadow-sm border border-gray-100">
-                <Text className="text-gray-500 font-semibold text-xs uppercase mb-2">Legal</Text>
+            <View className="bg-white dark:bg-slate-900 rounded-2xl p-4 shadow-sm border border-gray-100 dark:border-slate-700">
+                <Text className="text-gray-500 dark:text-slate-400 font-semibold text-xs uppercase mb-2">Legal</Text>
                 {legalItems.map(renderItem)}
             </View>
         </View>

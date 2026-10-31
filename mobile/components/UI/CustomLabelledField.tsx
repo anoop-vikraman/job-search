@@ -1,4 +1,5 @@
 import { themeColors } from '@/themes/colors';
+import { useTheme } from '@/themes/ThemeProvider';
 import { palette } from '@tweak/theme';
 import React, { useRef, useState } from 'react';
 import { KeyboardTypeOptions, StyleProp, Text, TextInput, TouchableWithoutFeedback, View, ViewStyle } from 'react-native';
@@ -37,6 +38,7 @@ export default function CustomLabelledField({
     error,
     required
 }: Props): React.JSX.Element {
+    const { colors, isDark } = useTheme();
     const inputRef = useRef<React.ComponentRef<typeof TextInput>>(null);
     const [isFocused, setIsFocused] = useState(false);
     const currentLength = value?.length || 0;
@@ -47,7 +49,7 @@ export default function CustomLabelledField({
     return (
         <View style={[{ width: '100%', marginBottom: 16 }, containerStyle]}>
             {/* Label matched to StandardInput */}
-            <Text style={{ color: palette.gray400, fontSize: 10, fontWeight: 'bold', marginBottom: 4, textTransform: 'uppercase', letterSpacing: 1.5, paddingHorizontal: 4 }}>
+            <Text style={{ color: isDark ? colors.textMuted : palette.gray400, fontSize: 10, fontWeight: 'bold', marginBottom: 4, textTransform: 'uppercase', letterSpacing: 1.5, paddingHorizontal: 4 }}>
                 {label} {required && <Text style={{ color: palette.red500 }}>*</Text>}
             </Text>
 
@@ -59,17 +61,17 @@ export default function CustomLabelledField({
                         borderWidth: 1,
                         position: 'relative',
                         backgroundColor: themeColors.primary + '08',
-                        borderColor: error ? palette.red500 : isFocused ? themeColors.primary : palette.gray100,
+                        borderColor: error ? palette.red500 : isFocused ? themeColors.primary : isDark ? colors.border : palette.gray100,
                         ...(multiline ? { paddingVertical: 12, minHeight: 80 } : { height: 56, justifyContent: 'center' })
                     }}
                 >
                     <TextInput
                         ref={inputRef}
-                        className={`py-3 text-gray-900 text-base font-medium ${multiline ? 'h-[100px] text-top pb-4' : ''}`}
+                        className={`py-3 text-gray-900 dark:text-slate-50 text-base font-medium ${multiline ? 'h-[100px] text-top pb-4' : ''}`}
                         value={value}
                         onChangeText={onChangeText}
                         placeholder={placeholder}
-                        placeholderTextColor={palette.gray400}
+                        placeholderTextColor={isDark ? colors.textMuted : palette.gray400}
                         secureTextEntry={secureTextEntry}
                         keyboardType={keyboardType}
                         multiline={multiline}
@@ -93,7 +95,7 @@ export default function CustomLabelledField({
                     )}
 
                     {showCharCount && maxLength && (
-                        <Text className={`absolute bottom-2 left-4 text-xs ${remainingChars < 10 ? 'text-red-400' : 'text-gray-400'}`}>
+                        <Text className={`absolute bottom-2 left-4 text-xs ${remainingChars < 10 ? 'text-red-400' : 'text-gray-400 dark:text-slate-400'}`}>
                             {remainingChars}
                         </Text>
                     )}

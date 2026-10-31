@@ -1,5 +1,6 @@
 import { CATEGORIES, getCategoryMeta } from '@/constants/categories';
 import { themeColors } from '@/themes/colors';
+import { useTheme } from '@/themes/ThemeProvider';
 import { Ionicons } from '@expo/vector-icons';
 import { palette } from '@tweak/theme';
 import dayjs from 'dayjs';
@@ -106,6 +107,7 @@ export default function TweakTile({
     currentUserId,
     onViewApplicants,
 }: TweakTileProps): React.JSX.Element {
+    const { colors, isDark } = useTheme();
     const catMeta = getCategoryMeta(item.category ?? '');
     const scheduleMeta = getScheduleMeta(item.schedulePreference);
     const { dateText, daysText, hoursText, slotType } = getDateDisplay(item);
@@ -130,11 +132,11 @@ export default function TweakTile({
             onPress={onPress}
             activeOpacity={0.75}
             style={{
-                backgroundColor: palette.white,
+                backgroundColor: isDark ? colors.surface : palette.white,
                 borderRadius: 18,
                 marginBottom: 14,
                 borderWidth: 1,
-                borderColor: palette.slate200,
+                borderColor: isDark ? colors.border : palette.slate200,
                 borderLeftWidth: 4,
                 borderLeftColor: scheduleMeta.color,
             }}
@@ -143,7 +145,7 @@ export default function TweakTile({
                 {hasImage ? (
                     <Image
                         source={{ uri: item.images[0]?.uri }}
-                        style={{ width: 68, height: 68, borderRadius: 12, backgroundColor: palette.slate100, alignSelf: 'center' }}
+                        style={{ width: 68, height: 68, borderRadius: 12, backgroundColor: isDark ? colors.surfaceMuted : palette.slate100, alignSelf: 'center' }}
                     />
                 ) : (
                     <View
@@ -164,7 +166,7 @@ export default function TweakTile({
                 <View style={{ flex: 1 }}>
                     <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 5 }}>
                         <Text
-                            style={{ fontSize: 16, fontWeight: '800', color: palette.slate900, flex: 1, marginRight: 8 }}
+                            style={{ fontSize: 16, fontWeight: '800', color: isDark ? colors.text : palette.slate900, flex: 1, marginRight: 8 }}
                             numberOfLines={1}
                         >
                             {item.category || 'Uncategorized'}
@@ -281,15 +283,15 @@ export default function TweakTile({
                                 <View
                                     key={idx}
                                     style={{
-                                        backgroundColor: palette.slate50,
+                                        backgroundColor: isDark ? colors.surfaceMuted : palette.slate50,
                                         borderWidth: 1,
-                                        borderColor: palette.slate200,
+                                        borderColor: isDark ? colors.border : palette.slate200,
                                         paddingHorizontal: 7,
                                         paddingVertical: 2,
                                         borderRadius: 20,
                                     }}
                                 >
-                                    <Text style={{ fontSize: 10, fontWeight: '600', color: palette.slate600 }}>{skill}</Text>
+                                    <Text style={{ fontSize: 10, fontWeight: '600', color: isDark ? colors.textSecondary : palette.slate600 }}>{skill}</Text>
                                 </View>
                             ))}
                         </ScrollView>
@@ -300,7 +302,7 @@ export default function TweakTile({
             {/* ── BOTTOM BAR ── */}
             <View style={{
                 borderTopWidth: 1,
-                borderTopColor: palette.slate100,
+                borderTopColor: isDark ? colors.border : palette.slate100,
                 paddingHorizontal: 14,
                 paddingVertical: 9,
                 flexDirection: 'row',
@@ -309,23 +311,23 @@ export default function TweakTile({
             }}>
                 {/* Date */}
                 <View style={{ flexDirection: 'row', alignItems: 'center', gap: 3 }}>
-                    <Ionicons name="calendar-clear-outline" size={11} color={palette.slate400} />
-                    <Text style={{ fontSize: 11, color: palette.slate600, fontWeight: '600' }}>{dateText}</Text>
+                    <Ionicons name="calendar-clear-outline" size={11} color={isDark ? colors.textMuted : palette.slate400} />
+                    <Text style={{ fontSize: 11, color: isDark ? colors.textSecondary : palette.slate600, fontWeight: '600' }}>{dateText}</Text>
                 </View>
 
                 {/* Days count */}
                 {daysText && (
                     <View style={{ flexDirection: 'row', alignItems: 'center', gap: 3 }}>
-                        <Ionicons name="layers-outline" size={11} color={palette.slate400} />
-                        <Text style={{ fontSize: 11, color: palette.slate600, fontWeight: '600' }}>{daysText}</Text>
+                        <Ionicons name="layers-outline" size={11} color={isDark ? colors.textMuted : palette.slate400} />
+                        <Text style={{ fontSize: 11, color: isDark ? colors.textSecondary : palette.slate600, fontWeight: '600' }}>{daysText}</Text>
                     </View>
                 )}
 
                 {/* Hours */}
                 {hoursText && (
                     <View style={{ flexDirection: 'row', alignItems: 'center', gap: 3 }}>
-                        <Ionicons name="time-outline" size={11} color={palette.slate400} />
-                        <Text style={{ fontSize: 11, color: palette.slate600, fontWeight: '600' }}>{hoursText}</Text>
+                        <Ionicons name="time-outline" size={11} color={isDark ? colors.textMuted : palette.slate400} />
+                        <Text style={{ fontSize: 11, color: isDark ? colors.textSecondary : palette.slate600, fontWeight: '600' }}>{hoursText}</Text>
                     </View>
                 )}
 
@@ -354,8 +356,8 @@ export default function TweakTile({
                     </TouchableOpacity>
                 ) : canShowAddress ? (
                     <View style={{ flexDirection: 'row', alignItems: 'center', gap: 3 }}>
-                        <Ionicons name="home-outline" size={11} color={palette.slate400} />
-                        <Text style={{ fontSize: 11, color: palette.slate600, fontWeight: '600' }}>{addressLabel}</Text>
+                        <Ionicons name="home-outline" size={11} color={isDark ? colors.textMuted : palette.slate400} />
+                        <Text style={{ fontSize: 11, color: isDark ? colors.textSecondary : palette.slate600, fontWeight: '600' }}>{addressLabel}</Text>
                     </View>
                 ) : null}
             </View>

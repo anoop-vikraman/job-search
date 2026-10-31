@@ -2,6 +2,7 @@ import { palette } from '@tweak/theme';
 import React from 'react';
 import { StyleProp, Text, TouchableOpacity, View, ViewStyle } from 'react-native';
 import { themeColors } from '../../themes/colors';
+import { useTheme } from '../../themes/ThemeProvider';
 
 interface Props {
     label: string;
@@ -20,6 +21,7 @@ export default function CustomCheckbox({
     containerStyle,
     color = themeColors.primary
 }: Props): React.JSX.Element {
+    const { isDark } = useTheme();
     return (
         <View style={containerStyle}>
             <TouchableOpacity
@@ -28,11 +30,11 @@ export default function CustomCheckbox({
                 activeOpacity={0.7}
             >
                 <View className="flex-1 mr-4">
-                    <Text className="text-base font-semibold text-gray-800">
+                    <Text className="text-base font-semibold text-gray-800 dark:text-slate-50">
                         {label}
                     </Text>
                     {description && (
-                        <Text className="text-sm text-gray-500 mt-1">
+                        <Text className="text-sm text-gray-500 dark:text-slate-400 mt-1">
                             {description}
                         </Text>
                     )}
@@ -41,7 +43,7 @@ export default function CustomCheckbox({
                 {/* Toggle/Checkbox Visual */}
                 <View
                     style={{
-                        backgroundColor: checked ? color : palette.gray200,
+                        backgroundColor: checked ? color : isDark ? palette.slate700 : palette.gray200,
                         width: 50,
                         height: 28,
                         borderRadius: 16,

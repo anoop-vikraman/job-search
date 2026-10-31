@@ -1,5 +1,4 @@
 import { AntDesign, Ionicons } from '@expo/vector-icons';
-import { palette } from '@tweak/theme';
 import React, { useState } from 'react';
 import {
     Modal,
@@ -13,6 +12,7 @@ import {
     StyleProp,
 } from 'react-native';
 import { themeColors } from '../../themes/colors';
+import { useTheme } from '../../themes/ThemeProvider';
 
 interface Option {
     label: string;
@@ -42,6 +42,7 @@ export default function CustomDropdown({
     visible: externalVisible,
     onVisibleChange,
 }: Props): React.JSX.Element {
+    const { colors } = useTheme();
     const [internalVisible, setInternalVisible] = useState(false);
 
     const visible = externalVisible !== undefined ? externalVisible : internalVisible;
@@ -113,7 +114,7 @@ export default function CustomDropdown({
 
     return (
         <View style={[{ width: '100%', marginBottom: 16 }, containerStyle]}>
-            <Text style={{ color: palette.gray400, fontSize: 10, fontWeight: 'bold', marginBottom: 4, textTransform: 'uppercase', letterSpacing: 1.5, paddingHorizontal: 4 }}>
+            <Text style={{ color: colors.textMuted, fontSize: 10, fontWeight: 'bold', marginBottom: 4, textTransform: 'uppercase', letterSpacing: 1.5, paddingHorizontal: 4 }}>
                 {label}
             </Text>
 
@@ -123,11 +124,11 @@ export default function CustomDropdown({
                     flexDirection: 'row',
                     alignItems: 'center',
                     borderWidth: 1,
-                    borderColor: palette.gray100,
+                    borderColor: colors.border,
                     borderRadius: 16,
                     paddingHorizontal: 8,
                     paddingVertical: 8,
-                    backgroundColor: palette.gray50,
+                    backgroundColor: colors.surfaceMuted,
                     minHeight: 52,
                     justifyContent: 'space-between'
                 }}
@@ -164,7 +165,7 @@ export default function CustomDropdown({
                             );
                         })
                     ) : (
-                        <Text style={{ fontSize: 16, marginLeft: 8, paddingVertical: 8, color: (!value || (Array.isArray(value) && value.length === 0)) ? palette.gray400 : palette.gray800 }}>
+                        <Text style={{ fontSize: 16, marginLeft: 8, paddingVertical: 8, color: (!value || (Array.isArray(value) && value.length === 0)) ? colors.textMuted : colors.text }}>
                             {getDisplayValue() || placeholder}
                         </Text>
                     )}
@@ -172,7 +173,7 @@ export default function CustomDropdown({
 
                 {(!Array.isArray(value) || value.length === 0) && (
                     <View style={{ marginLeft: 8, paddingRight: 4 }}>
-                        <Ionicons name="chevron-down" size={18} color={palette.gray500} />
+                        <Ionicons name="chevron-down" size={18} color={colors.textSecondary} />
                     </View>
                 )}
             </TouchableOpacity>
@@ -187,25 +188,25 @@ export default function CustomDropdown({
                 <TouchableWithoutFeedback onPress={() => setVisible(false)}>
                     <View className="flex-1 justify-end bg-black/50">
                         <TouchableWithoutFeedback>
-                            <View className="bg-white rounded-t-3xl h-[70%] w-full overflow-hidden">
+                            <View className="bg-white dark:bg-slate-900 rounded-t-3xl h-[70%] w-full overflow-hidden">
                                 {/* Header */}
-                                <View className="flex-row justify-between items-center px-6 py-4 border-b border-gray-100">
+                                <View className="flex-row justify-between items-center px-6 py-4 border-b border-gray-100 dark:border-slate-700">
                                     <Text className="text-lg font-bold" style={{ color: themeColors.primary }}>{label}</Text>
                                     <TouchableOpacity onPress={() => setVisible(false)} accessibilityRole="button" accessibilityLabel="Close">
-                                        <AntDesign name="close" size={24} color={palette.gray700} />
+                                        <AntDesign name="close" size={24} color={colors.text} />
                                     </TouchableOpacity>
                                 </View>
 
                                 {/* Search Bar */}
                                 <View className="px-4 py-2">
-                                    <View className="flex-row items-center bg-gray-100 rounded-lg px-3 py-2">
-                                        <Ionicons name="search" size={20} color={palette.gray400} />
+                                    <View className="flex-row items-center bg-gray-100 dark:bg-slate-800 rounded-lg px-3 py-2">
+                                        <Ionicons name="search" size={20} color={colors.textMuted} />
                                         <TextInput
-                                            className="flex-1 ml-2 text-base text-gray-800"
+                                            className="flex-1 ml-2 text-base text-gray-800 dark:text-slate-50"
                                             placeholder="Search..."
                                             value={searchText}
                                             onChangeText={setSearchText}
-                                            placeholderTextColor={palette.gray400}
+                                            placeholderTextColor={colors.textMuted}
                                             autoFocus={true} // Auto focus
                                             onSubmitEditing={handleSearchSubmit} // Enter to select
                                             returnKeyType="done"
@@ -216,7 +217,7 @@ export default function CustomDropdown({
                                 {/* List */}
                                 <ScrollView contentContainerClassName="px-4 pb-10">
                                     {filteredOptions.length === 0 ? (
-                                        <Text className="text-center text-gray-500 mt-10">No options found</Text>
+                                        <Text className="text-center text-gray-500 dark:text-slate-400 mt-10">No options found</Text>
                                     ) : (
                                         filteredOptions.map((item) => {
                                             const active = isSelected(item.value);
@@ -224,9 +225,9 @@ export default function CustomDropdown({
                                                 <TouchableOpacity
                                                     key={item.value}
                                                     onPress={() => handleSelect(item.value)}
-                                                    className={`flex-row justify-between items-center py-4 border-b border-gray-50 ${active ? 'bg-blue-50/50 -mx-4 px-4' : ''}`}
+                                                    className={`flex-row justify-between items-center py-4 border-b border-gray-50 dark:border-slate-700 ${active ? 'bg-blue-50/50 -mx-4 px-4' : ''}`}
                                                 >
-                                                    <Text className="text-base" style={active ? { fontWeight: 'bold', color: themeColors.primary } : { color: palette.gray700 }}>
+                                                    <Text className="text-base" style={active ? { fontWeight: 'bold', color: themeColors.primary } : { color: colors.textSecondary }}>
                                                         {item.label}
                                                     </Text>
                                                     {active && (
@@ -240,7 +241,7 @@ export default function CustomDropdown({
 
                                 {/* Done Button for MultiSelect */}
                                 {multiSelect && (
-                                    <View className="p-4 border-t border-gray-100 pb-8 bg-white">
+                                    <View className="p-4 border-t border-gray-100 dark:border-slate-700 pb-8 bg-white dark:bg-slate-900">
                                         <TouchableOpacity
                                             onPress={handleConfirm}
                                             style={{

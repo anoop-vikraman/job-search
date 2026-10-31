@@ -19,6 +19,7 @@ import { useApplyToTweak, useTweak } from '@/hooks/useTweaks';
 import { toMinor } from '@/utils/money';
 import { ScheduleSlot } from '@/types/tweak';
 import { palette } from '@tweak/theme';
+import { useTheme } from '@/themes/ThemeProvider';
 
 // ─── Conflict Detection (same logic as details page) ─────────────────────────
 
@@ -97,13 +98,14 @@ function SlotItem({
     onPress: () => void;
     onConflictInfo: () => void;
 }) {
+    const { colors } = useTheme();
     const conflictBg = conflict === 'working_time' ? palette.red50 : palette.orange50;
     const conflictBorder = conflict === 'working_time' ? palette.red200 : palette.orange200;
     const conflictText = conflict === 'working_time' ? palette.red600 : palette.orange600;
 
-    const bg = conflict ? conflictBg : selected ? palette.green100 : palette.slate50;
-    const border = conflict ? conflictBorder : selected ? palette.green300 : palette.slate200;
-    const textColor = conflict ? conflictText : selected ? palette.green700 : palette.slate600;
+    const bg = conflict ? conflictBg : selected ? palette.green100 : colors.surfaceMuted;
+    const border = conflict ? conflictBorder : selected ? palette.green300 : colors.border;
+    const textColor = conflict ? conflictText : selected ? palette.green700 : colors.textSecondary;
 
     return (
         <Pressable
@@ -126,7 +128,7 @@ function SlotItem({
                 ) : selected ? (
                     <Ionicons name="checkmark-circle" size={16} color={palette.green600} />
                 ) : (
-                    <Ionicons name="time-outline" size={16} color={palette.slate400} />
+                    <Ionicons name="time-outline" size={16} color={colors.textMuted} />
                 )}
                 <View>
                     {dateLabel && <Text style={{ fontSize: 11, color: textColor, fontWeight: '600', marginBottom: 1, opacity: 0.7 }}>{dateLabel}</Text>}
@@ -147,6 +149,7 @@ function SlotItem({
 export default function ApplyStep2(): React.JSX.Element {
     const { tweakId, whyMessage } = useLocalSearchParams<{ tweakId: string; whyMessage: string }>();
     const router = useRouter();
+    const { colors } = useTheme();
     const { data: tweak } = useTweak(tweakId);
     const applyMutation = useApplyToTweak();
 
@@ -162,7 +165,7 @@ export default function ApplyStep2(): React.JSX.Element {
         return (
             <ScreenWrapper>
                 <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
-                    <Text style={{ color: palette.slate500 }}>Tweak not found.</Text>
+                    <Text style={{ color: colors.textSecondary }}>Tweak not found.</Text>
                 </View>
             </ScreenWrapper>
         );
@@ -265,36 +268,36 @@ export default function ApplyStep2(): React.JSX.Element {
                 <View style={{
                     flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between',
                     paddingHorizontal: 16, paddingVertical: 14,
-                    backgroundColor: '#fff', borderBottomWidth: 1, borderBottomColor: palette.slate100,
+                    backgroundColor: colors.surface, borderBottomWidth: 1, borderBottomColor: colors.border,
                 }}>
                     <TouchableOpacity onPress={() => router.back()} style={{ padding: 6 }} accessibilityRole="button" accessibilityLabel="Go back">
-                        <Ionicons name="arrow-back" size={24} color={palette.gray900} />
+                        <Ionicons name="arrow-back" size={24} color={colors.text} />
                     </TouchableOpacity>
-                    <Text style={{ fontSize: 17, fontWeight: '800', color: palette.slate900 }}>Apply for Tweak</Text>
+                    <Text style={{ fontSize: 17, fontWeight: '800', color: colors.text }}>Apply for Tweak</Text>
                     <View style={{ width: 36 }} />
                 </View>
 
                 {/* Step indicator */}
-                <View style={{ flexDirection: 'row', alignItems: 'center', paddingHorizontal: 20, paddingVertical: 12, backgroundColor: '#fff', borderBottomWidth: 1, borderBottomColor: palette.slate100, gap: 8 }}>
+                <View style={{ flexDirection: 'row', alignItems: 'center', paddingHorizontal: 20, paddingVertical: 12, backgroundColor: colors.surface, borderBottomWidth: 1, borderBottomColor: colors.border, gap: 8 }}>
                     <View style={{ flex: 1, height: 4, borderRadius: 4, backgroundColor: palette.iosBlue }} />
                     <View style={{ flex: 1, height: 4, borderRadius: 4, backgroundColor: palette.iosBlue }} />
-                    <Text style={{ fontSize: 12, fontWeight: '700', color: palette.slate500, marginLeft: 4 }}>Step 2 / 2</Text>
+                    <Text style={{ fontSize: 12, fontWeight: '700', color: colors.textSecondary, marginLeft: 4 }}>Step 2 / 2</Text>
                 </View>
 
                 <ScrollView style={{ flex: 1 }} contentContainerStyle={{ padding: 20, paddingBottom: 40 }} keyboardShouldPersistTaps="handled">
 
                     {/* Slot selection */}
-                    <Text style={{ fontSize: 20, fontWeight: '900', color: palette.slate900, marginBottom: 6 }}>
+                    <Text style={{ fontSize: 20, fontWeight: '900', color: colors.text, marginBottom: 6 }}>
                         Choose Your Preferred Slots
                     </Text>
-                    <Text style={{ fontSize: 14, color: palette.slate500, marginBottom: 16, lineHeight: 20 }}>
+                    <Text style={{ fontSize: 14, color: colors.textSecondary, marginBottom: 16, lineHeight: 20 }}>
                         Select the time slots you're available for. Tap a conflicting slot (orange/red) for details.
                     </Text>
 
                     {slots.length === 0 ? (
-                        <View style={{ backgroundColor: palette.slate50, borderRadius: 12, padding: 16, alignItems: 'center', marginBottom: 24 }}>
-                            <Ionicons name="calendar-outline" size={32} color={palette.slate400} />
-                            <Text style={{ color: palette.slate500, marginTop: 8, textAlign: 'center' }}>No specific time slots defined for this tweak.</Text>
+                        <View style={{ backgroundColor: colors.surfaceMuted, borderRadius: 12, padding: 16, alignItems: 'center', marginBottom: 24 }}>
+                            <Ionicons name="calendar-outline" size={32} color={colors.textMuted} />
+                            <Text style={{ color: colors.textSecondary, marginTop: 8, textAlign: 'center' }}>No specific time slots defined for this tweak.</Text>
                         </View>
                     ) : (
                         <View style={{ marginBottom: 24 }}>
@@ -319,51 +322,51 @@ export default function ApplyStep2(): React.JSX.Element {
 
                     {/* Price Quote */}
                     <View style={{ marginBottom: 24 }}>
-                        <Text style={{ fontSize: 17, fontWeight: '800', color: palette.slate900, marginBottom: 6 }}>
+                        <Text style={{ fontSize: 17, fontWeight: '800', color: colors.text, marginBottom: 6 }}>
                             {isQuoteModel ? 'Your Quoted Price *' : 'Counter Quote (Optional)'}
                         </Text>
-                        <Text style={{ fontSize: 13, color: palette.slate500, marginBottom: 12 }}>
+                        <Text style={{ fontSize: 13, color: colors.textSecondary, marginBottom: 12 }}>
                             {isQuoteModel
                                 ? 'This tweak requires you to set a price. Enter your best quote.'
                                 : `The listed price is ₹${tweak.pricingModel !== 'quote' ? (tweak.pricingData?.price || tweak.price || '—') : '—'}. You can suggest a different price.`}
                         </Text>
                         <View style={{
                             flexDirection: 'row', alignItems: 'center',
-                            borderWidth: 1.5, borderColor: quotedPrice ? palette.iosBlue : palette.slate200,
-                            borderRadius: 14, backgroundColor: palette.gray50, paddingHorizontal: 16,
+                            borderWidth: 1.5, borderColor: quotedPrice ? palette.iosBlue : colors.border,
+                            borderRadius: 14, backgroundColor: colors.surfaceMuted, paddingHorizontal: 16,
                         }}>
-                            <Text style={{ fontSize: 20, fontWeight: '700', color: palette.slate900, marginRight: 8 }}>₹</Text>
+                            <Text style={{ fontSize: 20, fontWeight: '700', color: colors.text, marginRight: 8 }}>₹</Text>
                             <TextInput
                                 value={quotedPrice}
                                 onChangeText={(t) => setQuotedPrice(t.replace(/[^0-9.]/g, ''))}
                                 placeholder="0.00"
-                                placeholderTextColor={palette.slate400}
+                                placeholderTextColor={colors.textMuted}
                                 keyboardType="decimal-pad"
-                                style={{ flex: 1, fontSize: 18, fontWeight: '600', color: palette.slate900, paddingVertical: 14 }}
+                                style={{ flex: 1, fontSize: 18, fontWeight: '600', color: colors.text, paddingVertical: 14 }}
                             />
                         </View>
                     </View>
 
                     {/* Summary of step 1 message */}
                     <View style={{
-                        backgroundColor: palette.slate50,
+                        backgroundColor: colors.surfaceMuted,
                         borderWidth: 1,
-                        borderColor: palette.slate200,
+                        borderColor: colors.border,
                         borderRadius: 14,
                         padding: 14,
                         marginBottom: 16,
                     }}>
-                        <Text style={{ fontSize: 12, fontWeight: '700', color: palette.slate500, marginBottom: 6, textTransform: 'uppercase', letterSpacing: 0.5 }}>
+                        <Text style={{ fontSize: 12, fontWeight: '700', color: colors.textSecondary, marginBottom: 6, textTransform: 'uppercase', letterSpacing: 0.5 }}>
                             Your Pitch (Step 1)
                         </Text>
-                        <Text style={{ fontSize: 14, color: palette.slate700, lineHeight: 20 }} numberOfLines={3}>
+                        <Text style={{ fontSize: 14, color: colors.textSecondary, lineHeight: 20 }} numberOfLines={3}>
                             {whyMessage || '—'}
                         </Text>
                     </View>
                 </ScrollView>
 
                 {/* Bottom CTA */}
-                <View style={{ padding: 16, backgroundColor: '#fff', borderTopWidth: 1, borderTopColor: palette.slate100 }}>
+                <View style={{ padding: 16, backgroundColor: colors.surface, borderTopWidth: 1, borderTopColor: colors.border }}>
                     <TouchableOpacity
                         onPress={handleApply}
                         disabled={!canApply || applying}
@@ -392,14 +395,14 @@ export default function ApplyStep2(): React.JSX.Element {
                     onPress={() => setConflictTip({ visible: false, type: null })}
                 >
                     <View style={{
-                        backgroundColor: '#fff', borderRadius: 16, padding: 20, marginHorizontal: 32,
+                        backgroundColor: colors.surface, borderRadius: 16, padding: 20, marginHorizontal: 32,
                         shadowColor: '#000', shadowOpacity: 0.15, shadowRadius: 12, elevation: 10,
                     }}>
                         <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8, marginBottom: 10 }}>
                             <Ionicons name="warning" size={20} color={conflictTip.type === 'working_time' ? palette.red600 : palette.orange600} />
-                            <Text style={{ fontSize: 15, fontWeight: '700', color: palette.slate900 }}>Schedule Conflict</Text>
+                            <Text style={{ fontSize: 15, fontWeight: '700', color: colors.text }}>Schedule Conflict</Text>
                         </View>
-                        <Text style={{ color: palette.slate600, fontSize: 14, lineHeight: 20 }}>
+                        <Text style={{ color: colors.textSecondary, fontSize: 14, lineHeight: 20 }}>
                             {conflictTip.type === 'working_time'
                                 ? 'This slot conflicts with fixed working hours of another tweak you already applied for. Consider deselecting it.'
                                 : 'This slot overlaps with the availability window of another tweak you applied for. You may still select it, but conflicts can reduce acceptance chances.'}

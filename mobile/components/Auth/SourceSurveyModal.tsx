@@ -7,12 +7,14 @@ import CustomButton from '../UI/CustomButton';
 import { palette } from '@tweak/theme';
 import { SourceSurveyModalProps } from '../../types/auth';
 import { StandardInput } from '../UI/StandardInput';
+import { useTheme } from '@/themes/ThemeProvider';
 
 export default function SourceSurveyModal({
     visible,
     onClose,
     onComplete
 }: SourceSurveyModalProps): React.JSX.Element {
+    const { colors, isDark } = useTheme();
     const [selectedSource, setSelectedSource] = useState<string | null>(null);
     const [otherSource, setOtherSource] = useState('');
 
@@ -50,16 +52,16 @@ export default function SourceSurveyModal({
                 <View className="flex-row justify-between items-center w-full">
                     <View />
                     <TouchableOpacity onPress={() => onComplete('Skipped')} className="px-2 py-1">
-                        <Text className="text-gray-400 font-bold text-base">Skip</Text>
+                        <Text className="text-gray-400 dark:text-slate-400 font-bold text-base">Skip</Text>
                     </TouchableOpacity>
                 </View>
             }
         >
             <View className="mt-2 pb-6">
-                <Text className="text-2xl font-bold text-gray-900 mb-2 px-2">
+                <Text className="text-2xl font-bold text-gray-900 dark:text-slate-50 mb-2 px-2">
                     How did you hear about us?
                 </Text>
-                <Text className="text-gray-500 mb-8 px-2">
+                <Text className="text-gray-500 dark:text-slate-400 mb-8 px-2">
                     Help us understand how you found Tweak.
                 </Text>
 
@@ -69,24 +71,24 @@ export default function SourceSurveyModal({
                             key={source.label}
                             onPress={() => handleSelectOption(source.label)}
                             activeOpacity={0.7}
-                            className="w-full flex-row items-center border border-gray-100 bg-gray-50/50 rounded-2xl p-4"
+                            className="w-full flex-row items-center border border-gray-100 dark:border-slate-700 bg-gray-50/50 dark:bg-slate-800 rounded-2xl p-4"
                         >
-                            <View className="bg-white p-2 rounded-xl mr-4 shadow-sm">
+                            <View className="bg-white dark:bg-slate-900 p-2 rounded-xl mr-4 shadow-sm">
                                 <Ionicons name={source.icon} size={20} color={palette.indigo500} />
                             </View>
-                            <Text className="text-gray-700 text-lg font-medium flex-1">
+                            <Text className="text-gray-700 dark:text-slate-300 text-lg font-medium flex-1">
                                 {source.label}
                             </Text>
-                            <Ionicons name="chevron-forward" size={20} color={palette.slate300} />
+                            <Ionicons name="chevron-forward" size={20} color={isDark ? colors.textMuted : palette.slate300} />
                         </TouchableOpacity>
                     ))}
                 </View>
 
                 <View className="mt-8">
                     <View className="flex-row items-center mb-4">
-                        <View className="h-[1px] bg-gray-100 flex-1" />
-                        <Text className="text-gray-400 text-xs mx-4 uppercase tracking-widest font-bold">Or specify other</Text>
-                        <View className="h-[1px] bg-gray-100 flex-1" />
+                        <View className="h-[1px] bg-gray-100 dark:bg-slate-700 flex-1" />
+                        <Text className="text-gray-400 dark:text-slate-400 text-xs mx-4 uppercase tracking-widest font-bold">Or specify other</Text>
+                        <View className="h-[1px] bg-gray-100 dark:bg-slate-700 flex-1" />
                     </View>
 
                     <StandardInput

@@ -2,6 +2,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { palette } from '@tweak/theme';
 import React from 'react';
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { useTheme } from '../../themes/ThemeProvider';
 
 interface SectionCardProps {
     children: React.ReactNode;
@@ -10,11 +11,12 @@ interface SectionCardProps {
 }
 
 export default function SectionCard({ children, onEdit, title }: SectionCardProps): React.JSX.Element {
+    const { colors, isDark } = useTheme();
     return (
-        <View style={styles.container}>
+        <View style={[styles.container, isDark && { backgroundColor: colors.surface, borderTopColor: colors.border }]}>
             {title && (
-                <View style={{ marginBottom: 12, paddingBottom: 8, borderBottomWidth: 1, borderBottomColor: palette.gray100 }}>
-                    <Text style={{ fontSize: 16, fontWeight: 'bold', color: palette.gray900 }}>{title}</Text>
+                <View style={{ marginBottom: 12, paddingBottom: 8, borderBottomWidth: 1, borderBottomColor: isDark ? colors.border : palette.gray100 }}>
+                    <Text style={{ fontSize: 16, fontWeight: 'bold', color: isDark ? colors.text : palette.gray900 }}>{title}</Text>
                 </View>
             )}
 

@@ -11,10 +11,12 @@ import DraftConfirmationDialog from '../../components/UI/DraftConfirmationDialog
 import SectionCard from '../../components/UI/SectionCard';
 import { themeColors } from '../../themes/colors';
 import { palette } from '@tweak/theme';
+import { useTheme } from '@/themes/ThemeProvider';
 
 export default function CreateTweakStep5(): React.JSX.Element {
     const router = useRouter();
     const params = useLocalSearchParams();
+    const { colors, isDark } = useTheme();
     const [showDraftDialog, setShowDraftDialog] = useState(false);
     const [showSuccessModal, setShowSuccessModal] = useState(false);
     const [showDraftSaveModal, setShowDraftSaveModal] = useState(false);
@@ -99,12 +101,12 @@ export default function CreateTweakStep5(): React.JSX.Element {
 
     return (
         <ScreenWrapper>
-            <View style={styles.header}>
-                <TouchableOpacity onPress={handleBack} style={styles.backButton} accessibilityRole="button" accessibilityLabel="Go back">
-                    <Ionicons name="arrow-back" size={24} color={themeColors.text} />
+            <View style={[styles.header, isDark && { backgroundColor: colors.surface, borderBottomColor: colors.border }]}>
+                <TouchableOpacity onPress={handleBack} style={[styles.backButton, isDark && { backgroundColor: colors.surfaceMuted }]} accessibilityRole="button" accessibilityLabel="Go back">
+                    <Ionicons name="arrow-back" size={24} color={isDark ? colors.text : themeColors.text} />
                 </TouchableOpacity>
                 <View style={styles.headerTextContainer}>
-                    <Text style={styles.headerTitle}>Review Your Tweak</Text>
+                    <Text style={[styles.headerTitle, isDark && { color: colors.text }]}>Review Your Tweak</Text>
                     <Text style={styles.headerSubtitle}>STEP 5 OF 5</Text>
                 </View>
                 <ProfileHeaderRight />
@@ -112,8 +114,8 @@ export default function CreateTweakStep5(): React.JSX.Element {
 
             <ScrollView contentContainerStyle={styles.scrollContent}>
                 <View style={styles.titleSection}>
-                    <Text style={styles.title}>Almost There!</Text>
-                    <Text style={styles.subtitle}>
+                    <Text style={[styles.title, isDark && { color: colors.text }]}>Almost There!</Text>
+                    <Text style={[styles.subtitle, isDark && { color: colors.textSecondary }]}>
                         Review your tweak details below. You can edit any section before publishing.
                     </Text>
                 </View>
@@ -207,7 +209,7 @@ export default function CreateTweakStep5(): React.JSX.Element {
                 <View style={styles.actionSection}>
                     <CustomButton
                         onPress={handleSaveDraft}
-                        style={styles.draftButton}
+                        style={[styles.draftButton, isDark && { backgroundColor: colors.surface }]}
                         variant="outlined"
                     >
                         <Ionicons name="bookmark-outline" size={20} color={palette.indigo500} />

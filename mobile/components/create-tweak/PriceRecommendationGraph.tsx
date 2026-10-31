@@ -58,7 +58,7 @@ export default function PriceRecommendationGraph({
     const activeColor = isGoodPrice ? palette.green500 : themeColors.primary; // Green if good, Orange/Primary if not
 
     return (
-        <View className="bg-white rounded-3xl p-6 shadow-sm border border-gray-100 items-center">
+        <View className="bg-white dark:bg-slate-900 rounded-3xl p-6 shadow-sm border border-gray-100 dark:border-slate-700 items-center">
 
             <Text className="text-gray-800 font-bold text-lg mb-6">
                 Recommended Price your Tweak

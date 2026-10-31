@@ -165,8 +165,8 @@ export default function DetailsPage(): React.JSX.Element {
             />
 
             <ScrollView className="flex-1" contentContainerStyle={{ padding: 24, paddingBottom: 20 }}>
-                <Text className="text-3xl font-bold text-gray-900 mb-2">Describe Your Tweak</Text>
-                <Text className="text-gray-500 mb-8">The more details you provide, the better match we can find for you.</Text>
+                <Text className="text-3xl font-bold text-gray-900 dark:text-slate-50 mb-2">Describe Your Tweak</Text>
+                <Text className="text-gray-500 dark:text-slate-400 mb-8">The more details you provide, the better match we can find for you.</Text>
 
                 <View className="gap-8">
 
@@ -260,8 +260,8 @@ export default function DetailsPage(): React.JSX.Element {
             >
                 <TouchableWithoutFeedback onPress={() => setShowOtherSkillInput(false)}>
                     <View className="flex-1 justify-end bg-black/50">
-                        <View className="bg-white rounded-t-3xl p-6">
-                            <Text className="text-lg font-bold text-gray-900 mb-2">Add Custom Skill</Text>
+                        <View className="bg-white dark:bg-slate-900 rounded-t-3xl p-6">
+                            <Text className="text-lg font-bold text-gray-900 dark:text-slate-50 mb-2">Add Custom Skill</Text>
                             <View className="bg-yellow-50 p-4 rounded-xl border border-yellow-100 flex-row items-start mb-4">
                                 <Ionicons name="alert-circle" size={20} color={palette.yellow500} style={{ marginTop: 2 }} />
                                 <Text className="text-yellow-800 ml-2 flex-1 text-sm">
@@ -273,7 +273,7 @@ export default function DetailsPage(): React.JSX.Element {
                                 placeholder="Type skill name..."
                                 value={otherSkill}
                                 onChangeText={setOtherSkill}
-                                className="bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 text-base mb-4"
+                                className="bg-gray-50 dark:bg-slate-800 text-gray-900 dark:text-slate-50 border border-gray-200 dark:border-slate-700 rounded-xl px-4 py-3 text-base mb-4"
                                 autoFocus
                             />
                             <CustomButton

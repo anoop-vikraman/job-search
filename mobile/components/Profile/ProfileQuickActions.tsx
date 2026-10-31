@@ -29,7 +29,7 @@ export default function ProfileQuickActions(): React.JSX.Element {
                     <TouchableOpacity
                         key={index}
                         onPress={() => router.push(action.route as Href)}
-                        className="bg-white rounded-2xl p-4 shadow-sm border border-gray-100 items-center justify-center"
+                        className="bg-white dark:bg-slate-900 rounded-2xl p-4 shadow-sm border border-gray-100 dark:border-slate-700 items-center justify-center"
                         style={{ width: '47%' }}
                     >
                         <View
@@ -38,7 +38,7 @@ export default function ProfileQuickActions(): React.JSX.Element {
                         >
                             <Ionicons name={action.icon} size={24} color={action.color} />
                         </View>
-                        <Text className="font-semibold text-gray-900">{action.label}</Text>
+                        <Text className="font-semibold text-gray-900 dark:text-slate-50">{action.label}</Text>
                     </TouchableOpacity>
                 ))}
             </View>

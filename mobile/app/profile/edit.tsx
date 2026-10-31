@@ -12,6 +12,7 @@ import { Toast } from '../../components/UI/ToastManager';
 import { useAuthStore } from '../../store/useAuthStore';
 import { themeColors } from '../../themes/colors';
 import { palette } from '@tweak/theme';
+import { useTheme } from '@/themes/ThemeProvider';
 
 interface ProfileFormData {
     firstName: string;
@@ -24,6 +25,7 @@ interface ProfileFormData {
 
 export default function EditProfilePage(): React.JSX.Element {
     const router = useRouter();
+    const { colors } = useTheme();
     const { user, updateUser } = useAuthStore();
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [isUploading, setIsUploading] = useState(false);
@@ -112,11 +114,11 @@ export default function EditProfilePage(): React.JSX.Element {
 
     return (
         <ScreenWrapper>
-            <View style={styles.header}>
+            <View style={[styles.header, { backgroundColor: colors.surface, borderBottomColor: colors.border }]}>
                 <TouchableOpacity onPress={() => router.back()} style={styles.backButton} accessibilityRole="button" accessibilityLabel="Close">
-                    <Ionicons name="close" size={24} color={themeColors.text} />
+                    <Ionicons name="close" size={24} color={colors.text} />
                 </TouchableOpacity>
-                <Text style={styles.headerTitle}>Edit Profile</Text>
+                <Text style={[styles.headerTitle, { color: colors.text }]}>Edit Profile</Text>
                 <TouchableOpacity onPress={() => handleSubmit(onSubmit)()} disabled={isSubmitting}>
                     <Text style={[styles.saveButtonText, isSubmitting && { opacity: 0.5 }]}>Save</Text>
                 </TouchableOpacity>
@@ -125,9 +127,9 @@ export default function EditProfilePage(): React.JSX.Element {
             <ScrollView contentContainerStyle={styles.scrollContent}>
                 <View style={styles.avatarContainer}>
                     {user?.profilePictureUrl ? (
-                        <Image source={{ uri: user.profilePictureUrl }} style={styles.avatar} />
+                        <Image source={{ uri: user.profilePictureUrl }} style={[styles.avatar, { backgroundColor: colors.surfaceMuted }]} />
                     ) : (
-                        <View style={[styles.avatar, styles.avatarPlaceholder]}>
+                        <View style={[styles.avatar, styles.avatarPlaceholder, { backgroundColor: colors.surfaceMuted }]}>
                             <Ionicons name="person" size={40} color={themeColors.primary} />
                         </View>
                     )}

@@ -4,6 +4,7 @@ import React from 'react';
 import { ScrollView, Text, TouchableOpacity, View } from 'react-native';
 import { ScreenWrapper } from '../../components/ScreenWrapper';
 import { palette } from '@tweak/theme';
+import { useTheme } from '@/themes/ThemeProvider';
 
 const LANGUAGES = [
     { code: 'en', name: 'English', nativeName: 'English' },
@@ -16,6 +17,7 @@ const LANGUAGES = [
 
 export default function LanguageSettings(): React.JSX.Element {
     const router = useRouter();
+    const { colors } = useTheme();
     const [selectedLanguage, setSelectedLanguage] = React.useState('en');
 
     const handleLanguageChange = (code: string) => {
@@ -27,11 +29,11 @@ export default function LanguageSettings(): React.JSX.Element {
     return (
         <ScreenWrapper>
             {/* Header */}
-            <View className="flex-row items-center px-6 py-4 bg-white border-b border-gray-100">
+            <View className="flex-row items-center px-6 py-4 bg-white dark:bg-slate-900 border-b border-gray-100 dark:border-slate-700">
                 <TouchableOpacity onPress={() => router.back()} className="mr-4" accessibilityRole="button" accessibilityLabel="Go back">
-                    <Ionicons name="arrow-back" size={24} color={palette.gray900} />
+                    <Ionicons name="arrow-back" size={24} color={colors.text} />
                 </TouchableOpacity>
-                <Text className="text-lg font-bold text-gray-900">Language</Text>
+                <Text className="text-lg font-bold text-gray-900 dark:text-slate-50">Language</Text>
             </View>
 
             <ScrollView className="flex-1 px-6 py-6">
@@ -39,11 +41,11 @@ export default function LanguageSettings(): React.JSX.Element {
                     <TouchableOpacity
                         key={language.code}
                         onPress={() => handleLanguageChange(language.code)}
-                        className="bg-white rounded-2xl p-4 mb-3 shadow-sm border border-gray-100 flex-row items-center justify-between"
+                        className="bg-white dark:bg-slate-900 rounded-2xl p-4 mb-3 shadow-sm border border-gray-100 dark:border-slate-700 flex-row items-center justify-between"
                     >
                         <View>
-                            <Text className="font-bold text-gray-900">{language.nativeName}</Text>
-                            <Text className="text-gray-500 text-sm">{language.name}</Text>
+                            <Text className="font-bold text-gray-900 dark:text-slate-50">{language.nativeName}</Text>
+                            <Text className="text-gray-500 dark:text-slate-400 text-sm">{language.name}</Text>
                         </View>
                         {selectedLanguage === language.code && (
                             <Ionicons name="checkmark-circle" size={24} color={palette.green600} />

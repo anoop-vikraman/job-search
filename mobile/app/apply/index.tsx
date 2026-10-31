@@ -13,6 +13,7 @@ import { useMyApplications, useMyTweaks } from '../../hooks/useTweaks';
 import { loadDraftIntoCreateStore } from '../../utils/draftLoader';
 import TweakTile from '../../components/Tweak/TweakTile';
 import { palette } from '@tweak/theme';
+import { useTheme } from '@/themes/ThemeProvider';
 
 type TabType = 'my' | 'applied';
 
@@ -20,6 +21,7 @@ type TabType = 'my' | 'applied';
 
 export default function TweaksListing(): React.JSX.Element {
     const router = useRouter();
+    const { colors } = useTheme();
     const [activeTab, setActiveTab] = useState<TabType>('my');
     const [showDrafts, setShowDrafts] = useState(false);
 
@@ -138,7 +140,7 @@ export default function TweaksListing(): React.JSX.Element {
             <View style={{ flex: 1, paddingHorizontal: 16, paddingTop: 16 }}>
                 {/* Header */}
                 <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
-                    <Text style={{ fontSize: 24, fontWeight: '800', color: palette.slate900 }}>
+                    <Text style={{ fontSize: 24, fontWeight: '800', color: colors.text }}>
                         {showDrafts ? 'Drafts' : 'Tweaks'}
                     </Text>
                     <TouchableOpacity
@@ -151,15 +153,15 @@ export default function TweaksListing(): React.JSX.Element {
                             paddingHorizontal: 12,
                             paddingVertical: 7,
                             borderRadius: 12,
-                            backgroundColor: showDrafts ? palette.amber100 : palette.slate100,
+                            backgroundColor: showDrafts ? palette.amber100 : colors.surfaceMuted,
                         }}
                     >
                         <Ionicons
                             name={showDrafts ? 'close-circle' : 'document-text-outline'}
                             size={17}
-                            color={showDrafts ? palette.amber700 : palette.slate500}
+                            color={showDrafts ? palette.amber700 : colors.textSecondary}
                         />
-                        <Text style={{ fontWeight: '600', fontSize: 13, color: showDrafts ? palette.amber700 : palette.slate700 }}>
+                        <Text style={{ fontWeight: '600', fontSize: 13, color: showDrafts ? palette.amber700 : colors.textSecondary }}>
                             {showDrafts ? 'Close' : `Drafts (${draftsCount})`}
                         </Text>
                     </TouchableOpacity>
@@ -171,22 +173,22 @@ export default function TweaksListing(): React.JSX.Element {
                         flex: 1,
                         flexDirection: 'row',
                         alignItems: 'center',
-                        backgroundColor: palette.slate100,
+                        backgroundColor: colors.surfaceMuted,
                         borderRadius: 12,
                         paddingHorizontal: 12,
                         height: 44,
                     }}>
-                        <Ionicons name="search-outline" size={18} color={palette.slate500} style={{ marginRight: 8 }} />
+                        <Ionicons name="search-outline" size={18} color={colors.textSecondary} style={{ marginRight: 8 }} />
                         <TextInput
                             placeholder="Search category..."
                             value={searchQuery}
                             onChangeText={setSearchQuery}
-                            style={{ flex: 1, height: '100%', fontSize: 14, color: palette.slate900 }}
-                            placeholderTextColor={palette.slate400}
+                            style={{ flex: 1, height: '100%', fontSize: 14, color: colors.text }}
+                            placeholderTextColor={colors.textMuted}
                         />
                         {searchQuery.length > 0 && (
                             <TouchableOpacity onPress={() => setSearchQuery('')} accessibilityRole="button" accessibilityLabel="Clear search">
-                                <Ionicons name="close-circle" size={18} color={palette.slate400} />
+                                <Ionicons name="close-circle" size={18} color={colors.textMuted} />
                             </TouchableOpacity>
                         )}
                     </View>
@@ -196,7 +198,7 @@ export default function TweaksListing(): React.JSX.Element {
                         style={{
                             width: 44,
                             height: 44,
-                            backgroundColor: activeFilterCount > 0 ? `${themeColors.primary}15` : palette.slate100,
+                            backgroundColor: activeFilterCount > 0 ? `${themeColors.primary}15` : colors.surfaceMuted,
                             borderRadius: 12,
                             alignItems: 'center',
                             justifyContent: 'center',
@@ -208,7 +210,7 @@ export default function TweaksListing(): React.JSX.Element {
                         <Ionicons
                             name="options-outline"
                             size={20}
-                            color={activeFilterCount > 0 ? themeColors.primary : palette.slate500}
+                            color={activeFilterCount > 0 ? themeColors.primary : colors.textSecondary}
                         />
                         {activeFilterCount > 0 && (
                             <View style={{
@@ -223,7 +225,7 @@ export default function TweaksListing(): React.JSX.Element {
                                 alignItems: 'center',
                                 paddingHorizontal: 4,
                                 borderWidth: 2,
-                                borderColor: '#fff'
+                                borderColor: colors.surface
                             }}>
                                 <Text style={{ color: '#fff', fontSize: 10, fontWeight: 'bold' }}>{activeFilterCount}</Text>
                             </View>
@@ -271,7 +273,7 @@ export default function TweaksListing(): React.JSX.Element {
                             <View style={{ alignItems: 'center', justifyContent: 'center', paddingVertical: 80 }}>
                                 <View style={{
                                     width: 64, height: 64,
-                                    backgroundColor: palette.slate100,
+                                    backgroundColor: colors.surfaceMuted,
                                     borderRadius: 32,
                                     alignItems: 'center',
                                     justifyContent: 'center',
@@ -280,13 +282,13 @@ export default function TweaksListing(): React.JSX.Element {
                                     <Ionicons
                                         name={showDrafts ? 'document-text-outline' : 'hammer-outline'}
                                         size={30}
-                                        color={palette.slate400}
+                                        color={colors.textMuted}
                                     />
                                 </View>
-                                <Text style={{ color: palette.slate500, fontWeight: '700', fontSize: 17 }}>
+                                <Text style={{ color: colors.textSecondary, fontWeight: '700', fontSize: 17 }}>
                                     {showDrafts ? 'No Drafts' : 'No Tweaks Yet'}
                                 </Text>
-                                <Text style={{ color: palette.slate400, textAlign: 'center', marginTop: 6, paddingHorizontal: 40, fontSize: 13 }}>
+                                <Text style={{ color: colors.textMuted, textAlign: 'center', marginTop: 6, paddingHorizontal: 40, fontSize: 13 }}>
                                     {showDrafts
                                         ? 'Save a tweak as draft to see it here.'
                                         : 'Go to the Create tab to post your first tweak.'}
@@ -307,7 +309,7 @@ export default function TweaksListing(): React.JSX.Element {
                     >
                         <Pressable
                             style={{
-                                backgroundColor: '#fff',
+                                backgroundColor: colors.surface,
                                 borderTopLeftRadius: 24,
                                 borderTopRightRadius: 24,
                                 maxHeight: '85%',
@@ -322,9 +324,9 @@ export default function TweaksListing(): React.JSX.Element {
                                 paddingHorizontal: 20,
                                 paddingVertical: 18,
                                 borderBottomWidth: 1,
-                                borderBottomColor: palette.slate100
+                                borderBottomColor: colors.border
                             }}>
-                                <Text style={{ fontSize: 18, fontWeight: '800', color: palette.slate900 }}>Filters & Sort</Text>
+                                <Text style={{ fontSize: 18, fontWeight: '800', color: colors.text }}>Filters & Sort</Text>
                                 <TouchableOpacity onPress={resetFilters}>
                                     <Text style={{ color: themeColors.primary, fontWeight: '600' }}>Reset</Text>
                                 </TouchableOpacity>
@@ -332,7 +334,7 @@ export default function TweaksListing(): React.JSX.Element {
 
                             <ScrollView style={{ padding: 20 }}>
                                 {/* Sort Section */}
-                                <Text style={{ fontSize: 14, fontWeight: '700', color: palette.slate500, marginBottom: 12, textTransform: 'uppercase', letterSpacing: 0.5 }}>Sort By</Text>
+                                <Text style={{ fontSize: 14, fontWeight: '700', color: colors.textSecondary, marginBottom: 12, textTransform: 'uppercase', letterSpacing: 0.5 }}>Sort By</Text>
                                 <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 8, marginBottom: 24 }}>
                                     {[
                                         { label: 'Newest First', value: 'newest' },
@@ -349,18 +351,18 @@ export default function TweaksListing(): React.JSX.Element {
                                                 paddingHorizontal: 12,
                                                 paddingVertical: 8,
                                                 borderRadius: 20,
-                                                backgroundColor: sortBy === opt.value ? themeColors.primary : palette.slate50,
+                                                backgroundColor: sortBy === opt.value ? themeColors.primary : colors.surfaceMuted,
                                                 borderWidth: 1,
-                                                borderColor: sortBy === opt.value ? themeColors.primary : palette.slate200
+                                                borderColor: sortBy === opt.value ? themeColors.primary : colors.border
                                             }}
                                         >
-                                            <Text style={{ fontSize: 13, fontWeight: '600', color: sortBy === opt.value ? '#fff' : palette.slate600 }}>{opt.label}</Text>
+                                            <Text style={{ fontSize: 13, fontWeight: '600', color: sortBy === opt.value ? '#fff' : colors.textSecondary }}>{opt.label}</Text>
                                         </TouchableOpacity>
                                     ))}
                                 </View>
 
                                 {/* Category Section */}
-                                <Text style={{ fontSize: 14, fontWeight: '700', color: palette.slate500, marginBottom: 12, textTransform: 'uppercase', letterSpacing: 0.5 }}>Category</Text>
+                                <Text style={{ fontSize: 14, fontWeight: '700', color: colors.textSecondary, marginBottom: 12, textTransform: 'uppercase', letterSpacing: 0.5 }}>Category</Text>
                                 <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 8, marginBottom: 24 }}>
                                     {['All', ...CATEGORIES.map(c => c.name)].map(cat => (
                                         <TouchableOpacity
@@ -370,18 +372,18 @@ export default function TweaksListing(): React.JSX.Element {
                                                 paddingHorizontal: 12,
                                                 paddingVertical: 8,
                                                 borderRadius: 20,
-                                                backgroundColor: filters.category === cat ? themeColors.primary : palette.slate50,
+                                                backgroundColor: filters.category === cat ? themeColors.primary : colors.surfaceMuted,
                                                 borderWidth: 1,
-                                                borderColor: filters.category === cat ? themeColors.primary : palette.slate200
+                                                borderColor: filters.category === cat ? themeColors.primary : colors.border
                                             }}
                                         >
-                                            <Text style={{ fontSize: 13, fontWeight: '600', color: filters.category === cat ? '#fff' : palette.slate600 }}>{cat}</Text>
+                                            <Text style={{ fontSize: 13, fontWeight: '600', color: filters.category === cat ? '#fff' : colors.textSecondary }}>{cat}</Text>
                                         </TouchableOpacity>
                                     ))}
                                 </View>
 
                                 {/* Type Section */}
-                                <Text style={{ fontSize: 14, fontWeight: '700', color: palette.slate500, marginBottom: 12, textTransform: 'uppercase', letterSpacing: 0.5 }}>Tweak Type</Text>
+                                <Text style={{ fontSize: 14, fontWeight: '700', color: colors.textSecondary, marginBottom: 12, textTransform: 'uppercase', letterSpacing: 0.5 }}>Tweak Type</Text>
                                 <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 8, marginBottom: 24 }}>
                                     {[
                                         { label: 'All', value: 'All' },
@@ -395,18 +397,18 @@ export default function TweaksListing(): React.JSX.Element {
                                                 paddingHorizontal: 12,
                                                 paddingVertical: 8,
                                                 borderRadius: 20,
-                                                backgroundColor: filters.tweakType === type.value ? themeColors.primary : palette.slate50,
+                                                backgroundColor: filters.tweakType === type.value ? themeColors.primary : colors.surfaceMuted,
                                                 borderWidth: 1,
-                                                borderColor: filters.tweakType === type.value ? themeColors.primary : palette.slate200
+                                                borderColor: filters.tweakType === type.value ? themeColors.primary : colors.border
                                             }}
                                         >
-                                            <Text style={{ fontSize: 13, fontWeight: '600', color: filters.tweakType === type.value ? '#fff' : palette.slate600 }}>{type.label}</Text>
+                                            <Text style={{ fontSize: 13, fontWeight: '600', color: filters.tweakType === type.value ? '#fff' : colors.textSecondary }}>{type.label}</Text>
                                         </TouchableOpacity>
                                     ))}
                                 </View>
 
                                 {/* Schedule Section */}
-                                <Text style={{ fontSize: 14, fontWeight: '700', color: palette.slate500, marginBottom: 12, textTransform: 'uppercase', letterSpacing: 0.5 }}>Schedule Type</Text>
+                                <Text style={{ fontSize: 14, fontWeight: '700', color: colors.textSecondary, marginBottom: 12, textTransform: 'uppercase', letterSpacing: 0.5 }}>Schedule Type</Text>
                                 <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 8, marginBottom: 40 }}>
                                     {[
                                         { label: 'All', value: 'All' },
@@ -421,12 +423,12 @@ export default function TweaksListing(): React.JSX.Element {
                                                 paddingHorizontal: 12,
                                                 paddingVertical: 8,
                                                 borderRadius: 20,
-                                                backgroundColor: filters.schedulePreference === s.value ? themeColors.primary : palette.slate50,
+                                                backgroundColor: filters.schedulePreference === s.value ? themeColors.primary : colors.surfaceMuted,
                                                 borderWidth: 1,
-                                                borderColor: filters.schedulePreference === s.value ? themeColors.primary : palette.slate200
+                                                borderColor: filters.schedulePreference === s.value ? themeColors.primary : colors.border
                                             }}
                                         >
-                                            <Text style={{ fontSize: 13, fontWeight: '600', color: filters.schedulePreference === s.value ? '#fff' : palette.slate600 }}>{s.label}</Text>
+                                            <Text style={{ fontSize: 13, fontWeight: '600', color: filters.schedulePreference === s.value ? '#fff' : colors.textSecondary }}>{s.label}</Text>
                                         </TouchableOpacity>
                                     ))}
                                 </View>

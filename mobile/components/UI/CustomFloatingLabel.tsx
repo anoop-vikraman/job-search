@@ -2,6 +2,7 @@ import { Entypo } from '@expo/vector-icons';
 import { palette } from '@tweak/theme';
 import React, { useEffect, useRef, useState } from 'react';
 import { themeColors } from '../../themes/colors';
+import { useTheme } from '../../themes/ThemeProvider';
 
 import {
     DimensionValue,
@@ -39,6 +40,7 @@ export default function CustomFloatingLabel({
     leftComponent,
     ...props
 }: CustomFloatingLabelProps & { leftComponent?: React.ReactNode }): React.JSX.Element {
+    const { colors, isDark } = useTheme();
     const [isFocused, setIsFocused] = useState(false);
     const [isVisible, setIsVisible] = useState(false);
     const inputRef = useRef<React.ComponentRef<typeof TextInput>>(null);
@@ -90,8 +92,8 @@ export default function CustomFloatingLabel({
             animatedValue.value,
             [0, 1],
             [
-                error ? palette.iosRed : palette.gray500,
-                error ? palette.iosRed : isFocused ? themeColors.primary : palette.gray500
+                error ? palette.iosRed : isDark ? colors.textSecondary : palette.gray500,
+                error ? palette.iosRed : isFocused ? themeColors.primary : isDark ? colors.textSecondary : palette.gray500
             ]
         );
 
@@ -109,12 +111,13 @@ export default function CustomFloatingLabel({
         <View style={[styles.outerContainer, { width: width as DimensionValue }, containerStyle]}>
             <View style={[
                 styles.inputContainer,
+                isDark && { borderColor: colors.border, backgroundColor: colors.surface },
                 props.multiline && styles.inputContainerMultiline,
                 isFocused && !error && styles.inputFocused,
                 !!error && styles.inputError
             ]}>
                 {leftComponent && (
-                    <View style={{ paddingRight: 8, borderRightWidth: 1, borderRightColor: palette.gray200, marginRight: 10, height: '60%', alignItems: 'center', justifyContent: 'center' }}>
+                    <View style={{ paddingRight: 8, borderRightWidth: 1, borderRightColor: isDark ? colors.border : palette.gray200, marginRight: 10, height: '60%', alignItems: 'center', justifyContent: 'center' }}>
                         {leftComponent}
                     </View>
                 )}
@@ -137,7 +140,7 @@ export default function CustomFloatingLabel({
                     maxLength={type === 'phone' ? 10 : props.maxLength}
                     autoCapitalize={type === 'email' ? 'none' : props.autoCapitalize}
                     placeholder=""
-                    style={[styles.input, props.multiline && styles.inputMultiline, props.style]}
+                    style={[styles.input, isDark && { color: colors.text }, props.multiline && styles.inputMultiline, props.style]}
                 />
 
                 {isPassword && value ? (
@@ -145,7 +148,7 @@ export default function CustomFloatingLabel({
                         <Entypo
                             name={isVisible ? 'lock-open' : 'lock'}
                             size={20}
-                            color={isVisible ? palette.iosRed : palette.black}
+                            color={isVisible ? palette.iosRed : isDark ? colors.text : palette.black}
                         />
                     </Pressable>
                 ) : null}
@@ -154,13 +157,13 @@ export default function CustomFloatingLabel({
                     pointerEvents="none"
                     style={[StyleSheet.absoluteFill, { left: leftComponent ? 75 : 15, width: '100%' }]}
                 >
-                    <Animated.Text style={[styles.label, labelStyle]}>
+                    <Animated.Text style={[styles.label, isDark && { backgroundColor: colors.surface }, labelStyle]}>
                         {label}
                     </Animated.Text>
                 </Pressable>
 
                 {showCharCount && props.maxLength && (
-                    <Text style={styles.charCount}>
+                    <Text style={[styles.charCount, isDark && { color: colors.textSecondary }]}>
                         {remainingChars}
                     </Text>
                 )}

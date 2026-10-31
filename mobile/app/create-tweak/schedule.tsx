@@ -15,6 +15,7 @@ import { useCreateTweakStore } from '../../store/useCreateTweakStore';
 import { themeColors } from '../../themes/colors';
 import { ScheduleData } from '../../types/tweak';
 import { palette } from '@tweak/theme';
+import { useTheme } from '@/themes/ThemeProvider';
 
 interface DaySlot {
     date: string;
@@ -28,6 +29,7 @@ type MutableTextStyle = { -readonly [K in keyof TextStyle]: TextStyle[K] };
 
 export default function SchedulePage(): React.JSX.Element {
     const router = useRouter();
+    const { colors, isDark } = useTheme();
     const { schedulePreference, setScheduleData, isEditMode } = useCreateTweakStore();
     const confirm = useConfirmationStore(state => state.confirm);
 
@@ -269,7 +271,7 @@ export default function SchedulePage(): React.JSX.Element {
                         </View>
 
                         {/* Calendar */}
-                        <View className={`bg-white rounded-3xl border mb-3 shadow-sm overflow-hidden ${showValidation && !selectedDate ? 'border-red-500' : 'border-gray-200'
+                        <View className={`bg-white dark:bg-slate-900 rounded-3xl border mb-3 shadow-sm overflow-hidden ${showValidation && !selectedDate ? 'border-red-500' : 'border-gray-200 dark:border-slate-700'
                             }`} >
                             <View className="px-4 pt-0 pb-4">
                                 {/* Custom Calendar Header */}
@@ -282,7 +284,7 @@ export default function SchedulePage(): React.JSX.Element {
                                             </TouchableOpacity>
                                         )
                                     }
-                                    <Text style={{ fontSize: 16, fontWeight: 'bold', color: palette.gray800 }}>
+                                    <Text style={{ fontSize: 16, fontWeight: 'bold', color: isDark ? colors.text : palette.gray800 }}>
                                         {dayjs().month(calMonth).year(calYear).format('MMMM YYYY')}
                                     </Text>
                                     <TouchableOpacity onPress={goNextMonth} style={{ padding: 8 }} hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }} accessibilityRole="button" accessibilityLabel="Next month">
@@ -309,7 +311,7 @@ export default function SchedulePage(): React.JSX.Element {
                                     timePicker={false}
                                     styles={{
                                         weekdays: {
-                                            color: palette.gray400,
+                                            color: isDark ? colors.textMuted : palette.gray400,
                                             fontWeight: 'bold',
                                             fontSize: 12
                                         }
@@ -331,7 +333,7 @@ export default function SchedulePage(): React.JSX.Element {
 
                                             const textStyle: MutableTextStyle = {
                                                 fontSize: 14,
-                                                color: isBeforeToday ? palette.gray300 : palette.gray700,
+                                                color: isBeforeToday ? (isDark ? colors.textMuted : palette.gray300) : (isDark ? colors.text : palette.gray700),
                                                 fontWeight: '500'
                                             };
 
@@ -364,8 +366,8 @@ export default function SchedulePage(): React.JSX.Element {
 
                             {/* Integrated Selected Date Display */}
                             {selectedDate && (
-                                <View className="bg-gray-50/80 border-t border-gray-100 py-2 items-center">
-                                    <Text className="text-[10px] text-gray-500 font-bold uppercase tracking-widest">
+                                <View className="bg-gray-50/80 dark:bg-slate-800 border-t border-gray-100 dark:border-slate-700 py-2 items-center">
+                                    <Text className="text-[10px] text-gray-500 dark:text-slate-400 font-bold uppercase tracking-widest">
                                         Selected: <Text style={{ color: themeColors.primary }}>{selectedDate.format('MMMM DD, YYYY')}</Text>
                                     </Text>
                                 </View>
@@ -376,7 +378,7 @@ export default function SchedulePage(): React.JSX.Element {
                         {selectedDate && (
                             <View className="mb-4">
                                 {/* ── Slot Type Toggle ── */}
-                                <View style={{ flexDirection: 'row', borderRadius: 14, overflow: 'hidden', borderWidth: 1, borderColor: palette.slate200, marginBottom: 16 }}>
+                                <View style={{ flexDirection: 'row', borderRadius: 14, overflow: 'hidden', borderWidth: 1, borderColor: isDark ? colors.border : palette.slate200, marginBottom: 16 }}>
                                     <TouchableOpacity
                                         onPress={() => setSlotType('availability')}
                                         style={{
@@ -386,11 +388,11 @@ export default function SchedulePage(): React.JSX.Element {
                                             flexDirection: 'row',
                                             justifyContent: 'center',
                                             gap: 6,
-                                            backgroundColor: slotType === 'availability' ? palette.sky600 : palette.slate50,
+                                            backgroundColor: slotType === 'availability' ? palette.sky600 : (isDark ? colors.surfaceMuted : palette.slate50),
                                         }}
                                     >
-                                        <Ionicons name="time-outline" size={15} color={slotType === 'availability' ? '#fff' : palette.slate500} />
-                                        <Text style={{ fontSize: 13, fontWeight: '700', color: slotType === 'availability' ? '#fff' : palette.slate500 }}>Availability Window</Text>
+                                        <Ionicons name="time-outline" size={15} color={slotType === 'availability' ? '#fff' : (isDark ? colors.textSecondary : palette.slate500)} />
+                                        <Text style={{ fontSize: 13, fontWeight: '700', color: slotType === 'availability' ? '#fff' : (isDark ? colors.textSecondary : palette.slate500) }}>Availability Window</Text>
                                     </TouchableOpacity>
                                     <TouchableOpacity
                                         onPress={() => setSlotType('working_time')}
@@ -401,11 +403,11 @@ export default function SchedulePage(): React.JSX.Element {
                                             flexDirection: 'row',
                                             justifyContent: 'center',
                                             gap: 6,
-                                            backgroundColor: slotType === 'working_time' ? palette.violet600 : palette.slate50,
+                                            backgroundColor: slotType === 'working_time' ? palette.violet600 : (isDark ? colors.surfaceMuted : palette.slate50),
                                         }}
                                     >
-                                        <Ionicons name="briefcase-outline" size={15} color={slotType === 'working_time' ? '#fff' : palette.slate500} />
-                                        <Text style={{ fontSize: 13, fontWeight: '700', color: slotType === 'working_time' ? '#fff' : palette.slate500 }}>Working Time</Text>
+                                        <Ionicons name="briefcase-outline" size={15} color={slotType === 'working_time' ? '#fff' : (isDark ? colors.textSecondary : palette.slate500)} />
+                                        <Text style={{ fontSize: 13, fontWeight: '700', color: slotType === 'working_time' ? '#fff' : (isDark ? colors.textSecondary : palette.slate500) }}>Working Time</Text>
                                     </TouchableOpacity>
                                 </View>
 
@@ -425,7 +427,7 @@ export default function SchedulePage(): React.JSX.Element {
                                             <View className="mb-6 mt-2">
                                                 <TouchableOpacity
                                                     onPress={addFirstTimeSlot}
-                                                    className="flex-row items-center justify-center py-4 bg-white border-2 border-dashed border-gray-200 rounded-3xl active:bg-gray-50"
+                                                    className="flex-row items-center justify-center py-4 bg-white dark:bg-slate-900 border-2 border-dashed border-gray-200 dark:border-slate-700 rounded-3xl active:bg-gray-50"
                                                 >
                                                     <View className="bg-primary p-1.5 rounded-xl mr-2.5 shadow-sm shadow-primary/30">
                                                         <Ionicons name="time" size={18} color="white" />
@@ -434,14 +436,14 @@ export default function SchedulePage(): React.JSX.Element {
                                                 </TouchableOpacity>
                                             </View>
                                         ) : (
-                                            <Text className="text-sm font-bold text-gray-500 mb-4 text-center">Availability Windows</Text>
+                                            <Text className="text-sm font-bold text-gray-500 dark:text-slate-400 mb-4 text-center">Availability Windows</Text>
                                         )}
 
                                         {timeSlots.map((slot, index) => (
                                             <View key={index} className="mb-4">
                                                 <View className="flex-row items-center gap-3 mb-3">
                                                     <View className="flex-1">
-                                                        <Text className="text-xs font-bold text-gray-400 mb-1 ml-1 tracking-wider">START TIME</Text>
+                                                        <Text className="text-xs font-bold text-gray-400 dark:text-slate-400 mb-1 ml-1 tracking-wider">START TIME</Text>
                                                         <CustomTimePickerInput
                                                             value={slot.start}
                                                             onChange={(t) => updateTimeSlot(index, 'start', t)}
@@ -450,9 +452,9 @@ export default function SchedulePage(): React.JSX.Element {
                                                             hasError={showValidation && !slot.start}
                                                         />
                                                     </View>
-                                                    <Text className="text-gray-300 mt-6">-</Text>
+                                                    <Text className="text-gray-300 dark:text-slate-400 mt-6">-</Text>
                                                     <View className="flex-1">
-                                                        <Text className="text-xs font-bold text-gray-400 mb-1 ml-1 tracking-wider">END TIME</Text>
+                                                        <Text className="text-xs font-bold text-gray-400 dark:text-slate-400 mb-1 ml-1 tracking-wider">END TIME</Text>
                                                         <CustomTimePickerInput
                                                             value={slot.end}
                                                             onChange={(t) => updateTimeSlot(index, 'end', t)}
@@ -487,11 +489,11 @@ export default function SchedulePage(): React.JSX.Element {
                                     </View>
                                 ) : (
                                     /* Working Time: single slot editor */
-                                    <View className="bg-white p-4 rounded-3xl border border-purple-100 mb-4">
+                                    <View className="bg-white dark:bg-slate-900 p-4 rounded-3xl border border-purple-100 mb-4">
                                         <Text style={{ fontSize: 13, fontWeight: '700', color: palette.violet600, marginBottom: 14 }}>Working Hours</Text>
                                         <View className="flex-row items-center gap-3">
                                             <View className="flex-1">
-                                                <Text className="text-xs font-bold text-gray-400 mb-1 ml-1 tracking-wider">START TIME</Text>
+                                                <Text className="text-xs font-bold text-gray-400 dark:text-slate-400 mb-1 ml-1 tracking-wider">START TIME</Text>
                                                 <CustomTimePickerInput
                                                     value={workingTimeSlot.start}
                                                     onChange={(t) => { setShowValidation(false); setWorkingTimeSlot(p => ({ ...p, start: t })); }}
@@ -500,9 +502,9 @@ export default function SchedulePage(): React.JSX.Element {
                                                     hasError={false}
                                                 />
                                             </View>
-                                            <Text className="text-gray-300 mt-6">-</Text>
+                                            <Text className="text-gray-300 dark:text-slate-400 mt-6">-</Text>
                                             <View className="flex-1">
-                                                <Text className="text-xs font-bold text-gray-400 mb-1 ml-1 tracking-wider">END TIME</Text>
+                                                <Text className="text-xs font-bold text-gray-400 dark:text-slate-400 mb-1 ml-1 tracking-wider">END TIME</Text>
                                                 <CustomTimePickerInput
                                                     value={workingTimeSlot.end}
                                                     onChange={(t) => { setShowValidation(false); setWorkingTimeSlot(p => ({ ...p, end: t })); }}
@@ -521,7 +523,7 @@ export default function SchedulePage(): React.JSX.Element {
             case 'deadline':
                 return (
                     <View>
-                        <View className={`bg-white rounded-3xl border mb-4 shadow-sm overflow-hidden ${showValidation && !selectedDate ? 'border-red-500' : 'border-gray-200'
+                        <View className={`bg-white dark:bg-slate-900 rounded-3xl border mb-4 shadow-sm overflow-hidden ${showValidation && !selectedDate ? 'border-red-500' : 'border-gray-200 dark:border-slate-700'
                             }`}>
                             <View className="px-4 pt-0 pb-4">
                                 {/* Custom Calendar Header */}
@@ -534,7 +536,7 @@ export default function SchedulePage(): React.JSX.Element {
                                             </TouchableOpacity>
                                         )
                                     }
-                                    <Text style={{ fontSize: 16, fontWeight: 'bold', color: palette.gray800 }}>
+                                    <Text style={{ fontSize: 16, fontWeight: 'bold', color: isDark ? colors.text : palette.gray800 }}>
                                         {dayjs().month(calMonth).year(calYear).format('MMMM YYYY')}
                                     </Text>
                                     <TouchableOpacity onPress={goNextMonth} style={{ padding: 8 }} hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }} accessibilityRole="button" accessibilityLabel="Next month">
@@ -577,7 +579,7 @@ export default function SchedulePage(): React.JSX.Element {
                                     timePicker={false}
                                     styles={{
                                         weekdays: {
-                                            color: palette.gray400,
+                                            color: isDark ? colors.textMuted : palette.gray400,
                                             fontWeight: 'bold',
                                             fontSize: 12
                                         }
@@ -600,7 +602,7 @@ export default function SchedulePage(): React.JSX.Element {
 
                                             const textStyle: MutableTextStyle = {
                                                 fontSize: 14,
-                                                color: isBeforeToday ? palette.gray300 : palette.gray700,
+                                                color: isBeforeToday ? (isDark ? colors.textMuted : palette.gray300) : (isDark ? colors.text : palette.gray700),
                                             };
 
                                             // Deadline date styling
@@ -656,8 +658,8 @@ export default function SchedulePage(): React.JSX.Element {
 
                             {/* Integrated Selected Date Display */}
                             {selectedDate && (
-                                <View className="bg-gray-50/80 border-t border-gray-100 py-2 items-center">
-                                    <Text className="text-[10px] text-gray-500 font-bold uppercase tracking-widest">
+                                <View className="bg-gray-50/80 dark:bg-slate-800 border-t border-gray-100 dark:border-slate-700 py-2 items-center">
+                                    <Text className="text-[10px] text-gray-500 dark:text-slate-400 font-bold uppercase tracking-widest">
                                         Deadline: <Text style={{ color: palette.brand500 }}>{selectedDate.format('MMMM DD, YYYY')}</Text>
                                     </Text>
                                 </View>
@@ -667,10 +669,10 @@ export default function SchedulePage(): React.JSX.Element {
                         {/* Deadline Slots List */}
                         {deadlineSlots.length > 0 && (
                             <View className="mb-4" style={{ overflow: 'visible' }}>
-                                <Text className="text-sm font-bold text-gray-500 mb-2 text-center">Availability Schedule</Text>
+                                <Text className="text-sm font-bold text-gray-500 dark:text-slate-400 mb-2 text-center">Availability Schedule</Text>
                                 <View className="flex-row items-center justify-center mb-4 gap-1">
-                                    <Ionicons name="arrow-up" size={10} color={palette.gray400} />
-                                    <Text className="text-[9px] text-gray-400 font-bold uppercase tracking-wider">Slide up to delete</Text>
+                                    <Ionicons name="arrow-up" size={10} color={isDark ? colors.textMuted : palette.gray400} />
+                                    <Text className="text-[9px] text-gray-400 dark:text-slate-400 font-bold uppercase tracking-wider">Slide up to delete</Text>
                                 </View>
                                 <ScrollView
                                     horizontal
@@ -695,7 +697,7 @@ export default function SchedulePage(): React.JSX.Element {
                                             >
                                                 <TouchableOpacity
                                                     onPress={() => setActiveDeadlineSlot(index)}
-                                                    className={`mr-3 p-4 mt-3 rounded-2xl bg-white border mb-1 shadow-sm w-32 ${isActive ? 'bg-purple-50' : ''
+                                                    className={`mr-3 p-4 mt-3 rounded-2xl bg-white dark:bg-slate-900 border mb-1 shadow-sm w-32 ${isActive ? 'bg-purple-50' : ''
                                                         }`}
                                                     style={{
                                                         borderColor: isActive ? themeColors.primary : (slot.status === 'modified' ? palette.green600 : palette.brand500),
@@ -719,12 +721,12 @@ export default function SchedulePage(): React.JSX.Element {
                                                     >
                                                         <Ionicons name="close" size={12} color={palette.red500} />
                                                     </Pressable>
-                                                    <Text className="text-gray-500 text-xs font-bold uppercase mb-1">{slotDate.format('ddd')}</Text>
-                                                    <Text className="text-gray-900 text-xl font-bold mb-2">{slotDate.format('DD MMM')}</Text>
+                                                    <Text className="text-gray-500 dark:text-slate-400 text-xs font-bold uppercase mb-1">{slotDate.format('ddd')}</Text>
+                                                    <Text className="text-gray-900 dark:text-slate-50 text-xl font-bold mb-2">{slotDate.format('DD MMM')}</Text>
 
                                                     <View>
-                                                        <Text className="text-xs text-gray-600">{dayjs(slot.date + ' ' + slot.start).format('hh:mm a')}</Text>
-                                                        <Text className="text-xs text-gray-600">{dayjs(slot.date + ' ' + slot.end).format('hh:mm a')}</Text>
+                                                        <Text className="text-xs text-gray-600 dark:text-slate-300">{dayjs(slot.date + ' ' + slot.start).format('hh:mm a')}</Text>
+                                                        <Text className="text-xs text-gray-600 dark:text-slate-300">{dayjs(slot.date + ' ' + slot.end).format('hh:mm a')}</Text>
                                                     </View>
                                                 </TouchableOpacity>
                                             </SwipeableSlot>
@@ -734,14 +736,14 @@ export default function SchedulePage(): React.JSX.Element {
 
                                 {/* Active Slot Editor */}
                                 {activeDeadlineSlot !== null && deadlineSlots[activeDeadlineSlot] && (
-                                    <View className="bg-white p-4 rounded-3xl border border-gray-200 mb-6">
-                                        <Text className="text-lg font-bold text-gray-900 mb-4">
+                                    <View className="bg-white dark:bg-slate-900 p-4 rounded-3xl border border-gray-200 dark:border-slate-700 mb-6">
+                                        <Text className="text-lg font-bold text-gray-900 dark:text-slate-50 mb-4">
                                             Edit Time for {dayjs(deadlineSlots[activeDeadlineSlot].date).format('MMMM DD')}
                                         </Text>
 
                                         <View className="flex-row items-center gap-3">
                                             <View className="flex-1">
-                                                <Text className="text-xs font-bold text-gray-400 mb-1 ml-1 tracking-wider">START TIME</Text>
+                                                <Text className="text-xs font-bold text-gray-400 dark:text-slate-400 mb-1 ml-1 tracking-wider">START TIME</Text>
                                                 <CustomTimePickerInput
                                                     value={deadlineSlots[activeDeadlineSlot].start}
                                                     onChange={(t) => {
@@ -758,9 +760,9 @@ export default function SchedulePage(): React.JSX.Element {
                                                     hasError={showValidation && !deadlineSlots[activeDeadlineSlot].start}
                                                 />
                                             </View>
-                                            <Text className="text-gray-300 mt-6">-</Text>
+                                            <Text className="text-gray-300 dark:text-slate-400 mt-6">-</Text>
                                             <View className="flex-1">
-                                                <Text className="text-xs font-bold text-gray-400 mb-1 ml-1 tracking-wider">END TIME</Text>
+                                                <Text className="text-xs font-bold text-gray-400 dark:text-slate-400 mb-1 ml-1 tracking-wider">END TIME</Text>
                                                 <CustomTimePickerInput
                                                     value={deadlineSlots[activeDeadlineSlot].end}
                                                     onChange={(t) => {
@@ -815,7 +817,7 @@ export default function SchedulePage(): React.JSX.Element {
             case 'few_days':
                 return (
                     <View>
-                        <View className={`bg-white rounded-3xl border mb-4 shadow-sm overflow-hidden ${showValidation && fewDaysSlots.length === 0 ? 'border-red-500' : 'border-gray-200'
+                        <View className={`bg-white dark:bg-slate-900 rounded-3xl border mb-4 shadow-sm overflow-hidden ${showValidation && fewDaysSlots.length === 0 ? 'border-red-500' : 'border-gray-200 dark:border-slate-700'
                             }`}>
                             <View className="px-4 pt-0 pb-4">
                                 {/* Custom Calendar Header */}
@@ -828,7 +830,7 @@ export default function SchedulePage(): React.JSX.Element {
                                             </TouchableOpacity>
                                         )
                                     }
-                                    <Text style={{ fontSize: 16, fontWeight: 'bold', color: palette.gray800 }}>
+                                    <Text style={{ fontSize: 16, fontWeight: 'bold', color: isDark ? colors.text : palette.gray800 }}>
                                         {dayjs().month(calMonth).year(calYear).format('MMMM YYYY')}
                                     </Text>
                                     <TouchableOpacity onPress={goNextMonth} style={{ padding: 8 }} hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }} accessibilityRole="button" accessibilityLabel="Next month">
@@ -845,7 +847,7 @@ export default function SchedulePage(): React.JSX.Element {
                                     timePicker={false}
                                     styles={{
                                         weekdays: {
-                                            color: palette.gray400,
+                                            color: isDark ? colors.textMuted : palette.gray400,
                                             fontWeight: 'bold',
                                             fontSize: 12
                                         }
@@ -870,7 +872,7 @@ export default function SchedulePage(): React.JSX.Element {
 
                                             const textStyle: MutableTextStyle = {
                                                 fontSize: 14,
-                                                color: isBeforeToday ? palette.gray300 : palette.gray700,
+                                                color: isBeforeToday ? (isDark ? colors.textMuted : palette.gray300) : (isDark ? colors.text : palette.gray700),
                                             };
 
                                             // Selected Slot Styling (Background Color)
@@ -929,12 +931,12 @@ export default function SchedulePage(): React.JSX.Element {
 
                             {/* Integrated Selected Days Display */}
                             {fewDaysSlots.length > 0 && (
-                                <View className="bg-gray-50/80 border-t border-gray-100 py-2 px-4 flex-row justify-between items-center">
-                                    <Text className="text-[10px] text-gray-500 font-bold uppercase tracking-widest">
+                                <View className="bg-gray-50/80 dark:bg-slate-800 border-t border-gray-100 dark:border-slate-700 py-2 px-4 flex-row justify-between items-center">
+                                    <Text className="text-[10px] text-gray-500 dark:text-slate-400 font-bold uppercase tracking-widest">
                                         Selected: <Text style={{ color: themeColors.primary }}>{fewDaysSlots.length} {fewDaysSlots.length === 1 ? 'Day' : 'Days'}</Text>
                                     </Text>
-                                    <Text className="text-[10px] text-gray-400 uppercase tracking-widest">
-                                        Total: <Text className="font-bold text-gray-600">{getTotalHours().toFixed(1)}h</Text>
+                                    <Text className="text-[10px] text-gray-400 dark:text-slate-400 uppercase tracking-widest">
+                                        Total: <Text className="font-bold text-gray-600 dark:text-slate-300">{getTotalHours().toFixed(1)}h</Text>
                                     </Text>
                                 </View>
                             )}
@@ -943,10 +945,10 @@ export default function SchedulePage(): React.JSX.Element {
                         {/* Few Days Slots List */}
                         {fewDaysSlots.length > 0 && (
                             <View style={{ overflow: 'visible' }}>
-                                <Text className="text-sm font-bold text-gray-500 mb-2 text-center">Slots</Text>
+                                <Text className="text-sm font-bold text-gray-500 dark:text-slate-400 mb-2 text-center">Slots</Text>
                                 <View className="flex-row items-center justify-center mb-4 gap-1">
-                                    <Ionicons name="arrow-up" size={10} color={palette.gray400} />
-                                    <Text className="text-[9px] text-gray-400 font-bold uppercase tracking-wider">Slide up to delete</Text>
+                                    <Ionicons name="arrow-up" size={10} color={isDark ? colors.textMuted : palette.gray400} />
+                                    <Text className="text-[9px] text-gray-400 dark:text-slate-400 font-bold uppercase tracking-wider">Slide up to delete</Text>
                                 </View>
 
 
@@ -974,7 +976,7 @@ export default function SchedulePage(): React.JSX.Element {
                                             >
                                                 <TouchableOpacity
                                                     onPress={() => setActiveFewDaysSlot(index)}
-                                                    className={`mr-3 p-4 mt-3 rounded-2xl bg-white border mb-1 shadow-sm w-32 ${isActive ? 'bg-purple-50' : ''
+                                                    className={`mr-3 p-4 mt-3 rounded-2xl bg-white dark:bg-slate-900 border mb-1 shadow-sm w-32 ${isActive ? 'bg-purple-50' : ''
                                                         }`}
                                                     style={{
                                                         borderColor: isActive ? themeColors.primary : (slot.status === 'modified' ? palette.green600 : palette.brand500),
@@ -999,17 +1001,17 @@ export default function SchedulePage(): React.JSX.Element {
                                                     </Pressable>
 
 
-                                                    <Text className="text-gray-500 text-xs font-bold uppercase mb-1">{slotDate.format('ddd')}</Text>
-                                                    <Text className="text-gray-900 text-xl font-bold mb-2">{slotDate.format('DD MMM')}</Text>
+                                                    <Text className="text-gray-500 dark:text-slate-400 text-xs font-bold uppercase mb-1">{slotDate.format('ddd')}</Text>
+                                                    <Text className="text-gray-900 dark:text-slate-50 text-xl font-bold mb-2">{slotDate.format('DD MMM')}</Text>
 
                                                     <View>
-                                                        <Text className="text-xs text-gray-600">{dayjs(slot.date + ' ' + slot.start).format('hh:mm a')}</Text>
-                                                        <Text className="text-xs text-gray-600">{dayjs(slot.date + ' ' + slot.end).format('hh:mm a')}</Text>
+                                                        <Text className="text-xs text-gray-600 dark:text-slate-300">{dayjs(slot.date + ' ' + slot.start).format('hh:mm a')}</Text>
+                                                        <Text className="text-xs text-gray-600 dark:text-slate-300">{dayjs(slot.date + ' ' + slot.end).format('hh:mm a')}</Text>
                                                     </View>
 
                                                     {/* Hours Badge */}
-                                                    <View className="mt-2 bg-gray-100 rounded-full px-2 py-1">
-                                                        <Text className="text-xs font-bold text-gray-700 text-center">{hours.toFixed(1)}h</Text>
+                                                    <View className="mt-2 bg-gray-100 dark:bg-slate-800 rounded-full px-2 py-1">
+                                                        <Text className="text-xs font-bold text-gray-700 dark:text-slate-300 text-center">{hours.toFixed(1)}h</Text>
                                                     </View>
                                                 </TouchableOpacity>
                                             </SwipeableSlot>
@@ -1018,28 +1020,28 @@ export default function SchedulePage(): React.JSX.Element {
                                 </ScrollView>
 
                                 {/* ── Slot Type Toggle (few_days) ── */}
-                                <View style={{ flexDirection: 'row', borderRadius: 14, overflow: 'hidden', borderWidth: 1, borderColor: palette.slate200, marginBottom: 12 }}>
+                                <View style={{ flexDirection: 'row', borderRadius: 14, overflow: 'hidden', borderWidth: 1, borderColor: isDark ? colors.border : palette.slate200, marginBottom: 12 }}>
                                     <TouchableOpacity
                                         onPress={() => setSlotType('availability')}
                                         style={{
                                             flex: 1, paddingVertical: 10, alignItems: 'center',
                                             flexDirection: 'row', justifyContent: 'center', gap: 5,
-                                            backgroundColor: slotType === 'availability' ? palette.sky600 : palette.slate50,
+                                            backgroundColor: slotType === 'availability' ? palette.sky600 : (isDark ? colors.surfaceMuted : palette.slate50),
                                         }}
                                     >
-                                        <Ionicons name="time-outline" size={14} color={slotType === 'availability' ? '#fff' : palette.slate500} />
-                                        <Text style={{ fontSize: 12, fontWeight: '700', color: slotType === 'availability' ? '#fff' : palette.slate500 }}>Availability</Text>
+                                        <Ionicons name="time-outline" size={14} color={slotType === 'availability' ? '#fff' : (isDark ? colors.textSecondary : palette.slate500)} />
+                                        <Text style={{ fontSize: 12, fontWeight: '700', color: slotType === 'availability' ? '#fff' : (isDark ? colors.textSecondary : palette.slate500) }}>Availability</Text>
                                     </TouchableOpacity>
                                     <TouchableOpacity
                                         onPress={() => setSlotType('working_time')}
                                         style={{
                                             flex: 1, paddingVertical: 10, alignItems: 'center',
                                             flexDirection: 'row', justifyContent: 'center', gap: 5,
-                                            backgroundColor: slotType === 'working_time' ? palette.violet600 : palette.slate50,
+                                            backgroundColor: slotType === 'working_time' ? palette.violet600 : (isDark ? colors.surfaceMuted : palette.slate50),
                                         }}
                                     >
-                                        <Ionicons name="briefcase-outline" size={14} color={slotType === 'working_time' ? '#fff' : palette.slate500} />
-                                        <Text style={{ fontSize: 12, fontWeight: '700', color: slotType === 'working_time' ? '#fff' : palette.slate500 }}>Working Time</Text>
+                                        <Ionicons name="briefcase-outline" size={14} color={slotType === 'working_time' ? '#fff' : (isDark ? colors.textSecondary : palette.slate500)} />
+                                        <Text style={{ fontSize: 12, fontWeight: '700', color: slotType === 'working_time' ? '#fff' : (isDark ? colors.textSecondary : palette.slate500) }}>Working Time</Text>
                                     </TouchableOpacity>
                                 </View>
 
@@ -1055,14 +1057,14 @@ export default function SchedulePage(): React.JSX.Element {
 
                                 {/* Slot Editor (Both Modes) */}
                                 {activeFewDaysSlot !== null && fewDaysSlots[activeFewDaysSlot] ? (
-                                    <View className={`bg-white p-4 rounded-3xl border mb-6 ${slotType === 'working_time' ? 'border-purple-200' : 'border-gray-200'}`}>
-                                        <Text className="text-base font-bold text-gray-900 mb-4">
+                                    <View className={`bg-white dark:bg-slate-900 p-4 rounded-3xl border mb-6 ${slotType === 'working_time' ? 'border-purple-200' : 'border-gray-200 dark:border-slate-700'}`}>
+                                        <Text className="text-base font-bold text-gray-900 dark:text-slate-50 mb-4">
                                             {slotType === 'working_time' ? 'Working Time' : 'Availability'} for {dayjs(fewDaysSlots[activeFewDaysSlot].date).format('MMMM DD')}
                                         </Text>
 
                                         <View className="flex-row items-center gap-3">
                                             <View className="flex-1">
-                                                <Text className="text-xs font-bold text-gray-400 mb-1 ml-1 tracking-wider">START TIME</Text>
+                                                <Text className="text-xs font-bold text-gray-400 dark:text-slate-400 mb-1 ml-1 tracking-wider">START TIME</Text>
                                                 <CustomTimePickerInput
                                                     value={fewDaysSlots[activeFewDaysSlot].start}
                                                     onChange={(t) => {
@@ -1075,9 +1077,9 @@ export default function SchedulePage(): React.JSX.Element {
                                                     hasError={showValidation && !fewDaysSlots[activeFewDaysSlot].start}
                                                 />
                                             </View>
-                                            <Text className="text-gray-300 mt-6">-</Text>
+                                            <Text className="text-gray-300 dark:text-slate-400 mt-6">-</Text>
                                             <View className="flex-1">
-                                                <Text className="text-xs font-bold text-gray-400 mb-1 ml-1 tracking-wider">END TIME</Text>
+                                                <Text className="text-xs font-bold text-gray-400 dark:text-slate-400 mb-1 ml-1 tracking-wider">END TIME</Text>
                                                 <CustomTimePickerInput
                                                     value={fewDaysSlots[activeFewDaysSlot].end}
                                                     onChange={(t) => {
@@ -1160,8 +1162,8 @@ export default function SchedulePage(): React.JSX.Element {
                 contentContainerStyle={{ flexGrow: 1, padding: 24 }}
             >
                 <View className="flex-1">
-                    <Text className="text-3xl font-bold text-gray-900 mb-2">{getTitle()}</Text>
-                    <Text className="text-gray-500 mb-6">{getDescription()}</Text>
+                    <Text className="text-3xl font-bold text-gray-900 dark:text-slate-50 mb-2">{getTitle()}</Text>
+                    <Text className="text-gray-500 dark:text-slate-400 mb-6">{getDescription()}</Text>
 
                     {renderPicker()}
                 </View>

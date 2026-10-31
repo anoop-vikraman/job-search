@@ -3,6 +3,7 @@ import React from 'react';
 import { KeyboardAvoidingView, Modal, Platform, ScrollView, TouchableOpacity, View } from 'react-native';
 
 import { ActionSheetModalProps } from '../../types/ui';
+import { useTheme } from '../../themes/ThemeProvider';
 
 // Helper Text component import workaround since we missed importing Text above
 import { Text } from 'react-native';
@@ -16,6 +17,7 @@ export default function ActionSheetModal({
     showCloseButton = true,
     height = 'h-[85%]'
 }: ActionSheetModalProps): React.JSX.Element {
+    const { colors, isDark } = useTheme();
     // Refs for scroll management
     const scrollViewRef = React.useRef<React.ComponentRef<typeof ScrollView>>(null);
 
@@ -33,7 +35,7 @@ export default function ActionSheetModal({
             onRequestClose={onClose}
         >
             <View className="flex-1 justify-end bg-black/30">
-                <View className={`bg-white ${height} rounded-t-3xl w-full overflow-hidden`}>
+                <View className={`bg-white dark:bg-slate-900 ${height} rounded-t-3xl w-full overflow-hidden`}>
                     <KeyboardAvoidingView
                         behavior="padding"
                         style={{ flex: height ? 1 : 0 }}
@@ -57,11 +59,11 @@ export default function ActionSheetModal({
                                                 {/* Usually title is just text, but wrapper keeps layout consistent */}
                                                 {typeof title === 'string' ? (
                                                     <View>
-                                                        <Text className="text-2xl font-bold text-gray-900" numberOfLines={1}>
+                                                        <Text className="text-2xl font-bold text-gray-900 dark:text-slate-50" numberOfLines={1}>
                                                             {title}
                                                         </Text>
                                                         {subtitle && (
-                                                            <Text className="text-gray-500 text-sm mt-1" numberOfLines={1}>
+                                                            <Text className="text-gray-500 dark:text-slate-400 text-sm mt-1" numberOfLines={1}>
                                                                 {subtitle}
                                                             </Text>
                                                         )}
@@ -76,11 +78,11 @@ export default function ActionSheetModal({
                                     {showCloseButton && (
                                         <TouchableOpacity
                                             onPress={onClose}
-                                            className="bg-gray-100 p-2 rounded-full"
+                                            className="bg-gray-100 dark:bg-slate-800 p-2 rounded-full"
                                             accessibilityRole="button"
                                             accessibilityLabel="Close"
                                         >
-                                            <Ionicons name="close" size={20} color="#666" />
+                                            <Ionicons name="close" size={20} color={isDark ? colors.textSecondary : '#666'} />
                                         </TouchableOpacity>
                                     )}
                                 </View>

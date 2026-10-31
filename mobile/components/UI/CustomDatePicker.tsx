@@ -94,7 +94,7 @@ export default function CustomDatePicker({
                     <TouchableWithoutFeedback onPress={() => setShowPicker(false)}>
                         <View className="flex-1 justify-center items-center bg-black/50 px-4">
                             <TouchableWithoutFeedback>
-                                <View className="bg-white p-4 rounded-2xl w-full max-w-sm shadow-xl">
+                                <View className="bg-white dark:bg-slate-900 p-4 rounded-2xl w-full max-w-sm shadow-xl">
                                     <Text className="text-lg font-bold text-gray-900 mb-4 text-center">
                                         {label}
                                     </Text>

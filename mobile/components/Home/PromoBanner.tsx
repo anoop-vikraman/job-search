@@ -60,7 +60,7 @@ export default function PromoBanner(): React.JSX.Element {
                 {MOCK_BANNERS.map((_, index) => (
                     <View
                         key={index}
-                        className={`h-2 rounded-full ${currentIndex === index ? 'w-6 bg-orange-500' : 'w-2 bg-gray-300'}`}
+                        className={`h-2 rounded-full ${currentIndex === index ? 'w-6 bg-orange-500' : 'w-2 bg-gray-300 dark:bg-slate-700'}`}
                     />
                 ))}
             </View>

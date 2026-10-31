@@ -1,25 +1,28 @@
 import { palette } from '@tweak/theme';
 import React from 'react';
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { useTheme } from '../../themes/ThemeProvider';
 
 import { TabSelectorProps } from '../../types/ui';
 
 export default function TabSelector({ options, selected, onSelect }: TabSelectorProps): React.JSX.Element {
+    const { colors, isDark } = useTheme();
     return (
-        <View style={styles.container}>
+        <View style={[styles.container, isDark && { backgroundColor: colors.surfaceMuted }]}>
             {options.map((option) => (
                 <TouchableOpacity
                     key={option.value}
                     onPress={() => onSelect(option.value)}
                     style={[
                         styles.tab,
-                        selected === option.value && styles.tabActive
+                        selected === option.value && styles.tabActive,
+                        selected === option.value && isDark && { backgroundColor: colors.surface }
                     ]}
                     activeOpacity={0.7}
                 >
                     <Text style={[
                         styles.tabText,
-                        selected === option.value && styles.tabTextActive
+                        selected === option.value ? styles.tabTextActive : (isDark && { color: colors.textSecondary })
                     ]}>
                         {option.label}
                     </Text>

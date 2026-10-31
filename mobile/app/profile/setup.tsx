@@ -30,7 +30,7 @@ export default function ProfileSetupPage(): React.JSX.Element {
     return (
         <ScreenWrapper>
             {/* Header */}
-            <View className="flex-row items-center px-6 py-4 bg-white border-b border-gray-100">
+            <View className="flex-row items-center px-6 py-4 bg-white dark:bg-slate-900 border-b border-gray-100 dark:border-slate-700">
                 <TouchableOpacity onPress={() => router.back()} className="mr-4" accessibilityRole="button" accessibilityLabel="Go back">
                     <Ionicons name="arrow-back" size={24} color={palette.gray900} />
                 </TouchableOpacity>

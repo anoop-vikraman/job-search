@@ -217,13 +217,13 @@ export default function CustomImageUploader({
                                 key={index}
                                 onPress={() => handlePress(index)}
                                 onLongPress={() => confirmDelete(index)}
-                                className="relative w-24 h-24 rounded-lg overflow-hidden border border-gray-200"
+                                className="relative w-24 h-24 rounded-lg overflow-hidden border border-gray-200 dark:border-slate-700"
                                 accessibilityRole="button"
                                 accessibilityLabel="Image options"
                             >
                                 <Image source={{ uri: img.uri }} className="w-full h-full" resizeMode="cover" />
                                 {showThumbnailFeature && img.isThumbnail && (
-                                    <View className="absolute top-1 right-1 bg-white rounded-full p-1 shadow-sm">
+                                    <View className="absolute top-1 right-1 bg-white dark:bg-slate-900 rounded-full p-1 shadow-sm">
                                         <Entypo name="star" size={12} color={palette.gold} />
                                     </View>
                                 )}
@@ -266,12 +266,12 @@ export default function CustomImageUploader({
                     activeOpacity={1}
                     onPress={() => setModalVisible(false)}
                 >
-                    <View className="bg-white w-3/4 rounded-2xl p-6 items-center shadow-xl">
+                    <View className="bg-white dark:bg-slate-900 w-3/4 rounded-2xl p-6 items-center shadow-xl">
                         <Text className="text-lg font-bold text-gray-800 mb-6">Upload Media</Text>
 
                         <TouchableOpacity
                             onPress={() => { setModalVisible(false); handleCamera(); }}
-                            className="flex-row items-center w-full py-4 border-b border-gray-100"
+                            className="flex-row items-center w-full py-4 border-b border-gray-100 dark:border-slate-700"
                         >
                             <View className="w-10 h-10 bg-blue-50 rounded-full items-center justify-center mr-4">
                                 <Ionicons name="camera" size={20} color={themeColors.primary} />

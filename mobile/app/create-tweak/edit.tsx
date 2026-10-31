@@ -20,6 +20,7 @@ import { PricingModel, SchedulePreference, useCreateTweakStore } from '../../sto
 import { themeColors } from '../../themes/colors';
 import { ScheduleSlot } from '../../types/tweak';
 import { palette } from '@tweak/theme';
+import { useTheme } from '@/themes/ThemeProvider';
 
 type MutableViewStyle = { -readonly [K in keyof ViewStyle]: ViewStyle[K] };
 type MutableTextStyle = { -readonly [K in keyof TextStyle]: TextStyle[K] };
@@ -65,6 +66,7 @@ const { width: SCREEN_WIDTH } = Dimensions.get('window');
 
 export default function EditTweak(): React.JSX.Element {
     const router = useRouter();
+    const { colors, isDark } = useTheme();
 
     // Get data from Zustand store
     const {
@@ -271,8 +273,8 @@ export default function EditTweak(): React.JSX.Element {
             case 'type':
                 return (
                     <View style={{ width: SCREEN_WIDTH, paddingHorizontal: 24, flex: 1 }}>
-                        <Text style={{ fontSize: 24, fontWeight: 'bold', color: palette.gray900, marginBottom: 4 }}>How should this be done?</Text>
-                        <Text style={{ color: palette.gray500, marginBottom: 24 }}>Physical presence or online?</Text>
+                        <Text style={{ fontSize: 24, fontWeight: 'bold', color: isDark ? colors.text : palette.gray900, marginBottom: 4 }}>How should this be done?</Text>
+                        <Text style={{ color: isDark ? colors.textSecondary : palette.gray500, marginBottom: 24 }}>Physical presence or online?</Text>
                         <View style={{ gap: 16 }}>
                             <TouchableOpacity
                                 onPress={() => setLocalTweakType('in_person')}
@@ -281,8 +283,8 @@ export default function EditTweak(): React.JSX.Element {
                                     padding: 24,
                                     borderRadius: 32,
                                     borderWidth: 2,
-                                    borderColor: localTweakType === 'in_person' ? palette.brand500 : palette.gray100,
-                                    backgroundColor: localTweakType === 'in_person' ? palette.brand500 + '08' : 'white',
+                                    borderColor: localTweakType === 'in_person' ? palette.brand500 : (isDark ? colors.border : palette.gray100),
+                                    backgroundColor: localTweakType === 'in_person' ? palette.brand500 + '08' : (isDark ? colors.surface : 'white'),
                                     overflow: 'hidden',
                                     elevation: localTweakType === 'in_person' ? 0 : 1,
                                     shadowColor: '#000', shadowOffset: { width: 0, height: 1 }, shadowOpacity: localTweakType === 'in_person' ? 0 : 0.05, shadowRadius: 2
@@ -293,8 +295,8 @@ export default function EditTweak(): React.JSX.Element {
                                         <Ionicons name="location" size={28} color={palette.orange500} />
                                     </View>
                                     <View style={{ flex: 1 }}>
-                                        <Text style={{ fontSize: 20, fontWeight: 'bold', color: localTweakType === 'in_person' ? palette.brand500 : palette.gray900 }}>On-site</Text>
-                                        <Text style={{ color: palette.gray500, fontSize: 13, marginTop: 4 }}>Requires physical presence at a specific location.</Text>
+                                        <Text style={{ fontSize: 20, fontWeight: 'bold', color: localTweakType === 'in_person' ? palette.brand500 : (isDark ? colors.text : palette.gray900) }}>On-site</Text>
+                                        <Text style={{ color: isDark ? colors.textSecondary : palette.gray500, fontSize: 13, marginTop: 4 }}>Requires physical presence at a specific location.</Text>
                                     </View>
 
                                     <View style={{
@@ -302,8 +304,8 @@ export default function EditTweak(): React.JSX.Element {
                                         height: 24,
                                         borderRadius: 12,
                                         borderWidth: 2,
-                                        borderColor: localTweakType === 'in_person' ? palette.brand500 : palette.gray300,
-                                        backgroundColor: localTweakType === 'in_person' ? palette.brand500 : 'white',
+                                        borderColor: localTweakType === 'in_person' ? palette.brand500 : (isDark ? colors.border : palette.gray300),
+                                        backgroundColor: localTweakType === 'in_person' ? palette.brand500 : (isDark ? colors.surface : 'white'),
                                         alignItems: 'center',
                                         justifyContent: 'center'
                                     }}>
@@ -321,8 +323,8 @@ export default function EditTweak(): React.JSX.Element {
                                     padding: 24,
                                     borderRadius: 32,
                                     borderWidth: 2,
-                                    borderColor: localTweakType === 'remote' ? palette.brand500 : palette.gray100,
-                                    backgroundColor: localTweakType === 'remote' ? palette.brand500 + '08' : 'white',
+                                    borderColor: localTweakType === 'remote' ? palette.brand500 : (isDark ? colors.border : palette.gray100),
+                                    backgroundColor: localTweakType === 'remote' ? palette.brand500 + '08' : (isDark ? colors.surface : 'white'),
                                     overflow: 'hidden',
                                     elevation: localTweakType === 'remote' ? 0 : 1,
                                     shadowColor: '#000', shadowOffset: { width: 0, height: 1 }, shadowOpacity: localTweakType === 'remote' ? 0 : 0.05, shadowRadius: 2
@@ -333,8 +335,8 @@ export default function EditTweak(): React.JSX.Element {
                                         <Ionicons name="laptop-outline" size={28} color={palette.blue500} />
                                     </View>
                                     <View style={{ flex: 1 }}>
-                                        <Text style={{ fontSize: 20, fontWeight: 'bold', color: localTweakType === 'remote' ? palette.brand500 : palette.gray900 }}>Remote</Text>
-                                        <Text style={{ color: palette.gray500, fontSize: 13, marginTop: 4 }}>Work can be done digitally from anywhere.</Text>
+                                        <Text style={{ fontSize: 20, fontWeight: 'bold', color: localTweakType === 'remote' ? palette.brand500 : (isDark ? colors.text : palette.gray900) }}>Remote</Text>
+                                        <Text style={{ color: isDark ? colors.textSecondary : palette.gray500, fontSize: 13, marginTop: 4 }}>Work can be done digitally from anywhere.</Text>
                                     </View>
 
                                     <View style={{
@@ -342,8 +344,8 @@ export default function EditTweak(): React.JSX.Element {
                                         height: 24,
                                         borderRadius: 12,
                                         borderWidth: 2,
-                                        borderColor: localTweakType === 'remote' ? palette.brand500 : palette.gray300,
-                                        backgroundColor: localTweakType === 'remote' ? palette.brand500 : 'white',
+                                        borderColor: localTweakType === 'remote' ? palette.brand500 : (isDark ? colors.border : palette.gray300),
+                                        backgroundColor: localTweakType === 'remote' ? palette.brand500 : (isDark ? colors.surface : 'white'),
                                         alignItems: 'center',
                                         justifyContent: 'center'
                                     }}>
@@ -359,8 +361,8 @@ export default function EditTweak(): React.JSX.Element {
             case 'location':
                 return (
                     <View style={{ width: SCREEN_WIDTH, paddingHorizontal: 24, flex: 1 }}>
-                        <Text style={{ fontSize: 24, fontWeight: 'bold', color: palette.gray900, marginBottom: 4 }}>Where is the tweak?</Text>
-                        <Text style={{ color: palette.gray500, marginBottom: 24 }}>Choose a saved address or add a new one.</Text>
+                        <Text style={{ fontSize: 24, fontWeight: 'bold', color: isDark ? colors.text : palette.gray900, marginBottom: 4 }}>Where is the tweak?</Text>
+                        <Text style={{ color: isDark ? colors.textSecondary : palette.gray500, marginBottom: 24 }}>Choose a saved address or add a new one.</Text>
                         {localTweakType === 'remote' ? (
                             <View style={{ backgroundColor: palette.blue100, padding: 24, borderRadius: 24, borderWidth: 1, borderColor: palette.blue200, alignItems: 'center' }}>
                                 <Ionicons name="information-circle-outline" size={40} color={themeColors.primary} />
@@ -387,8 +389,8 @@ export default function EditTweak(): React.JSX.Element {
             case 'category':
                 return (
                     <View style={{ width: SCREEN_WIDTH, paddingHorizontal: 24, flex: 1 }}>
-                        <Text style={{ fontSize: 24, fontWeight: 'bold', color: palette.gray900, marginBottom: 4 }}>Select category</Text>
-                        <Text style={{ color: palette.gray500, marginBottom: 24 }}>What best describes this task?</Text>
+                        <Text style={{ fontSize: 24, fontWeight: 'bold', color: isDark ? colors.text : palette.gray900, marginBottom: 4 }}>Select category</Text>
+                        <Text style={{ color: isDark ? colors.textSecondary : palette.gray500, marginBottom: 24 }}>What best describes this task?</Text>
                         <View style={{ flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'space-between' }}>
                             {CATEGORIES.map((cat) => (
                                 <TouchableOpacity
@@ -397,11 +399,11 @@ export default function EditTweak(): React.JSX.Element {
                                     activeOpacity={0.9}
                                     style={{
                                         width: '48%',
-                                        backgroundColor: localCategory === cat.name ? palette.brand500 + '08' : 'white',
+                                        backgroundColor: localCategory === cat.name ? palette.brand500 + '08' : (isDark ? colors.surface : 'white'),
                                         padding: 16,
                                         borderRadius: 20,
                                         borderWidth: 2,
-                                        borderColor: localCategory === cat.name ? palette.brand500 : palette.gray100,
+                                        borderColor: localCategory === cat.name ? palette.brand500 : (isDark ? colors.border : palette.gray100),
                                         marginBottom: 16,
                                         overflow: 'hidden',
                                         elevation: localCategory === cat.name ? 0 : 1,
@@ -418,7 +420,7 @@ export default function EditTweak(): React.JSX.Element {
                                             </View>
                                         )}
                                     </View>
-                                    <Text style={{ fontWeight: 'bold', color: localCategory === cat.name ? palette.brand500 : palette.gray700, fontSize: 14 }}>{cat.name}</Text>
+                                    <Text style={{ fontWeight: 'bold', color: localCategory === cat.name ? palette.brand500 : (isDark ? colors.text : palette.gray700), fontSize: 14 }}>{cat.name}</Text>
                                 </TouchableOpacity>
                             ))}
                         </View>
@@ -427,8 +429,8 @@ export default function EditTweak(): React.JSX.Element {
             case 'details':
                 return (
                     <View style={{ width: SCREEN_WIDTH, paddingHorizontal: 24, flex: 1 }}>
-                        <Text style={{ fontSize: 24, fontWeight: 'bold', color: palette.gray900, marginBottom: 4 }}>Tweak Details</Text>
-                        <Text style={{ color: palette.gray500, marginBottom: 24 }}>Describe what needs to be done.</Text>
+                        <Text style={{ fontSize: 24, fontWeight: 'bold', color: isDark ? colors.text : palette.gray900, marginBottom: 4 }}>Tweak Details</Text>
+                        <Text style={{ color: isDark ? colors.textSecondary : palette.gray500, marginBottom: 24 }}>Describe what needs to be done.</Text>
                         <View style={{ marginBottom: 32 }}>
                             <CustomLabelledField
                                 label="Task Description"
@@ -443,14 +445,14 @@ export default function EditTweak(): React.JSX.Element {
                             />
                         </View>
                         <View style={{ marginBottom: 32 }}>
-                            <Text style={{ fontSize: 10, fontWeight: 'bold', color: palette.gray400, textTransform: 'uppercase', letterSpacing: 1.5, marginBottom: 12 }}>Voice Instructions</Text>
+                            <Text style={{ fontSize: 10, fontWeight: 'bold', color: isDark ? colors.textMuted : palette.gray400, textTransform: 'uppercase', letterSpacing: 1.5, marginBottom: 12 }}>Voice Instructions</Text>
                             <CustomVoiceRecorder
                                 uri={localAudioUri}
                                 onRecordingComplete={setLocalAudioUri}
                             />
                         </View>
                         <View style={{ marginBottom: 32 }}>
-                            <Text style={{ fontSize: 10, fontWeight: 'bold', color: palette.gray400, textTransform: 'uppercase', letterSpacing: 1.5, marginBottom: 12 }}>Photos</Text>
+                            <Text style={{ fontSize: 10, fontWeight: 'bold', color: isDark ? colors.textMuted : palette.gray400, textTransform: 'uppercase', letterSpacing: 1.5, marginBottom: 12 }}>Photos</Text>
                             <CustomImageUploader
                                 images={localImages}
                                 onImagesChange={setLocalImages}
@@ -480,8 +482,8 @@ export default function EditTweak(): React.JSX.Element {
             case 'timeline':
                 return (
                     <View style={{ width: SCREEN_WIDTH, paddingHorizontal: 24, flex: 1 }}>
-                        <Text style={{ fontSize: 24, fontWeight: 'bold', color: palette.gray900, marginBottom: 4 }}>Select Timeline</Text>
-                        <Text style={{ color: palette.gray500, marginBottom: 32 }}>Choose a scheduling preference.</Text>
+                        <Text style={{ fontSize: 24, fontWeight: 'bold', color: isDark ? colors.text : palette.gray900, marginBottom: 4 }}>Select Timeline</Text>
+                        <Text style={{ color: isDark ? colors.textSecondary : palette.gray500, marginBottom: 32 }}>Choose a scheduling preference.</Text>
                         <View style={{ gap: 16 }}>
                             {([
                                 { id: 'one_day', icon: 'calendar', title: 'Single Day Job', description: 'Best for quick tasks done in one visit.', color: palette.blue500 },
@@ -507,10 +509,10 @@ export default function EditTweak(): React.JSX.Element {
                                         flexDirection: 'row',
                                         alignItems: 'center',
                                         padding: 20,
-                                        backgroundColor: localSchedulePreference === item.id ? palette.brand500 + '08' : 'white',
+                                        backgroundColor: localSchedulePreference === item.id ? palette.brand500 + '08' : (isDark ? colors.surface : 'white'),
                                         borderRadius: 24,
                                         borderWidth: 2,
-                                        borderColor: localSchedulePreference === item.id ? palette.brand500 : palette.gray100,
+                                        borderColor: localSchedulePreference === item.id ? palette.brand500 : (isDark ? colors.border : palette.gray100),
                                         marginBottom: 16,
                                         overflow: 'hidden',
                                         elevation: localSchedulePreference === item.id ? 0 : 1,
@@ -521,8 +523,8 @@ export default function EditTweak(): React.JSX.Element {
                                         <Ionicons name={item.icon} size={22} color={item.color} />
                                     </View>
                                     <View style={{ flex: 1 }}>
-                                        <Text style={{ fontSize: 16, fontWeight: 'bold', color: localSchedulePreference === item.id ? palette.brand500 : palette.gray900 }}>{item.title}</Text>
-                                        <Text style={{ fontSize: 12, color: palette.gray500, marginTop: 2 }}>{item.description}</Text>
+                                        <Text style={{ fontSize: 16, fontWeight: 'bold', color: localSchedulePreference === item.id ? palette.brand500 : (isDark ? colors.text : palette.gray900) }}>{item.title}</Text>
+                                        <Text style={{ fontSize: 12, color: isDark ? colors.textSecondary : palette.gray500, marginTop: 2 }}>{item.description}</Text>
                                     </View>
 
                                     <View style={{
@@ -530,8 +532,8 @@ export default function EditTweak(): React.JSX.Element {
                                         height: 24,
                                         borderRadius: 12,
                                         borderWidth: 2,
-                                        borderColor: localSchedulePreference === item.id ? palette.brand500 : palette.gray300,
-                                        backgroundColor: localSchedulePreference === item.id ? palette.brand500 : 'white',
+                                        borderColor: localSchedulePreference === item.id ? palette.brand500 : (isDark ? colors.border : palette.gray300),
+                                        backgroundColor: localSchedulePreference === item.id ? palette.brand500 : (isDark ? colors.surface : 'white'),
                                         alignItems: 'center',
                                         justifyContent: 'center'
                                     }}>
@@ -557,7 +559,7 @@ export default function EditTweak(): React.JSX.Element {
                                         </Text>
                                     </View>
 
-                                    <View style={{ backgroundColor: 'white', borderRadius: 24, borderWidth: 1, borderColor: showValidation && !selectedDate ? palette.red500 : palette.gray100, marginBottom: 16, overflow: 'hidden', elevation: 1, shadowColor: '#000', shadowOffset: { width: 0, height: 1 }, shadowOpacity: 0.05, shadowRadius: 2 }}>
+                                    <View style={{ backgroundColor: isDark ? colors.surface : 'white', borderRadius: 24, borderWidth: 1, borderColor: showValidation && !selectedDate ? palette.red500 : (isDark ? colors.border : palette.gray100), marginBottom: 16, overflow: 'hidden', elevation: 1, shadowColor: '#000', shadowOffset: { width: 0, height: 1 }, shadowOpacity: 0.05, shadowRadius: 2 }}>
                                         <View style={{ paddingHorizontal: 16, paddingBottom: 16 }}>
                                             <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: 8, paddingTop: 12, paddingBottom: 4 }}>
                                                 {isCurrentMonth ? <View style={{ width: 36 }} /> : (
@@ -565,7 +567,7 @@ export default function EditTweak(): React.JSX.Element {
                                                         <Ionicons name="chevron-back" size={20} color={palette.brand500} />
                                                     </TouchableOpacity>
                                                 )}
-                                                <Text style={{ fontSize: 16, fontWeight: 'bold', color: palette.gray800 }}>
+                                                <Text style={{ fontSize: 16, fontWeight: 'bold', color: isDark ? colors.text : palette.gray800 }}>
                                                     {dayjs().month(calMonth).year(calYear).format('MMMM YYYY')}
                                                 </Text>
                                                 <TouchableOpacity onPress={goNextMonth} style={{ padding: 8 }} accessibilityRole="button" accessibilityLabel="Next month">
@@ -607,7 +609,7 @@ export default function EditTweak(): React.JSX.Element {
 
                                                         const textStyle: MutableTextStyle = {
                                                             fontSize: 14,
-                                                            color: isBeforeToday ? palette.gray300 : palette.gray700,
+                                                            color: isBeforeToday ? (isDark ? colors.textMuted : palette.gray300) : (isDark ? colors.text : palette.gray700),
                                                             fontWeight: '500'
                                                         };
 
@@ -642,8 +644,8 @@ export default function EditTweak(): React.JSX.Element {
                                             />
                                         </View>
                                         {selectedDate && (
-                                            <View style={{ backgroundColor: palette.gray50, borderTopWidth: 1, borderTopColor: palette.gray100, paddingVertical: 8, alignItems: 'center' }}>
-                                                <Text style={{ fontSize: 10, color: palette.gray500, fontWeight: 'bold', textTransform: 'uppercase', letterSpacing: 1.2 }}>
+                                            <View style={{ backgroundColor: isDark ? colors.surfaceMuted : palette.gray50, borderTopWidth: 1, borderTopColor: isDark ? colors.border : palette.gray100, paddingVertical: 8, alignItems: 'center' }}>
+                                                <Text style={{ fontSize: 10, color: isDark ? colors.textSecondary : palette.gray500, fontWeight: 'bold', textTransform: 'uppercase', letterSpacing: 1.2 }}>
                                                     Selected: <Text style={{ color: palette.brand500 }}>{selectedDate.format('MMMM DD, YYYY')}</Text>
                                                 </Text>
                                             </View>
@@ -655,7 +657,7 @@ export default function EditTweak(): React.JSX.Element {
                                             {timeSlots.length === 0 ? (
                                                 <TouchableOpacity
                                                     onPress={() => setTimeSlots([{ start: '09:00', end: '17:00' }])}
-                                                    style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'center', paddingVertical: 16, backgroundColor: 'white', borderRadius: 20, borderWidth: 2, borderStyle: 'dashed', borderColor: palette.gray200 }}
+                                                    style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'center', paddingVertical: 16, backgroundColor: isDark ? colors.surface : 'white', borderRadius: 20, borderWidth: 2, borderStyle: 'dashed', borderColor: isDark ? colors.border : palette.gray200 }}
                                                 >
                                                     <View style={{ backgroundColor: palette.brand500, borderRadius: 8, padding: 6, marginRight: 10 }}>
                                                         <Ionicons name="time" size={18} color="white" />
@@ -666,12 +668,12 @@ export default function EditTweak(): React.JSX.Element {
                                                 <View>
                                                     {timeSlots.map((slot, index) => (
                                                         <View key={index} style={{
-                                                            marginBottom: 12, padding: 16, borderRadius: 20, backgroundColor: 'white', borderWidth: 1, borderColor: palette.gray100,
+                                                            marginBottom: 12, padding: 16, borderRadius: 20, backgroundColor: isDark ? colors.surface : 'white', borderWidth: 1, borderColor: isDark ? colors.border : palette.gray100,
                                                             elevation: 1, shadowColor: '#000', shadowOffset: { width: 0, height: 1 }, shadowOpacity: 0.05, shadowRadius: 2
                                                         }}>
                                                             <View style={{ flexDirection: 'row', alignItems: 'center', gap: 12 }}>
                                                                 <View style={{ flex: 1 }}>
-                                                                    <Text style={{ fontSize: 10, fontWeight: 'bold', color: palette.gray400, marginBottom: 4, letterSpacing: 1 }}>START</Text>
+                                                                    <Text style={{ fontSize: 10, fontWeight: 'bold', color: isDark ? colors.textMuted : palette.gray400, marginBottom: 4, letterSpacing: 1 }}>START</Text>
                                                                     <CustomTimePickerInput
                                                                         value={slot.start}
                                                                         onChange={(t) => {
@@ -681,9 +683,9 @@ export default function EditTweak(): React.JSX.Element {
                                                                         }}
                                                                     />
                                                                 </View>
-                                                                <Text style={{ marginTop: 20, color: palette.gray300 }}>-</Text>
+                                                                <Text style={{ marginTop: 20, color: isDark ? colors.textMuted : palette.gray300 }}>-</Text>
                                                                 <View style={{ flex: 1 }}>
-                                                                    <Text style={{ fontSize: 10, fontWeight: 'bold', color: palette.gray400, marginBottom: 4, letterSpacing: 1 }}>END</Text>
+                                                                    <Text style={{ fontSize: 10, fontWeight: 'bold', color: isDark ? colors.textMuted : palette.gray400, marginBottom: 4, letterSpacing: 1 }}>END</Text>
                                                                     <CustomTimePickerInput
                                                                         value={slot.end}
                                                                         onChange={(t) => {
@@ -735,7 +737,7 @@ export default function EditTweak(): React.JSX.Element {
                         case 'deadline':
                             return (
                                 <View>
-                                    <View style={{ backgroundColor: 'white', borderRadius: 24, borderWidth: 1, borderColor: showValidation && !selectedDate ? palette.red500 : palette.gray100, marginBottom: 16, overflow: 'hidden', elevation: 1 }}>
+                                    <View style={{ backgroundColor: isDark ? colors.surface : 'white', borderRadius: 24, borderWidth: 1, borderColor: showValidation && !selectedDate ? palette.red500 : (isDark ? colors.border : palette.gray100), marginBottom: 16, overflow: 'hidden', elevation: 1 }}>
                                         <View style={{ paddingHorizontal: 16, paddingBottom: 16 }}>
                                             <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: 8, paddingTop: 12, paddingBottom: 4 }}>
                                                 {isCurrentMonth ? <View style={{ width: 36 }} /> : (
@@ -743,7 +745,7 @@ export default function EditTweak(): React.JSX.Element {
                                                         <Ionicons name="chevron-back" size={20} color={palette.brand500} />
                                                     </TouchableOpacity>
                                                 )}
-                                                <Text style={{ fontSize: 16, fontWeight: 'bold', color: palette.gray800 }}>
+                                                <Text style={{ fontSize: 16, fontWeight: 'bold', color: isDark ? colors.text : palette.gray800 }}>
                                                     {dayjs().month(calMonth).year(calYear).format('MMMM YYYY')}
                                                 </Text>
                                                 <TouchableOpacity onPress={goNextMonth} style={{ padding: 8 }} accessibilityRole="button" accessibilityLabel="Next month">
@@ -800,7 +802,7 @@ export default function EditTweak(): React.JSX.Element {
 
                                                         const textStyle: MutableTextStyle = {
                                                             fontSize: 14,
-                                                            color: isBeforeToday ? palette.gray300 : palette.gray700,
+                                                            color: isBeforeToday ? (isDark ? colors.textMuted : palette.gray300) : (isDark ? colors.text : palette.gray700),
                                                             fontWeight: '500'
                                                         };
 
@@ -865,8 +867,8 @@ export default function EditTweak(): React.JSX.Element {
                                     {deadlineSlots.length > 0 && (
                                         <View>
                                             <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'center', marginBottom: 4, gap: 4 }}>
-                                                <Ionicons name="arrow-up" size={10} color={palette.gray400} />
-                                                <Text style={{ fontSize: 9, color: palette.gray400, fontWeight: 'bold', textTransform: 'uppercase', letterSpacing: 1 }}>Slide up to delete</Text>
+                                                <Ionicons name="arrow-up" size={10} color={isDark ? colors.textMuted : palette.gray400} />
+                                                <Text style={{ fontSize: 9, color: isDark ? colors.textMuted : palette.gray400, fontWeight: 'bold', textTransform: 'uppercase', letterSpacing: 1 }}>Slide up to delete</Text>
                                             </View>
                                             <ScrollView horizontal showsHorizontalScrollIndicator={false} style={{ marginBottom: 16 }} contentContainerStyle={{ paddingBottom: 8, paddingRight: 20 }}>
                                                 {deadlineSlots.map((slot, index) => {
@@ -888,7 +890,7 @@ export default function EditTweak(): React.JSX.Element {
                                                                 style={{
                                                                     marginRight: 12, padding: 12, borderRadius: 20, borderWidth: isActive ? 2 : 1, width: 120,
                                                                     borderColor: isActive ? palette.brand500 : (slot.status === 'modified' ? palette.green600 : palette.brand500),
-                                                                    backgroundColor: isActive ? palette.brand500 + '05' : 'white',
+                                                                    backgroundColor: isActive ? palette.brand500 + '05' : (isDark ? colors.surface : 'white'),
                                                                     elevation: isActive ? 0 : 1,
                                                                     shadowColor: '#000', shadowOffset: { width: 0, height: 1 }, shadowOpacity: isActive ? 0 : 0.05, shadowRadius: 2,
                                                                     overflow: 'hidden',
@@ -896,12 +898,12 @@ export default function EditTweak(): React.JSX.Element {
                                                                     marginBottom: 2
                                                                 }}
                                                             >
-                                                                <Text style={{ fontSize: 10, fontWeight: 'bold', color: palette.gray500, textTransform: 'uppercase', marginBottom: 2 }}>{slotDate.format('ddd')}</Text>
-                                                                <Text style={{ fontSize: 16, fontWeight: 'bold', color: palette.gray800, marginBottom: 6 }}>{slotDate.format('DD MMM')}</Text>
+                                                                <Text style={{ fontSize: 10, fontWeight: 'bold', color: isDark ? colors.textSecondary : palette.gray500, textTransform: 'uppercase', marginBottom: 2 }}>{slotDate.format('ddd')}</Text>
+                                                                <Text style={{ fontSize: 16, fontWeight: 'bold', color: isDark ? colors.text : palette.gray800, marginBottom: 6 }}>{slotDate.format('DD MMM')}</Text>
 
                                                                 <View>
-                                                                    <Text style={{ fontSize: 11, color: palette.gray600 }}>{dayjs(slot.date + ' ' + slot.start).format('hh:mm a')}</Text>
-                                                                    <Text style={{ fontSize: 11, color: palette.gray600 }}>{dayjs(slot.date + ' ' + slot.end).format('hh:mm a')}</Text>
+                                                                    <Text style={{ fontSize: 11, color: isDark ? colors.textSecondary : palette.gray600 }}>{dayjs(slot.date + ' ' + slot.start).format('hh:mm a')}</Text>
+                                                                    <Text style={{ fontSize: 11, color: isDark ? colors.textSecondary : palette.gray600 }}>{dayjs(slot.date + ' ' + slot.end).format('hh:mm a')}</Text>
                                                                 </View>
                                                                 {slot.status === 'modified' && (
                                                                     <View style={{ position: 'absolute', top: 8, right: 8, width: 6, height: 6, borderRadius: 3, backgroundColor: palette.green600 }} />
@@ -913,8 +915,8 @@ export default function EditTweak(): React.JSX.Element {
                                             </ScrollView>
 
                                             {activeDeadlineSlot !== null && deadlineSlots[activeDeadlineSlot] && (
-                                                <View style={{ backgroundColor: palette.gray50, padding: 16, borderRadius: 20, borderWidth: 1, borderColor: palette.gray100 }}>
-                                                    <Text style={{ fontWeight: 'bold', marginBottom: 12 }}>Edit {dayjs(deadlineSlots[activeDeadlineSlot].date).format('MMM DD')}</Text>
+                                                <View style={{ backgroundColor: isDark ? colors.surfaceMuted : palette.gray50, padding: 16, borderRadius: 20, borderWidth: 1, borderColor: isDark ? colors.border : palette.gray100 }}>
+                                                    <Text style={{ fontWeight: 'bold', marginBottom: 12, color: isDark ? colors.text : undefined }}>Edit {dayjs(deadlineSlots[activeDeadlineSlot].date).format('MMM DD')}</Text>
                                                     <View style={{ flexDirection: 'row', alignItems: 'center', gap: 12 }}>
                                                         <View style={{ flex: 1 }}>
                                                             <CustomTimePickerInput
@@ -948,7 +950,7 @@ export default function EditTweak(): React.JSX.Element {
                         case 'few_days':
                             return (
                                 <View>
-                                    <View style={{ backgroundColor: 'white', borderRadius: 24, borderWidth: 1, borderColor: showValidation && fewDaysSlots.length === 0 ? palette.red500 : palette.gray100, marginBottom: 16, overflow: 'hidden', elevation: 1 }}>
+                                    <View style={{ backgroundColor: isDark ? colors.surface : 'white', borderRadius: 24, borderWidth: 1, borderColor: showValidation && fewDaysSlots.length === 0 ? palette.red500 : (isDark ? colors.border : palette.gray100), marginBottom: 16, overflow: 'hidden', elevation: 1 }}>
                                         <View style={{ paddingHorizontal: 16, paddingBottom: 16 }}>
                                             <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: 8, paddingTop: 12, paddingBottom: 4 }}>
                                                 {isCurrentMonth ? <View style={{ width: 36 }} /> : (
@@ -956,7 +958,7 @@ export default function EditTweak(): React.JSX.Element {
                                                         <Ionicons name="chevron-back" size={20} color={palette.brand500} />
                                                     </TouchableOpacity>
                                                 )}
-                                                <Text style={{ fontSize: 16, fontWeight: 'bold', color: palette.gray800 }}>
+                                                <Text style={{ fontSize: 16, fontWeight: 'bold', color: isDark ? colors.text : palette.gray800 }}>
                                                     {dayjs().month(calMonth).year(calYear).format('MMMM YYYY')}
                                                 </Text>
                                                 <TouchableOpacity onPress={goNextMonth} style={{ padding: 8 }} accessibilityRole="button" accessibilityLabel="Next month">
@@ -991,7 +993,7 @@ export default function EditTweak(): React.JSX.Element {
 
                                                         const textStyle: MutableTextStyle = {
                                                             fontSize: 14,
-                                                            color: isSelected ? 'white' : (isBeforeToday ? palette.gray300 : palette.gray700),
+                                                            color: isSelected ? 'white' : (isBeforeToday ? (isDark ? colors.textMuted : palette.gray300) : (isDark ? colors.text : palette.gray700)),
                                                             fontWeight: isSelected || isToday ? 'bold' : 'normal'
                                                         };
 
@@ -1034,8 +1036,8 @@ export default function EditTweak(): React.JSX.Element {
                                     {fewDaysSlots.length > 0 && (
                                         <View>
                                             <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'center', marginBottom: 4, gap: 4 }}>
-                                                <Ionicons name="arrow-up" size={10} color={palette.gray400} />
-                                                <Text style={{ fontSize: 9, color: palette.gray400, fontWeight: 'bold', textTransform: 'uppercase', letterSpacing: 1 }}>Slide up to delete</Text>
+                                                <Ionicons name="arrow-up" size={10} color={isDark ? colors.textMuted : palette.gray400} />
+                                                <Text style={{ fontSize: 9, color: isDark ? colors.textMuted : palette.gray400, fontWeight: 'bold', textTransform: 'uppercase', letterSpacing: 1 }}>Slide up to delete</Text>
                                             </View>
                                             <ScrollView horizontal showsHorizontalScrollIndicator={false} style={{ marginBottom: 16 }} contentContainerStyle={{ paddingBottom: 8, paddingRight: 20 }}>
                                                 {fewDaysSlots.map((slot, index) => {
@@ -1073,8 +1075,8 @@ export default function EditTweak(): React.JSX.Element {
                                                                     <Text style={{ fontSize: 11, color: palette.gray600 }}>{dayjs(slot.date + ' ' + slot.end).format('hh:mm a')}</Text>
                                                                 </View>
 
-                                                                <View style={{ marginTop: 8, backgroundColor: palette.gray100, borderRadius: 8, paddingVertical: 2, alignItems: 'center' }}>
-                                                                    <Text style={{ fontSize: 10, fontWeight: 'bold', color: palette.gray600 }}>{hours.toFixed(1)}h</Text>
+                                                                <View style={{ marginTop: 8, backgroundColor: isDark ? colors.surfaceMuted : palette.gray100, borderRadius: 8, paddingVertical: 2, alignItems: 'center' }}>
+                                                                    <Text style={{ fontSize: 10, fontWeight: 'bold', color: isDark ? colors.textSecondary : palette.gray600 }}>{hours.toFixed(1)}h</Text>
                                                                 </View>
 
                                                                 {slot.status === 'modified' && (
@@ -1087,8 +1089,8 @@ export default function EditTweak(): React.JSX.Element {
                                             </ScrollView>
 
                                             {activeFewDaysSlot !== null && fewDaysSlots[activeFewDaysSlot] && (
-                                                <View style={{ backgroundColor: palette.gray50, padding: 16, borderRadius: 20, borderWidth: 1, borderColor: palette.gray100 }}>
-                                                    <Text style={{ fontWeight: 'bold', marginBottom: 12 }}>Edit {dayjs(fewDaysSlots[activeFewDaysSlot].date).format('MMM DD')}</Text>
+                                                <View style={{ backgroundColor: isDark ? colors.surfaceMuted : palette.gray50, padding: 16, borderRadius: 20, borderWidth: 1, borderColor: isDark ? colors.border : palette.gray100 }}>
+                                                    <Text style={{ fontWeight: 'bold', marginBottom: 12, color: isDark ? colors.text : undefined }}>Edit {dayjs(fewDaysSlots[activeFewDaysSlot].date).format('MMM DD')}</Text>
                                                     <View style={{ flexDirection: 'row', alignItems: 'center', gap: 12 }}>
                                                         <View style={{ flex: 1 }}>
                                                             <CustomTimePickerInput
@@ -1126,8 +1128,8 @@ export default function EditTweak(): React.JSX.Element {
 
                 return (
                     <View style={{ width: SCREEN_WIDTH, paddingHorizontal: 24, flex: 1 }}>
-                        <Text style={{ fontSize: 24, fontWeight: 'bold', color: palette.gray900, marginBottom: 4 }}>Schedule Details</Text>
-                        <Text style={{ color: palette.gray500, marginBottom: 24 }}>Set the exact days and times.</Text>
+                        <Text style={{ fontSize: 24, fontWeight: 'bold', color: isDark ? colors.text : palette.gray900, marginBottom: 4 }}>Schedule Details</Text>
+                        <Text style={{ color: isDark ? colors.textSecondary : palette.gray500, marginBottom: 24 }}>Set the exact days and times.</Text>
                         {renderSchedulePicker()}
                     </View>
                 );
@@ -1145,8 +1147,8 @@ export default function EditTweak(): React.JSX.Element {
                     }) => (
                         <View
                             style={{
-                                borderRadius: 24, backgroundColor: isSelected ? palette.brand500 + '08' : 'white', borderWidth: 2, marginBottom: 16,
-                                borderColor: isSelected ? palette.brand500 : palette.gray100,
+                                borderRadius: 24, backgroundColor: isSelected ? palette.brand500 + '08' : (isDark ? colors.surface : 'white'), borderWidth: 2, marginBottom: 16,
+                                borderColor: isSelected ? palette.brand500 : (isDark ? colors.border : palette.gray100),
                                 overflow: 'hidden',
                                 elevation: isSelected ? 0 : 1,
                                 shadowColor: '#000', shadowOffset: { width: 0, height: 1 }, shadowOpacity: isSelected ? 0 : 0.05, shadowRadius: 2
@@ -1161,8 +1163,8 @@ export default function EditTweak(): React.JSX.Element {
                                     <Ionicons name={icon} size={22} color={color} />
                                 </View>
                                 <View style={{ flex: 1 }}>
-                                    <Text style={{ fontSize: 16, fontWeight: 'bold', color: palette.gray900 }}>{title}</Text>
-                                    <Text style={{ fontSize: 12, color: palette.gray500, marginTop: 2 }}>{description}</Text>
+                                    <Text style={{ fontSize: 16, fontWeight: 'bold', color: isDark ? colors.text : palette.gray900 }}>{title}</Text>
+                                    <Text style={{ fontSize: 12, color: isDark ? colors.textSecondary : palette.gray500, marginTop: 2 }}>{description}</Text>
                                 </View>
 
                                 <View style={{
@@ -1170,8 +1172,8 @@ export default function EditTweak(): React.JSX.Element {
                                     height: 24,
                                     borderRadius: 12,
                                     borderWidth: 2,
-                                    borderColor: isSelected ? palette.brand500 : palette.gray300,
-                                    backgroundColor: isSelected ? palette.brand500 : 'white',
+                                    borderColor: isSelected ? palette.brand500 : (isDark ? colors.border : palette.gray300),
+                                    backgroundColor: isSelected ? palette.brand500 : (isDark ? colors.surface : 'white'),
                                     alignItems: 'center',
                                     justifyContent: 'center'
                                 }}>
@@ -1190,19 +1192,19 @@ export default function EditTweak(): React.JSX.Element {
 
                     return (
                         <View>
-                            <Text style={{ fontSize: 18, fontWeight: 'bold', color: palette.gray700, marginBottom: 16 }}>Do you have a price in mind?</Text>
+                            <Text style={{ fontSize: 18, fontWeight: 'bold', color: isDark ? colors.text : palette.gray700, marginBottom: 16 }}>Do you have a price in mind?</Text>
                             <View style={{ flexDirection: 'row', gap: 12, marginBottom: 24 }}>
                                 <TouchableOpacity
                                     onPress={() => setHasPriceInMind(true)}
-                                    style={{ flex: 1, padding: 16, borderRadius: 20, borderWidth: 2, alignItems: 'center', borderColor: hasPriceInMind === true ? themeColors.primary : palette.gray100, backgroundColor: hasPriceInMind === true ? themeColors.primary + '08' : 'white' }}
+                                    style={{ flex: 1, padding: 16, borderRadius: 20, borderWidth: 2, alignItems: 'center', borderColor: hasPriceInMind === true ? themeColors.primary : (isDark ? colors.border : palette.gray100), backgroundColor: hasPriceInMind === true ? themeColors.primary + '08' : (isDark ? colors.surface : 'white') }}
                                 >
-                                    <Text style={{ fontWeight: 'bold', color: hasPriceInMind === true ? themeColors.primary : palette.gray500 }}>Yes</Text>
+                                    <Text style={{ fontWeight: 'bold', color: hasPriceInMind === true ? themeColors.primary : (isDark ? colors.textSecondary : palette.gray500) }}>Yes</Text>
                                 </TouchableOpacity>
                                 <TouchableOpacity
                                     onPress={() => { setHasPriceInMind(false); setLocalPricingModel('quote'); }}
-                                    style={{ flex: 1, padding: 16, borderRadius: 20, borderWidth: 2, alignItems: 'center', borderColor: hasPriceInMind === false ? themeColors.primary : palette.gray100, backgroundColor: hasPriceInMind === false ? themeColors.primary + '08' : 'white' }}
+                                    style={{ flex: 1, padding: 16, borderRadius: 20, borderWidth: 2, alignItems: 'center', borderColor: hasPriceInMind === false ? themeColors.primary : (isDark ? colors.border : palette.gray100), backgroundColor: hasPriceInMind === false ? themeColors.primary + '08' : (isDark ? colors.surface : 'white') }}
                                 >
-                                    <Text style={{ fontWeight: 'bold', color: hasPriceInMind === false ? themeColors.primary : palette.gray500 }}>No</Text>
+                                    <Text style={{ fontWeight: 'bold', color: hasPriceInMind === false ? themeColors.primary : (isDark ? colors.textSecondary : palette.gray500) }}>No</Text>
                                 </TouchableOpacity>
                             </View>
 
@@ -1221,10 +1223,10 @@ export default function EditTweak(): React.JSX.Element {
                                         isSelected={localPricingModel === 'hourly'} onSelect={() => setLocalPricingModel('hourly')}
                                     >
                                         <View style={{ marginTop: 8 }}>
-                                            <Text style={{ fontSize: 11, fontWeight: '700', color: palette.gray500, marginBottom: 8, letterSpacing: 0.5 }}>HOURLY RATE</Text>
-                                            <View style={{ flexDirection: 'row', alignItems: 'center', backgroundColor: 'white', borderRadius: 16, paddingHorizontal: 16, height: 56, borderWidth: 2, borderColor: palette.gray100 }}>
-                                                <Text style={{ fontSize: 18, fontWeight: 'bold', color: palette.gray900, marginRight: 8 }}>₹</Text>
-                                                <TextInput value={hourlyRate} onChangeText={setHourlyRate} keyboardType="numeric" style={{ flex: 1, fontSize: 18, fontWeight: 'bold', color: palette.gray900 }} placeholder="0" />
+                                            <Text style={{ fontSize: 11, fontWeight: '700', color: isDark ? colors.textSecondary : palette.gray500, marginBottom: 8, letterSpacing: 0.5 }}>HOURLY RATE</Text>
+                                            <View style={{ flexDirection: 'row', alignItems: 'center', backgroundColor: isDark ? colors.surface : 'white', borderRadius: 16, paddingHorizontal: 16, height: 56, borderWidth: 2, borderColor: isDark ? colors.border : palette.gray100 }}>
+                                                <Text style={{ fontSize: 18, fontWeight: 'bold', color: isDark ? colors.text : palette.gray900, marginRight: 8 }}>₹</Text>
+                                                <TextInput value={hourlyRate} onChangeText={setHourlyRate} keyboardType="numeric" style={{ flex: 1, fontSize: 18, fontWeight: 'bold', color: isDark ? colors.text : palette.gray900 }} placeholder="0" />
                                             </View>
                                         </View>
                                     </PricingOption>
@@ -1235,34 +1237,34 @@ export default function EditTweak(): React.JSX.Element {
                                     >
                                         <View style={{ marginTop: 8, gap: 16 }}>
                                             <View>
-                                                <Text style={{ fontSize: 11, fontWeight: '700', color: palette.gray500, marginBottom: 8, letterSpacing: 0.5 }}>ITEM NAME</Text>
+                                                <Text style={{ fontSize: 11, fontWeight: '700', color: isDark ? colors.textSecondary : palette.gray500, marginBottom: 8, letterSpacing: 0.5 }}>ITEM NAME</Text>
                                                 <TextInput
                                                     value={quantityName}
                                                     onChangeText={setQuantityName}
-                                                    style={{ backgroundColor: 'white', borderRadius: 16, paddingHorizontal: 16, height: 56, borderWidth: 2, borderColor: palette.gray100, fontSize: 16, fontWeight: 'bold', color: palette.gray900 }}
+                                                    style={{ backgroundColor: isDark ? colors.surface : 'white', borderRadius: 16, paddingHorizontal: 16, height: 56, borderWidth: 2, borderColor: isDark ? colors.border : palette.gray100, fontSize: 16, fontWeight: 'bold', color: isDark ? colors.text : palette.gray900 }}
                                                     placeholder="e.g. Page, Bag, Box"
                                                 />
                                             </View>
                                             <View style={{ flexDirection: 'row', gap: 12 }}>
                                                 <View style={{ flex: 1 }}>
-                                                    <Text style={{ fontSize: 11, fontWeight: '700', color: palette.gray500, marginBottom: 8, letterSpacing: 0.5 }}>QUANTITY</Text>
+                                                    <Text style={{ fontSize: 11, fontWeight: '700', color: isDark ? colors.textSecondary : palette.gray500, marginBottom: 8, letterSpacing: 0.5 }}>QUANTITY</Text>
                                                     <TextInput
                                                         value={quantityCount}
                                                         onChangeText={setQuantityCount}
                                                         keyboardType="numeric"
-                                                        style={{ backgroundColor: 'white', borderRadius: 16, paddingHorizontal: 16, height: 56, borderWidth: 2, borderColor: palette.gray100, fontSize: 16, fontWeight: 'bold', color: palette.gray900 }}
+                                                        style={{ backgroundColor: isDark ? colors.surface : 'white', borderRadius: 16, paddingHorizontal: 16, height: 56, borderWidth: 2, borderColor: isDark ? colors.border : palette.gray100, fontSize: 16, fontWeight: 'bold', color: isDark ? colors.text : palette.gray900 }}
                                                         placeholder="1"
                                                     />
                                                 </View>
                                                 <View style={{ flex: 1 }}>
-                                                    <Text style={{ fontSize: 11, fontWeight: '700', color: palette.gray500, marginBottom: 8, letterSpacing: 0.5 }}>PRICE PER ITEM</Text>
-                                                    <View style={{ flexDirection: 'row', alignItems: 'center', backgroundColor: 'white', borderRadius: 16, paddingHorizontal: 16, height: 56, borderWidth: 2, borderColor: palette.gray100 }}>
-                                                        <Text style={{ fontSize: 16, fontWeight: 'bold', color: palette.gray900, marginRight: 4 }}>₹</Text>
+                                                    <Text style={{ fontSize: 11, fontWeight: '700', color: isDark ? colors.textSecondary : palette.gray500, marginBottom: 8, letterSpacing: 0.5 }}>PRICE PER ITEM</Text>
+                                                    <View style={{ flexDirection: 'row', alignItems: 'center', backgroundColor: isDark ? colors.surface : 'white', borderRadius: 16, paddingHorizontal: 16, height: 56, borderWidth: 2, borderColor: isDark ? colors.border : palette.gray100 }}>
+                                                        <Text style={{ fontSize: 16, fontWeight: 'bold', color: isDark ? colors.text : palette.gray900, marginRight: 4 }}>₹</Text>
                                                         <TextInput
                                                             value={quantityPricePerItem}
                                                             onChangeText={setQuantityPricePerItem}
                                                             keyboardType="numeric"
-                                                            style={{ flex: 1, fontSize: 16, fontWeight: 'bold', color: palette.gray900 }}
+                                                            style={{ flex: 1, fontSize: 16, fontWeight: 'bold', color: isDark ? colors.text : palette.gray900 }}
                                                             placeholder="0"
                                                         />
                                                     </View>
@@ -1282,10 +1284,10 @@ export default function EditTweak(): React.JSX.Element {
                                         isSelected={localPricingModel === 'fixed'} onSelect={() => setLocalPricingModel('fixed')}
                                     >
                                         <View style={{ marginTop: 8 }}>
-                                            <Text style={{ fontSize: 11, fontWeight: '700', color: palette.gray500, marginBottom: 8, letterSpacing: 0.5 }}>TOTAL AMOUNT</Text>
-                                            <View style={{ flexDirection: 'row', alignItems: 'center', backgroundColor: 'white', borderRadius: 16, paddingHorizontal: 16, height: 56, borderWidth: 2, borderColor: palette.gray100 }}>
-                                                <Text style={{ fontSize: 18, fontWeight: 'bold', color: palette.gray900, marginRight: 8 }}>₹</Text>
-                                                <TextInput value={fixedPrice} onChangeText={setFixedPrice} keyboardType="numeric" style={{ flex: 1, fontSize: 18, fontWeight: 'bold', color: palette.gray900 }} placeholder="0" />
+                                            <Text style={{ fontSize: 11, fontWeight: '700', color: isDark ? colors.textSecondary : palette.gray500, marginBottom: 8, letterSpacing: 0.5 }}>TOTAL AMOUNT</Text>
+                                            <View style={{ flexDirection: 'row', alignItems: 'center', backgroundColor: isDark ? colors.surface : 'white', borderRadius: 16, paddingHorizontal: 16, height: 56, borderWidth: 2, borderColor: isDark ? colors.border : palette.gray100 }}>
+                                                <Text style={{ fontSize: 18, fontWeight: 'bold', color: isDark ? colors.text : palette.gray900, marginRight: 8 }}>₹</Text>
+                                                <TextInput value={fixedPrice} onChangeText={setFixedPrice} keyboardType="numeric" style={{ flex: 1, fontSize: 18, fontWeight: 'bold', color: isDark ? colors.text : palette.gray900 }} placeholder="0" />
                                             </View>
                                         </View>
                                     </PricingOption>
@@ -1297,8 +1299,8 @@ export default function EditTweak(): React.JSX.Element {
 
                 return (
                     <View style={{ width: SCREEN_WIDTH, paddingHorizontal: 24, flex: 1 }}>
-                        <Text style={{ fontSize: 24, fontWeight: 'bold', color: palette.gray900, marginBottom: 4 }}>Pricing</Text>
-                        <Text style={{ color: palette.gray500, marginBottom: 24 }}>Set the compensation for this task.</Text>
+                        <Text style={{ fontSize: 24, fontWeight: 'bold', color: isDark ? colors.text : palette.gray900, marginBottom: 4 }}>Pricing</Text>
+                        <Text style={{ color: isDark ? colors.textSecondary : palette.gray500, marginBottom: 24 }}>Set the compensation for this task.</Text>
                         {renderPricingEditor()}
                     </View>
                 );
@@ -1446,20 +1448,20 @@ export default function EditTweak(): React.JSX.Element {
 
 
     return (
-        <ScreenWrapper edges={['top', 'bottom', 'left', 'right']} style={{ backgroundColor: 'white' }}>
+        <ScreenWrapper edges={['top', 'bottom', 'left', 'right']} style={{ backgroundColor: isDark ? colors.background : 'white' }}>
             {/* Header - Tightened and Premium */}
-            <View style={styles.header}>
-                <TouchableOpacity onPress={() => router.back()} style={styles.backButton} accessibilityRole="button" accessibilityLabel="Go back">
-                    <Ionicons name="arrow-back" size={20} color={themeColors.text} />
+            <View style={[styles.header, isDark && { backgroundColor: colors.surface, borderBottomColor: colors.border }]}>
+                <TouchableOpacity onPress={() => router.back()} style={[styles.backButton, isDark && { backgroundColor: colors.surfaceMuted }]} accessibilityRole="button" accessibilityLabel="Go back">
+                    <Ionicons name="arrow-back" size={20} color={isDark ? colors.text : themeColors.text} />
                 </TouchableOpacity>
                 <View style={styles.headerTextContainer}>
-                    <Text style={styles.headerTitle}>Edit Tweak</Text>
-                    <Text style={styles.headerSubtitle}>STEP {currentIndex + 1} OF 7</Text>
+                    <Text style={[styles.headerTitle, isDark && { color: colors.text }]}>Edit Tweak</Text>
+                    <Text style={[styles.headerSubtitle, isDark && { color: colors.textSecondary }]}>STEP {currentIndex + 1} OF 7</Text>
                 </View>
             </View>
 
             {/* Stepper Row - Improved spacing and dynamic coloring */}
-            <View style={{ height: 68, borderBottomWidth: 1, borderBottomColor: palette.gray100, backgroundColor: 'white' }}>
+            <View style={{ height: 68, borderBottomWidth: 1, borderBottomColor: isDark ? colors.border : palette.gray100, backgroundColor: isDark ? colors.surface : 'white' }}>
                 <ScrollView
                     ref={stepperRef}
                     horizontal={true}
@@ -1472,9 +1474,9 @@ export default function EditTweak(): React.JSX.Element {
                         const hasError = invalidSteps.includes(card.id);
 
                         // Icon and Background Color Logic
-                        let backgroundColor: string = palette.gray50;
-                        let borderColor: string = palette.gray100;
-                        let iconColor: string = palette.gray400;
+                        let backgroundColor: string = isDark ? colors.surfaceMuted : palette.gray50;
+                        let borderColor: string = isDark ? colors.border : palette.gray100;
+                        let iconColor: string = isDark ? colors.textMuted : palette.gray400;
 
                         if (hasError) {
                             backgroundColor = palette.red50;
@@ -1539,7 +1541,7 @@ export default function EditTweak(): React.JSX.Element {
             </View>
 
             {/* Main Content Area */}
-            <View style={{ flex: 1, backgroundColor: 'white' }}>
+            <View style={{ flex: 1, backgroundColor: isDark ? colors.background : 'white' }}>
                 <ScrollView
                     showsVerticalScrollIndicator={false}
                     contentContainerStyle={{ flexGrow: 1, paddingTop: 20 }}
@@ -1552,18 +1554,18 @@ export default function EditTweak(): React.JSX.Element {
                     <View style={{ flexDirection: 'row', alignItems: 'center', gap: 12, paddingHorizontal: 24, marginTop: 32, marginBottom: 40 }}>
                         <TouchableOpacity
                             onPress={() => currentIndex > 0 ? scrollToStep(currentIndex - 1) : router.back()}
-                            style={{ width: 56, height: 56, borderRadius: 16, backgroundColor: palette.gray100, alignItems: 'center', justifyContent: 'center' }}
+                            style={{ width: 56, height: 56, borderRadius: 16, backgroundColor: isDark ? colors.surfaceMuted : palette.gray100, alignItems: 'center', justifyContent: 'center' }}
                             accessibilityRole="button"
                             accessibilityLabel="Previous step"
                         >
-                            <Ionicons name="chevron-back" size={24} color={palette.gray700} />
+                            <Ionicons name="chevron-back" size={24} color={isDark ? colors.textSecondary : palette.gray700} />
                         </TouchableOpacity>
 
                         <TouchableOpacity
                             onPress={handleSaveAsDraft}
-                            style={{ flex: 1, height: 56, borderRadius: 16, borderWidth: 1, borderColor: palette.gray300, alignItems: 'center', justifyContent: 'center' }}
+                            style={{ flex: 1, height: 56, borderRadius: 16, borderWidth: 1, borderColor: isDark ? colors.border : palette.gray300, alignItems: 'center', justifyContent: 'center' }}
                         >
-                            <Text style={{ fontWeight: 'bold', color: palette.gray700, fontSize: 13 }}>Save Draft</Text>
+                            <Text style={{ fontWeight: 'bold', color: isDark ? colors.textSecondary : palette.gray700, fontSize: 13 }}>Save Draft</Text>
                         </TouchableOpacity>
 
                         <TouchableOpacity

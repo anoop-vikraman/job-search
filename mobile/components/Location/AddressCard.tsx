@@ -3,6 +3,7 @@ import React from 'react';
 import { Text, TouchableOpacity, View } from 'react-native';
 import { palette } from '@tweak/theme';
 import { themeColors } from '../../themes/colors';
+import { useTheme } from '@/themes/ThemeProvider';
 
 import { AddressCardProps } from '../../types/location';
 
@@ -16,6 +17,7 @@ export default function AddressCard({
     onEdit,
     onDelete
 }: AddressCardProps): React.JSX.Element {
+    const { colors, isDark } = useTheme();
     const iconName =
         address.saveAs?.toLowerCase() === 'home' ? 'home' :
             address.saveAs?.toLowerCase() === 'work' ? 'briefcase' :
@@ -26,9 +28,9 @@ export default function AddressCard({
             <TouchableOpacity
                 onPress={onPress}
                 activeOpacity={0.7}
-                className={`flex-row items-center p-4 rounded-2xl mb-3 border ${selected ? 'border-primary' : 'border-gray-100 bg-white'}`}
+                className={`flex-row items-center p-4 rounded-2xl mb-3 border ${selected ? 'border-primary' : 'border-gray-100 dark:border-slate-700 bg-white dark:bg-slate-900'}`}
                 style={{
-                    backgroundColor: selected ? themeColors.primary + '08' : 'white',
+                    backgroundColor: selected ? themeColors.primary + '08' : (isDark ? colors.surface : 'white'),
                     ...(!selected && {
                         shadowColor: palette.black,
                         shadowOffset: { width: 0, height: 2 },
@@ -52,10 +54,10 @@ export default function AddressCard({
 
                 {/* Details */}
                 <View className="flex-1">
-                    <Text className={`font-bold text-[15px] mb-0.5 ${selected ? 'text-primary' : 'text-gray-900'}`}>
+                    <Text className={`font-bold text-[15px] mb-0.5 ${selected ? 'text-primary' : 'text-gray-900 dark:text-slate-50'}`}>
                         {address.saveAs}
                     </Text>
-                    <Text className="text-gray-500 text-[11px] leading-[15px]" numberOfLines={2}>
+                    <Text className="text-gray-500 dark:text-slate-400 text-[11px] leading-[15px]" numberOfLines={2}>
                         {address.houseNo ? `${address.houseNo}, ` : ''}{address.area}, {address.city}, {address.state} - {address.pincode}
                     </Text>
                 </View>
@@ -71,7 +73,7 @@ export default function AddressCard({
                         accessibilityRole="button"
                         accessibilityLabel="More options"
                     >
-                        <Ionicons name="ellipsis-vertical" size={20} color="gray" />
+                        <Ionicons name="ellipsis-vertical" size={20} color={isDark ? colors.textSecondary : 'gray'} />
                     </TouchableOpacity>
                 )}
             </TouchableOpacity>
@@ -83,7 +85,7 @@ export default function AddressCard({
                         position: 'absolute',
                         right: 10,
                         top: 45,
-                        backgroundColor: 'white',
+                        backgroundColor: isDark ? colors.surface : 'white',
                         borderRadius: 12,
                         padding: 8,
                         shadowColor: palette.black,
@@ -94,7 +96,7 @@ export default function AddressCard({
                         zIndex: 100,
                         flexDirection: 'row',
                         borderWidth: 1,
-                        borderColor: palette.gray100
+                        borderColor: isDark ? colors.border : palette.gray100
                     }}
                 >
                     <TouchableOpacity
@@ -104,7 +106,7 @@ export default function AddressCard({
                         <Ionicons name="pencil" size={16} color={themeColors.primary} />
                         <Text className="ml-2 text-primary font-bold text-sm">Edit</Text>
                     </TouchableOpacity>
-                    <View className="w-[1px] h-full bg-gray-100 mx-1" />
+                    <View className="w-[1px] h-full bg-gray-100 dark:bg-slate-700 mx-1" />
                     <TouchableOpacity
                         onPress={onDelete}
                         className="flex-row items-center px-3 py-2"

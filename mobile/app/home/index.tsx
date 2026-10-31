@@ -36,8 +36,8 @@ export default function Home(): React.JSX.Element {
 
                 {/* Additional Promo / Content can go here */}
                 <View className="px-6 mb-8">
-                    <View className="bg-gray-50 h-[200px] rounded-3xl items-center justify-center border border-gray-100 border-dashed">
-                        <Text className="text-gray-400 font-medium">More Content Coming Soon</Text>
+                    <View className="bg-gray-50 dark:bg-slate-800 h-[200px] rounded-3xl items-center justify-center border border-gray-100 dark:border-slate-700 border-dashed">
+                        <Text className="text-gray-400 dark:text-slate-400 font-medium">More Content Coming Soon</Text>
                     </View>
                 </View>
             </ScrollView>

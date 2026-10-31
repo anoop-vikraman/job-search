@@ -1,6 +1,7 @@
 import { palette } from '@tweak/theme';
 import React from 'react';
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { useTheme } from '../../themes/ThemeProvider';
 
 interface SelectableCardProps {
     title: string;
@@ -10,25 +11,30 @@ interface SelectableCardProps {
 }
 
 export default function SelectableCard({ title, children, isSelected, onSelect }: SelectableCardProps): React.JSX.Element {
+    const { colors, isDark } = useTheme();
     return (
         <View style={[
             styles.container,
-            isSelected ? styles.containerSelected : styles.containerUnselected
+            isDark && { backgroundColor: colors.surface },
+            isSelected ? styles.containerSelected : styles.containerUnselected,
+            !isSelected && isDark && { borderColor: colors.border }
         ]}>
             <TouchableOpacity
                 onPress={onSelect}
                 activeOpacity={0.7}
-                style={styles.header}
+                style={[styles.header, isDark && { backgroundColor: colors.surfaceMuted }]}
             >
                 <Text style={[
                     styles.title,
-                    isSelected ? styles.titleSelected : styles.titleUnselected
+                    isSelected ? styles.titleSelected : styles.titleUnselected,
+                    !isSelected && isDark && { color: colors.text }
                 ]}>
                     {title}
                 </Text>
                 <View style={[
                     styles.radio,
-                    isSelected ? styles.radioSelected : styles.radioUnselected
+                    isSelected ? styles.radioSelected : styles.radioUnselected,
+                    !isSelected && isDark && { borderColor: colors.border, backgroundColor: colors.surface }
                 ]}>
                     {isSelected && <View style={styles.radioDot} />}
                 </View>

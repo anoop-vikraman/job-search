@@ -5,10 +5,12 @@ import { Image, TouchableOpacity, View } from 'react-native';
 import { palette } from '@tweak/theme';
 import { useAuthStore } from '../../store/useAuthStore';
 import { themeColors } from '../../themes/colors';
+import { useTheme } from '../../themes/ThemeProvider';
 
 export default function ProfileHeaderRight(): React.JSX.Element {
     const router = useRouter();
     const { user } = useAuthStore();
+    const { colors, isDark } = useTheme();
 
     // Default avatar if no profile picture
     const defaultAvatar = "https://ui-avatars.com/api/?background=6366F1&color=fff&name=" +
@@ -23,7 +25,7 @@ export default function ProfileHeaderRight(): React.JSX.Element {
             {user?.profilePictureUrl ? (
                 <Image
                     source={{ uri: user.profilePictureUrl }}
-                    style={{ width: 32, height: 32, borderRadius: 16, borderWidth: 1, borderColor: palette.gray200 }}
+                    style={{ width: 32, height: 32, borderRadius: 16, borderWidth: 1, borderColor: isDark ? colors.border : palette.gray200 }}
                 />
             ) : (
                 <View style={{

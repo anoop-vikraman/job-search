@@ -478,7 +478,7 @@ export default function CustomVoiceRecorder({ uri, onRecordingComplete, label = 
     // Recorded State
     if (isRecorded) {
         return (
-            <View className="flex-row items-center bg-white border border-gray-200 rounded-2xl px-2 py-2 gap-2 min-h-[56px]">
+            <View className="flex-row items-center bg-white dark:bg-slate-900 border border-gray-200 dark:border-slate-700 rounded-2xl px-2 py-2 gap-2 min-h-[56px]">
                 {/* Delete Button */}
                 <TouchableOpacity onPress={confirmDelete} className="p-2" accessibilityRole="button" accessibilityLabel="Delete recording">
                     <MaterialCommunityIcons name="delete-outline" size={24} color={palette.gray500} />
@@ -509,7 +509,7 @@ export default function CustomVoiceRecorder({ uri, onRecordingComplete, label = 
     // Recording Locked State
     if (isRecordingLocked) {
         return (
-            <View className="flex-row items-center bg-white border border-gray-200 rounded-2xl px-2 py-2 gap-2 min-h-[56px]">
+            <View className="flex-row items-center bg-white dark:bg-slate-900 border border-gray-200 dark:border-slate-700 rounded-2xl px-2 py-2 gap-2 min-h-[56px]">
                 {/* Red Mic Icon */}
                 <View className="w-10 h-10 bg-red-100 rounded-full justify-center items-center">
                     <Animated.View style={blinkStyle}>
@@ -549,7 +549,7 @@ export default function CustomVoiceRecorder({ uri, onRecordingComplete, label = 
         <View className="relative">
             <Animated.View
                 style={[containerAnimatedStyle]}
-                className="flex-row items-center border border-gray-200 rounded-2xl px-3 py-2 min-h-[56px]"
+                className="flex-row items-center border border-gray-200 dark:border-slate-700 rounded-2xl px-3 py-2 min-h-[56px]"
             >
                 {/* Left Side - Timer when recording, placeholder when idle */}
                 {isRecordingHeld ? (
@@ -625,7 +625,7 @@ export default function CustomVoiceRecorder({ uri, onRecordingComplete, label = 
                     ]}
                     pointerEvents="none"
                 >
-                    <View className="bg-white p-2 rounded-full shadow-lg border border-gray-200 mb-1">
+                    <View className="bg-white dark:bg-slate-900 p-2 rounded-full shadow-lg border border-gray-200 dark:border-slate-700 mb-1">
                         <MaterialCommunityIcons name="lock-open-outline" size={20} color={palette.gray700} />
                     </View>
                     <Entypo name="chevron-up" size={18} color={palette.gray400} />

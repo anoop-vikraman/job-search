@@ -19,6 +19,7 @@ import { useTweak, useUpdateTweak } from '@/hooks/useTweaks';
 import { useAddToWatchlist, useRemoveFromWatchlist, useWatchlist } from '@/hooks/useWatchlist';
 import { ScheduleSlot } from '@/types/tweak';
 import { palette } from '@tweak/theme';
+import { useTheme } from '@/themes/ThemeProvider';
 
 // ─── Conflict Detection Helpers ───────────────────────────────────────────────
 
@@ -98,6 +99,7 @@ function SkillBadge({
     skill: string;
     matched: boolean;
 }) {
+    const { colors } = useTheme();
     const [showTip, setShowTip] = useState(false);
 
     return (
@@ -112,8 +114,8 @@ function SkillBadge({
                     paddingVertical: 6,
                     borderRadius: 20,
                     borderWidth: 1,
-                    backgroundColor: matched ? palette.green100 : palette.slate50,
-                    borderColor: matched ? palette.green300 : palette.slate200,
+                    backgroundColor: matched ? palette.green100 : colors.surfaceMuted,
+                    borderColor: matched ? palette.green300 : colors.border,
                 }}
             >
                 {matched && (
@@ -123,7 +125,7 @@ function SkillBadge({
                     style={{
                         fontSize: 13,
                         fontWeight: '600',
-                        color: matched ? palette.green600 : palette.slate600,
+                        color: matched ? palette.green600 : colors.textSecondary,
                     }}
                 >
                     {skill}
@@ -137,14 +139,14 @@ function SkillBadge({
                     onPress={() => setShowTip(false)}
                 >
                     <View style={{
-                        backgroundColor: '#fff', borderRadius: 16, padding: 20, marginHorizontal: 32,
+                        backgroundColor: colors.surface, borderRadius: 16, padding: 20, marginHorizontal: 32,
                         shadowColor: '#000', shadowOpacity: 0.15, shadowRadius: 12, elevation: 10,
                     }}>
                         <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8, marginBottom: 8 }}>
-                            <Ionicons name={matched ? 'checkmark-circle' : 'information-circle'} size={20} color={matched ? palette.green600 : palette.slate400} />
-                            <Text style={{ fontSize: 15, fontWeight: '700', color: palette.slate900 }}>{skill}</Text>
+                            <Ionicons name={matched ? 'checkmark-circle' : 'information-circle'} size={20} color={matched ? palette.green600 : colors.textMuted} />
+                            <Text style={{ fontSize: 15, fontWeight: '700', color: colors.text }}>{skill}</Text>
                         </View>
-                        <Text style={{ color: palette.slate600, fontSize: 14, lineHeight: 20 }}>
+                        <Text style={{ color: colors.textSecondary, fontSize: 14, lineHeight: 20 }}>
                             {matched
                                 ? 'This skill matches your profile! You have a higher chance of being selected.'
                                 : "You don't have this skill listed on your profile. Consider adding it to improve your chances."}
@@ -163,6 +165,7 @@ function ConflictSlotBadge({
     label: string;
     conflict: ConflictType;
 }) {
+    const { colors } = useTheme();
     const [showTip, setShowTip] = useState(false);
 
     const bg = conflict === 'working_time' ? palette.red50 : conflict === 'availability' ? palette.orange50 : palette.blue50;
@@ -206,14 +209,14 @@ function ConflictSlotBadge({
                     onPress={() => setShowTip(false)}
                 >
                     <View style={{
-                        backgroundColor: '#fff', borderRadius: 16, padding: 20, marginHorizontal: 32,
+                        backgroundColor: colors.surface, borderRadius: 16, padding: 20, marginHorizontal: 32,
                         shadowColor: '#000', shadowOpacity: 0.15, shadowRadius: 12, elevation: 10,
                     }}>
                         <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8, marginBottom: 8 }}>
                             <Ionicons name="warning" size={20} color={textColor} />
-                            <Text style={{ fontSize: 15, fontWeight: '700', color: palette.slate900 }}>Schedule Conflict</Text>
+                            <Text style={{ fontSize: 15, fontWeight: '700', color: colors.text }}>Schedule Conflict</Text>
                         </View>
-                        <Text style={{ color: palette.slate600, fontSize: 14, lineHeight: 20 }}>{tipText}</Text>
+                        <Text style={{ color: colors.textSecondary, fontSize: 14, lineHeight: 20 }}>{tipText}</Text>
                     </View>
                 </Pressable>
             </Modal>
@@ -226,6 +229,7 @@ function ConflictSlotBadge({
 export default function TweakDetails(): React.JSX.Element {
     const { id } = useLocalSearchParams();
     const router = useRouter();
+    const { colors } = useTheme();
     const { user } = useAuthStore();
     const { data: tweak } = useTweak(id as string);
     const { data: watchlist = [] } = useWatchlist();
@@ -281,9 +285,9 @@ export default function TweakDetails(): React.JSX.Element {
         return (
             <ScreenWrapper>
                 <View className="flex-1 items-center justify-center px-6">
-                    <Ionicons name="alert-circle-outline" size={64} color={palette.gray400} />
-                    <Text className="text-xl font-bold text-gray-900 mt-4">Tweak Not Found</Text>
-                    <Text className="text-gray-500 text-center mt-2">
+                    <Ionicons name="alert-circle-outline" size={64} color={colors.textMuted} />
+                    <Text className="text-xl font-bold text-gray-900 dark:text-slate-50 mt-4">Tweak Not Found</Text>
+                    <Text className="text-gray-500 dark:text-slate-400 text-center mt-2">
                         This tweak may have been removed or doesn't exist.
                     </Text>
                     <TouchableOpacity
@@ -380,11 +384,11 @@ export default function TweakDetails(): React.JSX.Element {
     return (
         <ScreenWrapper>
             {/* ── Header ──────────────────────────────────────────────────── */}
-            <View className="px-4 py-4 flex-row items-center justify-between bg-white border-b border-gray-100">
+            <View className="px-4 py-4 flex-row items-center justify-between bg-white dark:bg-slate-900 border-b border-gray-100 dark:border-slate-700">
                 <TouchableOpacity onPress={() => router.back()} className="p-2 -ml-2" accessibilityRole="button" accessibilityLabel="Go back">
-                    <Ionicons name="arrow-back" size={24} color={palette.gray900} />
+                    <Ionicons name="arrow-back" size={24} color={colors.text} />
                 </TouchableOpacity>
-                <Text className="text-lg font-bold text-gray-900">Tweak Details</Text>
+                <Text className="text-lg font-bold text-gray-900 dark:text-slate-50">Tweak Details</Text>
                 <View style={{ flexDirection: 'row', alignItems: 'center', gap: 4 }}>
                     {/* Watchlist Button */}
                     {!isOwnedByMe && (
@@ -397,7 +401,7 @@ export default function TweakDetails(): React.JSX.Element {
                             <Ionicons
                                 name={isWatchlisted ? 'bookmark' : 'bookmark-outline'}
                                 size={22}
-                                color={isWatchlisted ? palette.iosBlue : palette.gray700}
+                                color={isWatchlisted ? palette.iosBlue : colors.textSecondary}
                             />
                         </TouchableOpacity>
                     )}
@@ -408,21 +412,21 @@ export default function TweakDetails(): React.JSX.Element {
                         accessibilityRole="button"
                         accessibilityLabel="More options"
                     >
-                        <Ionicons name="ellipsis-vertical" size={22} color={palette.gray700} />
+                        <Ionicons name="ellipsis-vertical" size={22} color={colors.textSecondary} />
                     </TouchableOpacity>
                 </View>
             </View>
 
-            <ScrollView showsVerticalScrollIndicator={false} className="flex-1 bg-white" contentContainerStyle={{ flexGrow: 1 }}>
+            <ScrollView showsVerticalScrollIndicator={false} className="flex-1 bg-white dark:bg-slate-900" contentContainerStyle={{ flexGrow: 1 }}>
                 <View className="flex-1 p-5 pb-8">
                     {/* 1. Category as Title */}
-                    <Text className="text-3xl font-bold text-gray-900 mb-4 capitalize">{tweak.category || 'General Task'}</Text>
+                    <Text className="text-3xl font-bold text-gray-900 dark:text-slate-50 mb-4 capitalize">{tweak.category || 'General Task'}</Text>
 
                     {/* 2. Location (if in-person) */}
                     {tweak.tweakType === 'in_person' && tweak.address && (
                         <View className="flex-row items-center mb-4">
                             <Ionicons name="location-sharp" size={18} color={palette.blue600} />
-                            <Text className="text-gray-700 ml-1 text-base font-medium">{tweak.address.city}, {tweak.address.state}</Text>
+                            <Text className="text-gray-700 dark:text-slate-300 ml-1 text-base font-medium">{tweak.address.city}, {tweak.address.state}</Text>
                         </View>
                     )}
 
@@ -496,7 +500,7 @@ export default function TweakDetails(): React.JSX.Element {
                     {/* 4. Schedule & Availability Slots */}
                     {tweak.scheduleData && (
                         <View className="mb-6">
-                            <Text className="text-base font-bold text-gray-900 mb-3">Schedule & Availability</Text>
+                            <Text className="text-base font-bold text-gray-900 dark:text-slate-50 mb-3">Schedule & Availability</Text>
 
                             {(tweak.schedulePreference === 'few_days' || tweak.schedulePreference === 'deadline') ? (
                                 <ScrollView horizontal showsHorizontalScrollIndicator={false} className="mb-2">
@@ -506,13 +510,13 @@ export default function TweakDetails(): React.JSX.Element {
                                             const dayName = slotDate.toLocaleDateString('en-US', { weekday: 'short' });
                                             const day = slotDate.getDate();
                                             const month = slotDate.toLocaleDateString('en-US', { month: 'short' });
-                                            const bg = conflict === 'working_time' ? palette.red50 : conflict === 'availability' ? palette.orange50 : palette.white;
-                                            const border = conflict === 'working_time' ? palette.red200 : conflict === 'availability' ? palette.orange200 : palette.gray200;
+                                            const bg = conflict === 'working_time' ? palette.red50 : conflict === 'availability' ? palette.orange50 : colors.surface;
+                                            const border = conflict === 'working_time' ? palette.red200 : conflict === 'availability' ? palette.orange200 : colors.border;
 
                                             return (
                                                 <View key={index} style={{ backgroundColor: bg, borderWidth: 1, borderColor: border, borderRadius: 14, padding: 12, minWidth: 90, alignItems: 'center' }}>
-                                                    <Text style={{ color: palette.gray500, fontSize: 10, fontWeight: '700', textTransform: 'uppercase', marginBottom: 2 }}>{dayName}</Text>
-                                                    <Text style={{ color: palette.gray900, fontSize: 18, fontWeight: '800', marginBottom: 6 }}>{day} {month}</Text>
+                                                    <Text style={{ color: colors.textSecondary, fontSize: 10, fontWeight: '700', textTransform: 'uppercase', marginBottom: 2 }}>{dayName}</Text>
+                                                    <Text style={{ color: colors.text, fontSize: 18, fontWeight: '800', marginBottom: 6 }}>{day} {month}</Text>
                                                     <ConflictSlotBadge
                                                         label={`${slot.start} - ${slot.end}`}
                                                         conflict={conflict}
@@ -524,13 +528,13 @@ export default function TweakDetails(): React.JSX.Element {
                                 </ScrollView>
                             ) : tweak.schedulePreference === 'one_day' && tweak.scheduleData.date ? (
                                 <View>
-                                    <View className="bg-white border border-gray-200 rounded-xl p-4 flex-row items-center gap-3 mb-4">
+                                    <View className="bg-white dark:bg-slate-900 border border-gray-200 dark:border-slate-700 rounded-xl p-4 flex-row items-center gap-3 mb-4">
                                         <View className="w-12 h-12 bg-blue-50 rounded-full items-center justify-center">
                                             <Ionicons name="calendar-outline" size={24} color={palette.blue600} />
                                         </View>
                                         <View>
-                                            <Text className="text-xs text-gray-500 font-medium uppercase mb-1">Date</Text>
-                                            <Text className="text-base font-bold text-gray-900">{formatDate(new Date(tweak.scheduleData.date))}</Text>
+                                            <Text className="text-xs text-gray-500 dark:text-slate-400 font-medium uppercase mb-1">Date</Text>
+                                            <Text className="text-base font-bold text-gray-900 dark:text-slate-50">{formatDate(new Date(tweak.scheduleData.date))}</Text>
                                         </View>
                                     </View>
 
@@ -575,8 +579,8 @@ export default function TweakDetails(): React.JSX.Element {
                     {/* 6. Description */}
                     {tweak.description && (
                         <View className="mb-6">
-                            <Text className="text-base font-bold text-gray-900 mb-3">About the Job</Text>
-                            <Text className="text-gray-600 text-base leading-6">
+                            <Text className="text-base font-bold text-gray-900 dark:text-slate-50 mb-3">About the Job</Text>
+                            <Text className="text-gray-600 dark:text-slate-300 text-base leading-6">
                                 {showFullDescription ? tweak.description : truncateText(tweak.description, 200)}
                             </Text>
                             {tweak.description.length > 200 && (
@@ -590,17 +594,17 @@ export default function TweakDetails(): React.JSX.Element {
                     {/* 7. Voice Instructions */}
                     {tweak.audioUri && (
                         <View className="mb-6">
-                            <Text className="text-base font-bold text-gray-900 mb-3">Voice Instructions</Text>
-                            <View className="bg-white border border-gray-200 rounded-full p-2 pr-6 flex-row items-center shadow-sm">
+                            <Text className="text-base font-bold text-gray-900 dark:text-slate-50 mb-3">Voice Instructions</Text>
+                            <View className="bg-white dark:bg-slate-900 border border-gray-200 dark:border-slate-700 rounded-full p-2 pr-6 flex-row items-center shadow-sm">
                                 <TouchableOpacity
                                     onPress={togglePlayback}
-                                    className="w-10 h-10 bg-gray-100 rounded-full items-center justify-center mr-4"
+                                    className="w-10 h-10 bg-gray-100 dark:bg-slate-800 rounded-full items-center justify-center mr-4"
                                     accessibilityRole="button"
                                     accessibilityLabel={isPlaying ? 'Pause audio' : 'Play audio'}
                                 >
-                                    <FontAwesome5 name={isPlaying ? 'pause' : 'play'} size={14} color={palette.gray700} />
+                                    <FontAwesome5 name={isPlaying ? 'pause' : 'play'} size={14} color={colors.textSecondary} />
                                 </TouchableOpacity>
-                                <Text className="text-sm font-bold text-gray-900 mr-4">
+                                <Text className="text-sm font-bold text-gray-900 dark:text-slate-50 mr-4">
                                     {formatDuration(isPlaying ? playerStatus.currentTime : playerStatus.duration)}
                                 </Text>
                                 <View className="flex-1 h-8 justify-center gap-1 flex-row items-center opacity-40">
@@ -615,13 +619,13 @@ export default function TweakDetails(): React.JSX.Element {
                     {/* 8. Photos */}
                     {tweak.images && tweak.images.length > 0 && (
                         <View className="mb-6">
-                            <Text className="text-base font-bold text-gray-900 mb-3">Photos</Text>
+                            <Text className="text-base font-bold text-gray-900 dark:text-slate-50 mb-3">Photos</Text>
                             <ScrollView horizontal showsHorizontalScrollIndicator={false} className="-mx-5 px-5">
                                 {tweak.images.map((img: { uri: string }, index: number) => (
                                     <View key={index} className="mr-3 shadow-md shadow-gray-200">
                                         <Image
                                             source={{ uri: img.uri }}
-                                            className="w-32 h-32 rounded-xl bg-gray-100"
+                                            className="w-32 h-32 rounded-xl bg-gray-100 dark:bg-slate-800"
                                             resizeMode="cover"
                                         />
                                     </View>
@@ -634,7 +638,7 @@ export default function TweakDetails(): React.JSX.Element {
                     {tweak.skills && tweak.skills.length > 0 && (
                         <View className="mb-6">
                             <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: 12 }}>
-                                <Text className="text-base font-bold text-gray-900">Skills Required</Text>
+                                <Text className="text-base font-bold text-gray-900 dark:text-slate-50">Skills Required</Text>
                                 {!isOwnedByMe && (
                                     <View style={{ flexDirection: 'row', alignItems: 'center', gap: 4 }}>
                                         <Ionicons name="checkmark-circle" size={12} color={palette.green600} />
@@ -658,11 +662,11 @@ export default function TweakDetails(): React.JSX.Element {
                     {/* 10. Languages */}
                     {tweak.languages && tweak.languages.length > 0 && (
                         <View className="mb-6">
-                            <Text className="text-base font-bold text-gray-900 mb-3">Languages</Text>
+                            <Text className="text-base font-bold text-gray-900 dark:text-slate-50 mb-3">Languages</Text>
                             <View className="flex-row flex-wrap gap-2">
                                 {tweak.languages.map((lang: string, index: number) => (
-                                    <View key={index} className="bg-gray-100 px-4 py-2 rounded-full border border-gray-200">
-                                        <Text className="text-gray-700 font-medium">{lang}</Text>
+                                    <View key={index} className="bg-gray-100 dark:bg-slate-800 px-4 py-2 rounded-full border border-gray-200 dark:border-slate-700">
+                                        <Text className="text-gray-700 dark:text-slate-300 font-medium">{lang}</Text>
                                     </View>
                                 ))}
                             </View>
@@ -670,7 +674,7 @@ export default function TweakDetails(): React.JSX.Element {
                     )}
 
                     {/* ── Action Buttons ─────────────────────────────────────── */}
-                    <View className="mt-auto pt-6 border-t border-gray-100">
+                    <View className="mt-auto pt-6 border-t border-gray-100 dark:border-slate-700">
                         {isOwnedByMe ? (
                             <View style={{ gap: 10 }}>
                                 {/* View Applicants Button */}
@@ -696,10 +700,10 @@ export default function TweakDetails(): React.JSX.Element {
                                 <View className="flex-row gap-3">
                                     <TouchableOpacity
                                         onPress={() => router.push('/create-tweak/edit')}
-                                        className="flex-1 bg-white border border-gray-300 py-4 rounded-xl flex-row items-center justify-center gap-2"
+                                        className="flex-1 bg-white dark:bg-slate-900 border border-gray-300 dark:border-slate-700 py-4 rounded-xl flex-row items-center justify-center gap-2"
                                     >
-                                        <Ionicons name="create-outline" size={20} color={palette.gray700} />
-                                        <Text className="font-bold text-gray-700">Edit Tweak</Text>
+                                        <Ionicons name="create-outline" size={20} color={colors.textSecondary} />
+                                        <Text className="font-bold text-gray-700 dark:text-slate-300">Edit Tweak</Text>
                                     </TouchableOpacity>
                                     <TouchableOpacity
                                         onPress={() => {
@@ -777,7 +781,7 @@ export default function TweakDetails(): React.JSX.Element {
                         position: 'absolute',
                         top: 70,
                         right: 16,
-                        backgroundColor: '#fff',
+                        backgroundColor: colors.surface,
                         borderRadius: 16,
                         shadowColor: '#000',
                         shadowOpacity: 0.15,
@@ -791,7 +795,7 @@ export default function TweakDetails(): React.JSX.Element {
                                 setShowMenuModal(false);
                                 Alert.alert('Report', 'Thank you for your report. We will review this tweak.');
                             }}
-                            style={{ flexDirection: 'row', alignItems: 'center', gap: 12, paddingHorizontal: 16, paddingVertical: 14, borderBottomWidth: 1, borderBottomColor: palette.slate100 }}
+                            style={{ flexDirection: 'row', alignItems: 'center', gap: 12, paddingHorizontal: 16, paddingVertical: 14, borderBottomWidth: 1, borderBottomColor: colors.border }}
                         >
                             <Ionicons name="flag-outline" size={18} color={palette.red500} />
                             <Text style={{ fontSize: 15, fontWeight: '600', color: palette.red500 }}>Report</Text>
@@ -803,8 +807,8 @@ export default function TweakDetails(): React.JSX.Element {
                             }}
                             style={{ flexDirection: 'row', alignItems: 'center', gap: 12, paddingHorizontal: 16, paddingVertical: 14 }}
                         >
-                            <Ionicons name="help-circle-outline" size={18} color={palette.gray700} />
-                            <Text style={{ fontSize: 15, fontWeight: '600', color: palette.gray700 }}>Support</Text>
+                            <Ionicons name="help-circle-outline" size={18} color={colors.textSecondary} />
+                            <Text style={{ fontSize: 15, fontWeight: '600', color: colors.textSecondary }}>Support</Text>
                         </TouchableOpacity>
                     </View>
                 </Pressable>
@@ -812,11 +816,11 @@ export default function TweakDetails(): React.JSX.Element {
             {/* ── Application Summary Modal ─────────────────────────────── */}
             <Modal visible={showAppSummaryModal} transparent animationType="slide" onRequestClose={() => setShowAppSummaryModal(false)}>
                 <View style={{ flex: 1, backgroundColor: 'rgba(0,0,0,0.5)', justifyContent: 'flex-end' }}>
-                    <View style={{ backgroundColor: '#fff', borderTopLeftRadius: 24, borderTopRightRadius: 24, padding: 24, minHeight: '60%' }}>
+                    <View style={{ backgroundColor: colors.surface, borderTopLeftRadius: 24, borderTopRightRadius: 24, padding: 24, minHeight: '60%' }}>
                         <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: 20 }}>
-                            <Text style={{ fontSize: 20, fontWeight: '800', color: palette.slate900 }}>Your Application</Text>
+                            <Text style={{ fontSize: 20, fontWeight: '800', color: colors.text }}>Your Application</Text>
                             <TouchableOpacity onPress={() => setShowAppSummaryModal(false)} accessibilityRole="button" accessibilityLabel="Close">
-                                <Ionicons name="close-circle" size={28} color={palette.slate300} />
+                                <Ionicons name="close-circle" size={28} color={colors.textMuted} />
                             </TouchableOpacity>
                         </View>
 
@@ -838,22 +842,22 @@ export default function TweakDetails(): React.JSX.Element {
                             </View>
 
                             {/* Pitch */}
-                            <Text style={{ fontSize: 14, fontWeight: '700', color: palette.slate500, marginBottom: 8, textTransform: 'uppercase' }}>Your Pitch</Text>
-                            <View style={{ backgroundColor: palette.slate50, padding: 16, borderRadius: 16, borderWidth: 1, borderColor: palette.slate200, marginBottom: 20 }}>
-                                <Text style={{ fontSize: 15, color: palette.slate700, lineHeight: 22 }}>
+                            <Text style={{ fontSize: 14, fontWeight: '700', color: colors.textSecondary, marginBottom: 8, textTransform: 'uppercase' }}>Your Pitch</Text>
+                            <View style={{ backgroundColor: colors.surfaceMuted, padding: 16, borderRadius: 16, borderWidth: 1, borderColor: colors.border, marginBottom: 20 }}>
+                                <Text style={{ fontSize: 15, color: colors.textSecondary, lineHeight: 22 }}>
                                     {myApplication?.whyPreferMessage}
                                 </Text>
                             </View>
 
                             {/* Quote */}
-                            <Text style={{ fontSize: 14, fontWeight: '700', color: palette.slate500, marginBottom: 8, textTransform: 'uppercase' }}>Your Quote</Text>
+                            <Text style={{ fontSize: 14, fontWeight: '700', color: colors.textSecondary, marginBottom: 8, textTransform: 'uppercase' }}>Your Quote</Text>
                             <View style={{ flexDirection: 'row', alignItems: 'center', gap: 10, marginBottom: 20 }}>
-                                <View style={{ backgroundColor: palette.slate100, paddingHorizontal: 16, paddingVertical: 10, borderRadius: 12 }}>
-                                    <Text style={{ fontSize: 18, fontWeight: '800', color: palette.slate900 }}>₹{myApplication?.quotedPrice || tweak.price}</Text>
+                                <View style={{ backgroundColor: colors.surfaceMuted, paddingHorizontal: 16, paddingVertical: 10, borderRadius: 12 }}>
+                                    <Text style={{ fontSize: 18, fontWeight: '800', color: colors.text }}>₹{myApplication?.quotedPrice || tweak.price}</Text>
                                 </View>
                                 {myApplication?.listerQuotedPrice && (
                                     <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}>
-                                        <Ionicons name="arrow-forward" size={16} color={palette.slate400} />
+                                        <Ionicons name="arrow-forward" size={16} color={colors.textMuted} />
                                         <View style={{ backgroundColor: palette.orange50, paddingHorizontal: 12, paddingVertical: 10, borderRadius: 12, borderWidth: 1, borderColor: palette.orange200 }}>
                                             <Text style={{ fontSize: 16, fontWeight: '800', color: palette.orange600 }}>Counter: ₹{myApplication.listerQuotedPrice}</Text>
                                         </View>
@@ -862,12 +866,12 @@ export default function TweakDetails(): React.JSX.Element {
                             </View>
 
                             {/* Slots */}
-                            <Text style={{ fontSize: 14, fontWeight: '700', color: palette.slate500, marginBottom: 8, textTransform: 'uppercase' }}>Selected Slots</Text>
+                            <Text style={{ fontSize: 14, fontWeight: '700', color: colors.textSecondary, marginBottom: 8, textTransform: 'uppercase' }}>Selected Slots</Text>
                             <View style={{ gap: 8, marginBottom: 30 }}>
                                 {myApplication?.selectedSlots.map((slot, i) => (
-                                    <View key={i} style={{ backgroundColor: palette.slate100, padding: 12, borderRadius: 12, flexDirection: 'row', alignItems: 'center', gap: 10 }}>
-                                        <Ionicons name="time-outline" size={16} color={palette.slate500} />
-                                        <Text style={{ fontSize: 14, color: palette.slate700, fontWeight: '600' }}>
+                                    <View key={i} style={{ backgroundColor: colors.surfaceMuted, padding: 12, borderRadius: 12, flexDirection: 'row', alignItems: 'center', gap: 10 }}>
+                                        <Ionicons name="time-outline" size={16} color={colors.textSecondary} />
+                                        <Text style={{ fontSize: 14, color: colors.textSecondary, fontWeight: '600' }}>
                                             {new Date(slot.date ?? '').toLocaleDateString('en-US', { day: 'numeric', month: 'short' })}: {slot.start} - {slot.end}
                                         </Text>
                                     </View>

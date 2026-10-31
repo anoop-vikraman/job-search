@@ -14,6 +14,7 @@ import SelectableCard from '../../components/UI/SelectableCard';
 import TabSelector from '../../components/UI/TabSelector';
 import { useConfirmationStore } from '../../store/useConfirmationStore';
 import { themeColors } from '../../themes/colors';
+import { useTheme } from '@/themes/ThemeProvider';
 
 import { DurationTab, PricingType } from '../../types/tweak';
 import { palette } from '@tweak/theme';
@@ -51,6 +52,7 @@ export default function CreateTweakStep4(): React.JSX.Element {
     const router = useRouter();
     const params = useLocalSearchParams();
     const confirm = useConfirmationStore(state => state.confirm);
+    const { colors, isDark } = useTheme();
 
     // Check if in edit mode
     const editMode = params.editMode === 'true';
@@ -182,14 +184,22 @@ export default function CreateTweakStep4(): React.JSX.Element {
         });
     };
 
+    // Dark-mode overrides for module-level StyleSheet constants (neutral surfaces/text only).
+    const labelDark = isDark ? { color: colors.textSecondary } : null;
+    const currencyDark = isDark ? { color: colors.text } : null;
+    const inputDark = isDark ? { color: colors.text } : null;
+    const fieldWrapperDark = isDark ? { borderColor: colors.border, backgroundColor: colors.surface } : null;
+    const fieldDark = isDark ? { borderColor: colors.border, color: colors.text, backgroundColor: colors.surface } : null;
+    const placeholderColor = isDark ? colors.textMuted : palette.gray400;
+
     return (
         <ScreenWrapper scrollable contentContainerStyle={styles.scrollContent}>
-            <View style={styles.header}>
-                <TouchableOpacity onPress={() => router.back()} style={styles.backButton} accessibilityRole="button" accessibilityLabel="Go back">
-                    <Ionicons name="arrow-back" size={24} color={themeColors.text} />
+            <View style={[styles.header, isDark && { backgroundColor: colors.surface, borderBottomColor: colors.border }]}>
+                <TouchableOpacity onPress={() => router.back()} style={[styles.backButton, isDark && { backgroundColor: colors.surfaceMuted }]} accessibilityRole="button" accessibilityLabel="Go back">
+                    <Ionicons name="arrow-back" size={24} color={isDark ? colors.text : themeColors.text} />
                 </TouchableOpacity>
                 <View style={styles.headerTextContainer}>
-                    <Text style={styles.headerTitle}>Create Tweak</Text>
+                    <Text style={[styles.headerTitle, isDark && { color: colors.text }]}>Create Tweak</Text>
                     <Text style={styles.headerSubtitle}>STEP 4 OF 4</Text>
                 </View>
                 <ProfileHeaderRight />
@@ -197,8 +207,8 @@ export default function CreateTweakStep4(): React.JSX.Element {
 
             <View>
                 <View style={styles.titleSection}>
-                    <Text style={styles.title}>Set Your Price</Text>
-                    <Text style={styles.subtitle}>Choose how you'd like to price this tweak.</Text>
+                    <Text style={[styles.title, isDark && { color: colors.text }]}>Set Your Price</Text>
+                    <Text style={[styles.subtitle, isDark && { color: colors.textSecondary }]}>Choose how you'd like to price this tweak.</Text>
                 </View>
 
                 {/* Fixed Price Card */}
@@ -208,23 +218,24 @@ export default function CreateTweakStep4(): React.JSX.Element {
                     onSelect={() => setValue('selectedPricingType', 'fixed')}
                 >
                     <View style={styles.inputContainer}>
-                        <Text style={styles.inputLabel}>TOTAL AMOUNT</Text>
+                        <Text style={[styles.inputLabel, labelDark]}>TOTAL AMOUNT</Text>
                         <View style={[
                             styles.priceInputWrapper,
+                            isDark && { backgroundColor: colors.surface },
                             { borderColor: getBorderColor(getFixedPriceAmount(), MIN_AMOUNT, RECOMMENDED_AMOUNT) }
                         ]}>
-                            <Text style={styles.currencySymbol}>₹</Text>
+                            <Text style={[styles.currencySymbol, currencyDark]}>₹</Text>
                             <Controller
                                 control={control}
                                 name="fixedPrice"
                                 render={({ field: { onChange, value } }) => (
                                     <TextInput
-                                        style={styles.priceInput}
+                                        style={[styles.priceInput, inputDark]}
                                         value={value}
                                         onChangeText={onChange}
                                         placeholder="0"
                                         keyboardType="numeric"
-                                        placeholderTextColor={palette.gray400}
+                                        placeholderTextColor={placeholderColor}
                                     />
                                 )}
                             />
@@ -245,38 +256,38 @@ export default function CreateTweakStep4(): React.JSX.Element {
                 >
                     <View style={styles.quantityRow}>
                         <View style={styles.quantityInputContainer}>
-                            <Text style={styles.inputLabel}>RATE</Text>
-                            <View style={styles.quantityInputWrapper}>
-                                <Text style={styles.currencySymbol}>₹</Text>
+                            <Text style={[styles.inputLabel, labelDark]}>RATE</Text>
+                            <View style={[styles.quantityInputWrapper, fieldWrapperDark]}>
+                                <Text style={[styles.currencySymbol, currencyDark]}>₹</Text>
                                 <Controller
                                     control={control}
                                     name="quantityRate"
                                     render={({ field: { onChange, value } }) => (
                                         <TextInput
-                                            style={styles.quantityInput}
+                                            style={[styles.quantityInput, inputDark]}
                                             value={value}
                                             onChangeText={onChange}
                                             placeholder="0"
                                             keyboardType="numeric"
-                                            placeholderTextColor={palette.gray400}
+                                            placeholderTextColor={placeholderColor}
                                         />
                                     )}
                                 />
                             </View>
                         </View>
-                        <Text style={styles.perText}>per</Text>
+                        <Text style={[styles.perText, labelDark]}>per</Text>
                         <View style={styles.quantityInputContainer}>
-                            <Text style={styles.inputLabel}>UNIT</Text>
+                            <Text style={[styles.inputLabel, labelDark]}>UNIT</Text>
                             <Controller
                                 control={control}
                                 name="quantityUnit"
                                 render={({ field: { onChange, value } }) => (
                                     <TextInput
-                                        style={styles.unitInput}
+                                        style={[styles.unitInput, fieldDark]}
                                         value={value}
                                         onChangeText={onChange}
                                         placeholder="e.g., hour, item"
-                                        placeholderTextColor={palette.gray400}
+                                        placeholderTextColor={placeholderColor}
                                     />
                                 )}
                             />
@@ -284,18 +295,18 @@ export default function CreateTweakStep4(): React.JSX.Element {
                     </View>
 
                     <View style={styles.inputContainer}>
-                        <Text style={styles.inputLabel}>ESTIMATED QUANTITY</Text>
+                        <Text style={[styles.inputLabel, labelDark]}>ESTIMATED QUANTITY</Text>
                         <Controller
                             control={control}
                             name="estimatedQuantity"
                             render={({ field: { onChange, value } }) => (
                                 <TextInput
-                                    style={styles.standardInput}
+                                    style={[styles.standardInput, fieldDark]}
                                     value={value}
                                     onChangeText={onChange}
                                     placeholder="Enter estimated quantity"
                                     keyboardType="numeric"
-                                    placeholderTextColor={palette.gray400}
+                                    placeholderTextColor={placeholderColor}
                                 />
                             )}
                         />
@@ -336,38 +347,38 @@ export default function CreateTweakStep4(): React.JSX.Element {
                         {durationTab === 'hourly' ? (
                             <>
                                 <View style={styles.inputContainer}>
-                                    <Text style={styles.inputLabel}>ESTIMATED HOURS</Text>
+                                    <Text style={[styles.inputLabel, labelDark]}>ESTIMATED HOURS</Text>
                                     <Controller
                                         control={control}
                                         name="estimatedHours"
                                         render={({ field: { onChange, value } }) => (
                                             <TextInput
-                                                style={styles.standardInput}
+                                                style={[styles.standardInput, fieldDark]}
                                                 value={value}
                                                 onChangeText={onChange}
                                                 placeholder="Enter total hours"
                                                 keyboardType="numeric"
-                                                placeholderTextColor={palette.gray400}
+                                                placeholderTextColor={placeholderColor}
                                             />
                                         )}
                                     />
                                 </View>
 
                                 <View style={styles.inputContainer}>
-                                    <Text style={styles.inputLabel}>RATE PER HOUR</Text>
-                                    <View style={styles.quantityInputWrapper}>
-                                        <Text style={styles.currencySymbol}>₹</Text>
+                                    <Text style={[styles.inputLabel, labelDark]}>RATE PER HOUR</Text>
+                                    <View style={[styles.quantityInputWrapper, fieldWrapperDark]}>
+                                        <Text style={[styles.currencySymbol, currencyDark]}>₹</Text>
                                         <Controller
                                             control={control}
                                             name="hourlyRate"
                                             render={({ field: { onChange, value } }) => (
                                                 <TextInput
-                                                    style={styles.quantityInput}
+                                                    style={[styles.quantityInput, inputDark]}
                                                     value={value}
                                                     onChangeText={onChange}
                                                     placeholder="0"
                                                     keyboardType="numeric"
-                                                    placeholderTextColor={palette.gray400}
+                                                    placeholderTextColor={placeholderColor}
                                                 />
                                             )}
                                         />
@@ -399,20 +410,20 @@ export default function CreateTweakStep4(): React.JSX.Element {
                                 </View>
 
                                 <View style={styles.inputContainer}>
-                                    <Text style={styles.inputLabel}>RATE PER DAY</Text>
-                                    <View style={styles.quantityInputWrapper}>
-                                        <Text style={styles.currencySymbol}>₹</Text>
+                                    <Text style={[styles.inputLabel, labelDark]}>RATE PER DAY</Text>
+                                    <View style={[styles.quantityInputWrapper, fieldWrapperDark]}>
+                                        <Text style={[styles.currencySymbol, currencyDark]}>₹</Text>
                                         <Controller
                                             control={control}
                                             name="dailyRate"
                                             render={({ field: { onChange, value } }) => (
                                                 <TextInput
-                                                    style={styles.quantityInput}
+                                                    style={[styles.quantityInput, inputDark]}
                                                     value={value}
                                                     onChangeText={onChange}
                                                     placeholder="0"
                                                     keyboardType="numeric"
-                                                    placeholderTextColor={palette.gray400}
+                                                    placeholderTextColor={placeholderColor}
                                                 />
                                             )}
                                         />

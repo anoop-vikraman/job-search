@@ -3,22 +3,23 @@ import { useRouter } from 'expo-router';
 import React from 'react';
 import { ScrollView, Text, TouchableOpacity, View } from 'react-native';
 import { ScreenWrapper } from '../../components/ScreenWrapper';
-import { palette } from '@tweak/theme';
+import { useTheme } from '@/themes/ThemeProvider';
 
 export default function HelpPage(): React.JSX.Element {
     const router = useRouter();
+    const { colors } = useTheme();
 
     return (
         <ScreenWrapper>
-            <View className="flex-row items-center px-6 py-4 bg-white border-b border-gray-100">
+            <View className="flex-row items-center px-6 py-4 bg-white dark:bg-slate-900 border-b border-gray-100 dark:border-slate-700">
                 <TouchableOpacity onPress={() => router.back()} className="mr-4" accessibilityRole="button" accessibilityLabel="Go back">
-                    <Ionicons name="arrow-back" size={24} color={palette.gray900} />
+                    <Ionicons name="arrow-back" size={24} color={colors.text} />
                 </TouchableOpacity>
-                <Text className="text-lg font-bold text-gray-900">Help Center</Text>
+                <Text className="text-lg font-bold text-gray-900 dark:text-slate-50">Help Center</Text>
             </View>
 
             <ScrollView className="flex-1 px-6 py-6">
-                <Text className="text-xl font-bold text-gray-900 mb-4">Frequently Asked Questions</Text>
+                <Text className="text-xl font-bold text-gray-900 dark:text-slate-50 mb-4">Frequently Asked Questions</Text>
 
                 {[
                     { q: 'How do I create a tweak?', a: 'Tap on "Create Tweak" from the home page and follow the steps to post your job requirement.' },
@@ -26,9 +27,9 @@ export default function HelpPage(): React.JSX.Element {
                     { q: 'How do refunds work?', a: 'If you\'re not satisfied with a service, you can request a refund from your order details page.' },
                     { q: 'What is the reliability score?', a: 'Your reliability score is calculated based on your positive and negative actions on the platform.' },
                 ].map((faq, index) => (
-                    <View key={index} className="bg-white rounded-2xl p-4 mb-3 shadow-sm border border-gray-100">
-                        <Text className="font-bold text-gray-900 mb-2">{faq.q}</Text>
-                        <Text className="text-gray-600 text-sm">{faq.a}</Text>
+                    <View key={index} className="bg-white dark:bg-slate-900 rounded-2xl p-4 mb-3 shadow-sm border border-gray-100 dark:border-slate-700">
+                        <Text className="font-bold text-gray-900 dark:text-slate-50 mb-2">{faq.q}</Text>
+                        <Text className="text-gray-600 dark:text-slate-300 text-sm">{faq.a}</Text>
                     </View>
                 ))}
 

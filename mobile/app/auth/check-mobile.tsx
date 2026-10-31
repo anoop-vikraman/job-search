@@ -81,7 +81,7 @@ export default function CheckMobile(): React.JSX.Element {
                             maxLength={10}
                             error={errors.mobile?.message}
                             leftComponent={
-                                <View className="border-r border-gray-200 pr-2 mr-[-4px]">
+                                <View className="border-r border-gray-200 dark:border-slate-700 pr-2 mr-[-4px]">
                                     <CountryCodePicker
                                         selectedCode={countryCode}
                                         onSelect={setCountryCode}

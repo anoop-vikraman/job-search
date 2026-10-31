@@ -54,7 +54,7 @@ export default function ProfilePage(): React.JSX.Element {
                 <View className="px-6 py-6">
                     <TouchableOpacity
                         onPress={handleLogout}
-                        className="bg-white rounded-xl py-4 border-2 border-red-500 mb-6"
+                        className="bg-white dark:bg-slate-900 rounded-xl py-4 border-2 border-red-500 mb-6"
                     >
                         <Text className="text-red-500 font-bold text-center text-lg">Log Out</Text>
                     </TouchableOpacity>
@@ -62,7 +62,7 @@ export default function ProfilePage(): React.JSX.Element {
 
                 {/* Version */}
                 <View className="px-6 pb-8">
-                    <Text className="text-gray-400 text-center text-sm">Version 1.0.0</Text>
+                    <Text className="text-gray-400 dark:text-slate-400 text-center text-sm">Version 1.0.0</Text>
                 </View>
             </ScrollView>
         </ScreenWrapper>

@@ -15,6 +15,7 @@ import CustomDatePicker from '../../components/UI/CustomDatePicker';
 import PasswordStrengthMeter from '../../components/UI/PasswordStrengthMeter';
 import { FeatureFlags } from '../../constants/featureFlags';
 import { palette } from '@tweak/theme';
+import { useTheme } from '@/themes/ThemeProvider';
 
 const maxDate = new Date();
 maxDate.setFullYear(maxDate.getFullYear() - 18);
@@ -58,6 +59,7 @@ export default function CreatePassword(): React.JSX.Element {
     const router = useRouter();
     const { flow } = useLocalSearchParams(); // 'signup' or 'reset'
     const isSignup = String(flow) === 'signup';
+    const { colors, isDark } = useTheme();
 
     const { control, handleSubmit, watch, formState: { errors } } = useForm<FormData>({
         resolver: zodResolver(isSignup ? signupSchema : resetSchema),
@@ -98,7 +100,7 @@ export default function CreatePassword(): React.JSX.Element {
         <ScreenWrapper scrollable contentContainerStyle={{ flexGrow: 1, paddingHorizontal: 24, paddingVertical: 20 }}>
             {/* Header */}
             <View className="mb-8 mt-4 items-center">
-                <Text className="text-2xl font-bold text-gray-900 mb-2 text-center">
+                <Text className="text-2xl font-bold text-gray-900 dark:text-slate-50 mb-2 text-center">
                     {isSignup ? t('welcome') : t('resetPassHeader')}
                 </Text>
             </View>
@@ -107,7 +109,7 @@ export default function CreatePassword(): React.JSX.Element {
                 {isSignup && (
                     <>
                         <View>
-                            <Text className="text-gray-500 font-medium mb-3">Basic Details</Text>
+                            <Text className="text-gray-500 dark:text-slate-400 font-medium mb-3">Basic Details</Text>
                             <Controller
                                 control={control}
                                 name="firstName"
@@ -155,7 +157,7 @@ export default function CreatePassword(): React.JSX.Element {
                 )}
 
                 <View>
-                    <Text className="text-gray-500 font-medium mb-3">Set your Password</Text>
+                    <Text className="text-gray-500 dark:text-slate-400 font-medium mb-3">Set your Password</Text>
                     <Controller
                         control={control}
                         name="password"
@@ -169,7 +171,7 @@ export default function CreatePassword(): React.JSX.Element {
                                 error={errors.password?.message}
                                 rightComponent={
                                     <TouchableOpacity onPress={() => setIsPasswordVisible(!isPasswordVisible)} accessibilityRole="button" accessibilityLabel={isPasswordVisible ? 'Hide password' : 'Show password'}>
-                                        <Ionicons name={isPasswordVisible ? 'eye-off' : 'eye'} size={20} color={palette.gray500} />
+                                        <Ionicons name={isPasswordVisible ? 'eye-off' : 'eye'} size={20} color={isDark ? colors.textSecondary : palette.gray500} />
                                     </TouchableOpacity>
                                 }
                             />
@@ -192,7 +194,7 @@ export default function CreatePassword(): React.JSX.Element {
                                     secureTextEntry={!isConfirmPasswordVisible}
                                     rightComponent={
                                         <TouchableOpacity onPress={() => setIsConfirmPasswordVisible(!isConfirmPasswordVisible)} accessibilityRole="button" accessibilityLabel={isConfirmPasswordVisible ? 'Hide password' : 'Show password'}>
-                                            <Ionicons name={isConfirmPasswordVisible ? 'eye-off' : 'eye'} size={20} color={palette.gray500} />
+                                            <Ionicons name={isConfirmPasswordVisible ? 'eye-off' : 'eye'} size={20} color={isDark ? colors.textSecondary : palette.gray500} />
                                         </TouchableOpacity>
                                     }
                                 />
@@ -202,8 +204,8 @@ export default function CreatePassword(): React.JSX.Element {
                         {/* Match Indicator Logic */}
                         {(confirmPassword.length > 0 || (password.length > 0 && errors.confirmPassword)) && (
                             <View className="flex-row items-center justify-end mt-2 px-1">
-                                <Text className="text-xs text-gray-500 mr-2">
-                                    Both passwords <Text className="font-bold text-gray-900">{isMatch ? 'match' : 'do not match'}</Text>
+                                <Text className="text-xs text-gray-500 dark:text-slate-400 mr-2">
+                                    Both passwords <Text className="font-bold text-gray-900 dark:text-slate-50">{isMatch ? 'match' : 'do not match'}</Text>
                                 </Text>
                                 {isMatch ? (
                                     <View className="bg-emerald-100 rounded-full p-0.5">
@@ -221,7 +223,7 @@ export default function CreatePassword(): React.JSX.Element {
 
                 {isSignup && FeatureFlags.ENABLE_REFERRAL_CODE && (
                     <View>
-                        <Text className="text-gray-500 font-medium mb-3 mt-4">Referral Code (optional)</Text>
+                        <Text className="text-gray-500 dark:text-slate-400 font-medium mb-3 mt-4">Referral Code (optional)</Text>
                         <Controller
                             control={control}
                             name="referralCode"

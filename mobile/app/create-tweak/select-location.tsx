@@ -374,7 +374,7 @@ export default function SelectLocation(): React.JSX.Element {
 
     return (
         <ScreenWrapper scrollable={false} edges={['left', 'right']}>
-            <View className="flex-1 bg-white">
+            <View className="flex-1 bg-white dark:bg-slate-900">
                 <LocationSearchHeader onSearch={handleSearch} />
 
                 <MapView
@@ -418,7 +418,7 @@ export default function SelectLocation(): React.JSX.Element {
                 <View className="absolute top-[120px] right-4 z-10">
                     <TouchableOpacity
                         onPress={toggleMapType}
-                        className="bg-white p-2 rounded-xl shadow-md border border-gray-100 items-center justify-center min-w-[50px]"
+                        className="bg-white dark:bg-slate-900 p-2 rounded-xl shadow-md border border-gray-100 dark:border-slate-700 items-center justify-center min-w-[50px]"
                     >
                         <Ionicons
                             name={mapType === 'standard' ? 'map' : 'contrast'}

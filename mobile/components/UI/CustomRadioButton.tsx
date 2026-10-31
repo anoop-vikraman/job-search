@@ -2,6 +2,7 @@ import { palette } from '@tweak/theme';
 import React from 'react';
 import { StyleProp, Text, TextStyle, TouchableOpacity, View, ViewStyle } from 'react-native';
 import { themeColors } from '../../themes/colors';
+import { useTheme } from '../../themes/ThemeProvider';
 
 interface Option {
     label: string;
@@ -25,6 +26,7 @@ export function CustomRadioButton({
     containerStyle,
     labelStyle
 }: Props): React.JSX.Element {
+    const { colors, isDark } = useTheme();
     return (
         <View className={`flex-wrap ${layout === 'row' ? 'flex-row gap-6' : 'gap-3'}`} style={containerStyle}>
             {options.map((option, index) => {
@@ -38,7 +40,7 @@ export function CustomRadioButton({
                     >
                         <View
                             className={`w-5 h-5 rounded-full border items-center justify-center mr-2 ${isSelected ? 'border-primary' : 'border-gray-400'}`}
-                            style={{ borderColor: isSelected ? themeColors.primary : palette.gray400 }}
+                            style={{ borderColor: isSelected ? themeColors.primary : isDark ? colors.border : palette.gray400 }}
                         >
                             {isSelected && (
                                 <View
@@ -47,7 +49,7 @@ export function CustomRadioButton({
                                 />
                             )}
                         </View>
-                        <Text className="text-base text-gray-700 font-medium" style={labelStyle}>
+                        <Text className="text-base text-gray-700 dark:text-slate-300 font-medium" style={labelStyle}>
                             {option.label}
                         </Text>
                     </TouchableOpacity>

@@ -21,34 +21,34 @@ export default function ServiceGrid(): React.JSX.Element {
 
     return (
         <View className="px-6 mb-8">
-            <Text className="text-gray-900 font-bold text-lg mb-4 tracking-wider text-center">WHAT WOULD YOU LIKE TO DO?</Text>
+            <Text className="text-gray-900 dark:text-slate-50 font-bold text-lg mb-4 tracking-wider text-center">WHAT WOULD YOU LIKE TO DO?</Text>
 
             <View className="flex-row gap-4 mb-4">
                 {/* Create Remote Tweak */}
                 <TouchableOpacity
                     onPress={() => handleCreateTweak('remote')}
-                    className="flex-1 bg-white p-4 rounded-3xl shadow-sm border border-gray-100 min-h-[160px] justify-between"
+                    className="flex-1 bg-white dark:bg-slate-900 p-4 rounded-3xl shadow-sm border border-gray-100 dark:border-slate-700 min-h-[160px] justify-between"
                 >
                     <View className="bg-blue-100 w-12 h-12 rounded-full items-center justify-center mb-2">
                         <Ionicons name="laptop-outline" size={24} color={palette.blue500} />
                     </View>
                     <View>
-                        <Text className="text-xl font-bold text-gray-900 leading-6 mb-1">Remote{'\n'}Tweak</Text>
-                        <Text className="text-xs text-gray-500">Work from anywhere</Text>
+                        <Text className="text-xl font-bold text-gray-900 dark:text-slate-50 leading-6 mb-1">Remote{'\n'}Tweak</Text>
+                        <Text className="text-xs text-gray-500 dark:text-slate-400">Work from anywhere</Text>
                     </View>
                 </TouchableOpacity>
 
                 {/* Create On-site Tweak */}
                 <TouchableOpacity
                     onPress={() => handleCreateTweak('in_person')}
-                    className="flex-1 bg-white p-4 rounded-3xl shadow-sm border border-gray-100 min-h-[160px] justify-between"
+                    className="flex-1 bg-white dark:bg-slate-900 p-4 rounded-3xl shadow-sm border border-gray-100 dark:border-slate-700 min-h-[160px] justify-between"
                 >
                     <View className="bg-orange-100 w-12 h-12 rounded-full items-center justify-center mb-2">
                         <Ionicons name="location" size={24} color={palette.orange500} />
                     </View>
                     <View>
-                        <Text className="text-xl font-bold text-gray-900 leading-6 mb-1">On-site{'\n'}Tweak</Text>
-                        <Text className="text-xs text-gray-500">Physical presence</Text>
+                        <Text className="text-xl font-bold text-gray-900 dark:text-slate-50 leading-6 mb-1">On-site{'\n'}Tweak</Text>
+                        <Text className="text-xs text-gray-500 dark:text-slate-400">Physical presence</Text>
                     </View>
                 </TouchableOpacity>
             </View>
@@ -57,28 +57,28 @@ export default function ServiceGrid(): React.JSX.Element {
                 {/* Apply for Tweaks */}
                 <TouchableOpacity
                     onPress={() => router.push('/apply')}
-                    className="flex-1 bg-white p-4 rounded-3xl shadow-sm border border-gray-100 min-h-[160px] justify-between"
+                    className="flex-1 bg-white dark:bg-slate-900 p-4 rounded-3xl shadow-sm border border-gray-100 dark:border-slate-700 min-h-[160px] justify-between"
                 >
                     <View className="bg-purple-100 w-12 h-12 rounded-full items-center justify-center mb-2">
                         <Ionicons name="search" size={24} color={palette.purple600} />
                     </View>
                     <View>
-                        <Text className="text-lg font-bold text-gray-900 leading-5 mb-1">Apply for{'\n'}Tweaks</Text>
-                        <Text className="text-xs text-gray-500">Find gigs</Text>
+                        <Text className="text-lg font-bold text-gray-900 dark:text-slate-50 leading-5 mb-1">Apply for{'\n'}Tweaks</Text>
+                        <Text className="text-xs text-gray-500 dark:text-slate-400">Find gigs</Text>
                     </View>
                 </TouchableOpacity>
 
                 {/* Permanent Jobs */}
                 <TouchableOpacity
                     onPress={() => router.push('/jobs')}
-                    className="flex-1 bg-white p-4 rounded-3xl shadow-sm border border-gray-100 min-h-[160px] justify-between"
+                    className="flex-1 bg-white dark:bg-slate-900 p-4 rounded-3xl shadow-sm border border-gray-100 dark:border-slate-700 min-h-[160px] justify-between"
                 >
                     <View className="bg-green-100 w-12 h-12 rounded-full items-center justify-center mb-2">
                         <Ionicons name="briefcase" size={24} color={palette.green600} />
                     </View>
                     <View>
-                        <Text className="text-lg font-bold text-gray-900 leading-5 mb-1">Permanent{'\n'}Jobs</Text>
-                        <Text className="text-xs text-gray-500">Full-time</Text>
+                        <Text className="text-lg font-bold text-gray-900 dark:text-slate-50 leading-5 mb-1">Permanent{'\n'}Jobs</Text>
+                        <Text className="text-xs text-gray-500 dark:text-slate-400">Full-time</Text>
                     </View>
                 </TouchableOpacity>
             </View>

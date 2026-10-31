@@ -25,7 +25,7 @@ export default function LocationCurrentButton({
             <TouchableOpacity
                 onPress={onPress}
                 activeOpacity={0.8}
-                className="bg-white flex-row items-center px-4 py-2.5 rounded-full shadow-xl border border-gray-100"
+                className="bg-white dark:bg-slate-900 flex-row items-center px-4 py-2.5 rounded-full shadow-xl border border-gray-100 dark:border-slate-700"
             >
                 <Ionicons name="locate" size={18} color={themeColors.primary} />
                 <Text className="ml-2 text-primary font-bold text-xs">Current location</Text>

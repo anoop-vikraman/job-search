@@ -24,8 +24,8 @@ export default function PreferencesPage(): React.JSX.Element {
             />
 
             <View className="px-6 py-8 flex-1">
-                <Text className="text-3xl font-bold text-gray-900 mb-2">Select Timeline</Text>
-                <Text className="text-gray-500 mb-8">Choose the scheduling option that works best for you.</Text>
+                <Text className="text-3xl font-bold text-gray-900 dark:text-slate-50 mb-2">Select Timeline</Text>
+                <Text className="text-gray-500 dark:text-slate-400 mb-8">Choose the scheduling option that works best for you.</Text>
 
                 <View className="gap-4">
                     <PreferenceCard
@@ -68,14 +68,14 @@ interface PreferenceCardProps {
 const PreferenceCard = ({ icon, color, title, desc, onPress }: PreferenceCardProps) => (
     <TouchableOpacity
         onPress={onPress}
-        className="bg-white p-5 rounded-2xl border border-gray-200 flex-row items-center shadow-sm active:border-primary active:bg-blue-50"
+        className="bg-white dark:bg-slate-900 p-5 rounded-2xl border border-gray-200 dark:border-slate-700 flex-row items-center shadow-sm active:border-primary active:bg-blue-50"
     >
         <View className={`w-12 h-12 rounded-full items-center justify-center mr-4`} style={{ backgroundColor: `${color}15` }}>
             <Ionicons name={icon} size={24} color={color} />
         </View>
         <View className="flex-1">
-            <Text className="text-lg font-bold text-gray-900 mb-1">{title}</Text>
-            <Text className="text-gray-500 text-sm leading-5">{desc}</Text>
+            <Text className="text-lg font-bold text-gray-900 dark:text-slate-50 mb-1">{title}</Text>
+            <Text className="text-gray-500 dark:text-slate-400 text-sm leading-5">{desc}</Text>
         </View>
     </TouchableOpacity>
 );

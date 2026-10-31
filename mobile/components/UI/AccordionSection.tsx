@@ -3,6 +3,7 @@ import React from 'react';
 import { LayoutAnimation, Platform, StyleSheet, Text, TouchableOpacity, UIManager, View } from 'react-native';
 import { palette } from '@tweak/theme';
 import { themeColors } from '../../themes/colors';
+import { useTheme } from '../../themes/ThemeProvider';
 
 if (Platform.OS === 'android' && UIManager.setLayoutAnimationEnabledExperimental) {
     UIManager.setLayoutAnimationEnabledExperimental(true);
@@ -25,15 +26,21 @@ export default function AccordionSection({
     children,
     isCompleted = false,
 }: AccordionSectionProps): React.JSX.Element {
+    const { colors, isDark } = useTheme();
     const handleToggle = () => {
         LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
         onToggle();
     };
 
     return (
-        <View style={styles.container}>
+        <View style={[styles.container, isDark && { backgroundColor: colors.surface, borderColor: colors.border }]}>
             <TouchableOpacity
-                style={[styles.header, isExpanded && styles.headerExpanded]}
+                style={[
+                    styles.header,
+                    isDark && { backgroundColor: colors.surface },
+                    isExpanded && styles.headerExpanded,
+                    isExpanded && isDark && { backgroundColor: colors.surfaceMuted, borderBottomColor: colors.border }
+                ]}
                 onPress={handleToggle}
                 activeOpacity={0.7}
             >
@@ -45,7 +52,7 @@ export default function AccordionSection({
                             color={isExpanded ? 'white' : themeColors.primary}
                         />
                     </View>
-                    <Text style={[styles.title, isExpanded && styles.titleExpanded]}>{title}</Text>
+                    <Text style={[styles.title, isDark && !isExpanded && { color: colors.text }, isExpanded && styles.titleExpanded]}>{title}</Text>
                 </View>
                 <View style={styles.headerRight}>
                     {isCompleted && !isExpanded && (
@@ -56,13 +63,13 @@ export default function AccordionSection({
                     <Ionicons
                         name={isExpanded ? 'chevron-up' : 'chevron-down'}
                         size={20}
-                        color={isExpanded ? themeColors.primary : palette.gray400}
+                        color={isExpanded ? themeColors.primary : isDark ? colors.textMuted : palette.gray400}
                     />
                 </View>
             </TouchableOpacity>
 
             {isExpanded && (
-                <View style={styles.content}>
+                <View style={[styles.content, isDark && { backgroundColor: colors.surface }]}>
                     {children}
                 </View>
             )}

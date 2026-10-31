@@ -2,6 +2,7 @@ import { palette } from '@tweak/theme';
 import React, { useRef, useState } from 'react';
 import { Pressable, StyleSheet, Text, TextInput, View } from 'react-native';
 import { themeColors } from '../../themes/colors';
+import { useTheme } from '../../themes/ThemeProvider';
 
 interface Props {
     length?: number;
@@ -11,6 +12,7 @@ interface Props {
 }
 
 export default function CustomOTPInput({ length = 6, value = '', onChange, error }: Props): React.JSX.Element {
+    const { colors, isDark } = useTheme();
     const inputRef = useRef<React.ComponentRef<typeof TextInput>>(null);
     const [isFocused, setIsFocused] = useState(false);
 
@@ -51,11 +53,12 @@ export default function CustomOTPInput({ length = 6, value = '', onChange, error
                             key={index}
                             style={[
                                 styles.box,
+                                isDark && { borderColor: colors.border, backgroundColor: colors.surfaceMuted },
                                 isActive && styles.boxActive,
                                 error && styles.boxError,
                             ]}
                         >
-                            <Text style={styles.digit}>{digit}</Text>
+                            <Text style={[styles.digit, isDark && { color: colors.text }]}>{digit}</Text>
                         </View>
                     );
                 })}

@@ -10,11 +10,13 @@ import CustomButton from '../components/UI/CustomButton';
 import { Toast } from '../components/UI/ToastManager';
 import { useAuthStore } from '../store/useAuthStore';
 import { palette } from '@tweak/theme';
+import { useTheme } from '@/themes/ThemeProvider';
 
 export default function Login(): React.JSX.Element {
     const { t } = useTranslation();
     const router = useRouter();
     const { login } = useAuthStore();
+    const { colors, isDark } = useTheme();
 
     const [mobile, setMobile] = React.useState('');
     const [password, setPassword] = React.useState('');
@@ -58,7 +60,7 @@ export default function Login(): React.JSX.Element {
                     keyboardType="phone-pad"
                     maxLength={10}
                     leftComponent={
-                        <View className="border-r border-gray-200 pr-2 mr-[-4px]">
+                        <View className="border-r border-gray-200 dark:border-slate-700 pr-2 mr-[-4px]">
                             <CountryCodePicker
                                 selectedCode={countryCode}
                                 onSelect={setCountryCode}
@@ -74,7 +76,7 @@ export default function Login(): React.JSX.Element {
                     secureTextEntry={!isPasswordVisible}
                     rightComponent={
                         <TouchableOpacity onPress={() => setIsPasswordVisible(!isPasswordVisible)} accessibilityRole="button" accessibilityLabel={isPasswordVisible ? 'Hide password' : 'Show password'}>
-                            <Ionicons name={isPasswordVisible ? 'eye-off' : 'eye'} size={20} color={palette.gray500} />
+                            <Ionicons name={isPasswordVisible ? 'eye-off' : 'eye'} size={20} color={isDark ? colors.textSecondary : palette.gray500} />
                         </TouchableOpacity>
                     }
                 />

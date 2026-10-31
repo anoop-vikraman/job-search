@@ -23,21 +23,21 @@ export default function LocationConfirmSheet({
     if (!visible) return null;
 
     return (
-        <View className="absolute bottom-0 w-full bg-white rounded-t-[32px] shadow-2xl p-6 pb-10 border-t border-gray-100">
+        <View className="absolute bottom-0 w-full bg-white dark:bg-slate-900 rounded-t-[32px] shadow-2xl p-6 pb-10 border-t border-gray-100 dark:border-slate-700">
             {/* Drag Handle */}
             <View className="items-center mb-3 mt-[-8px]">
-                <View className="w-10 h-1 bg-gray-200 rounded-full" />
+                <View className="w-10 h-1 bg-gray-200 dark:bg-slate-700 rounded-full" />
             </View>
 
             <View className="flex-row items-start justify-between mb-3">
                 <View className="flex-1 pr-4">
-                    <Text className="text-gray-400 text-[10px] font-bold uppercase tracking-widest mb-0.5">Confirming selection</Text>
+                    <Text className="text-gray-400 dark:text-slate-400 text-[10px] font-bold uppercase tracking-widest mb-0.5">Confirming selection</Text>
                     <View className="flex-row items-center">
-                        <Text className="text-xl font-bold text-gray-900" numberOfLines={1}>
+                        <Text className="text-xl font-bold text-gray-900 dark:text-slate-50" numberOfLines={1}>
                             {formattedAddress.split(',')[0] || 'Selected Location'}
                         </Text>
                     </View>
-                    <Text className="text-gray-500 text-xs mt-0.5 leading-4" numberOfLines={2}>
+                    <Text className="text-gray-500 dark:text-slate-400 text-xs mt-0.5 leading-4" numberOfLines={2}>
                         {formattedAddress || `${latitude.toFixed(4)}, ${longitude.toFixed(4)}`}
                     </Text>
                 </View>

@@ -32,8 +32,8 @@ export default function LocationEntryPage(): React.JSX.Element {
             />
 
             <View className="flex-1 px-8 py-8">
-                <Text className="text-3xl font-bold text-gray-900 mb-2">Where is the tweak?</Text>
-                <Text className="text-gray-500 mb-6">Choose a saved address or add a new one for your onsite tweak.</Text>
+                <Text className="text-3xl font-bold text-gray-900 dark:text-slate-50 mb-2">Where is the tweak?</Text>
+                <Text className="text-gray-500 dark:text-slate-400 mb-6">Choose a saved address or add a new one for your onsite tweak.</Text>
 
                 <View className="flex-1">
                     <AddressListView
@@ -51,7 +51,7 @@ export default function LocationEntryPage(): React.JSX.Element {
             </View>
 
             {/* Continue Button Fixed at Bottom */}
-            <View className="p-6 bg-white border-t border-gray-100" style={{ paddingBottom: 40 }}>
+            <View className="p-6 bg-white dark:bg-slate-900 border-t border-gray-100 dark:border-slate-700" style={{ paddingBottom: 40 }}>
                 <TouchableOpacity
                     activeOpacity={0.8}
                     disabled={!selectedId}

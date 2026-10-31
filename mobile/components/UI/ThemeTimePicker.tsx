@@ -82,9 +82,9 @@ export default function ThemeTimePicker({
             <TouchableWithoutFeedback onPress={onClose}>
                 <View className="flex-1 justify-center items-center bg-black/50 px-6">
                     <TouchableWithoutFeedback>
-                        <View className="bg-white rounded-3xl w-full max-w-sm overflow-hidden">
+                        <View className="bg-white dark:bg-slate-900 rounded-3xl w-full max-w-sm overflow-hidden">
                             {/* Header */}
-                            <View className="p-4 border-b border-gray-100">
+                            <View className="p-4 border-b border-gray-100 dark:border-slate-700">
                                 <Text className="text-xl font-bold text-gray-900 text-center">{title}</Text>
                             </View>
 

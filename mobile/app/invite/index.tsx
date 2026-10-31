@@ -5,11 +5,13 @@ import { ScrollView, Share, Text, TouchableOpacity, View } from 'react-native';
 import { ScreenWrapper } from '../../components/ScreenWrapper';
 import { useConfirmationStore } from '../../store/useConfirmationStore';
 import { palette } from '@tweak/theme';
+import { useTheme } from '@/themes/ThemeProvider';
 
 const referralData = { totalEarnings: 0, friendsInvited: 0, referralLink: '' };
 
 export default function InvitePage(): React.JSX.Element {
     const router = useRouter();
+    const { colors } = useTheme();
     const confirm = useConfirmationStore(state => state.confirm);
     const { totalEarnings, friendsInvited, referralLink } = referralData;
 
@@ -42,11 +44,11 @@ export default function InvitePage(): React.JSX.Element {
     return (
         <ScreenWrapper>
             {/* Header */}
-            <View className="flex-row items-center px-6 py-4 bg-white border-b border-gray-100">
+            <View className="flex-row items-center px-6 py-4 bg-white dark:bg-slate-900 border-b border-gray-100 dark:border-slate-700">
                 <TouchableOpacity onPress={() => router.back()} className="mr-4" accessibilityRole="button" accessibilityLabel="Go back">
-                    <Ionicons name="arrow-back" size={24} color={palette.gray900} />
+                    <Ionicons name="arrow-back" size={24} color={colors.text} />
                 </TouchableOpacity>
-                <Text className="text-lg font-bold text-gray-900">Invite Friends</Text>
+                <Text className="text-lg font-bold text-gray-900 dark:text-slate-50">Invite Friends</Text>
             </View>
 
             <ScrollView className="flex-1 px-6 py-6">
@@ -84,7 +86,7 @@ export default function InvitePage(): React.JSX.Element {
                 </View>
 
                 {/* How it Works */}
-                <Text className="font-bold text-lg text-gray-900 mb-4">How it works</Text>
+                <Text className="font-bold text-lg text-gray-900 dark:text-slate-50 mb-4">How it works</Text>
 
                 <View className="space-y-4 mb-6">
                     {[
@@ -97,8 +99,8 @@ export default function InvitePage(): React.JSX.Element {
                                 <Text className={`font-bold ${item.textColor}`}>{item.step}</Text>
                             </View>
                             <View className="flex-1">
-                                <Text className="font-bold text-gray-900 mb-1">{item.title}</Text>
-                                <Text className="text-gray-500 text-sm">{item.desc}</Text>
+                                <Text className="font-bold text-gray-900 dark:text-slate-50 mb-1">{item.title}</Text>
+                                <Text className="text-gray-500 dark:text-slate-400 text-sm">{item.desc}</Text>
                             </View>
                         </View>
                     ))}

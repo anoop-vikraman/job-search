@@ -12,7 +12,7 @@ export default function PastTweaksTabs(): React.JSX.Element {
     const [activeTab, setActiveTab] = useState<'created' | 'completed'>('created');
 
     const renderTweakCard = (tweak: PastTweak) => (
-        <View key={tweak.id} className="bg-white rounded-2xl p-4 mb-3 shadow-sm border border-gray-100">
+        <View key={tweak.id} className="bg-white dark:bg-slate-900 rounded-2xl p-4 mb-3 shadow-sm border border-gray-100 dark:border-slate-700">
             <View className="flex-row justify-between items-start mb-2">
                 <Text className="font-bold text-gray-900 flex-1">{tweak.title}</Text>
                 <View className={`px-3 py-1 rounded-full ${tweak.status === 'Completed' ? 'bg-green-100' : 'bg-orange-100'

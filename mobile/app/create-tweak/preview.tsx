@@ -21,6 +21,7 @@ import { useCreateTweak } from '../../hooks/useTweaks';
 import { buildCreateTweakRequest } from '../../utils/tweakAdapter';
 import { ScheduleSlot } from '../../types/tweak';
 import { palette } from '@tweak/theme';
+import { useTheme } from '@/themes/ThemeProvider';
 
 const { width: SCREEN_WIDTH } = Dimensions.get('window');
 
@@ -30,6 +31,7 @@ interface PreviewImage {
 
 export default function TweakPreview(): React.JSX.Element {
     const router = useRouter();
+    const { colors, isDark } = useTheme();
 
     // Get data from Zustand store instead of URL params
     const {
@@ -206,18 +208,18 @@ export default function TweakPreview(): React.JSX.Element {
                 progress={1.0}
             />
 
-            <ScrollView showsVerticalScrollIndicator={false} className="flex-1 bg-white" contentContainerStyle={{ flexGrow: 1 }}>
+            <ScrollView showsVerticalScrollIndicator={false} className="flex-1 bg-white dark:bg-slate-900" contentContainerStyle={{ flexGrow: 1 }}>
                 <View className="flex-1 p-5 pb-8">
 
                     {/* 1. Category as Title */}
-                    <Text className="text-3xl font-bold text-gray-900 mb-4 capitalize">{category || 'General Task'}</Text>
+                    <Text className="text-3xl font-bold text-gray-900 dark:text-slate-50 mb-4 capitalize">{category || 'General Task'}</Text>
 
                     {/* 2. Location (if in-person) */}
                     {tweakType === 'in_person' && address && (
                         <TouchableOpacity onPress={() => setShowMapModal(true)} className="flex-row items-center mb-4">
                             <Ionicons name="location-sharp" size={18} color={palette.blue600} />
-                            <Text className="text-gray-700 ml-1 text-base font-medium">{address?.city || 'Location'}, {address?.state || ''}</Text>
-                            <Ionicons name="chevron-forward" size={16} color={palette.gray400} className="ml-1" />
+                            <Text className="text-gray-700 dark:text-slate-300 ml-1 text-base font-medium">{address?.city || 'Location'}, {address?.state || ''}</Text>
+                            <Ionicons name="chevron-forward" size={16} color={isDark ? colors.textMuted : palette.gray400} className="ml-1" />
                         </TouchableOpacity>
                     )}
 
@@ -265,7 +267,7 @@ export default function TweakPreview(): React.JSX.Element {
                     {/* 4. Schedule & Availability Slots */}
                     {scheduleData && (
                         <View className="mb-6">
-                            <Text className="text-base font-bold text-gray-900 mb-3">Schedule & Availability</Text>
+                            <Text className="text-base font-bold text-gray-900 dark:text-slate-50 mb-3">Schedule & Availability</Text>
 
                             {/* Horizontal Scrollable Slots for Few Days or Deadline modes */}
                             {(schedulePreference === 'few_days' || schedulePreference === 'deadline') ? (
@@ -278,9 +280,9 @@ export default function TweakPreview(): React.JSX.Element {
                                             const month = slotDate.toLocaleDateString('en-US', { month: 'short' });
 
                                             return (
-                                                <View key={index} className="bg-white border border-gray-200 rounded-xl p-3 min-w-[90px] items-center">
-                                                    <Text className="text-gray-500 text-[10px] font-bold uppercase mb-1">{dayName}</Text>
-                                                    <Text className="text-gray-900 text-lg font-bold mb-2">{day} {month}</Text>
+                                                <View key={index} className="bg-white dark:bg-slate-900 border border-gray-200 dark:border-slate-700 rounded-xl p-3 min-w-[90px] items-center">
+                                                    <Text className="text-gray-500 dark:text-slate-400 text-[10px] font-bold uppercase mb-1">{dayName}</Text>
+                                                    <Text className="text-gray-900 dark:text-slate-50 text-lg font-bold mb-2">{day} {month}</Text>
                                                     <View className="bg-blue-50 px-2 py-1 rounded-md">
                                                         <Text className="text-blue-700 text-[10px] font-bold">
                                                             {slot.start} - {slot.end}
@@ -293,13 +295,13 @@ export default function TweakPreview(): React.JSX.Element {
                                 </ScrollView>
                             ) : schedulePreference === 'one_day' && scheduleData.date ? (
                                 <View>
-                                    <View className="bg-white border border-gray-200 rounded-xl p-4 flex-row items-center gap-3 mb-4">
+                                    <View className="bg-white dark:bg-slate-900 border border-gray-200 dark:border-slate-700 rounded-xl p-4 flex-row items-center gap-3 mb-4">
                                         <View className="w-12 h-12 bg-blue-50 rounded-full items-center justify-center">
                                             <Ionicons name="calendar-outline" size={24} color={palette.blue600} />
                                         </View>
                                         <View>
-                                            <Text className="text-xs text-gray-500 font-medium uppercase mb-1">Date</Text>
-                                            <Text className="text-base font-bold text-gray-900">{formatDate(new Date(scheduleData.date))}</Text>
+                                            <Text className="text-xs text-gray-500 dark:text-slate-400 font-medium uppercase mb-1">Date</Text>
+                                            <Text className="text-base font-bold text-gray-900 dark:text-slate-50">{formatDate(new Date(scheduleData.date))}</Text>
                                         </View>
                                     </View>
 
@@ -322,8 +324,8 @@ export default function TweakPreview(): React.JSX.Element {
                     {/* 6. Description */}
                     {description && (
                         <View className="mb-6">
-                            <Text className="text-base font-bold text-gray-900 mb-3">About the Job</Text>
-                            <Text className="text-gray-600 text-base leading-6">
+                            <Text className="text-base font-bold text-gray-900 dark:text-slate-50 mb-3">About the Job</Text>
+                            <Text className="text-gray-600 dark:text-slate-300 text-base leading-6">
                                 {showFullDescription ? description : truncateText(description, 200)}
                             </Text>
                             {description.length > 200 && (
@@ -337,18 +339,18 @@ export default function TweakPreview(): React.JSX.Element {
                     {/* 7. Voice Instructions */}
                     {audioUri && (
                         <View className="mb-6">
-                            <Text className="text-base font-bold text-gray-900 mb-3">Voice Instructions</Text>
-                            <View className="bg-white border border-gray-200 rounded-full p-2 pr-6 flex-row items-center shadow-sm">
+                            <Text className="text-base font-bold text-gray-900 dark:text-slate-50 mb-3">Voice Instructions</Text>
+                            <View className="bg-white dark:bg-slate-900 border border-gray-200 dark:border-slate-700 rounded-full p-2 pr-6 flex-row items-center shadow-sm">
                                 <TouchableOpacity
                                     onPress={togglePlayback}
-                                    className="w-10 h-10 bg-gray-100 rounded-full items-center justify-center mr-4"
+                                    className="w-10 h-10 bg-gray-100 dark:bg-slate-800 rounded-full items-center justify-center mr-4"
                                     accessibilityRole="button"
                                     accessibilityLabel={isPlaying ? "Pause audio" : "Play audio"}
                                 >
-                                    <FontAwesome5 name={isPlaying ? "pause" : "play"} size={14} color={palette.gray700} />
+                                    <FontAwesome5 name={isPlaying ? "pause" : "play"} size={14} color={isDark ? colors.textSecondary : palette.gray700} />
                                 </TouchableOpacity>
 
-                                <Text className="text-sm font-bold text-gray-900 mr-4">
+                                <Text className="text-sm font-bold text-gray-900 dark:text-slate-50 mr-4">
                                     {formatDuration(isPlaying ? playerStatus.currentTime : playerStatus.duration)}
                                 </Text>
 
@@ -364,7 +366,7 @@ export default function TweakPreview(): React.JSX.Element {
                     {/* 8. Photos */}
                     {images && images.length > 0 && (
                         <View className="mb-6">
-                            <Text className="text-base font-bold text-gray-900 mb-3">Photos</Text>
+                            <Text className="text-base font-bold text-gray-900 dark:text-slate-50 mb-3">Photos</Text>
                             <ScrollView horizontal showsHorizontalScrollIndicator={false} className="-mx-5 px-5">
                                 {images.map((img: PreviewImage, index: number) => (
                                     <TouchableOpacity
@@ -376,7 +378,7 @@ export default function TweakPreview(): React.JSX.Element {
                                     >
                                         <Image
                                             source={{ uri: img.uri }}
-                                            className="w-32 h-32 rounded-xl bg-gray-100"
+                                            className="w-32 h-32 rounded-xl bg-gray-100 dark:bg-slate-800"
                                             resizeMode="cover"
                                         />
                                     </TouchableOpacity>
@@ -388,11 +390,11 @@ export default function TweakPreview(): React.JSX.Element {
                     {/* 9. Skills Required */}
                     {skills && skills.length > 0 && (
                         <View className="mb-6">
-                            <Text className="text-base font-bold text-gray-900 mb-3">Skills Required</Text>
+                            <Text className="text-base font-bold text-gray-900 dark:text-slate-50 mb-3">Skills Required</Text>
                             <View className="flex-row flex-wrap gap-2">
                                 {skills.map((skill: string, index: number) => (
-                                    <View key={index} className="bg-gray-100 px-4 py-2 rounded-full border border-gray-200">
-                                        <Text className="text-gray-700 font-medium">{skill}</Text>
+                                    <View key={index} className="bg-gray-100 dark:bg-slate-800 px-4 py-2 rounded-full border border-gray-200 dark:border-slate-700">
+                                        <Text className="text-gray-700 dark:text-slate-300 font-medium">{skill}</Text>
                                     </View>
                                 ))}
                             </View>
@@ -402,11 +404,11 @@ export default function TweakPreview(): React.JSX.Element {
                     {/* 10. Languages */}
                     {languages && languages.length > 0 && (
                         <View className="mb-6">
-                            <Text className="text-base font-bold text-gray-900 mb-3">Languages</Text>
+                            <Text className="text-base font-bold text-gray-900 dark:text-slate-50 mb-3">Languages</Text>
                             <View className="flex-row flex-wrap gap-2">
                                 {languages.map((lang: string, index: number) => (
-                                    <View key={index} className="bg-gray-100 px-4 py-2 rounded-full border border-gray-200">
-                                        <Text className="text-gray-700 font-medium">{lang}</Text>
+                                    <View key={index} className="bg-gray-100 dark:bg-slate-800 px-4 py-2 rounded-full border border-gray-200 dark:border-slate-700">
+                                        <Text className="text-gray-700 dark:text-slate-300 font-medium">{lang}</Text>
                                     </View>
                                 ))}
                             </View>
@@ -418,18 +420,18 @@ export default function TweakPreview(): React.JSX.Element {
                         <TouchableOpacity
                             onPress={handleSaveDraft}
                             disabled={createTweak.isPending}
-                            className="flex-1 bg-white border border-gray-300 py-4 rounded-xl flex-row items-center justify-center gap-1"
+                            className="flex-1 bg-white dark:bg-slate-900 border border-gray-300 dark:border-slate-700 py-4 rounded-xl flex-row items-center justify-center gap-1"
                         >
-                            <Ionicons name="bookmark-outline" size={16} color={palette.gray700} />
-                            <Text className="font-bold text-gray-700 text-sm">Draft</Text>
+                            <Ionicons name="bookmark-outline" size={16} color={isDark ? colors.textSecondary : palette.gray700} />
+                            <Text className="font-bold text-gray-700 dark:text-slate-300 text-sm">Draft</Text>
                         </TouchableOpacity>
 
                         <TouchableOpacity
                             onPress={handleEdit}
-                            className="flex-1 bg-white border border-gray-300 py-4 rounded-xl flex-row items-center justify-center gap-1"
+                            className="flex-1 bg-white dark:bg-slate-900 border border-gray-300 dark:border-slate-700 py-4 rounded-xl flex-row items-center justify-center gap-1"
                         >
-                            <Ionicons name="create-outline" size={16} color={palette.gray700} />
-                            <Text className="font-bold text-gray-700 text-sm">Edit</Text>
+                            <Ionicons name="create-outline" size={16} color={isDark ? colors.textSecondary : palette.gray700} />
+                            <Text className="font-bold text-gray-700 dark:text-slate-300 text-sm">Edit</Text>
                         </TouchableOpacity>
 
                         <TouchableOpacity
@@ -454,11 +456,11 @@ export default function TweakPreview(): React.JSX.Element {
                     onRequestClose={() => setShowMapModal(false)}
                 >
                     <View style={{ flex: 1 }}>
-                        <View className="flex-row items-center justify-between p-4 pt-12 bg-white border-b border-gray-200">
+                        <View className="flex-row items-center justify-between p-4 pt-12 bg-white dark:bg-slate-900 border-b border-gray-200 dark:border-slate-700">
                             <TouchableOpacity onPress={() => setShowMapModal(false)} className="p-2" accessibilityRole="button" accessibilityLabel="Close">
-                                <Ionicons name="close" size={24} color="black" />
+                                <Ionicons name="close" size={24} color={isDark ? colors.text : 'black'} />
                             </TouchableOpacity>
-                            <Text className="font-bold text-lg">{address?.city || 'Location'}</Text>
+                            <Text className="font-bold text-lg dark:text-slate-50">{address?.city || 'Location'}</Text>
                             <View className="w-10" />
                         </View>
                         <MapView

@@ -4,8 +4,10 @@ import React from 'react';
 import { ErrorBoundary, FallbackProps } from 'react-error-boundary';
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { palette } from '@tweak/theme';
+import { useTheme } from '@/themes/ThemeProvider';
 
-const ErrorFallback = ({ error, resetErrorBoundary }: FallbackProps) => {
+const ErrorFallback = ({ error, resetErrorBoundary }: FallbackProps): React.JSX.Element => {
+    const { colors, isDark } = useTheme();
     const handleRestart = async () => {
         try {
             // 1. Try Expo Updates
@@ -27,17 +29,17 @@ const ErrorFallback = ({ error, resetErrorBoundary }: FallbackProps) => {
     };
 
     return (
-        <View style={styles.container}>
-            <View className="bg-white rounded-[40px] w-[90%] p-8 shadow-2xl items-center">
+        <View style={[styles.container, isDark && { backgroundColor: colors.background }]}>
+            <View className="bg-white dark:bg-slate-900 rounded-[40px] w-[90%] p-8 shadow-2xl items-center">
                 <View className="bg-red-50 p-6 rounded-full mb-6">
                     <Ionicons name="alert-circle" size={48} color={palette.red500} />
                 </View>
 
-                <Text className="text-2xl font-bold text-gray-900 text-center mb-2 px-2">
+                <Text className="text-2xl font-bold text-gray-900 dark:text-slate-50 text-center mb-2 px-2">
                     Something went wrong
                 </Text>
 
-                <Text className="text-gray-500 text-center text-base mb-10 px-4 leading-6">
+                <Text className="text-gray-500 dark:text-slate-400 text-center text-base mb-10 px-4 leading-6">
                     {(error as Error).message || "An unexpected error occurred in the application interface."}
                 </Text>
 

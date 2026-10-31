@@ -11,6 +11,7 @@ import CreateTweakNavButtons from '../../components/UI/CreateTweakNavButtons';
 import CustomDropdown from '../../components/UI/CustomDropdown';
 import CustomLabelledField from '../../components/UI/CustomLabelledField';
 import CustomRadioButton from '../../components/UI/CustomRadioButton';
+import { useTheme } from '@/themes/ThemeProvider';
 
 const schema = z.object({
     category: z.string().min(1, 'Category is required'),
@@ -27,6 +28,7 @@ type FormInput = z.input<typeof schema>;
 export default function CreateTweakStep2(): React.JSX.Element {
     const router = useRouter();
     const params = useLocalSearchParams();
+    const { colors, isDark } = useTheme();
 
     const { control, handleSubmit, watch, setValue, formState: { errors } } = useForm<FormInput, unknown, FormData>({
         resolver: zodResolver(schema),
@@ -114,12 +116,12 @@ export default function CreateTweakStep2(): React.JSX.Element {
     // Inside component
     return (
         <ScreenWrapper scrollable contentContainerStyle={{ flexGrow: 1 }}>
-            <View className="px-6 py-4 border-b border-gray-100 flex-row items-center justify-between">
+            <View className="px-6 py-4 border-b border-gray-100 dark:border-slate-700 flex-row items-center justify-between">
                 <View className="flex-row items-center">
                     <TouchableOpacity onPress={() => router.back()} className="mr-4" accessibilityRole="button" accessibilityLabel="Go back">
-                        <Ionicons name="arrow-back" size={24} color="black" />
+                        <Ionicons name="arrow-back" size={24} color={isDark ? colors.text : 'black'} />
                     </TouchableOpacity>
-                    <Text className="text-xl font-bold">Create Tweak</Text>
+                    <Text className="text-xl font-bold dark:text-slate-50">Create Tweak</Text>
                 </View>
                 <View className="flex-row items-center gap-4">
                     <Text className="text-primary font-bold">Step 2 of 4</Text>
@@ -210,7 +212,7 @@ export default function CreateTweakStep2(): React.JSX.Element {
 
                 {/* Experience Preference */}
                 <View className="mb-6">
-                    <Text className="text-gray-700 text-base mb-3">
+                    <Text className="text-gray-700 dark:text-slate-300 text-base mb-3">
                         Are you looking for someone with previous experience?
                     </Text>
                     <Controller
@@ -229,7 +231,7 @@ export default function CreateTweakStep2(): React.JSX.Element {
 
                 {/* KYC Preference */}
                 <View className="mb-6">
-                    <Text className="text-gray-700 text-base mb-3">
+                    <Text className="text-gray-700 dark:text-slate-300 text-base mb-3">
                         Do you want only KYC verified users?
                     </Text>
                     <Controller

@@ -1,6 +1,7 @@
 import { palette } from '@tweak/theme';
 import React from 'react';
 import { StyleSheet, Text, View } from 'react-native';
+import { useTheme } from '../../themes/ThemeProvider';
 
 interface DataRowProps {
     label: string;
@@ -9,10 +10,11 @@ interface DataRowProps {
 }
 
 export default function DataRow({ label, value, highlight = false }: DataRowProps): React.JSX.Element {
+    const { colors, isDark } = useTheme();
     return (
         <View style={styles.container}>
-            <Text style={styles.label}>{label}</Text>
-            <Text style={[styles.value, highlight && styles.valueHighlight]}>
+            <Text style={[styles.label, isDark && { color: colors.textSecondary }]}>{label}</Text>
+            <Text style={[styles.value, isDark && !highlight && { color: colors.text }, highlight && styles.valueHighlight]}>
                 {value}
             </Text>
         </View>

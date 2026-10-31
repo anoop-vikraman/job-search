@@ -15,8 +15,10 @@ import { ScreenWrapper } from '@/components/ScreenWrapper';
 import { useApplicationAction, useTweak, useTweakApplicationsRaw } from '@/hooks/useTweaks';
 import { formatMinor, toMinor } from '@/utils/money';
 import { palette } from '@tweak/theme';
+import { useTheme } from '@/themes/ThemeProvider';
 
 export default function ApplicantDetail(): React.JSX.Element {
+    const { colors } = useTheme();
     // Route param `userId` now carries the backend application id.
     const { id, userId: applicationId } = useLocalSearchParams<{ id: string; userId: string }>();
     const router = useRouter();
@@ -31,7 +33,7 @@ export default function ApplicantDetail(): React.JSX.Element {
         return (
             <ScreenWrapper>
                 <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
-                    <Text style={{ color: palette.slate500 }}>Applicant not found.</Text>
+                    <Text style={{ color: colors.textSecondary }}>Applicant not found.</Text>
                 </View>
             </ScreenWrapper>
         );
@@ -98,22 +100,22 @@ export default function ApplicantDetail(): React.JSX.Element {
                 <View style={{
                     flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between',
                     paddingHorizontal: 16, paddingVertical: 14,
-                    backgroundColor: '#fff', borderBottomWidth: 1, borderBottomColor: palette.slate100,
+                    backgroundColor: colors.surface, borderBottomWidth: 1, borderBottomColor: colors.border,
                 }}>
                     <TouchableOpacity onPress={() => router.back()} style={{ padding: 6 }} accessibilityRole="button" accessibilityLabel="Go back">
-                        <Ionicons name="arrow-back" size={24} color={palette.gray900} />
+                        <Ionicons name="arrow-back" size={24} color={colors.text} />
                     </TouchableOpacity>
-                    <Text style={{ fontSize: 17, fontWeight: '800', color: palette.slate900 }}>Applicant Profile</Text>
+                    <Text style={{ fontSize: 17, fontWeight: '800', color: colors.text }}>Applicant Profile</Text>
                     <View style={{ width: 36 }} />
                 </View>
 
                 <ScrollView style={{ flex: 1 }} contentContainerStyle={{ paddingBottom: 120 }}>
                     {/* Hero Section */}
-                    <View style={{ alignItems: 'center', padding: 24, backgroundColor: '#fff' }}>
-                        <View style={{ width: 100, height: 100, borderRadius: 50, backgroundColor: palette.slate100, alignItems: 'center', justifyContent: 'center', marginBottom: 16, shadowColor: '#000', shadowOpacity: 0.1, shadowRadius: 10, elevation: 5 }}>
-                            <Text style={{ fontSize: 40, fontWeight: '700', color: palette.slate500 }}>{displayName.charAt(0).toUpperCase()}</Text>
+                    <View style={{ alignItems: 'center', padding: 24, backgroundColor: colors.surface }}>
+                        <View style={{ width: 100, height: 100, borderRadius: 50, backgroundColor: colors.surfaceMuted, alignItems: 'center', justifyContent: 'center', marginBottom: 16, shadowColor: '#000', shadowOpacity: 0.1, shadowRadius: 10, elevation: 5 }}>
+                            <Text style={{ fontSize: 40, fontWeight: '700', color: colors.textSecondary }}>{displayName.charAt(0).toUpperCase()}</Text>
                         </View>
-                        <Text style={{ fontSize: 24, fontWeight: '800', color: palette.slate900 }}>{displayName}</Text>
+                        <Text style={{ fontSize: 24, fontWeight: '800', color: colors.text }}>{displayName}</Text>
 
                         <View style={{ backgroundColor: palette.blue100, paddingHorizontal: 12, paddingVertical: 6, borderRadius: 20, marginTop: 12, flexDirection: 'row', alignItems: 'center', gap: 6 }}>
                             <Ionicons name="ribbon-outline" size={14} color={palette.blue800} />
@@ -126,15 +128,15 @@ export default function ApplicantDetail(): React.JSX.Element {
                     {/* Content Section */}
                     <View style={{ padding: 20 }}>
                         {/* Why prefer me */}
-                        <Text style={{ fontSize: 16, fontWeight: '800', color: palette.slate900, marginBottom: 12 }}>Why they applied</Text>
-                        <View style={{ backgroundColor: palette.slate50, borderRadius: 16, padding: 16, borderWidth: 1, borderColor: palette.slate200, marginBottom: 24 }}>
-                            <Text style={{ fontSize: 15, lineHeight: 24, color: palette.slate700 }}>
+                        <Text style={{ fontSize: 16, fontWeight: '800', color: colors.text, marginBottom: 12 }}>Why they applied</Text>
+                        <View style={{ backgroundColor: colors.surfaceMuted, borderRadius: 16, padding: 16, borderWidth: 1, borderColor: colors.border, marginBottom: 24 }}>
+                            <Text style={{ fontSize: 15, lineHeight: 24, color: colors.textSecondary }}>
                                 {applicant.why_prefer_message || "No message provided."}
                             </Text>
                         </View>
 
                         {/* Selected Slots */}
-                        <Text style={{ fontSize: 16, fontWeight: '800', color: palette.slate900, marginBottom: 12 }}>Preferred Slots</Text>
+                        <Text style={{ fontSize: 16, fontWeight: '800', color: colors.text, marginBottom: 12 }}>Preferred Slots</Text>
                         <View style={{ gap: 8, marginBottom: 24 }}>
                             {applicant.selected_slots.map((slot, idx) => {
                                 const d = new Date(slot.date ?? '').toLocaleDateString('en-US', { day: 'numeric', month: 'short' });
@@ -148,11 +150,11 @@ export default function ApplicantDetail(): React.JSX.Element {
                         </View>
 
                         {/* Pricing */}
-                        <View style={{ backgroundColor: '#fff', borderRadius: 20, padding: 20, borderWidth: 1, borderColor: palette.slate200, elevation: 2, shadowColor: '#000', shadowOpacity: 0.05, shadowRadius: 10 }}>
+                        <View style={{ backgroundColor: colors.surface, borderRadius: 20, padding: 20, borderWidth: 1, borderColor: colors.border, elevation: 2, shadowColor: '#000', shadowOpacity: 0.05, shadowRadius: 10 }}>
                             <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 20 }}>
                                 <View>
-                                    <Text style={{ fontSize: 13, color: palette.slate500, marginBottom: 4 }}>Applicant's Quote</Text>
-                                    <Text style={{ fontSize: 24, fontWeight: '900', color: palette.slate900 }}>
+                                    <Text style={{ fontSize: 13, color: colors.textSecondary, marginBottom: 4 }}>Applicant's Quote</Text>
+                                    <Text style={{ fontSize: 24, fontWeight: '900', color: colors.text }}>
                                         {applicant.quoted_price_minor != null
                                             ? formatMinor(applicant.quoted_price_minor)
                                             : `₹${tweak.price}`}
@@ -161,11 +163,11 @@ export default function ApplicantDetail(): React.JSX.Element {
                                 <Ionicons name="cash-outline" size={32} color={palette.green600} />
                             </View>
 
-                            <Text style={{ fontSize: 14, fontWeight: '700', color: palette.slate900, marginBottom: 8 }}>Counter Quote (Optional)</Text>
-                            <View style={{ flexDirection: 'row', alignItems: 'center', backgroundColor: palette.slate50, borderRadius: 12, borderWidth: 1, borderColor: palette.slate200, paddingHorizontal: 12 }}>
-                                <Text style={{ fontSize: 18, fontWeight: '700', color: palette.slate500, marginRight: 8 }}>₹</Text>
+                            <Text style={{ fontSize: 14, fontWeight: '700', color: colors.text, marginBottom: 8 }}>Counter Quote (Optional)</Text>
+                            <View style={{ flexDirection: 'row', alignItems: 'center', backgroundColor: colors.surfaceMuted, borderRadius: 12, borderWidth: 1, borderColor: colors.border, paddingHorizontal: 12 }}>
+                                <Text style={{ fontSize: 18, fontWeight: '700', color: colors.textSecondary, marginRight: 8 }}>₹</Text>
                                 <TextInput
-                                    style={{ flex: 1, paddingVertical: 12, fontSize: 16, fontWeight: '600', color: palette.slate900 }}
+                                    style={{ flex: 1, paddingVertical: 12, fontSize: 16, fontWeight: '600', color: colors.text }}
                                     placeholder="Propose a different price"
                                     keyboardType="numeric"
                                     value={counterQuote}
@@ -184,7 +186,7 @@ export default function ApplicantDetail(): React.JSX.Element {
                 </ScrollView>
 
                 {/* Footer Actions */}
-                <View style={{ position: 'absolute', bottom: 0, left: 0, right: 0, padding: 20, backgroundColor: '#fff', borderTopWidth: 1, borderTopColor: palette.slate100, flexDirection: 'row', gap: 12 }}>
+                <View style={{ position: 'absolute', bottom: 0, left: 0, right: 0, padding: 20, backgroundColor: colors.surface, borderTopWidth: 1, borderTopColor: colors.border, flexDirection: 'row', gap: 12 }}>
                     {isPending ? (
                         <>
                             <TouchableOpacity
@@ -223,7 +225,7 @@ export default function ApplicantDetail(): React.JSX.Element {
                         </>
                     ) : (
                         <View style={{ flex: 1, paddingVertical: 16, alignItems: 'center' }}>
-                            <Text style={{ fontSize: 14, fontWeight: '700', color: palette.slate500, textTransform: 'capitalize' }}>
+                            <Text style={{ fontSize: 14, fontWeight: '700', color: colors.textSecondary, textTransform: 'capitalize' }}>
                                 Application {applicant.status}
                             </Text>
                         </View>

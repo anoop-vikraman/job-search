@@ -3,6 +3,7 @@ import { useRouter } from 'expo-router';
 import React from 'react';
 import { Text, TextInput, TouchableOpacity, View } from 'react-native';
 import { palette } from '@tweak/theme';
+import { useTheme } from '../../themes/ThemeProvider';
 
 interface HomeHeaderProps {
     currentAddress?: string;
@@ -11,9 +12,10 @@ interface HomeHeaderProps {
 
 export default function HomeHeader({ currentAddress = "Select Location", onLocationPress }: HomeHeaderProps): React.JSX.Element {
     const router = useRouter();
+    const { colors, isDark } = useTheme();
 
     return (
-        <View className="px-4 pt-2 pb-4 bg-white shadow-sm z-10">
+        <View className="px-4 pt-2 pb-4 bg-white dark:bg-slate-900 shadow-sm z-10">
             {/* Top Row: Location, Wallet, and Profile */}
             <View className="flex-row justify-between items-center mb-4">
                 <TouchableOpacity
@@ -25,10 +27,10 @@ export default function HomeHeader({ currentAddress = "Select Location", onLocat
                     </View>
                     <View className="flex-1">
                         <View className="flex-row items-center">
-                            <Text className="font-bold text-lg text-gray-900 mr-1">Home</Text>
-                            <Ionicons name="chevron-down" size={16} color={palette.gray700} />
+                            <Text className="font-bold text-lg text-gray-900 dark:text-slate-50 mr-1">Home</Text>
+                            <Ionicons name="chevron-down" size={16} color={isDark ? colors.text : palette.gray700} />
                         </View>
-                        <Text numberOfLines={1} className="text-gray-500 text-sm">
+                        <Text numberOfLines={1} className="text-gray-500 dark:text-slate-400 text-sm">
                             {currentAddress}
                         </Text>
                     </View>
@@ -45,25 +47,25 @@ export default function HomeHeader({ currentAddress = "Select Location", onLocat
 
                 <TouchableOpacity
                     onPress={() => router.push('/profile')}
-                    className="p-2 bg-gray-100 rounded-full"
+                    className="p-2 bg-gray-100 dark:bg-slate-800 rounded-full"
                     accessibilityRole="button"
                     accessibilityLabel="Open profile"
                 >
-                    <Ionicons name="person" size={24} color={palette.gray700} />
+                    <Ionicons name="person" size={24} color={isDark ? colors.text : palette.gray700} />
                 </TouchableOpacity>
             </View>
 
             {/* Search Bar */}
-            <View className="flex-row items-center bg-gray-100 rounded-xl px-4 py-3 border border-gray-200">
-                <Ionicons name="search" size={20} color={palette.gray400} />
+            <View className="flex-row items-center bg-gray-100 dark:bg-slate-800 rounded-xl px-4 py-3 border border-gray-200 dark:border-slate-700">
+                <Ionicons name="search" size={20} color={isDark ? colors.textMuted : palette.gray400} />
                 <TextInput
                     placeholder="Search for Services"
-                    placeholderTextColor={palette.gray400}
-                    className="flex-1 ml-3 text-base text-gray-900"
+                    placeholderTextColor={isDark ? colors.textMuted : palette.gray400}
+                    className="flex-1 ml-3 text-base text-gray-900 dark:text-slate-50"
                     editable={false} // Make it clickable if navigating to a search page
                 // onPressIn={() => router.push('/search')} 
                 />
-                <View className="h-5 w-[1px] bg-gray-300 mx-2" />
+                <View className="h-5 w-[1px] bg-gray-300 dark:bg-slate-700 mx-2" />
                 <TouchableOpacity accessibilityRole="button" accessibilityLabel="Voice search">
                     <Ionicons name="mic" size={20} color={palette.orange500} />
                 </TouchableOpacity>
