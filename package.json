@@ -1,0 +1,16 @@
+{
+  "name": "tweak",
+  "private": true,
+  "version": "1.0.0",
+  "workspaces": [
+    "admin",
+    "mobile"
+  ],
+  "scripts": {
+    "dev:admin": "npm run dev --workspace=admin",
+    "dev:mobile": "npm run start --workspace=mobile",
+    "dev:backend": "cd backend && venv/bin/uvicorn app.main:app --reload --port 8000",
+    "lint:admin": "npm run lint --workspace=admin",
+    "lint:mobile": "npm run lint --workspace=mobile"
+  }
+}
