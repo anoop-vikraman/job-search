@@ -105,6 +105,16 @@ See [wallet-and-escrow.md](./wallet-and-escrow.md#adding-money-razorpay) for the
 | POST | `/api/v1/conversations/{conversation_id}/messages` | user (party) |
 | POST | `/api/v1/conversations/{conversation_id}/read` | user (party) |
 
+### Moderation
+| Method | Path | Auth |
+|---|---|---|
+| POST | `/api/v1/reports` | user |
+| POST | `/api/v1/users/{user_id}/block` | user |
+| DELETE | `/api/v1/users/{user_id}/block` | user |
+| GET | `/api/v1/users/me/blocks` | user |
+| GET | `/api/v1/admin/reports?status&target_type&page&limit` | admin |
+| POST | `/api/v1/admin/reports/{report_id}/resolve` | admin |
+
 ### Devices (push)
 | Method | Path | Auth |
 |---|---|---|
@@ -152,6 +162,8 @@ See [wallet-and-escrow.md](./wallet-and-escrow.md#adding-money-razorpay) for the
 | `INVALID_SIGNATURE` / `PAYMENT_MISMATCH` / `PAYMENT_NOT_CAPTURED` | Top-up verification failures |
 | `ORDER_ALREADY_PAID` | Order credited by a different payment |
 | `SIMULATED_TOPUP_DISABLED` | Legacy top-up turned off |
+| `USER_BLOCKED` | Applying to / chatting with a blocked (or blocking) user |
+| `ALREADY_REPORTED` | Duplicate open report |
 | `WORK_SUBMITTED` | Lister cancel after the provider marked work done |
 | `INVALID_SPLIT` | Partial dispute amount outside 1…escrow−1 |
 

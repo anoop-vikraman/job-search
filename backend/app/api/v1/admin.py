@@ -12,7 +12,15 @@ from app.api.deps import CurrentUser, DbSession, require_admin
 from app.core.errors import AppError
 from app.db.base import Base
 from app.models.application import Application
-from app.models.enums import DisputeStatus, PayoutStatus, RefundStatus, TweakStatus, UserRole
+from app.models.enums import (
+    DisputeStatus,
+    PayoutStatus,
+    RefundStatus,
+    ReportStatus,
+    ReportTarget,
+    TweakStatus,
+    UserRole,
+)
 from app.models.payment import Payout
 from app.models.refund import Refund
 from app.models.tweak import Tweak
@@ -21,12 +29,13 @@ from app.models.wallet import WalletTransaction
 from app.schemas.application import ApplicationResponse
 from app.schemas.common import ErrorResponse, MessageResponse, Page
 from app.schemas.dispute import DisputeResolve, DisputeResponse
+from app.schemas.moderation import AdminReportResponse, ReportResolve, ReportResponse
 from app.schemas.payment import PayoutDecision, PayoutResponse
 from app.schemas.refund import RefundDecision, RefundResponse
 from app.schemas.tweak import TweakResponse
 from app.schemas.user import AdminBanRequest, UserProfile
 from app.schemas.wallet import TransactionResponse
-from app.services import dispute_service, payment_service, refund_service
+from app.services import dispute_service, payment_service, refund_service, report_service
 
 router = APIRouter(prefix="/admin", tags=["admin"], dependencies=[Depends(require_admin)])
 
@@ -167,6 +176,47 @@ async def list_refunds(
     if status_filter is not None:
         conditions.append(Refund.status == status_filter)
     return await _paginate(db, Refund, RefundResponse, page, limit, Refund.created_at, conditions)
+
+
+@router.get("/reports", response_model=Page[AdminReportResponse])
+async def list_reports(
+    db: DbSession,
+    page: int = Query(1, ge=1),
+    limit: int = Query(20, ge=1, le=100),
+    status_filter: ReportStatus | None = Query(None, alias="status"),
+    target_type: ReportTarget | None = None,
+) -> Page[AdminReportResponse]:
+    """Moderation queue: user/tweak/message reports, newest first."""
+    rows, total = await report_service.list_reports(
+        db, status_filter=status_filter, target_type=target_type, page=page, limit=limit
+    )
+    return Page(
+        items=[
+            AdminReportResponse(
+                **ReportResponse.model_validate(r).model_dump(), open_reports_against_user=n
+            )
+            for r, n in rows
+        ],
+        total=total,
+        page=page,
+        limit=limit,
+    )
+
+
+@router.post(
+    "/reports/{report_id}/resolve",
+    response_model=ReportResponse,
+    responses={404: {"model": ErrorResponse}, 409: {"model": ErrorResponse}},
+)
+async def resolve_report(
+    report_id: uuid.UUID, data: ReportResolve, admin: CurrentUser, db: DbSession
+) -> ReportResponse:
+    """Dismiss or action a report (optionally banning the user / closing the tweak).
+
+    Settles every open report on the same target.
+    """
+    report = await report_service.resolve_report(db, report_id, admin.id, data)
+    return ReportResponse.model_validate(report)
 
 
 @router.get("/disputes", response_model=Page[DisputeResponse])

@@ -5,6 +5,7 @@ import {
   Users,
   Wrench,
   ClipboardList,
+  Flag,
   Gavel,
 } from "lucide-react";
 import * as React from "react";
@@ -21,6 +22,7 @@ const NAV = [
   { to: "/transactions", label: "Transactions", icon: ArrowLeftRight },
   { to: "/refunds", label: "Refunds", icon: ReceiptText },
   { to: "/disputes", label: "Disputes", icon: Gavel },
+  { to: "/reports", label: "Reports", icon: Flag },
 ];
 
 export function AppLayout(): React.JSX.Element {

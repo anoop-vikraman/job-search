@@ -17,7 +17,7 @@ from app.models.notification import Notification
 from app.models.tweak import Tweak
 from app.models.user import User
 from app.schemas.chat import ChatMessageResponse, ChatParticipant, ConversationResponse
-from app.services import notification_service
+from app.services import block_service, notification_service
 
 # Chat opens on acceptance and stays writable through disputes and after completion
 # (follow-ups, reviews). Rejected/withdrawn (incl. cancelled work) leaves it read-only.
@@ -98,6 +98,7 @@ async def _build(
         ),
     )
     users = {u.id: u for u in await db.scalars(select(User).where(User.id.in_(other_ids)))}
+    blocked = await block_service.blocked_ids(db, viewer_id)
     last_messages = {
         m.conversation_id: m
         for m in await db.scalars(
@@ -129,7 +130,9 @@ async def _build(
                 my_role=_role(c, viewer_id),
                 last_message=ChatMessageResponse.model_validate(last) if last else None,
                 unread_count=unread.get(c.id, 0),
-                can_send=app_statuses.get(c.application_id) in CHAT_OPEN_STATUSES,
+                can_send=app_statuses.get(c.application_id) in CHAT_OPEN_STATUSES
+                and other_id not in blocked,
+                blocked=other_id in blocked,
                 last_message_at=c.last_message_at,
                 created_at=c.created_at,
             )
@@ -160,6 +163,9 @@ async def get_or_create(
     if existing is not None:
         return (await _build(db, [existing], user_id))[0], False
 
+    await block_service.ensure_not_blocked(
+        db, tweak.created_by_user_id, application.provider_user_id
+    )
     if application.status not in CHAT_OPEN_STATUSES:
         raise AppError(
             status.HTTP_409_CONFLICT,
@@ -253,6 +259,9 @@ async def send_message(
     )
     if application_status not in CHAT_OPEN_STATUSES:
         raise AppError(status.HTTP_409_CONFLICT, "CHAT_CLOSED", "This conversation is read-only.")
+    await block_service.ensure_not_blocked(
+        db, conversation.lister_user_id, conversation.provider_user_id
+    )
 
     # Wall-clock time (not the transaction's now()) so ordering and read cursors stay
     # strictly increasing even for messages sent in quick succession.

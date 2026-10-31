@@ -108,3 +108,21 @@ export interface Dispute {
   resolved_at: string | null;
   created_at: string;
 }
+
+export type ReportTarget = "user" | "tweak" | "message";
+export type ReportStatus = "open" | "actioned" | "dismissed";
+
+export interface Report {
+  id: string;
+  reporter_user_id: string;
+  target_type: ReportTarget;
+  target_id: string;
+  target_user_id: string;
+  reason: string;
+  details: string | null;
+  status: ReportStatus;
+  admin_note: string | null;
+  resolved_at: string | null;
+  created_at: string;
+  open_reports_against_user: number;
+}

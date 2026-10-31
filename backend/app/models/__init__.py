@@ -4,6 +4,7 @@ from app.models.chat import Conversation, Message
 from app.models.device_token import DeviceToken
 from app.models.dispute import Dispute
 from app.models.job import Job
+from app.models.moderation import Block, Report
 from app.models.notification import Notification
 from app.models.notification_preference import NotificationPreference
 from app.models.payment import PaymentOrder, Payout
@@ -19,6 +20,7 @@ from app.models.watchlist import Watchlist
 __all__ = [
     "Address",
     "Application",
+    "Block",
     "Conversation",
     "DeviceToken",
     "Dispute",
@@ -32,6 +34,7 @@ __all__ = [
     "PushTicket",
     "Rating",
     "RefreshToken",
+    "Report",
     "Refund",
     "Tweak",
     "User",

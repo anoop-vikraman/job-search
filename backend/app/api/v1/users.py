@@ -1,8 +1,13 @@
-from fastapi import APIRouter
+import uuid
+
+from fastapi import APIRouter, status
 
 from app.api.deps import CurrentUser, DbSession
-from app.schemas.common import ErrorResponse
+from app.schemas.chat import ChatParticipant
+from app.schemas.common import ErrorResponse, MessageResponse
+from app.schemas.moderation import BlockedUser
 from app.schemas.user import UpdateUserRequest, UserProfile
+from app.services import block_service
 
 router = APIRouter(prefix="/users", tags=["users"])
 
@@ -11,6 +16,34 @@ router = APIRouter(prefix="/users", tags=["users"])
 async def get_me(user: CurrentUser) -> UserProfile:
     """Return the authenticated user's profile."""
     return UserProfile.model_validate(user)
+
+
+@router.get("/me/blocks", response_model=list[BlockedUser], status_code=status.HTTP_200_OK)
+async def list_blocks(user: CurrentUser, db: DbSession) -> list[BlockedUser]:
+    """Users the caller has blocked."""
+    rows = await block_service.list_blocked(db, user.id)
+    return [
+        BlockedUser(user=ChatParticipant.model_validate(u), blocked_at=b.created_at)
+        for b, u in rows
+    ]
+
+
+@router.post(
+    "/{user_id}/block",
+    response_model=MessageResponse,
+    status_code=status.HTTP_200_OK,
+    responses={400: {"model": ErrorResponse}, 404: {"model": ErrorResponse}},
+)
+async def block_user(user_id: uuid.UUID, user: CurrentUser, db: DbSession) -> MessageResponse:
+    """Block a user (idempotent): hides their tweaks and stops applications and chat both ways."""
+    await block_service.block(db, user.id, user_id)
+    return MessageResponse(message="User blocked.")
+
+
+@router.delete("/{user_id}/block", status_code=status.HTTP_204_NO_CONTENT)
+async def unblock_user(user_id: uuid.UUID, user: CurrentUser, db: DbSession) -> None:
+    """Remove a block (idempotent)."""
+    await block_service.unblock(db, user.id, user_id)
 
 
 @router.patch("/me", response_model=UserProfile, responses={422: {"model": ErrorResponse}})

@@ -351,10 +351,38 @@ export interface Conversation {
     my_role: 'lister' | 'provider';
     last_message: ChatMessage | null;
     unread_count: number;
-    /** False once the work was cancelled; history stays readable. */
+    /** False once the work was cancelled, or if either side blocked the other. */
     can_send: boolean;
+    /** Either side blocked the other. */
+    blocked: boolean;
     last_message_at: string | null;
     created_at: string;
+}
+
+// ─── Moderation ───────────────────────────────────────────────────────────
+
+export type ReportTarget = 'user' | 'tweak' | 'message';
+export type ReportReason = 'spam' | 'scam' | 'harassment' | 'inappropriate' | 'no_show' | 'other';
+
+export interface ReportCreateRequest {
+    target_type: ReportTarget;
+    target_id: string;
+    reason: ReportReason;
+    details?: string;
+}
+
+export interface ReportResponse {
+    id: string;
+    target_type: ReportTarget;
+    target_id: string;
+    reason: ReportReason;
+    status: 'open' | 'actioned' | 'dismissed';
+    created_at: string;
+}
+
+export interface BlockedUser {
+    user: ChatParticipant;
+    blocked_at: string;
 }
 
 // ─── Media ───────────────────────────────────────────────────────────────

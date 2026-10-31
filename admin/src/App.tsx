@@ -7,6 +7,7 @@ import { ApplicationsPage } from "@/pages/ApplicationsPage";
 import { DisputesPage } from "@/pages/DisputesPage";
 import { LoginPage } from "@/pages/LoginPage";
 import { RefundsPage } from "@/pages/RefundsPage";
+import { ReportsPage } from "@/pages/ReportsPage";
 import { TransactionsPage } from "@/pages/TransactionsPage";
 import { TweaksPage } from "@/pages/TweaksPage";
 import { UsersPage } from "@/pages/UsersPage";
@@ -33,6 +34,7 @@ export function App(): React.JSX.Element {
         <Route path="/transactions" element={<TransactionsPage />} />
         <Route path="/refunds" element={<RefundsPage />} />
         <Route path="/disputes" element={<DisputesPage />} />
+        <Route path="/reports" element={<ReportsPage />} />
       </Route>
       <Route path="*" element={<Navigate to="/users" replace />} />
     </Routes>

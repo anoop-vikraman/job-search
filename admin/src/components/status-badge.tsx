@@ -17,6 +17,8 @@ const TONES: Record<string, Tone> = {
   pending: "pending",
   open: "pending",
   resolved: "success",
+  actioned: "success",
+  dismissed: "neutral",
   disputed: "danger",
   requested: "pending",
   hold: "pending",

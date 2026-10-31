@@ -18,7 +18,7 @@ from app.schemas.application import (
 from app.schemas.common import CursorPage, ErrorResponse
 from app.schemas.dispute import DisputeCreate, DisputeResponse
 from app.schemas.tweak import FeedSort, TweakCreate, TweakResponse, TweakUpdate
-from app.services import application_service, dispute_service, tweak_service
+from app.services import application_service, block_service, dispute_service, tweak_service
 
 router = APIRouter(prefix="/tweaks", tags=["tweaks"])
 
@@ -50,7 +50,8 @@ async def list_tweaks(
     radius_km: float | None = Query(None, gt=0, le=500),
     sort: FeedSort = FeedSort.newest,
 ) -> CursorPage[TweakResponse]:
-    """Marketplace feed: active tweaks not owned by the viewer.
+    """Marketplace feed: active tweaks not owned by the viewer or anyone they blocked
+    (or who blocked them).
 
     `search` matches title, description, category and skills (case-insensitive).
     Passing `lat`/`lng` adds `distance_km`; `radius_km` and `sort=distance` require them.
@@ -73,6 +74,7 @@ async def list_tweaks(
         filters=filters,
         sort=sort,
         cursor=cursor,
+        exclude_owner_ids=await block_service.blocked_ids(db, user.id),
     )
     return CursorPage(
         items=[

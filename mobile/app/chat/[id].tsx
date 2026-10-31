@@ -3,7 +3,7 @@ import { useIsFocused } from '@react-navigation/native';
 import dayjs from 'dayjs';
 import { useLocalSearchParams, useRouter, type Href } from 'expo-router';
 import React, { useEffect, useState } from 'react';
-import { ActivityIndicator, FlatList, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import { ActivityIndicator, Alert, FlatList, Modal, Pressable, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import { palette } from '@tweak/theme';
 
 import ChatAvatar from '@/components/Chat/ChatAvatar';
@@ -16,7 +16,9 @@ import {
     useSendMessage,
 } from '@/hooks/useChat';
 import { useTheme } from '@/themes/ThemeProvider';
-import type { ChatMessage } from '@/types/api';
+import type { ChatMessage, ReportTarget } from '@/types/api';
+import { useSetBlocked } from '@/hooks/useModeration';
+import ReportSheet from '@/components/Moderation/ReportSheet';
 
 const MAX_LENGTH = 2000;
 
@@ -31,7 +33,10 @@ export default function ChatThreadPage(): React.JSX.Element {
     const { colors, isDark } = useTheme();
     const isFocused = useIsFocused();
 
-    const { data: conversation } = useConversation(id);
+    const { data: conversation, refetch: refetchConversation } = useConversation(id);
+    const [menuOpen, setMenuOpen] = useState(false);
+    const [reportTarget, setReportTarget] = useState<{ type: ReportTarget; id: string } | null>(null);
+    const setBlocked = useSetBlocked();
     const { data: messages = [], isLoading } = useMessages(id, { poll: isFocused });
     const send = useSendMessage(id);
     const { mutate: markRead } = useMarkConversationRead();
@@ -59,7 +64,11 @@ export default function ChatThreadPage(): React.JSX.Element {
     const renderMessage = ({ item }: { item: ChatMessage }): React.JSX.Element => {
         const mine = item.sender_user_id !== otherId;
         return (
-            <View style={{ alignItems: mine ? 'flex-end' : 'flex-start', marginVertical: 3, paddingHorizontal: 12 }}>
+            <Pressable
+                onLongPress={mine ? undefined : () => setReportTarget({ type: 'message', id: item.id })}
+                delayLongPress={400}
+                style={{ alignItems: mine ? 'flex-end' : 'flex-start', marginVertical: 3, paddingHorizontal: 12 }}
+            >
                 <View
                     style={{
                         maxWidth: '80%',
@@ -76,7 +85,7 @@ export default function ChatThreadPage(): React.JSX.Element {
                 <Text style={{ fontSize: 10, color: colors.textMuted, marginTop: 2, marginHorizontal: 4 }}>
                     {formatStamp(item.created_at)}
                 </Text>
-            </View>
+            </Pressable>
         );
     };
 
@@ -106,6 +115,11 @@ export default function ChatThreadPage(): React.JSX.Element {
                     </TouchableOpacity>
                 ) : (
                     <View style={{ flex: 1 }} />
+                )}
+                {conversation && (
+                    <TouchableOpacity onPress={() => setMenuOpen(true)} style={{ padding: 6 }} accessibilityRole="button" accessibilityLabel="More options">
+                        <Ionicons name="ellipsis-vertical" size={20} color={colors.text} />
+                    </TouchableOpacity>
                 )}
             </View>
 
@@ -137,7 +151,9 @@ export default function ChatThreadPage(): React.JSX.Element {
             {conversation && !canSend ? (
                 <View style={{ padding: 14, backgroundColor: colors.surfaceMuted, borderTopWidth: 1, borderTopColor: colors.border }}>
                     <Text style={{ textAlign: 'center', fontSize: 13, color: colors.textSecondary }}>
-                        This job was cancelled, so the conversation is read-only.
+                        {conversation.blocked
+                            ? "You can't message this user."
+                            : 'This job was cancelled, so the conversation is read-only.'}
                     </Text>
                 </View>
             ) : (
@@ -167,6 +183,64 @@ export default function ChatThreadPage(): React.JSX.Element {
                     </TouchableOpacity>
                 </View>
             )}
+            {/* Options */}
+            <Modal visible={menuOpen} transparent animationType="fade" onRequestClose={() => setMenuOpen(false)}>
+                <Pressable style={{ flex: 1, backgroundColor: 'rgba(0,0,0,0.3)' }} onPress={() => setMenuOpen(false)}>
+                    <View style={{ position: 'absolute', top: 64, right: 12, backgroundColor: colors.surface, borderRadius: 14, minWidth: 200, overflow: 'hidden', elevation: 10, shadowColor: '#000', shadowOpacity: 0.15, shadowRadius: 12 }}>
+                        {conversation && (
+                            <>
+                                <TouchableOpacity
+                                    onPress={() => {
+                                        setMenuOpen(false);
+                                        setReportTarget({ type: 'user', id: conversation.other_user.id });
+                                    }}
+                                    style={{ flexDirection: 'row', alignItems: 'center', gap: 10, padding: 14, borderBottomWidth: 1, borderBottomColor: colors.border }}
+                                >
+                                    <Ionicons name="flag-outline" size={18} color="#DC2626" />
+                                    <Text style={{ fontWeight: '600', color: '#DC2626' }}>Report {participantName(conversation.other_user)}</Text>
+                                </TouchableOpacity>
+                                <TouchableOpacity
+                                    onPress={() => {
+                                        setMenuOpen(false);
+                                        const name = participantName(conversation.other_user);
+                                        const blocking = !conversation.blocked;
+                                        Alert.alert(
+                                            blocking ? `Block ${name}?` : `Unblock ${name}?`,
+                                            blocking
+                                                ? "You won't see each other's tweaks, apply to them, or message each other."
+                                                : 'You will be able to interact again.',
+                                            [
+                                                { text: 'Cancel', style: 'cancel' },
+                                                {
+                                                    text: blocking ? 'Block' : 'Unblock',
+                                                    style: blocking ? 'destructive' : 'default',
+                                                    onPress: () =>
+                                                        setBlocked.mutate(
+                                                            { userId: conversation.other_user.id, blocked: blocking },
+                                                            { onSuccess: () => void refetchConversation() }
+                                                        ),
+                                                },
+                                            ]
+                                        );
+                                    }}
+                                    style={{ flexDirection: 'row', alignItems: 'center', gap: 10, padding: 14 }}
+                                >
+                                    <Ionicons name="ban-outline" size={18} color={colors.textSecondary} />
+                                    <Text style={{ fontWeight: '600', color: colors.textSecondary }}>
+                                        {conversation.blocked ? 'Unblock' : 'Block'} {participantName(conversation.other_user)}
+                                    </Text>
+                                </TouchableOpacity>
+                            </>
+                        )}
+                    </View>
+                </Pressable>
+            </Modal>
+            <ReportSheet
+                visible={reportTarget !== null}
+                target={reportTarget}
+                subject={reportTarget?.type === 'message' ? 'this message' : conversation ? participantName(conversation.other_user) : 'user'}
+                onClose={() => setReportTarget(null)}
+            />
         </ScreenWrapper>
     );
 }

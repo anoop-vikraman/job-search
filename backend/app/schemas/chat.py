@@ -48,8 +48,10 @@ class ConversationResponse(BaseModel):
     my_role: Literal["lister", "provider"]
     last_message: ChatMessageResponse | None
     unread_count: int
-    # False once the application is no longer accepted/completed (e.g. cancelled).
+    # False once the work was cancelled/rejected, or if either side blocked the other.
     can_send: bool
+    # Either side blocked the other.
+    blocked: bool = False
     last_message_at: UtcDatetime | None
     created_at: UtcDatetime
 

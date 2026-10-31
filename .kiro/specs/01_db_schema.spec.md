@@ -354,6 +354,15 @@ Required by steering: rotatable refresh tokens persisted in DB.
   CHECK), `auto_release_at`; `application_status` gains `disputed`; `notification_type` gains
   `work_submitted`, `dispute_opened`, `dispute_resolved`.
 
+### reports / blocks
+- `reports`: `reporter_user_id`, `target_type` report_target (`user`,`tweak`,`message`), `target_id`,
+  `target_user_id` (accountable user), `reason` report_reason, `details`, `status` report_status
+  (`open`,`actioned`,`dismissed`), `admin_note`, `resolved_by_user_id`, `resolved_at`.
+  `uq_reports_open_per_target (reporter_user_id, target_type, target_id) WHERE status='open'`,
+  `ix_reports_target`, `ix_reports_status_created`, FK indexes.
+- `blocks`: `blocker_user_id`, `blocked_user_id` (both FK users CASCADE, indexed), UNIQUE pair,
+  CHECK not self.
+
 ### jobs / push_tickets / notification_preferences
 - `jobs`: `kind`, `payload` (JSONB object), `status` job_status (`queued`,`running`,`done`,`failed`),
   `run_at`, `attempts`, `max_attempts`, `last_error`, `locked_at`, `finished_at`;

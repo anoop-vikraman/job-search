@@ -21,6 +21,7 @@ import { backendApplicationToLocal } from '@/utils/tweakAdapter';
 import { useOpenDispute, useSubmitWork } from '@/hooks/useWorkflow';
 import NoteWithPhotosSheet from '@/components/Work/NoteWithPhotosSheet';
 import WorkStatusBanner from '@/components/Work/WorkStatusBanner';
+import ReportSheet from '@/components/Moderation/ReportSheet';
 import { Toast } from '@/components/UI/ToastManager';
 import { minorToMajor } from '@/utils/money';
 import { useAddToWatchlist, useRemoveFromWatchlist, useWatchlist } from '@/hooks/useWatchlist';
@@ -299,6 +300,7 @@ export default function TweakDetails(): React.JSX.Element {
     const [showMenuModal, setShowMenuModal] = useState(false);
     const [showAppSummaryModal, setShowAppSummaryModal] = useState(false);
     const [workSheet, setWorkSheet] = useState<'submit' | 'dispute' | null>(null);
+    const [reportOpen, setReportOpen] = useState(false);
     const submitWork = useSubmitWork();
     const openDispute = useOpenDispute();
 
@@ -902,7 +904,7 @@ export default function TweakDetails(): React.JSX.Element {
                         <TouchableOpacity
                             onPress={() => {
                                 setShowMenuModal(false);
-                                Alert.alert('Report', 'Thank you for your report. We will review this tweak.');
+                                setReportOpen(true);
                             }}
                             style={{ flexDirection: 'row', alignItems: 'center', gap: 12, paddingHorizontal: 16, paddingVertical: 14, borderBottomWidth: 1, borderBottomColor: colors.border }}
                         >
@@ -912,7 +914,7 @@ export default function TweakDetails(): React.JSX.Element {
                         <TouchableOpacity
                             onPress={() => {
                                 setShowMenuModal(false);
-                                Alert.alert('Support', 'Our support team will contact you shortly.');
+                                router.push('/help' as Href);
                             }}
                             style={{ flexDirection: 'row', alignItems: 'center', gap: 12, paddingHorizontal: 16, paddingVertical: 14 }}
                         >
@@ -922,6 +924,13 @@ export default function TweakDetails(): React.JSX.Element {
                     </View>
                 </Pressable>
             </Modal>
+            <ReportSheet
+                visible={reportOpen}
+                target={{ type: 'tweak', id: tweak.id }}
+                subject="this tweak"
+                onClose={() => setReportOpen(false)}
+            />
+
             {/* ── Provider work sheets ─────────────────────────────────────── */}
             {myProviderApplication && (
                 <>

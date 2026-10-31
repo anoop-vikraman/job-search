@@ -79,6 +79,27 @@ class TxnStatus(str, enum.Enum):
     reversed = "reversed"
 
 
+class ReportTarget(str, enum.Enum):
+    user = "user"
+    tweak = "tweak"
+    message = "message"
+
+
+class ReportReason(str, enum.Enum):
+    spam = "spam"
+    scam = "scam"
+    harassment = "harassment"
+    inappropriate = "inappropriate"
+    no_show = "no_show"
+    other = "other"
+
+
+class ReportStatus(str, enum.Enum):
+    open = "open"
+    actioned = "actioned"
+    dismissed = "dismissed"
+
+
 class JobStatus(str, enum.Enum):
     queued = "queued"
     running = "running"

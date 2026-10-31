@@ -5,6 +5,7 @@ import type {
   DisputeOutcome,
   Page,
   Refund,
+  Report,
   Transaction,
   Tweak,
   UserProfile,
@@ -82,4 +83,25 @@ export interface DisputeResolution {
 export async function resolveDispute(disputeId: string, body: DisputeResolution): Promise<Dispute> {
   const res = await api.post<Dispute>(`/admin/disputes/${disputeId}/resolve`, body);
   return res.data;
+}
+
+export interface ReportFilters {
+  status?: string;
+  target_type?: string;
+}
+
+export async function listReports(page: number, filters: ReportFilters = {}): Promise<Page<Report>> {
+  const res = await api.get<Page<Report>>("/admin/reports", withPage(page, { ...filters }));
+  return res.data;
+}
+
+export interface ReportResolution {
+  action: "actioned" | "dismissed";
+  note?: string;
+  ban_user?: boolean;
+  close_tweak?: boolean;
+}
+
+export async function resolveReport(reportId: string, body: ReportResolution): Promise<void> {
+  await api.post(`/admin/reports/${reportId}/resolve`, body);
 }

@@ -14,7 +14,7 @@ from app.models.enums import ApplicationStatus, NotificationType, TweakStatus
 from app.models.tweak import Tweak
 from app.models.user import User
 from app.schemas.application import ApplicationCreate, CounterQuoteRequest, WorkSubmit
-from app.services import job_service, notification_service, wallet_service
+from app.services import block_service, job_service, notification_service, wallet_service
 
 
 def _platform_fee(amount_minor: int) -> int:
@@ -41,6 +41,7 @@ async def apply(
         )
     if tweak.status != TweakStatus.active:
         raise AppError(status.HTTP_400_BAD_REQUEST, "TWEAK_NOT_ACTIVE", "Tweak is not open.")
+    await block_service.ensure_not_blocked(db, provider_user_id, tweak.created_by_user_id)
 
     existing = await db.scalar(
         select(Application).where(
