@@ -1,3 +1,7 @@
+import dayjs from 'dayjs';
+import 'dayjs/locale/hi';
+import 'dayjs/locale/ml';
+import 'dayjs/locale/ta';
 import { getLocales } from 'expo-localization';
 import i18n from 'i18next';
 import { initReactI18next } from 'react-i18next';
@@ -15,6 +19,10 @@ const RESOURCES = {
     hi: { translation: hi },
 };
 
+export type AppLanguage = keyof typeof RESOURCES;
+export const SUPPORTED_LANGUAGES = Object.keys(RESOURCES) as AppLanguage[];
+const isSupported = (lang: string | null | undefined): lang is AppLanguage =>
+    lang != null && (SUPPORTED_LANGUAGES as string[]).includes(lang);
 const LANG_STORAGE_KEY = 'app_language';
 const TRANSLATION_STORAGE_PREFIX = 'translation_';
 
@@ -22,10 +30,11 @@ const initI18n = async () => {
     // 1. Try to get user preference from MMKV (Sync is fast!)
     let language = storage.getString(LANG_STORAGE_KEY);
 
-    if (!language) {
+    // A stored code we do not ship (e.g. te/kn from an older build) falls back to detection.
+    if (!isSupported(language)) {
         // 2. Fallback to Device Language
         const deviceLanguage = getLocales()[0]?.languageCode;
-        if (deviceLanguage && Object.keys(RESOURCES).includes(deviceLanguage)) {
+        if (isSupported(deviceLanguage)) {
             language = deviceLanguage;
         } else {
             language = 'en';
@@ -64,6 +73,8 @@ const initI18n = async () => {
         }
     });
 
+    // Month/day names in dayjs-formatted dates follow the app language.
+    dayjs.locale(language);
     // 4. Background Update Check
     checkForUpdates(language);
 };
@@ -76,6 +87,8 @@ const checkForUpdates = async (lang: string) => {
 };
 
 export const changeLanguage = (lang: string): void => {
+    if (!isSupported(lang)) return;
+    dayjs.locale(lang);
     i18n.changeLanguage(lang);
     storage.set(LANG_STORAGE_KEY, lang);
     checkForUpdates(lang);

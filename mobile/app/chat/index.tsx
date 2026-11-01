@@ -3,6 +3,7 @@ import { useIsFocused } from '@react-navigation/native';
 import dayjs from 'dayjs';
 import { useRouter, type Href } from 'expo-router';
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 import { FlatList, Text, TouchableOpacity, View } from 'react-native';
 import { palette } from '@tweak/theme';
 
@@ -20,23 +21,30 @@ function formatWhen(iso: string): string {
 export default function ConversationsPage(): React.JSX.Element {
     const router = useRouter();
     const { colors } = useTheme();
+    const { t } = useTranslation();
     const isFocused = useIsFocused();
     const { data: conversations = [], isLoading, isRefetching, refetch } = useConversations({ poll: isFocused });
 
     const renderItem = ({ item }: { item: Conversation }): React.JSX.Element => {
         const unread = item.unread_count > 0;
         const last = item.last_message;
-        const lastText = last ? last.body || (last.attachments.length > 1 ? `📷 ${last.attachments.length} photos` : '📷 Photo') : '';
+        const lastText = last ? last.body || (last.attachments.length > 1 ? t('chat.photos', { count: last.attachments.length }) : t('chat.photo')) : '';
         const preview = last
-            ? `${last.sender_user_id === item.other_user.id ? '' : 'You: '}${lastText}`
-            : 'Say hello 👋';
+            ? last.sender_user_id === item.other_user.id
+                ? lastText
+                : t('chat.youPrefix', { text: lastText })
+            : t('chat.sayHello');
         return (
             <TouchableOpacity
                 onPress={() => router.push(`/chat/${item.id}` as Href)}
                 activeOpacity={0.7}
                 style={{ flexDirection: 'row', alignItems: 'center', gap: 12, paddingHorizontal: 16, paddingVertical: 12, borderBottomWidth: 1, borderBottomColor: colors.border }}
                 accessibilityRole="button"
-                accessibilityLabel={`Conversation with ${participantName(item.other_user)}${unread ? `, ${item.unread_count} unread` : ''}`}
+                accessibilityLabel={
+                    unread
+                        ? t('chat.conversationWithUnread', { name: participantName(item.other_user), count: item.unread_count })
+                        : t('chat.conversationWith', { name: participantName(item.other_user) })
+                }
             >
                 <ChatAvatar user={item.other_user} />
                 <View style={{ flex: 1 }}>
@@ -73,10 +81,10 @@ export default function ConversationsPage(): React.JSX.Element {
     return (
         <ScreenWrapper>
             <View style={{ flexDirection: 'row', alignItems: 'center', paddingHorizontal: 16, paddingVertical: 14, backgroundColor: colors.surface, borderBottomWidth: 1, borderBottomColor: colors.border }}>
-                <TouchableOpacity onPress={() => router.back()} style={{ padding: 6, marginRight: 8 }} accessibilityRole="button" accessibilityLabel="Go back">
+                <TouchableOpacity onPress={() => router.back()} style={{ padding: 6, marginRight: 8 }} accessibilityRole="button" accessibilityLabel={t('common.goBack')}>
                     <Ionicons name="arrow-back" size={24} color={colors.text} />
                 </TouchableOpacity>
-                <Text style={{ fontSize: 18, fontWeight: '800', color: colors.text }}>Messages</Text>
+                <Text style={{ fontSize: 18, fontWeight: '800', color: colors.text }}>{t('chat.title')}</Text>
             </View>
             <FlatList
                 data={conversations}
@@ -91,9 +99,9 @@ export default function ConversationsPage(): React.JSX.Element {
                             <View style={{ width: 72, height: 72, borderRadius: 36, backgroundColor: colors.surfaceMuted, alignItems: 'center', justifyContent: 'center', marginBottom: 16 }}>
                                 <Ionicons name="chatbubbles-outline" size={32} color={colors.textMuted} />
                             </View>
-                            <Text style={{ fontSize: 16, fontWeight: '700', color: colors.textSecondary }}>No conversations yet</Text>
+                            <Text style={{ fontSize: 16, fontWeight: '700', color: colors.textSecondary }}>{t('chat.emptyTitle')}</Text>
                             <Text style={{ fontSize: 13, color: colors.textMuted, textAlign: 'center', marginTop: 6 }}>
-                                Chat opens once an application is accepted. Start one from the tweak or applicant screen.
+                                {t('chat.emptyBody')}
                             </Text>
                         </View>
                     )

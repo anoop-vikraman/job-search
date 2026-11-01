@@ -1,6 +1,8 @@
 import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
 import React, { useMemo, useState } from 'react';
+import type { TFunction } from 'i18next';
+import { useTranslation } from 'react-i18next';
 import { ActivityIndicator, FlatList, Modal, Pressable, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import { ScreenWrapper } from '../../components/ScreenWrapper';
 import { Toast } from '../../components/UI/ToastManager';
@@ -27,21 +29,22 @@ const MAX_TOPUP_RUPEES = 100000;
 const QUICK_AMOUNTS = [100, 500, 1000, 2000];
 const MIN_WITHDRAW_RUPEES = 100; // backend PAYOUT_MIN_MINOR
 
-const PAYOUT_STATUS: Record<Payout['status'], { label: string; color: string }> = {
-    requested: { label: 'Processing', color: '#D97706' },
-    paid: { label: 'Sent', color: '#16A34A' },
-    rejected: { label: 'Returned', color: '#DC2626' },
+// Labels in locales: wallet.payoutStatus.*
+const PAYOUT_STATUS_COLOR: Record<Payout['status'], string> = {
+    requested: '#D97706',
+    paid: '#16A34A',
+    rejected: '#DC2626',
 };
 
-function transactionLabel(t: Transaction): string {
-    if (t.type === 'payout') return t.amount_minor < 0 ? 'Withdrawal' : 'Withdrawal reversed';
-    if (t.type === 'topup') return 'Money added';
-    return t.type.charAt(0).toUpperCase() + t.type.slice(1);
+function transactionLabel(tx: Transaction, t: TFunction): string {
+    if (tx.type === 'payout') return tx.amount_minor < 0 ? t('wallet.tx.withdrawal') : t('wallet.tx.withdrawalReversed');
+    return t(`wallet.tx.${tx.type}`);
 }
 
 export default function WalletPage(): React.JSX.Element {
     const router = useRouter();
     const { colors } = useTheme();
+    const { t } = useTranslation();
     const { user } = useAuthStore();
     const { data: wallet } = useWallet();
     const { data: transactions = [] } = useWalletTransactions();
@@ -96,7 +99,7 @@ export default function WalletPage(): React.JSX.Element {
             onSuccess: (p) => {
                 setWithdrawOpen(false);
                 setWithdrawText('');
-                Toast.success(`${formatMinor(p.amount_minor, currency)} is on its way to ${p.upi_id}`);
+                Toast.success(t('wallet.payoutSent', { amount: formatMinor(p.amount_minor, currency), upi: p.upi_id }));
             },
         });
     };
@@ -106,11 +109,11 @@ export default function WalletPage(): React.JSX.Element {
         verify.mutate(result, {
             onSuccess: (res) => {
                 setAmountText('');
-                Toast.success(`${formatMinor(res.transaction.amount_minor, currency)} added to your wallet`);
+                Toast.success(t('wallet.topupDone', { amount: formatMinor(res.transaction.amount_minor, currency) }));
             },
             onError: () => {
                 // The Razorpay webhook still credits a captured payment server-side.
-                Toast.info("Payment received. Your balance will update once it's confirmed.");
+                Toast.info(t('wallet.topupPending'));
             },
         });
     };
@@ -123,11 +126,11 @@ export default function WalletPage(): React.JSX.Element {
                     onPress={() => router.back()}
                     className="mr-4"
                     accessibilityRole="button"
-                    accessibilityLabel="Go back"
+                    accessibilityLabel={t('common.goBack')}
                 >
                     <Ionicons name="arrow-back" size={24} color={colors.text} />
                 </TouchableOpacity>
-                <Text className="text-lg font-bold text-gray-900 dark:text-slate-50">Wallet</Text>
+                <Text className="text-lg font-bold text-gray-900 dark:text-slate-50">{t('wallet.title')}</Text>
             </View>
 
             <FlatList
@@ -140,13 +143,13 @@ export default function WalletPage(): React.JSX.Element {
                         {/* Balance Card */}
                         <View className="px-6 py-6">
                             <View className="bg-gradient-to-br from-green-500 to-green-600 rounded-3xl p-8 shadow-lg">
-                                <Text className="text-white/80 text-sm mb-2">Total Balance</Text>
+                                <Text className="text-white/80 text-sm mb-2">{t('wallet.totalBalance')}</Text>
                                 <Text className="text-white font-bold text-5xl">
                                     {formatMinor(walletBalanceMinor, currency)}
                                 </Text>
                                 {wallet != null && wallet.held_minor > 0 && (
                                     <Text className="text-white/70 text-sm mt-2">
-                                        Held: {formatMinor(wallet.held_minor, currency)}
+                                        {t('wallet.held', { amount: formatMinor(wallet.held_minor, currency) })}
                                     </Text>
                                 )}
                                 <View style={{ flexDirection: 'row', gap: 10, marginTop: 20 }}>
@@ -155,7 +158,7 @@ export default function WalletPage(): React.JSX.Element {
                                     disabled={busy}
                                     style={{ flexDirection: 'row', alignItems: 'center', gap: 6, backgroundColor: 'rgba(255,255,255,0.22)', paddingHorizontal: 16, paddingVertical: 10, borderRadius: 14 }}
                                     accessibilityRole="button"
-                                    accessibilityLabel="Add money"
+                                    accessibilityLabel={t('wallet.addMoney')}
                                 >
                                     {verify.isPending ? (
                                         <ActivityIndicator size="small" color="#fff" />
@@ -163,17 +166,17 @@ export default function WalletPage(): React.JSX.Element {
                                         <Ionicons name="add-circle" size={18} color="#fff" />
                                     )}
                                     <Text style={{ color: '#fff', fontWeight: '800', fontSize: 15 }}>
-                                        {verify.isPending ? 'Confirming payment…' : 'Add money'}
+                                        {verify.isPending ? t('wallet.confirming') : t('wallet.addMoney')}
                                     </Text>
                                 </TouchableOpacity>
                                 <TouchableOpacity
                                     onPress={() => setWithdrawOpen(true)}
                                     style={{ flexDirection: 'row', alignItems: 'center', gap: 6, backgroundColor: 'rgba(255,255,255,0.22)', paddingHorizontal: 16, paddingVertical: 10, borderRadius: 14 }}
                                     accessibilityRole="button"
-                                    accessibilityLabel="Withdraw"
+                                    accessibilityLabel={t('wallet.withdraw')}
                                 >
                                     <Ionicons name="arrow-up-circle" size={18} color="#fff" />
-                                    <Text style={{ color: '#fff', fontWeight: '800', fontSize: 15 }}>Withdraw</Text>
+                                    <Text style={{ color: '#fff', fontWeight: '800', fontSize: 15 }}>{t('wallet.withdraw')}</Text>
                                 </TouchableOpacity>
                                 </View>
                             </View>
@@ -181,24 +184,24 @@ export default function WalletPage(): React.JSX.Element {
 
                         {payouts.length > 0 && (
                             <View className="px-6 mb-4">
-                                <Text className="font-bold text-lg text-gray-900 dark:text-slate-50 mb-3">Withdrawals</Text>
+                                <Text className="font-bold text-lg text-gray-900 dark:text-slate-50 mb-3">{t('wallet.withdrawals')}</Text>
                                 {payouts.slice(0, 5).map((p) => (
                                     <View key={p.id} className="bg-white dark:bg-slate-900 rounded-2xl p-4 mb-2 border border-gray-100 dark:border-slate-700 flex-row justify-between items-center">
                                         <View style={{ flex: 1 }}>
                                             <Text className="font-semibold text-gray-900 dark:text-slate-50">{formatMinor(p.amount_minor, currency)} → {p.upi_id}</Text>
                                             <Text className="text-gray-500 dark:text-slate-400 text-xs mt-1">
                                                 {new Date(p.created_at).toLocaleDateString()}
-                                                {p.reference ? ` · Ref ${p.reference}` : ''}
+                                                {p.reference ? ` · ${t('wallet.ref', { ref: p.reference })}` : ''}
                                                 {p.failure_reason ? ` · ${p.failure_reason}` : ''}
                                             </Text>
                                         </View>
-                                        <Text style={{ color: PAYOUT_STATUS[p.status].color, fontWeight: '800', fontSize: 12 }}>{PAYOUT_STATUS[p.status].label}</Text>
+                                        <Text style={{ color: PAYOUT_STATUS_COLOR[p.status], fontWeight: '800', fontSize: 12 }}>{t(`wallet.payoutStatus.${p.status}`)}</Text>
                                     </View>
                                 ))}
                             </View>
                         )}
                         <View className="px-6">
-                            <Text className="font-bold text-lg text-gray-900 dark:text-slate-50 mb-4">Transactions</Text>
+                            <Text className="font-bold text-lg text-gray-900 dark:text-slate-50 mb-4">{t('wallet.transactions')}</Text>
                         </View>
                     </View>
                 }
@@ -207,7 +210,7 @@ export default function WalletPage(): React.JSX.Element {
                         <View className="bg-gray-100 dark:bg-slate-800 w-20 h-20 rounded-full items-center justify-center mb-4">
                             <Ionicons name="receipt-outline" size={32} color={colors.textMuted} />
                         </View>
-                        <Text className="text-gray-400 dark:text-slate-400 font-medium">No transactions yet</Text>
+                        <Text className="text-gray-400 dark:text-slate-400 font-medium">{t('wallet.noTransactions')}</Text>
                     </View>
                 }
                 renderItem={({ item: transaction }) => {
@@ -219,7 +222,7 @@ export default function WalletPage(): React.JSX.Element {
                             <View className="flex-row justify-between items-start">
                                 <View className="flex-1">
                                     <Text className="font-semibold text-gray-900 dark:text-slate-50 mb-1">
-                                        {transactionLabel(transaction)}
+                                        {transactionLabel(transaction, t)}
                                     </Text>
                                     <Text className="text-gray-500 dark:text-slate-400 text-sm">
                                         {new Date(transaction.created_at).toLocaleDateString()}
@@ -238,19 +241,19 @@ export default function WalletPage(): React.JSX.Element {
             <Modal visible={sheetOpen} transparent animationType="slide" onRequestClose={() => setSheetOpen(false)}>
                 <Pressable style={{ flex: 1, backgroundColor: 'rgba(0,0,0,0.5)', justifyContent: 'flex-end' }} onPress={() => setSheetOpen(false)}>
                     <Pressable style={{ backgroundColor: colors.surface, borderTopLeftRadius: 24, borderTopRightRadius: 24, padding: 20, paddingBottom: 32 }}>
-                        <Text style={{ fontSize: 18, fontWeight: '800', color: colors.text, marginBottom: 16 }}>Add money</Text>
+                        <Text style={{ fontSize: 18, fontWeight: '800', color: colors.text, marginBottom: 16 }}>{t('wallet.addMoney')}</Text>
                         <View style={{ flexDirection: 'row', alignItems: 'center', backgroundColor: colors.surfaceMuted, borderRadius: 14, borderWidth: 1, borderColor: colors.border, paddingHorizontal: 14 }}>
                             <Text style={{ fontSize: 24, fontWeight: '800', color: colors.textSecondary, marginRight: 6 }}>₹</Text>
                             <TextInput
                                 value={amountText}
                                 onChangeText={(t) => setAmountText(t.replace(/[^0-9]/g, ''))}
-                                placeholder="Enter amount"
+                                placeholder={t('wallet.enterAmount')}
                                 placeholderTextColor={colors.textMuted}
                                 keyboardType="number-pad"
                                 maxLength={6}
                                 autoFocus
                                 style={{ flex: 1, paddingVertical: 14, fontSize: 24, fontWeight: '800', color: colors.text }}
-                                accessibilityLabel="Amount in rupees"
+                                accessibilityLabel={t('wallet.amountLabel')}
                             />
                         </View>
                         <View style={{ flexDirection: 'row', gap: 8, marginTop: 12 }}>
@@ -266,7 +269,7 @@ export default function WalletPage(): React.JSX.Element {
                         </View>
                         {amountText.length > 0 && !amountValid && (
                             <Text style={{ color: '#DC2626', fontSize: 12, marginTop: 10 }}>
-                                Enter an amount between ₹{MIN_TOPUP_RUPEES} and ₹{MAX_TOPUP_RUPEES.toLocaleString()}.
+                                {t('wallet.amountRange', { min: MIN_TOPUP_RUPEES, max: MAX_TOPUP_RUPEES.toLocaleString() })}
                             </Text>
                         )}
                         <TouchableOpacity
@@ -277,12 +280,12 @@ export default function WalletPage(): React.JSX.Element {
                         >
                             {createOrder.isPending && <ActivityIndicator size="small" color="#fff" />}
                             <Text style={{ color: '#fff', fontSize: 16, fontWeight: '800' }}>
-                                {amountValid ? `Pay ₹${amount.toLocaleString()}` : 'Pay'}
+                                {amountValid ? t('wallet.payAmount', { amount: amount.toLocaleString() }) : t('wallet.pay')}
                             </Text>
                         </TouchableOpacity>
                         <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 6, marginTop: 12 }}>
                             <Ionicons name="shield-checkmark-outline" size={14} color={colors.textMuted} />
-                            <Text style={{ fontSize: 12, color: colors.textMuted }}>UPI, cards and netbanking via Razorpay</Text>
+                            <Text style={{ fontSize: 12, color: colors.textMuted }}>{t('wallet.via')}</Text>
                         </View>
                     </Pressable>
                 </Pressable>
@@ -292,13 +295,13 @@ export default function WalletPage(): React.JSX.Element {
             <Modal visible={withdrawOpen} transparent animationType="slide" onRequestClose={() => setWithdrawOpen(false)}>
                 <Pressable style={{ flex: 1, backgroundColor: 'rgba(0,0,0,0.5)', justifyContent: 'flex-end' }} onPress={() => setWithdrawOpen(false)}>
                     <Pressable style={{ backgroundColor: colors.surface, borderTopLeftRadius: 24, borderTopRightRadius: 24, padding: 20, paddingBottom: 32 }}>
-                        <Text style={{ fontSize: 18, fontWeight: '800', color: colors.text, marginBottom: 8 }}>Withdraw</Text>
+                        <Text style={{ fontSize: 18, fontWeight: '800', color: colors.text, marginBottom: 8 }}>{t('wallet.withdraw')}</Text>
                         {!kyc?.verified ? (
                             <>
                                 <Text style={{ fontSize: 14, color: colors.textSecondary }}>
                                     {kyc?.latest?.status === 'pending'
-                                        ? 'Your identity verification is in review. You can withdraw once it is approved.'
-                                        : 'Verify your identity once to start withdrawing your earnings to UPI.'}
+                                        ? t('wallet.kycPending')
+                                        : t('wallet.kycNeeded')}
                                 </Text>
                                 {kyc?.latest?.status !== 'pending' && (
                                     <TouchableOpacity
@@ -309,34 +312,34 @@ export default function WalletPage(): React.JSX.Element {
                                         style={{ marginTop: 16, backgroundColor: themeColors.primary, paddingVertical: 15, borderRadius: 14, alignItems: 'center' }}
                                         accessibilityRole="button"
                                     >
-                                        <Text style={{ color: '#fff', fontSize: 16, fontWeight: '800' }}>Verify identity</Text>
+                                        <Text style={{ color: '#fff', fontSize: 16, fontWeight: '800' }}>{t('wallet.verifyIdentity')}</Text>
                                     </TouchableOpacity>
                                 )}
                             </>
                         ) : (
                             <>
                                 <Text style={{ fontSize: 13, color: colors.textSecondary, marginBottom: 12 }}>
-                                    Available {formatMinor(walletBalanceMinor, currency)} · paid to {kyc.latest?.upi_id}
+                                    {t('wallet.available', { amount: formatMinor(walletBalanceMinor, currency), upi: kyc.latest?.upi_id ?? '' })}
                                 </Text>
                                 <View style={{ flexDirection: 'row', alignItems: 'center', backgroundColor: colors.surfaceMuted, borderRadius: 14, borderWidth: 1, borderColor: colors.border, paddingHorizontal: 14 }}>
                                     <Text style={{ fontSize: 24, fontWeight: '800', color: colors.textSecondary, marginRight: 6 }}>₹</Text>
                                     <TextInput
                                         value={withdrawText}
                                         onChangeText={(t) => setWithdrawText(t.replace(/[^0-9]/g, ''))}
-                                        placeholder="Amount"
+                                        placeholder={t('wallet.amount')}
                                         placeholderTextColor={colors.textMuted}
                                         keyboardType="number-pad"
                                         maxLength={7}
                                         style={{ flex: 1, paddingVertical: 14, fontSize: 24, fontWeight: '800', color: colors.text }}
-                                        accessibilityLabel="Withdrawal amount in rupees"
+                                        accessibilityLabel={t('wallet.withdrawAmountLabel')}
                                     />
                                     <TouchableOpacity onPress={() => setWithdrawText(String(Math.floor(walletBalanceMinor / 100)))}>
-                                        <Text style={{ color: themeColors.primary, fontWeight: '700' }}>Max</Text>
+                                        <Text style={{ color: themeColors.primary, fontWeight: '700' }}>{t('wallet.max')}</Text>
                                     </TouchableOpacity>
                                 </View>
                                 {withdrawText.length > 0 && !withdrawValid && (
                                     <Text style={{ color: '#DC2626', fontSize: 12, marginTop: 8 }}>
-                                        Minimum ₹{MIN_WITHDRAW_RUPEES}, up to your available balance.
+                                        {t('wallet.withdrawRange', { min: MIN_WITHDRAW_RUPEES })}
                                     </Text>
                                 )}
                                 <TouchableOpacity
@@ -346,10 +349,10 @@ export default function WalletPage(): React.JSX.Element {
                                     accessibilityRole="button"
                                 >
                                     {requestPayout.isPending && <ActivityIndicator size="small" color="#fff" />}
-                                    <Text style={{ color: '#fff', fontSize: 16, fontWeight: '800' }}>Withdraw</Text>
+                                    <Text style={{ color: '#fff', fontSize: 16, fontWeight: '800' }}>{t('wallet.withdraw')}</Text>
                                 </TouchableOpacity>
                                 <Text style={{ fontSize: 12, color: colors.textMuted, textAlign: 'center', marginTop: 10 }}>
-                                    Transfers are usually sent within 1 working day.
+                                    {t('wallet.transferTime')}
                                 </Text>
                             </>
                         )}

@@ -1,5 +1,6 @@
 import { Ionicons } from '@expo/vector-icons';
 import React, { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { ActivityIndicator, Modal, Pressable, Text, TextInput, TouchableOpacity, View } from 'react-native';
 
 import { useTheme } from '@/themes/ThemeProvider';
@@ -42,6 +43,7 @@ export default function NoteWithPhotosSheet({
     onSubmit,
 }: NoteWithPhotosSheetProps): React.JSX.Element {
     const { colors } = useTheme();
+    const { t } = useTranslation();
     const [note, setNote] = useState('');
     const [photos, setPhotos] = useState<string[]>([]);
     const [uploading, setUploading] = useState(false);
@@ -55,7 +57,7 @@ export default function NoteWithPhotosSheet({
             const urls = await pickAndUploadPhotos(MAX_PHOTOS - photos.length);
             setPhotos((prev) => [...prev, ...urls].slice(0, MAX_PHOTOS));
         } catch {
-            Toast.error('Could not upload photos. Please try again.');
+            Toast.error(t('common.photosUploadFailed'));
         } finally {
             setUploading(false);
         }
@@ -78,7 +80,7 @@ export default function NoteWithPhotosSheet({
                     />
                     {minLength > 0 && trimmed.length < minLength && (
                         <Text style={{ fontSize: 12, color: colors.textMuted, marginTop: 6 }}>
-                            At least {minLength} characters ({trimmed.length}/{minLength})
+                            {t('work.minChars', { min: minLength, current: trimmed.length })}
                         </Text>
                     )}
                     <View style={{ marginTop: 14, gap: 10 }}>
@@ -91,7 +93,7 @@ export default function NoteWithPhotosSheet({
                                 accessibilityRole="button"
                             >
                                 {uploading ? <ActivityIndicator size="small" color={colors.textMuted} /> : <Ionicons name="camera-outline" size={18} color={colors.textSecondary} />}
-                                <Text style={{ fontWeight: '600', color: colors.textSecondary }}>Add photos ({photos.length}/{MAX_PHOTOS})</Text>
+                                <Text style={{ fontWeight: '600', color: colors.textSecondary }}>{t('work.addPhotos', { count: photos.length, max: MAX_PHOTOS })}</Text>
                             </TouchableOpacity>
                         )}
                     </View>

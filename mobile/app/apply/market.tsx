@@ -3,6 +3,7 @@ import { themeColors } from '@/themes/colors';
 import { Ionicons } from '@expo/vector-icons';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import React, { useEffect, useMemo, useRef, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { ActivityIndicator, FlatList, Modal, Pressable, ScrollView, Text, TextInput, TouchableOpacity, View, type TextStyle, type ViewStyle } from 'react-native';
 import { ScreenWrapper } from '../../components/ScreenWrapper';
 import { Toast } from '../../components/UI/ToastManager';
@@ -17,20 +18,16 @@ import TweakMap from '../../components/Tweak/TweakMap';
 import { track } from '../../utils/analytics';
 import { useTheme } from '@/themes/ThemeProvider';
 
-const SORT_OPTIONS: { label: string; value: FeedSort; icon: keyof typeof Ionicons.glyphMap }[] = [
-    { label: 'Newest', value: 'newest', icon: 'time-outline' },
-    { label: 'Nearest', value: 'distance', icon: 'navigate-outline' },
-    { label: 'Price ↑', value: 'price_asc', icon: 'trending-up-outline' },
-    { label: 'Price ↓', value: 'price_desc', icon: 'trending-down-outline' },
+// Labels in locales: market.sort.*
+const SORT_OPTIONS: { value: FeedSort; icon: keyof typeof Ionicons.glyphMap }[] = [
+    { value: 'newest', icon: 'time-outline' },
+    { value: 'distance', icon: 'navigate-outline' },
+    { value: 'price_asc', icon: 'trending-up-outline' },
+    { value: 'price_desc', icon: 'trending-down-outline' },
 ];
 
-const RADIUS_OPTIONS: { label: string; value: number | null }[] = [
-    { label: 'Any', value: null },
-    { label: '5 km', value: 5 },
-    { label: '10 km', value: 10 },
-    { label: '25 km', value: 25 },
-    { label: '50 km', value: 50 },
-];
+// null = any distance
+const RADIUS_OPTIONS: (number | null)[] = [null, 5, 10, 25, 50];
 
 const DEFAULT_RADIUS_KM = 25;
 
@@ -45,6 +42,7 @@ const DEFAULT_FILTERS: ClientFilters = { category: 'All', tweakType: 'All', sche
 export default function MarketPage(): React.JSX.Element {
     const router = useRouter();
     const { colors } = useTheme();
+    const { t } = useTranslation();
     const { user } = useAuthStore();
     const userId = user?.id || '';
 
@@ -102,8 +100,8 @@ export default function MarketPage(): React.JSX.Element {
             setNearMe(false);
             Toast.warning(
                 result.error === 'denied'
-                    ? 'Allow location access to see tweaks near you.'
-                    : 'Could not get your location. Please try again.'
+                    ? t('market.locationDenied')
+                    : t('market.locationFailed')
             );
             return false;
         }
@@ -142,10 +140,10 @@ export default function MarketPage(): React.JSX.Element {
 
     const openSaveSheet = (): void => {
         if (!hasSavableFilters) {
-            Toast.info('Search or pick a category, type or distance first, then save it as an alert.');
+            Toast.info(t('market.saveNeedsFilter'));
             return;
         }
-        setSaveName(savable.search ?? savable.category ?? 'Nearby tweaks');
+        setSaveName(savable.search ?? savable.category ?? t('market.nearbyDefault'));
         setSaveOpen(true);
     };
 
@@ -154,7 +152,7 @@ export default function MarketPage(): React.JSX.Element {
         createSaved.mutate(savable, {
             onSuccess: () => {
                 setSaveOpen(false);
-                Toast.success("Alert saved. We'll notify you about new matching tweaks.");
+                Toast.success(t('market.alertSaved'));
             },
         });
     };
@@ -170,9 +168,9 @@ export default function MarketPage(): React.JSX.Element {
 
     const subtitle = coords
         ? radiusKm != null
-            ? `Within ${radiusKm} km of you`
-            : 'Sorted by distance from you'
-        : 'Browse available tasks';
+            ? t('market.subtitleWithin', { km: radiusKm })
+            : t('market.subtitleDistance')
+        : t('market.subtitleBrowse');
 
     const chip = (active: boolean): ViewStyle => ({
         flexDirection: 'row',
@@ -204,7 +202,7 @@ export default function MarketPage(): React.JSX.Element {
             <View style={{ flex: 1, paddingHorizontal: 16, paddingTop: 16 }}>
                 {/* Header */}
                 <View style={{ marginBottom: 16 }}>
-                    <Text style={{ fontSize: 24, fontWeight: '800', color: colors.text }}>Find Tweaks</Text>
+                    <Text style={{ fontSize: 24, fontWeight: '800', color: colors.text }}>{t('market.title')}</Text>
                     <Text style={{ fontSize: 13, color: colors.textSecondary, marginTop: 2 }}>{subtitle}</Text>
                 </View>
 
@@ -214,7 +212,7 @@ export default function MarketPage(): React.JSX.Element {
                         <Ionicons name="search-outline" size={18} color={colors.textSecondary} style={{ marginRight: 8 }} />
                         <TextInput
                             ref={searchInputRef}
-                            placeholder="Search title, skill or category..."
+                            placeholder={t('market.searchPlaceholder')}
                             value={searchQuery}
                             onChangeText={setSearchQuery}
                             returnKeyType="search"
@@ -226,7 +224,7 @@ export default function MarketPage(): React.JSX.Element {
                         {isFetching && !isRefetching && !isFetchingNextPage ? (
                             <ActivityIndicator size="small" color={colors.textMuted} />
                         ) : searchQuery.length > 0 ? (
-                            <TouchableOpacity onPress={() => setSearchQuery('')} accessibilityRole="button" accessibilityLabel="Clear search">
+                            <TouchableOpacity onPress={() => setSearchQuery('')} accessibilityRole="button" accessibilityLabel={t('market.clearSearch')}>
                                 <Ionicons name="close-circle" size={18} color={colors.textMuted} />
                             </TouchableOpacity>
                         ) : null}
@@ -235,7 +233,7 @@ export default function MarketPage(): React.JSX.Element {
                         onPress={openSaveSheet}
                         style={{ width: 44, height: 44, backgroundColor: colors.surfaceMuted, borderRadius: 12, alignItems: 'center', justifyContent: 'center' }}
                         accessibilityRole="button"
-                        accessibilityLabel="Save this search as an alert"
+                        accessibilityLabel={t('market.saveSearch')}
                     >
                         <Ionicons name="notifications-outline" size={20} color={colors.textSecondary} />
                     </TouchableOpacity>
@@ -243,7 +241,7 @@ export default function MarketPage(): React.JSX.Element {
                         onPress={() => setIsFilterModalVisible(true)}
                         style={{ width: 44, height: 44, backgroundColor: activeFilterCount > 0 ? `${themeColors.primary}15` : colors.surfaceMuted, borderRadius: 12, alignItems: 'center', justifyContent: 'center' }}
                         accessibilityRole="button"
-                        accessibilityLabel="Filter"
+                        accessibilityLabel={t('market.filter')}
                     >
                         <Ionicons name="options-outline" size={20} color={activeFilterCount > 0 ? themeColors.primary : colors.textSecondary} />
                         {activeFilterCount > 0 && (
@@ -262,14 +260,14 @@ export default function MarketPage(): React.JSX.Element {
                             style={chip(nearMe)}
                             accessibilityRole="switch"
                             accessibilityState={{ checked: nearMe }}
-                            accessibilityLabel="Near me"
+                            accessibilityLabel={t('market.nearMe')}
                         >
                             {location.status === 'locating' ? (
                                 <ActivityIndicator size="small" color={nearMe ? '#fff' : colors.textSecondary} />
                             ) : (
                                 <Ionicons name="locate-outline" size={14} color={nearMe ? '#fff' : colors.textSecondary} />
                             )}
-                            <Text style={chipText(nearMe)}>Near me</Text>
+                            <Text style={chipText(nearMe)}>{t('market.nearMe')}</Text>
                         </TouchableOpacity>
                         <View style={{ width: 1, backgroundColor: colors.border, marginVertical: 4 }} />
                         {SORT_OPTIONS.map((opt) => {
@@ -283,7 +281,7 @@ export default function MarketPage(): React.JSX.Element {
                                     accessibilityState={{ selected: active }}
                                 >
                                     <Ionicons name={opt.icon} size={13} color={active ? '#fff' : colors.textSecondary} />
-                                    <Text style={chipText(active)}>{opt.label}</Text>
+                                    <Text style={chipText(active)}>{t(`market.sort.${opt.value}`)}</Text>
                                 </TouchableOpacity>
                             );
                         })}
@@ -301,7 +299,7 @@ export default function MarketPage(): React.JSX.Element {
                             accessibilityState={{ selected: viewMode === mode }}
                         >
                             <Ionicons name={mode === 'list' ? 'list-outline' : 'map-outline'} size={14} color={viewMode === mode ? colors.text : colors.textMuted} />
-                            <Text style={{ fontSize: 12, fontWeight: '700', color: viewMode === mode ? colors.text : colors.textMuted }}>{mode === 'list' ? 'List' : 'Map'}</Text>
+                            <Text style={{ fontSize: 12, fontWeight: '700', color: viewMode === mode ? colors.text : colors.textMuted }}>{mode === 'list' ? t('market.list') : t('market.map')}</Text>
                         </TouchableOpacity>
                     ))}
                 </View>
@@ -342,11 +340,11 @@ export default function MarketPage(): React.JSX.Element {
                         isFetching ? undefined : (
                             <View style={{ alignItems: 'center', marginTop: 100 }}>
                                 <Ionicons name={coords ? 'navigate-outline' : 'search'} size={48} color={colors.textMuted} />
-                                <Text style={{ fontSize: 16, fontWeight: '700', color: colors.textSecondary, marginTop: 12 }}>No tweaks found</Text>
+                                <Text style={{ fontSize: 16, fontWeight: '700', color: colors.textSecondary, marginTop: 12 }}>{t('market.noResults')}</Text>
                                 <Text style={{ fontSize: 13, color: colors.textMuted, marginTop: 4, textAlign: 'center', paddingHorizontal: 32 }}>
                                     {coords && radiusKm != null
-                                        ? 'Try a larger distance or a different search.'
-                                        : 'Try adjusting your search or filters'}
+                                        ? t('market.tryLarger')
+                                        : t('market.tryAdjust')}
                                 </Text>
                             </View>
                         )
@@ -359,7 +357,7 @@ export default function MarketPage(): React.JSX.Element {
                 <Modal visible={saveOpen} transparent animationType="slide" onRequestClose={() => setSaveOpen(false)}>
                     <Pressable style={{ flex: 1, backgroundColor: 'rgba(0,0,0,0.5)', justifyContent: 'flex-end' }} onPress={() => setSaveOpen(false)}>
                         <Pressable style={{ backgroundColor: colors.surface, borderTopLeftRadius: 24, borderTopRightRadius: 24, padding: 20, paddingBottom: 32 }}>
-                            <Text style={{ fontSize: 18, fontWeight: '800', color: colors.text }}>Get alerts for this search</Text>
+                            <Text style={{ fontSize: 18, fontWeight: '800', color: colors.text }}>{t('market.alertTitle')}</Text>
                             <Text style={{ fontSize: 13, color: colors.textSecondary, marginTop: 4, marginBottom: 12 }}>
                                 {describeSavedSearch({
                                     search: savable.search ?? null,
@@ -371,7 +369,7 @@ export default function MarketPage(): React.JSX.Element {
                             <TextInput
                                 value={saveName}
                                 onChangeText={setSaveName}
-                                placeholder="Alert name"
+                                placeholder={t('market.alertName')}
                                 placeholderTextColor={colors.textMuted}
                                 maxLength={80}
                                 style={{ borderWidth: 1, borderColor: colors.border, borderRadius: 12, padding: 12, fontSize: 15, color: colors.text, backgroundColor: colors.surfaceMuted }}
@@ -382,7 +380,7 @@ export default function MarketPage(): React.JSX.Element {
                                 style={{ marginTop: 16, backgroundColor: themeColors.primary, opacity: !savable.name || createSaved.isPending ? 0.5 : 1, paddingVertical: 14, borderRadius: 14, alignItems: 'center' }}
                                 accessibilityRole="button"
                             >
-                                <Text style={{ color: '#fff', fontWeight: '800', fontSize: 16 }}>Save alert</Text>
+                                <Text style={{ color: '#fff', fontWeight: '800', fontSize: 16 }}>{t('market.saveAlert')}</Text>
                             </TouchableOpacity>
                         </Pressable>
                     </Pressable>
@@ -398,47 +396,47 @@ export default function MarketPage(): React.JSX.Element {
                     <Pressable style={{ flex: 1, backgroundColor: 'rgba(0,0,0,0.5)', justifyContent: 'flex-end' }} onPress={() => setIsFilterModalVisible(false)}>
                         <Pressable style={{ backgroundColor: colors.surface, borderTopLeftRadius: 24, borderTopRightRadius: 24, maxHeight: '85%', paddingBottom: 30 }}>
                             <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', paddingHorizontal: 20, paddingVertical: 18, borderBottomWidth: 1, borderBottomColor: colors.border }}>
-                                <Text style={{ fontSize: 18, fontWeight: '800', color: colors.text }}>Filters</Text>
+                                <Text style={{ fontSize: 18, fontWeight: '800', color: colors.text }}>{t('market.filters')}</Text>
                                 <TouchableOpacity onPress={resetFilters}>
-                                    <Text style={{ color: themeColors.primary, fontWeight: '600' }}>Reset</Text>
+                                    <Text style={{ color: themeColors.primary, fontWeight: '600' }}>{t('market.reset')}</Text>
                                 </TouchableOpacity>
                             </View>
 
                             <ScrollView style={{ padding: 20 }}>
                                 {/* Distance */}
-                                <Text style={sectionLabel}>Distance</Text>
+                                <Text style={sectionLabel}>{t('market.distanceLabel')}</Text>
                                 {nearMe ? (
                                     <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 8, marginBottom: 24 }}>
-                                        {RADIUS_OPTIONS.map((opt) => (
-                                            <TouchableOpacity key={opt.label} onPress={() => setRadiusKm(opt.value)} style={chip(radiusKm === opt.value)}>
-                                                <Text style={chipText(radiusKm === opt.value)}>{opt.label}</Text>
+                                        {RADIUS_OPTIONS.map((km) => (
+                                            <TouchableOpacity key={km ?? 'any'} onPress={() => setRadiusKm(km)} style={chip(radiusKm === km)}>
+                                                <Text style={chipText(radiusKm === km)}>{km == null ? t('market.any') : t('market.km', { km })}</Text>
                                             </TouchableOpacity>
                                         ))}
                                     </View>
                                 ) : (
                                     <TouchableOpacity onPress={toggleNearMe} style={[chip(false), { alignSelf: 'flex-start', marginBottom: 24 }]}>
                                         <Ionicons name="locate-outline" size={14} color={colors.textSecondary} />
-                                        <Text style={chipText(false)}>Turn on Near me to filter by distance</Text>
+                                        <Text style={chipText(false)}>{t('market.turnOnNearMe')}</Text>
                                     </TouchableOpacity>
                                 )}
 
                                 {/* Category */}
-                                <Text style={sectionLabel}>Category</Text>
+                                <Text style={sectionLabel}>{t('market.category')}</Text>
                                 <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 8, marginBottom: 24 }}>
                                     {['All', ...CATEGORIES.map((c) => c.name)].map((cat) => (
                                         <TouchableOpacity key={cat} onPress={() => setFilters({ ...filters, category: cat })} style={chip(filters.category === cat)}>
-                                            <Text style={chipText(filters.category === cat)}>{cat}</Text>
+                                            <Text style={chipText(filters.category === cat)}>{cat === 'All' ? t('common.all') : cat}</Text>
                                         </TouchableOpacity>
                                     ))}
                                 </View>
 
                                 {/* Type */}
-                                <Text style={sectionLabel}>Tweak Type</Text>
+                                <Text style={sectionLabel}>{t('market.tweakType')}</Text>
                                 <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 8, marginBottom: 24 }}>
                                     {[
-                                        { label: 'All', value: 'All' },
-                                        { label: 'Onsite', value: 'in_person' },
-                                        { label: 'Remote', value: 'remote' },
+                                        { label: t('common.all'), value: 'All' },
+                                        { label: t('common.onsite'), value: 'in_person' },
+                                        { label: t('common.remote'), value: 'remote' },
                                     ].map((type) => (
                                         <TouchableOpacity key={type.value} onPress={() => setFilters({ ...filters, tweakType: type.value })} style={chip(filters.tweakType === type.value)}>
                                             <Text style={chipText(filters.tweakType === type.value)}>{type.label}</Text>
@@ -447,13 +445,13 @@ export default function MarketPage(): React.JSX.Element {
                                 </View>
 
                                 {/* Schedule */}
-                                <Text style={sectionLabel}>Schedule Type</Text>
+                                <Text style={sectionLabel}>{t('market.scheduleType')}</Text>
                                 <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 8, marginBottom: 40 }}>
                                     {[
-                                        { label: 'All', value: 'All' },
-                                        { label: 'Single Day', value: 'one_day' },
-                                        { label: 'Deadline', value: 'deadline' },
-                                        { label: 'Multi-Day', value: 'few_days' },
+                                        { label: t('common.all'), value: 'All' },
+                                        { label: t('market.schedule.one_day'), value: 'one_day' },
+                                        { label: t('market.schedule.deadline'), value: 'deadline' },
+                                        { label: t('market.schedule.few_days'), value: 'few_days' },
                                     ].map((s) => (
                                         <TouchableOpacity key={s.value} onPress={() => setFilters({ ...filters, schedulePreference: s.value })} style={chip(filters.schedulePreference === s.value)}>
                                             <Text style={chipText(filters.schedulePreference === s.value)}>{s.label}</Text>
@@ -464,7 +462,7 @@ export default function MarketPage(): React.JSX.Element {
 
                             <View style={{ paddingHorizontal: 20, paddingTop: 10 }}>
                                 <TouchableOpacity onPress={() => setIsFilterModalVisible(false)} style={{ backgroundColor: themeColors.primary, paddingVertical: 14, borderRadius: 14, alignItems: 'center' }}>
-                                    <Text style={{ color: '#fff', fontSize: 16, fontWeight: '800' }}>Apply Filters</Text>
+                                    <Text style={{ color: '#fff', fontSize: 16, fontWeight: '800' }}>{t('market.applyFilters')}</Text>
                                 </TouchableOpacity>
                             </View>
                         </Pressable>

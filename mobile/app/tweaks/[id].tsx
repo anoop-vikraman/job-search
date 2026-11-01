@@ -2,6 +2,7 @@ import { FontAwesome5, Ionicons } from '@expo/vector-icons';
 import { useAudioPlayer, useAudioPlayerStatus } from 'expo-audio';
 import { useLocalSearchParams, useRouter, type Href } from 'expo-router';
 import React, { useEffect, useMemo, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import {
     Alert,
     Image,
@@ -247,6 +248,7 @@ export default function TweakDetails(): React.JSX.Element {
     const { id } = useLocalSearchParams();
     const router = useRouter();
     const { colors } = useTheme();
+    const { t } = useTranslation();
     const { user } = useAuthStore();
     const { data: tweak } = useTweak(id as string);
     const { data: watchlist = [] } = useWatchlist();
@@ -967,7 +969,7 @@ export default function TweakDetails(): React.JSX.Element {
             <ReportSheet
                 visible={reportOpen}
                 target={{ type: 'tweak', id: tweak.id }}
-                subject="this tweak"
+                subject={t('report.thisTweak')}
                 onClose={() => setReportOpen(false)}
             />
 
@@ -976,25 +978,25 @@ export default function TweakDetails(): React.JSX.Element {
                 <>
                     <NoteWithPhotosSheet
                         visible={workSheet === 'submit'}
-                        title="Mark work as done"
-                        description="The lister gets a notification to confirm. Payment releases automatically if they don't respond in time."
-                        placeholder="What did you do? (optional)"
-                        submitLabel="Submit for confirmation"
+                        title={t('work.submitTitle')}
+                        description={t('work.submitDescription')}
+                        placeholder={t('work.submitPlaceholder')}
+                        submitLabel={t('work.submitLabel')}
                         submitting={submitWork.isPending}
                         onClose={() => setWorkSheet(null)}
                         onSubmit={({ note, photoUrls }) =>
                             submitWork.mutate(
                                 { applicationId: myProviderApplication.id, tweakId: tweak.id, data: { note: note || undefined, photo_urls: photoUrls } },
-                                { onSuccess: () => { setWorkSheet(null); Toast.success('Sent to the lister for confirmation'); } }
+                                { onSuccess: () => { setWorkSheet(null); Toast.success(t('work.submitted')); } }
                             )
                         }
                     />
                     <NoteWithPhotosSheet
                         visible={workSheet === 'dispute'}
-                        title="Report a problem"
-                        description="Payment is put on hold and Tweak support reviews what happened. Add details and any photos."
-                        placeholder="Describe the problem (at least 10 characters)"
-                        submitLabel="Open dispute"
+                        title={t('work.problemTitle')}
+                        description={t('work.problemDescription')}
+                        placeholder={t('work.disputePlaceholder')}
+                        submitLabel={t('work.openDispute')}
                         minLength={10}
                         tone="danger"
                         submitting={openDispute.isPending}
@@ -1002,7 +1004,7 @@ export default function TweakDetails(): React.JSX.Element {
                         onSubmit={({ note, photoUrls }) =>
                             openDispute.mutate(
                                 { applicationId: myProviderApplication.id, tweakId: tweak.id, data: { reason: note, evidence_urls: photoUrls } },
-                                { onSuccess: () => { setWorkSheet(null); Toast.success('Dispute opened. Support will review it.'); } }
+                                { onSuccess: () => { setWorkSheet(null); Toast.success(t('work.disputeOpened')); } }
                             )
                         }
                     />

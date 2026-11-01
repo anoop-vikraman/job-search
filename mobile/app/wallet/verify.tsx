@@ -2,6 +2,7 @@ import { Ionicons } from '@expo/vector-icons';
 import * as ImagePicker from 'expo-image-picker';
 import { useRouter } from 'expo-router';
 import React, { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { ActivityIndicator, Image, ScrollView, Text, TextInput, TouchableOpacity, View } from 'react-native';
 
 import { ScreenWrapper } from '@/components/ScreenWrapper';
@@ -11,13 +12,8 @@ import { useTheme } from '@/themes/ThemeProvider';
 import { themeColors } from '@/themes/colors';
 import type { KycIdType } from '@/types/api';
 
-const ID_TYPES: { value: KycIdType; label: string }[] = [
-    { value: 'aadhaar', label: 'Aadhaar' },
-    { value: 'pan', label: 'PAN' },
-    { value: 'driving_licence', label: 'Driving licence' },
-    { value: 'passport', label: 'Passport' },
-    { value: 'voter_id', label: 'Voter ID' },
-];
+// Labels in locales: verify.idTypes.*
+const ID_TYPES: KycIdType[] = ['aadhaar', 'pan', 'driving_licence', 'passport', 'voter_id'];
 const UPI_RE = /^[A-Za-z0-9.\-_]{2,256}@[A-Za-z][A-Za-z0-9]{1,63}$/;
 const MAX_DOCS = 3;
 
@@ -30,6 +26,7 @@ interface LocalDoc {
 export default function VerifyIdentityPage(): React.JSX.Element {
     const router = useRouter();
     const { colors } = useTheme();
+    const { t } = useTranslation();
     const { data: kyc, isLoading } = useKycStatus();
     const submit = useSubmitKyc();
 
@@ -46,7 +43,7 @@ export default function VerifyIdentityPage(): React.JSX.Element {
     const addDoc = async (): Promise<void> => {
         const permission = await ImagePicker.requestMediaLibraryPermissionsAsync();
         if (!permission.granted) {
-            Toast.error('Photo library permission is required');
+            Toast.error(t('verify.photoPermission'));
             return;
         }
         const result = await ImagePicker.launchImageLibraryAsync({ mediaTypes: ['images'], quality: 0.8 });
@@ -59,16 +56,16 @@ export default function VerifyIdentityPage(): React.JSX.Element {
         if (!valid) return;
         submit.mutate(
             { fullName: fullName.trim(), idType, idNumber: cleanId, upiId: upiId.trim(), documents: docs },
-            { onSuccess: () => Toast.success("Submitted. We'll review it within 1–2 working days.") }
+            { onSuccess: () => Toast.success(t('verify.submitted')) }
         );
     };
 
     const header = (
         <View className="flex-row items-center px-6 py-4 bg-white dark:bg-slate-900 border-b border-gray-100 dark:border-slate-700">
-            <TouchableOpacity onPress={() => router.back()} className="mr-4" accessibilityRole="button" accessibilityLabel="Go back">
+            <TouchableOpacity onPress={() => router.back()} className="mr-4" accessibilityRole="button" accessibilityLabel={t('common.goBack')}>
                 <Ionicons name="arrow-back" size={24} color={colors.text} />
             </TouchableOpacity>
-            <Text className="text-lg font-bold text-gray-900 dark:text-slate-50">Verify Identity</Text>
+            <Text className="text-lg font-bold text-gray-900 dark:text-slate-50">{t('verify.title')}</Text>
         </View>
     );
 
@@ -90,12 +87,15 @@ export default function VerifyIdentityPage(): React.JSX.Element {
                 <View style={{ alignItems: 'center', padding: 32 }}>
                     <Ionicons name={verified ? 'shield-checkmark' : 'time-outline'} size={56} color={verified ? '#16A34A' : '#D97706'} />
                     <Text style={{ fontSize: 18, fontWeight: '800', color: colors.text, marginTop: 12 }}>
-                        {verified ? "You're verified" : 'Verification in review'}
+                        {verified ? t('verify.verifiedTitle') : t('verify.reviewTitle')}
                     </Text>
                     <Text style={{ fontSize: 14, color: colors.textSecondary, textAlign: 'center', marginTop: 6 }}>
                         {verified
-                            ? `Withdrawals are paid to ${latest?.upi_id ?? 'your verified UPI id'}.`
-                            : `We're checking your ${ID_TYPES.find((t) => t.value === latest?.id_type)?.label ?? 'ID'} ending ${latest?.id_number_last4}. This usually takes 1–2 working days.`}
+                            ? t('verify.verifiedBody', { upi: latest?.upi_id ?? t('verify.verifiedUpiFallback') })
+                            : t('verify.reviewBody', {
+                                  idType: latest?.id_type ? t(`verify.idTypes.${latest.id_type}`) : t('verify.idFallback'),
+                                  last4: latest?.id_number_last4 ?? '',
+                              })}
                     </Text>
                 </View>
             </ScreenWrapper>
@@ -111,51 +111,53 @@ export default function VerifyIdentityPage(): React.JSX.Element {
             <ScrollView contentContainerStyle={{ padding: 20, paddingBottom: 120 }} keyboardShouldPersistTaps="handled">
                 {latest?.status === 'rejected' && (
                     <View style={{ backgroundColor: '#FEF2F2', borderRadius: 12, padding: 12, marginBottom: 8 }}>
-                        <Text style={{ color: '#991B1B', fontWeight: '700' }}>Your last submission was not approved</Text>
+                        <Text style={{ color: '#991B1B', fontWeight: '700' }}>{t('verify.rejectedTitle')}</Text>
                         <Text style={{ color: '#991B1B', marginTop: 2 }}>{latest.rejection_reason}</Text>
                     </View>
                 )}
                 <Text style={{ fontSize: 14, color: colors.textSecondary }}>
-                    To withdraw earnings we need to confirm who you are. Your documents are stored privately and only seen by our verification team.
+                    {t('verify.intro')}
                 </Text>
 
-                <Text style={label}>Full name (as on your ID)</Text>
-                <TextInput value={fullName} onChangeText={setFullName} style={input} placeholder="e.g. Priya Sharma" placeholderTextColor={colors.textMuted} />
+                <Text style={label}>{t('verify.fullName')}</Text>
+                <TextInput value={fullName} onChangeText={setFullName} style={input} placeholder={t('verify.fullNamePlaceholder')} placeholderTextColor={colors.textMuted} />
 
-                <Text style={label}>ID type</Text>
+                <Text style={label}>{t('verify.idType')}</Text>
                 <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 8 }}>
-                    {ID_TYPES.map((t) => (
+                    {ID_TYPES.map((type) => (
                         <TouchableOpacity
-                            key={t.value}
-                            onPress={() => setIdType(t.value)}
-                            style={{ paddingHorizontal: 12, paddingVertical: 8, borderRadius: 20, borderWidth: 1, borderColor: idType === t.value ? themeColors.primary : colors.border, backgroundColor: idType === t.value ? `${themeColors.primary}15` : colors.surfaceMuted }}
+                            key={type}
+                            onPress={() => setIdType(type)}
+                            style={{ paddingHorizontal: 12, paddingVertical: 8, borderRadius: 20, borderWidth: 1, borderColor: idType === type ? themeColors.primary : colors.border, backgroundColor: idType === type ? `${themeColors.primary}15` : colors.surfaceMuted }}
+                            accessibilityRole="radio"
+                            accessibilityState={{ selected: idType === type }}
                         >
-                            <Text style={{ fontWeight: '600', color: idType === t.value ? themeColors.primary : colors.textSecondary }}>{t.label}</Text>
+                            <Text style={{ fontWeight: '600', color: idType === type ? themeColors.primary : colors.textSecondary }}>{t(`verify.idTypes.${type}`)}</Text>
                         </TouchableOpacity>
                     ))}
                 </View>
 
-                <Text style={label}>ID number</Text>
-                <TextInput value={idNumber} onChangeText={setIdNumber} style={input} autoCapitalize="characters" placeholder="We only keep the last 4 characters" placeholderTextColor={colors.textMuted} />
+                <Text style={label}>{t('verify.idNumber')}</Text>
+                <TextInput value={idNumber} onChangeText={setIdNumber} style={input} autoCapitalize="characters" placeholder={t('verify.idNumberPlaceholder')} placeholderTextColor={colors.textMuted} />
 
-                <Text style={label}>UPI id for withdrawals</Text>
+                <Text style={label}>{t('verify.upi')}</Text>
                 <TextInput value={upiId} onChangeText={setUpiId} style={input} autoCapitalize="none" autoCorrect={false} keyboardType="email-address" placeholder="name@bank" placeholderTextColor={colors.textMuted} />
                 {upiId.length > 0 && !UPI_RE.test(upiId.trim()) && (
-                    <Text style={{ color: '#DC2626', fontSize: 12, marginTop: 4 }}>Enter a valid UPI id, e.g. name@okaxis</Text>
+                    <Text style={{ color: '#DC2626', fontSize: 12, marginTop: 4 }}>{t('verify.upiInvalid')}</Text>
                 )}
 
-                <Text style={label}>Photos of your ID (front and back)</Text>
+                <Text style={label}>{t('verify.docs')}</Text>
                 <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 10 }}>
                     {docs.map((d) => (
                         <View key={d.uri}>
                             <Image source={{ uri: d.uri }} style={{ width: 96, height: 64, borderRadius: 8 }} />
-                            <TouchableOpacity onPress={() => setDocs((prev) => prev.filter((x) => x.uri !== d.uri))} style={{ position: 'absolute', top: -6, right: -6, backgroundColor: '#fff', borderRadius: 11 }} accessibilityLabel="Remove document">
+                            <TouchableOpacity onPress={() => setDocs((prev) => prev.filter((x) => x.uri !== d.uri))} style={{ position: 'absolute', top: -6, right: -6, backgroundColor: '#fff', borderRadius: 11 }} accessibilityLabel={t('verify.removeDoc')}>
                                 <Ionicons name="close-circle" size={22} color="#DC2626" />
                             </TouchableOpacity>
                         </View>
                     ))}
                     {docs.length < MAX_DOCS && (
-                        <TouchableOpacity onPress={addDoc} style={{ width: 96, height: 64, borderRadius: 8, borderWidth: 1, borderStyle: 'dashed', borderColor: colors.border, alignItems: 'center', justifyContent: 'center' }} accessibilityRole="button" accessibilityLabel="Add ID photo">
+                        <TouchableOpacity onPress={addDoc} style={{ width: 96, height: 64, borderRadius: 8, borderWidth: 1, borderStyle: 'dashed', borderColor: colors.border, alignItems: 'center', justifyContent: 'center' }} accessibilityRole="button" accessibilityLabel={t('verify.addDoc')}>
                             <Ionicons name="add" size={24} color={colors.textMuted} />
                         </TouchableOpacity>
                     )}
@@ -168,7 +170,7 @@ export default function VerifyIdentityPage(): React.JSX.Element {
                     accessibilityRole="button"
                 >
                     {submit.isPending && <ActivityIndicator size="small" color="#fff" />}
-                    <Text style={{ color: '#fff', fontSize: 16, fontWeight: '800' }}>Submit for verification</Text>
+                    <Text style={{ color: '#fff', fontSize: 16, fontWeight: '800' }}>{t('verify.submit')}</Text>
                 </TouchableOpacity>
             </ScrollView>
         </ScreenWrapper>

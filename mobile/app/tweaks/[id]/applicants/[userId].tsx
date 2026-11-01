@@ -1,6 +1,7 @@
 import { Ionicons } from '@expo/vector-icons';
 import { useLocalSearchParams, useRouter, type Href } from 'expo-router';
 import React, { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import {
     Alert,
     KeyboardAvoidingView,
@@ -23,6 +24,7 @@ import { useTheme } from '@/themes/ThemeProvider';
 
 export default function ApplicantDetail(): React.JSX.Element {
     const { colors } = useTheme();
+    const { t } = useTranslation();
     // Route param `userId` now carries the backend application id.
     const { id, userId: applicationId } = useLocalSearchParams<{ id: string; userId: string }>();
     const router = useRouter();
@@ -294,10 +296,10 @@ export default function ApplicantDetail(): React.JSX.Element {
             </KeyboardAvoidingView>
             <NoteWithPhotosSheet
                 visible={disputeOpen}
-                title="Open a dispute"
-                description="Payment stays on hold and Tweak support reviews the job. Explain what went wrong and add photos if you can."
-                placeholder="Describe the problem (at least 10 characters)"
-                submitLabel="Open dispute"
+                title={t('work.disputeTitle')}
+                description={t('work.disputeDescription')}
+                placeholder={t('work.disputePlaceholder')}
+                submitLabel={t('work.openDispute')}
                 minLength={10}
                 tone="danger"
                 submitting={openDispute.isPending}

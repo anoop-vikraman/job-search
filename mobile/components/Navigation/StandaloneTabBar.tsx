@@ -2,6 +2,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { NavigationContext } from '@react-navigation/native';
 import { useRouter, useSegments, type Href } from 'expo-router';
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 import { Dimensions, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import Svg, { Path } from 'react-native-svg';
 import { palette } from '@tweak/theme';
@@ -15,7 +16,8 @@ const CENTER_BUTTON_RADIUS = 28; // Smaller button (was 35)
 
 interface TabConfig {
     name: string;
-    label: string;
+    /** i18n key (tabs.*) */
+    labelKey: string;
     route: string;
     icon?: keyof typeof Ionicons.glyphMap;
     outlineIcon?: keyof typeof Ionicons.glyphMap;
@@ -23,16 +25,17 @@ interface TabConfig {
 }
 
 const TABS: TabConfig[] = [
-    { name: 'index', label: 'Home', icon: 'home', outlineIcon: 'home-outline', route: '/(tabs)' },
-    { name: 'apply', label: 'Apply', icon: 'search', outlineIcon: 'search-outline', route: '/(tabs)/apply' },
-    { name: 'create', label: 'Create', route: 'create', isSpacer: true },
-    { name: 'my-tweaks', label: 'My Tweaks', icon: 'list', outlineIcon: 'list-outline', route: '/(tabs)/my-tweaks' },
-    { name: 'notifications', label: 'Alerts', icon: 'notifications', outlineIcon: 'notifications-outline', route: '/(tabs)/notifications' },
+    { name: 'index', labelKey: 'tabs.home', icon: 'home', outlineIcon: 'home-outline', route: '/(tabs)' },
+    { name: 'apply', labelKey: 'tabs.apply', icon: 'search', outlineIcon: 'search-outline', route: '/(tabs)/apply' },
+    { name: 'create', labelKey: 'tabs.create', route: 'create', isSpacer: true },
+    { name: 'my-tweaks', labelKey: 'tabs.myTweaks', icon: 'list', outlineIcon: 'list-outline', route: '/(tabs)/my-tweaks' },
+    { name: 'notifications', labelKey: 'tabs.alerts', icon: 'notifications', outlineIcon: 'notifications-outline', route: '/(tabs)/notifications' },
 ];
 
 // Inner component that safely uses navigation hooks (only rendered when context exists)
 function StandaloneTabBarInner() {
     const { colors, isDark } = useTheme();
+    const { t } = useTranslation();
     const router = useRouter();
     const segments = useSegments() as string[];
     const [isMenuOpen, setIsMenuOpen] = React.useState(false);
@@ -114,7 +117,7 @@ function StandaloneTabBarInner() {
                     return (
                         <TabItem
                             key={tab.name}
-                            label={tab.label}
+                            label={t(tab.labelKey)}
                             iconName={isFocused ? tab.icon : tab.outlineIcon}
                             isFocused={isFocused}
                             onPress={onPress}
@@ -142,7 +145,7 @@ function StandaloneTabBarInner() {
                         <View style={[styles.menuIconContainer, { backgroundColor: palette.blue100 }]}>
                             <Ionicons name="laptop-outline" size={20} color={palette.blue500} />
                         </View>
-                        <Text style={[styles.menuText, isDark && { color: colors.text }]}>Remote Tweak</Text>
+                        <Text style={[styles.menuText, isDark && { color: colors.text }]}>{t('tabs.remoteTweak')}</Text>
                     </TouchableOpacity>
 
                     <View style={[styles.menuDivider, isDark && { backgroundColor: colors.border }]} />
@@ -154,7 +157,7 @@ function StandaloneTabBarInner() {
                         <View style={[styles.menuIconContainer, { backgroundColor: palette.orange100 }]}>
                             <Ionicons name="location" size={20} color={palette.orange500} />
                         </View>
-                        <Text style={[styles.menuText, isDark && { color: colors.text }]}>Onsite Tweak</Text>
+                        <Text style={[styles.menuText, isDark && { color: colors.text }]}>{t('tabs.onsiteTweak')}</Text>
                     </TouchableOpacity>
 
                     {/* Arrow pointing down */}

@@ -8,6 +8,7 @@ import {
 import { useRouter, type Href } from 'expo-router';
 
 import { chatApi } from '../api/chat';
+import i18n from '../utils/i18n';
 import type { ChatMessage, Conversation } from '../types/api';
 import { useRealtimeStore } from '../store/useRealtimeStore';
 import { queryKeys } from './queryKeys';
@@ -148,6 +149,6 @@ export const CHAT_STATUSES: readonly string[] = ['accepted', 'completed', 'dispu
 export function participantName(p: { first_name: string | null; last_name: string | null }): string {
     const first = p.first_name?.trim();
     const lastInitial = p.last_name?.trim().charAt(0);
-    if (!first) return 'Tweak user';
+    if (!first) return i18n.t('common.tweakUser');
     return lastInitial ? `${first} ${lastInitial}.` : first;
 }

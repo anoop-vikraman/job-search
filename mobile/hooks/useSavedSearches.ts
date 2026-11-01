@@ -7,6 +7,7 @@ import {
 } from '@tanstack/react-query';
 
 import { savedSearchesApi } from '../api/savedSearches';
+import i18n from '../utils/i18n';
 import type { SavedSearch, SavedSearchCreate } from '../types/api';
 import { queryKeys } from './queryKeys';
 
@@ -38,7 +39,7 @@ export function describeSavedSearch(s: Pick<SavedSearch, 'search' | 'category' |
     const parts: string[] = [];
     if (s.search) parts.push(`“${s.search}”`);
     if (s.category) parts.push(s.category);
-    if (s.tweak_type) parts.push(s.tweak_type === 'remote' ? 'Remote' : 'Onsite');
-    if (s.radius_km != null) parts.push(`within ${s.radius_km} km`);
+    if (s.tweak_type) parts.push(i18n.t(s.tweak_type === 'remote' ? 'common.remote' : 'common.onsite'));
+    if (s.radius_km != null) parts.push(i18n.t('savedAlerts.withinKm', { km: s.radius_km }));
     return parts.join(' · ');
 }

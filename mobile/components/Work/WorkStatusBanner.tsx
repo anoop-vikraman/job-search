@@ -1,6 +1,7 @@
 import { Ionicons } from '@expo/vector-icons';
 import dayjs from 'dayjs';
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 import { Text, View } from 'react-native';
 
 import { useDispute } from '../../hooks/useWorkflow';
@@ -13,16 +14,17 @@ interface WorkStatusBannerProps {
     viewer: 'lister' | 'provider';
 }
 
-const OUTCOME_TEXT = {
-    release: 'Resolved: payment released to the provider.',
-    refund: 'Resolved: payment refunded to the lister.',
-    partial: 'Resolved: payment split between both sides.',
+const OUTCOME_KEY = {
+    release: 'work.outcomeRelease',
+    refund: 'work.outcomeRefund',
+    partial: 'work.outcomePartial',
 } as const;
 
 /** Where accepted work stands: submitted (review window), disputed, or dispute resolved. */
 export default function WorkStatusBanner({ application, viewer }: WorkStatusBannerProps): React.JSX.Element | null {
     const everDisputed = application.status === 'disputed' || application.status === 'withdrawn' || application.status === 'completed';
     const { data: dispute } = useDispute(application.id, everDisputed);
+    const { t } = useTranslation();
 
     if (application.status === 'disputed' || (dispute && dispute.status === 'open')) {
         return (
@@ -30,22 +32,22 @@ export default function WorkStatusBanner({ application, viewer }: WorkStatusBann
                 icon="shield-half-outline"
                 color="#B45309"
                 bg="#FFFBEB"
-                title="Under review by Tweak support"
-                body={dispute ? `Reason: ${dispute.reason}` : 'Payment is on hold until support decides.'}
+                title={t('work.underReview')}
+                body={dispute ? t('work.disputeReason', { reason: dispute.reason }) : t('work.onHold')}
             />
         );
     }
     if (dispute && dispute.status === 'resolved' && dispute.outcome) {
         const amount = dispute.outcome === 'partial' && dispute.provider_amount_minor != null
-            ? ` Provider received ${formatMinor(dispute.provider_amount_minor)} before fees.`
+            ? ` ${t('work.providerReceived', { amount: formatMinor(dispute.provider_amount_minor) })}`
             : '';
         return (
             <Banner
                 icon="checkmark-done-circle-outline"
                 color="#166534"
                 bg="#F0FDF4"
-                title="Dispute resolved"
-                body={OUTCOME_TEXT[dispute.outcome] + amount + (dispute.admin_note ? ` Note: ${dispute.admin_note}` : '')}
+                title={t('work.resolved')}
+                body={t(OUTCOME_KEY[dispute.outcome]) + amount + (dispute.admin_note ? ` ${t('work.adminNote', { note: dispute.admin_note })}` : '')}
             />
         );
     }
@@ -53,8 +55,8 @@ export default function WorkStatusBanner({ application, viewer }: WorkStatusBann
         const when = application.auto_release_at ? dayjs(application.auto_release_at).format('DD MMM, HH:mm') : null;
         const deadline = when
             ? viewer === 'provider'
-                ? `Payment releases automatically on ${when} unless the lister disputes.`
-                : `Confirm or open a dispute before ${when}, or payment releases automatically.`
+                ? t('work.autoReleaseProvider', { when })
+                : t('work.autoReleaseLister', { when })
             : '';
         const note = application.completion_note ? `“${application.completion_note}”\n` : '';
         return (
@@ -62,7 +64,7 @@ export default function WorkStatusBanner({ application, viewer }: WorkStatusBann
                 icon="hourglass-outline"
                 color="#1D4ED8"
                 bg="#EFF6FF"
-                title={viewer === 'provider' ? 'Waiting for the lister to confirm' : 'The provider marked this done'}
+                title={viewer === 'provider' ? t('work.waitingForLister') : t('work.providerMarkedDone')}
                 body={note + deadline}
                 extra={
                     application.completion_photos.length > 0 ? (

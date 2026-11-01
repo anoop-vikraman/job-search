@@ -3,6 +3,7 @@ import { useIsFocused } from '@react-navigation/native';
 import dayjs from 'dayjs';
 import { useLocalSearchParams, useRouter, type Href } from 'expo-router';
 import React, { useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { ActivityIndicator, Alert, FlatList, Image, Modal, Pressable, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import { palette } from '@tweak/theme';
 
@@ -35,6 +36,7 @@ export default function ChatThreadPage(): React.JSX.Element {
     const { id } = useLocalSearchParams<{ id: string }>();
     const router = useRouter();
     const { colors, isDark } = useTheme();
+    const { t } = useTranslation();
     const isFocused = useIsFocused();
 
     const { data: conversation, refetch: refetchConversation } = useConversation(id);
@@ -75,7 +77,7 @@ export default function ChatThreadPage(): React.JSX.Element {
             const urls = await pickAndUploadPhotos(MAX_PHOTOS - photos.length);
             setPhotos((prev) => [...prev, ...urls].slice(0, MAX_PHOTOS));
         } catch {
-            Toast.error('Could not upload the photo. Please try again.');
+            Toast.error(t('common.photoUploadFailed'));
         } finally {
             setUploading(false);
         }
@@ -124,7 +126,7 @@ export default function ChatThreadPage(): React.JSX.Element {
                                     key={a.url}
                                     source={{ uri: mediaUri(a.url) }}
                                     style={{ width: item.attachments.length === 1 ? 200 : 96, height: item.attachments.length === 1 ? 200 : 96, borderRadius: 10 }}
-                                    accessibilityLabel="Photo"
+                                    accessibilityLabel={t('chat.photoLabel')}
                                 />
                             ))}
                         </View>
@@ -135,7 +137,7 @@ export default function ChatThreadPage(): React.JSX.Element {
                 </View>
                 <Text style={{ fontSize: 10, color: colors.textMuted, marginTop: 2, marginHorizontal: 4 }}>
                     {formatStamp(item.created_at)}
-                    {item.id === seenId ? ' · Seen' : ''}
+                    {item.id === seenId ? ` · ${t('chat.seen')}` : ''}
                 </Text>
             </Pressable>
         );
@@ -145,7 +147,7 @@ export default function ChatThreadPage(): React.JSX.Element {
         <ScreenWrapper>
             {/* Header */}
             <View style={{ flexDirection: 'row', alignItems: 'center', gap: 10, paddingHorizontal: 12, paddingVertical: 10, backgroundColor: colors.surface, borderBottomWidth: 1, borderBottomColor: colors.border }}>
-                <TouchableOpacity onPress={() => router.back()} style={{ padding: 6 }} accessibilityRole="button" accessibilityLabel="Go back">
+                <TouchableOpacity onPress={() => router.back()} style={{ padding: 6 }} accessibilityRole="button" accessibilityLabel={t('common.goBack')}>
                     <Ionicons name="arrow-back" size={24} color={colors.text} />
                 </TouchableOpacity>
                 {conversation ? (
@@ -153,7 +155,7 @@ export default function ChatThreadPage(): React.JSX.Element {
                         style={{ flex: 1, flexDirection: 'row', alignItems: 'center', gap: 10 }}
                         onPress={() => router.push(`/tweaks/${conversation.tweak_id}` as Href)}
                         accessibilityRole="button"
-                        accessibilityLabel={`Open tweak ${conversation.tweak_title}`}
+                        accessibilityLabel={t('chat.openTweak', { title: conversation.tweak_title })}
                     >
                         <ChatAvatar user={conversation.other_user} size={36} />
                         <View style={{ flex: 1 }}>
@@ -161,7 +163,7 @@ export default function ChatThreadPage(): React.JSX.Element {
                                 {participantName(conversation.other_user)}
                             </Text>
                             <Text numberOfLines={1} style={{ fontSize: 12, color: colors.textSecondary }}>
-                                {conversation.my_role === 'lister' ? 'Provider' : 'Lister'} · {conversation.tweak_title}
+                                {conversation.my_role === 'lister' ? t('chat.provider') : t('chat.lister')} · {conversation.tweak_title}
                             </Text>
                         </View>
                     </TouchableOpacity>
@@ -169,7 +171,7 @@ export default function ChatThreadPage(): React.JSX.Element {
                     <View style={{ flex: 1 }} />
                 )}
                 {conversation && (
-                    <TouchableOpacity onPress={() => setMenuOpen(true)} style={{ padding: 6 }} accessibilityRole="button" accessibilityLabel="More options">
+                    <TouchableOpacity onPress={() => setMenuOpen(true)} style={{ padding: 6 }} accessibilityRole="button" accessibilityLabel={t('chat.moreOptions')}>
                         <Ionicons name="ellipsis-vertical" size={20} color={colors.text} />
                     </TouchableOpacity>
                 )}
@@ -192,7 +194,7 @@ export default function ChatThreadPage(): React.JSX.Element {
                         <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center', paddingHorizontal: 40 }}>
                             <Ionicons name="chatbubble-ellipses-outline" size={40} color={colors.textMuted} />
                             <Text style={{ fontSize: 14, color: colors.textSecondary, textAlign: 'center', marginTop: 10 }}>
-                                Coordinate timing, address details or anything else about this tweak.
+                                {t('chat.threadEmpty')}
                             </Text>
                         </View>
                     }
@@ -204,18 +206,17 @@ export default function ChatThreadPage(): React.JSX.Element {
                 <View style={{ padding: 14, backgroundColor: colors.surfaceMuted, borderTopWidth: 1, borderTopColor: colors.border }}>
                     <Text style={{ textAlign: 'center', fontSize: 13, color: colors.textSecondary }}>
                         {conversation.blocked
-                            ? "You can't message this user."
+                            ? t('chat.cantMessage')
                             : conversation.pre_accept_remaining === 0
-                              ? "You've used your messages for now. Chat fully opens once the application is accepted."
-                              : 'This job was cancelled, so the conversation is read-only.'}
+                              ? t('chat.preAcceptUsed')
+                              : t('chat.readOnly')}
                     </Text>
                 </View>
             ) : (
                 <View style={{ backgroundColor: colors.surface, borderTopWidth: 1, borderTopColor: colors.border }}>
                 {conversation?.pre_accept_remaining != null && (
                     <Text style={{ fontSize: 12, color: colors.textSecondary, textAlign: 'center', paddingTop: 8, paddingHorizontal: 16 }}>
-                        Application not accepted yet: you can send {conversation.pre_accept_remaining} more message
-                        {conversation.pre_accept_remaining === 1 ? '' : 's'}.
+                        {t('chat.preAcceptRemaining', { count: conversation.pre_accept_remaining })}
                     </Text>
                 )}
                 {photos.length > 0 && (
@@ -229,14 +230,14 @@ export default function ChatThreadPage(): React.JSX.Element {
                         disabled={uploading || photos.length >= MAX_PHOTOS || !conversation}
                         style={{ width: 40, height: 40, alignItems: 'center', justifyContent: 'center' }}
                         accessibilityRole="button"
-                        accessibilityLabel="Attach photo"
+                        accessibilityLabel={t('chat.attachPhoto')}
                     >
                         {uploading ? <ActivityIndicator size="small" color={colors.textMuted} /> : <Ionicons name="image-outline" size={24} color={colors.textSecondary} />}
                     </TouchableOpacity>
                     <TextInput
                         value={draft}
                         onChangeText={setDraft}
-                        placeholder="Message"
+                        placeholder={t('chat.placeholder')}
                         placeholderTextColor={colors.textMuted}
                         multiline
                         maxLength={MAX_LENGTH}
@@ -248,7 +249,7 @@ export default function ChatThreadPage(): React.JSX.Element {
                         disabled={!hasContent || send.isPending || uploading}
                         style={{ width: 40, height: 40, borderRadius: 20, alignItems: 'center', justifyContent: 'center', backgroundColor: hasContent ? palette.iosBlue : colors.surfaceMuted }}
                         accessibilityRole="button"
-                        accessibilityLabel="Send message"
+                        accessibilityLabel={t('chat.send')}
                     >
                         {send.isPending ? (
                             <ActivityIndicator size="small" color="#fff" />
@@ -273,7 +274,7 @@ export default function ChatThreadPage(): React.JSX.Element {
                                     style={{ flexDirection: 'row', alignItems: 'center', gap: 10, padding: 14, borderBottomWidth: 1, borderBottomColor: colors.border }}
                                 >
                                     <Ionicons name="person-circle-outline" size={18} color={colors.textSecondary} />
-                                    <Text style={{ fontWeight: '600', color: colors.textSecondary }}>View profile</Text>
+                                    <Text style={{ fontWeight: '600', color: colors.textSecondary }}>{t('chat.viewProfile')}</Text>
                                 </TouchableOpacity>
                                 <TouchableOpacity
                                     onPress={() => {
@@ -283,7 +284,7 @@ export default function ChatThreadPage(): React.JSX.Element {
                                     style={{ flexDirection: 'row', alignItems: 'center', gap: 10, padding: 14, borderBottomWidth: 1, borderBottomColor: colors.border }}
                                 >
                                     <Ionicons name="flag-outline" size={18} color="#DC2626" />
-                                    <Text style={{ fontWeight: '600', color: '#DC2626' }}>Report {participantName(conversation.other_user)}</Text>
+                                    <Text style={{ fontWeight: '600', color: '#DC2626' }}>{t('chat.reportUser', { name: participantName(conversation.other_user) })}</Text>
                                 </TouchableOpacity>
                                 <TouchableOpacity
                                     onPress={() => {
@@ -291,14 +292,14 @@ export default function ChatThreadPage(): React.JSX.Element {
                                         const name = participantName(conversation.other_user);
                                         const blocking = !conversation.blocked;
                                         Alert.alert(
-                                            blocking ? `Block ${name}?` : `Unblock ${name}?`,
+                                            blocking ? t('chat.blockTitle', { name }) : t('chat.unblockTitle', { name }),
                                             blocking
-                                                ? "You won't see each other's tweaks, apply to them, or message each other."
-                                                : 'You will be able to interact again.',
+                                                ? t('chat.blockBody')
+                                                : t('chat.unblockBody'),
                                             [
-                                                { text: 'Cancel', style: 'cancel' },
+                                                { text: t('common.cancel'), style: 'cancel' },
                                                 {
-                                                    text: blocking ? 'Block' : 'Unblock',
+                                                    text: blocking ? t('common.block') : t('common.unblock'),
                                                     style: blocking ? 'destructive' : 'default',
                                                     onPress: () =>
                                                         setBlocked.mutate(
@@ -313,7 +314,9 @@ export default function ChatThreadPage(): React.JSX.Element {
                                 >
                                     <Ionicons name="ban-outline" size={18} color={colors.textSecondary} />
                                     <Text style={{ fontWeight: '600', color: colors.textSecondary }}>
-                                        {conversation.blocked ? 'Unblock' : 'Block'} {participantName(conversation.other_user)}
+                                        {conversation.blocked
+                                            ? t('chat.unblockUser', { name: participantName(conversation.other_user) })
+                                            : t('chat.blockUser', { name: participantName(conversation.other_user) })}
                                     </Text>
                                 </TouchableOpacity>
                             </>
@@ -324,7 +327,7 @@ export default function ChatThreadPage(): React.JSX.Element {
             <ReportSheet
                 visible={reportTarget !== null}
                 target={reportTarget}
-                subject={reportTarget?.type === 'message' ? 'this message' : conversation ? participantName(conversation.other_user) : 'user'}
+                subject={reportTarget?.type === 'message' ? t('chat.thisMessage') : conversation ? participantName(conversation.other_user) : t('common.tweakUser')}
                 onClose={() => setReportTarget(null)}
             />
         </ScreenWrapper>

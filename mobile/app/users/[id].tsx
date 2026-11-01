@@ -2,6 +2,7 @@ import { Ionicons } from '@expo/vector-icons';
 import dayjs from 'dayjs';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import React, { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { ActivityIndicator, Image, ScrollView, Text, TouchableOpacity, View } from 'react-native';
 
 import ChatAvatar from '@/components/Chat/ChatAvatar';
@@ -26,6 +27,7 @@ export default function PublicProfilePage(): React.JSX.Element {
     const { id } = useLocalSearchParams<{ id: string }>();
     const router = useRouter();
     const { colors } = useTheme();
+    const { t } = useTranslation();
     const { user } = useAuthStore();
     const { data: profile, isLoading, isError } = usePublicProfile(id);
     const [reportOpen, setReportOpen] = useState(false);
@@ -33,12 +35,12 @@ export default function PublicProfilePage(): React.JSX.Element {
 
     const header = (
         <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: 16, paddingVertical: 14, backgroundColor: colors.surface, borderBottomWidth: 1, borderBottomColor: colors.border }}>
-            <TouchableOpacity onPress={() => router.back()} style={{ padding: 6 }} accessibilityRole="button" accessibilityLabel="Go back">
+            <TouchableOpacity onPress={() => router.back()} style={{ padding: 6 }} accessibilityRole="button" accessibilityLabel={t('common.goBack')}>
                 <Ionicons name="arrow-back" size={24} color={colors.text} />
             </TouchableOpacity>
-            <Text style={{ fontSize: 17, fontWeight: '800', color: colors.text }}>Profile</Text>
+            <Text style={{ fontSize: 17, fontWeight: '800', color: colors.text }}>{t('publicProfile.title')}</Text>
             {profile && !isMe ? (
-                <TouchableOpacity onPress={() => setReportOpen(true)} style={{ padding: 6 }} accessibilityRole="button" accessibilityLabel="Report user">
+                <TouchableOpacity onPress={() => setReportOpen(true)} style={{ padding: 6 }} accessibilityRole="button" accessibilityLabel={t('publicProfile.reportUser')}>
                     <Ionicons name="flag-outline" size={20} color={colors.textSecondary} />
                 </TouchableOpacity>
             ) : (
@@ -52,7 +54,7 @@ export default function PublicProfilePage(): React.JSX.Element {
             <ScreenWrapper>
                 {header}
                 <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
-                    {isLoading ? <ActivityIndicator color={colors.textMuted} /> : <Text style={{ color: colors.textSecondary }}>This profile isn't available.</Text>}
+                    {isLoading ? <ActivityIndicator color={colors.textMuted} /> : <Text style={{ color: colors.textSecondary }}>{t('publicProfile.unavailable')}</Text>}
                 </View>
             </ScreenWrapper>
         );
@@ -66,16 +68,16 @@ export default function PublicProfilePage(): React.JSX.Element {
                     <ChatAvatar user={{ id: profile.id, first_name: profile.display_name, last_name: null, profile_picture_url: profile.profile_picture_url }} size={88} />
                     <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6, marginTop: 12 }}>
                         <Text style={{ fontSize: 22, fontWeight: '800', color: colors.text }}>{profile.display_name}</Text>
-                        {profile.verified && <Ionicons name="shield-checkmark" size={18} color="#16A34A" accessibilityLabel="Identity verified" />}
+                        {profile.verified && <Ionicons name="shield-checkmark" size={18} color="#16A34A" accessibilityLabel={t('publicProfile.verified')} />}
                     </View>
                     <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6, marginTop: 6 }}>
                         <Stars score={profile.rating_avg} />
                         <Text style={{ color: colors.textSecondary, fontSize: 13 }}>
-                            {profile.rating_count > 0 ? `${profile.rating_avg.toFixed(1)} (${profile.rating_count})` : 'No ratings yet'}
+                            {profile.rating_count > 0 ? `${profile.rating_avg.toFixed(1)} (${profile.rating_count})` : t('publicProfile.noRatings')}
                         </Text>
                     </View>
                     <Text style={{ color: colors.textMuted, fontSize: 12, marginTop: 6 }}>
-                        {profile.completed_jobs} job{profile.completed_jobs === 1 ? '' : 's'} completed · Member since {dayjs(profile.member_since).format('MMM YYYY')}
+                        {t('publicProfile.jobsCompleted', { count: profile.completed_jobs })} · {t('publicProfile.memberSince', { date: dayjs(profile.member_since).format('MMM YYYY') })}
                     </Text>
                     {profile.bio ? <Text style={{ color: colors.textSecondary, fontSize: 14, textAlign: 'center', marginTop: 12 }}>{profile.bio}</Text> : null}
                 </View>
@@ -83,7 +85,7 @@ export default function PublicProfilePage(): React.JSX.Element {
                 <View style={{ padding: 20, gap: 24 }}>
                     {profile.skills.length > 0 && (
                         <View>
-                            <Text style={{ fontSize: 16, fontWeight: '800', color: colors.text, marginBottom: 10 }}>Skills</Text>
+                            <Text style={{ fontSize: 16, fontWeight: '800', color: colors.text, marginBottom: 10 }}>{t('publicProfile.skills')}</Text>
                             <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 8 }}>
                                 {profile.skills.map((s) => (
                                     <View key={s} style={{ paddingHorizontal: 12, paddingVertical: 6, borderRadius: 20, backgroundColor: colors.surfaceMuted, borderWidth: 1, borderColor: colors.border }}>
@@ -96,7 +98,7 @@ export default function PublicProfilePage(): React.JSX.Element {
 
                     {profile.portfolio.length > 0 && (
                         <View>
-                            <Text style={{ fontSize: 16, fontWeight: '800', color: colors.text, marginBottom: 10 }}>Past work</Text>
+                            <Text style={{ fontSize: 16, fontWeight: '800', color: colors.text, marginBottom: 10 }}>{t('publicProfile.pastWork')}</Text>
                             <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ gap: 10 }}>
                                 {profile.portfolio.map((p) => (
                                     <View key={p.url} style={{ width: 140 }}>
@@ -109,9 +111,9 @@ export default function PublicProfilePage(): React.JSX.Element {
                     )}
 
                     <View>
-                        <Text style={{ fontSize: 16, fontWeight: '800', color: colors.text, marginBottom: 10 }}>Reviews</Text>
+                        <Text style={{ fontSize: 16, fontWeight: '800', color: colors.text, marginBottom: 10 }}>{t('publicProfile.reviews')}</Text>
                         {profile.reviews.length === 0 ? (
-                            <Text style={{ color: colors.textMuted }}>No reviews yet.</Text>
+                            <Text style={{ color: colors.textMuted }}>{t('publicProfile.noReviews')}</Text>
                         ) : (
                             profile.reviews.map((r, i) => (
                                 <View key={`${r.created_at}-${i}`} style={{ padding: 14, borderRadius: 14, backgroundColor: colors.surface, borderWidth: 1, borderColor: colors.border, marginBottom: 8 }}>

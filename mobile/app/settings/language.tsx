@@ -4,36 +4,37 @@ import React from 'react';
 import { ScrollView, Text, TouchableOpacity, View } from 'react-native';
 import { ScreenWrapper } from '../../components/ScreenWrapper';
 import { palette } from '@tweak/theme';
+import { useTranslation } from 'react-i18next';
 import { useTheme } from '@/themes/ThemeProvider';
+import { changeLanguage, type AppLanguage } from '@/utils/i18n';
 
-const LANGUAGES = [
+// Only languages with a bundled locale file (mobile/locales/*.json).
+const LANGUAGES: { code: AppLanguage; name: string; nativeName: string }[] = [
     { code: 'en', name: 'English', nativeName: 'English' },
     { code: 'hi', name: 'Hindi', nativeName: 'हिन्दी' },
     { code: 'ta', name: 'Tamil', nativeName: 'தமிழ்' },
-    { code: 'te', name: 'Telugu', nativeName: 'తెలుగు' },
-    { code: 'kn', name: 'Kannada', nativeName: 'ಕನ್ನಡ' },
     { code: 'ml', name: 'Malayalam', nativeName: 'മലയാളം' },
 ];
 
 export default function LanguageSettings(): React.JSX.Element {
     const router = useRouter();
     const { colors } = useTheme();
-    const [selectedLanguage, setSelectedLanguage] = React.useState('en');
+    const { t, i18n } = useTranslation();
+    // useTranslation re-renders this screen when the language changes.
+    const selectedLanguage = i18n.resolvedLanguage ?? i18n.language;
 
-    const handleLanguageChange = (code: string) => {
-        setSelectedLanguage(code);
-        // In a real app, update i18n configuration here
-        // i18n.changeLanguage(code);
+    const handleLanguageChange = (code: AppLanguage) => {
+        if (code !== selectedLanguage) changeLanguage(code);
     };
 
     return (
         <ScreenWrapper>
             {/* Header */}
             <View className="flex-row items-center px-6 py-4 bg-white dark:bg-slate-900 border-b border-gray-100 dark:border-slate-700">
-                <TouchableOpacity onPress={() => router.back()} className="mr-4" accessibilityRole="button" accessibilityLabel="Go back">
+                <TouchableOpacity onPress={() => router.back()} className="mr-4" accessibilityRole="button" accessibilityLabel={t('common.goBack')}>
                     <Ionicons name="arrow-back" size={24} color={colors.text} />
                 </TouchableOpacity>
-                <Text className="text-lg font-bold text-gray-900 dark:text-slate-50">Language</Text>
+                <Text className="text-lg font-bold text-gray-900 dark:text-slate-50">{t('languageSettings.title')}</Text>
             </View>
 
             <ScrollView className="flex-1 px-6 py-6">
@@ -41,6 +42,8 @@ export default function LanguageSettings(): React.JSX.Element {
                     <TouchableOpacity
                         key={language.code}
                         onPress={() => handleLanguageChange(language.code)}
+                        accessibilityRole="radio"
+                        accessibilityState={{ selected: selectedLanguage === language.code }}
                         className="bg-white dark:bg-slate-900 rounded-2xl p-4 mb-3 shadow-sm border border-gray-100 dark:border-slate-700 flex-row items-center justify-between"
                     >
                         <View>
