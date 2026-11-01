@@ -1,6 +1,5 @@
 import { Ionicons } from '@expo/vector-icons';
-import { NavigationContext } from '@react-navigation/native';
-import { useRouter, useSegments, type Href } from 'expo-router';
+import { useRootNavigationState, useRouter, useSegments, type Href } from 'expo-router';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { Dimensions, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
@@ -186,10 +185,12 @@ function StandaloneTabBarInner() {
 // Exported wrapper: only renders the inner tab bar when navigation context is available
 // AND we are not in an unstable state.
 export default function StandaloneTabBar(): React.JSX.Element | null {
-    const navigationContext = React.useContext(NavigationContext);
-
-    // Safety check for Expo Router context
-    if (!navigationContext) {
+    // Wait until the router tree is mounted before the inner component calls
+    // router/segment hooks. (Previously this read @react-navigation/native's
+    // NavigationContext, which is a different context than expo-router's vendored
+    // copy — it was always null, so the tab bar never rendered.)
+    const navState = useRootNavigationState();
+    if (!navState?.key) {
         return null;
     }
 
