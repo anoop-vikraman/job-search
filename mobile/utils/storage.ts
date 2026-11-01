@@ -8,7 +8,9 @@ let useFallback = false;
 try {
     mmkv = new MMKV();
 } catch (e) {
-    console.warn("MMKV failed to initialize (likely running in Expo Go?). Falling back to in-memory storage.");
+    // MMKV v3 is a C++ TurboModule and needs a dev/standalone build with the New
+    // Architecture; a web build or a misconfigured native build lands here.
+    console.warn('MMKV failed to initialize; falling back to in-memory storage. Persistence is disabled.', e);
     useFallback = true;
 }
 
