@@ -80,13 +80,26 @@ applications, wallet transactions ledger, and the refund queue (approve reverses
 
 ## Mobile
 
+The app uses native modules (maps, push, MMKV, webview, Sentry), so **Expo Go won't work** — you
+need a **development build** (custom dev client).
+
 ```bash
 cd mobile
 npm install
-npx expo start      # requires a dev build for native modules
+
+# build + install the dev client and start Metro (needs a native toolchain)
+npx expo run:android      # or: npx expo run:ios  (macOS)
+
+# on later runs, just start the bundler:
+npx expo start --dev-client
 ```
 
-Point the app's API client (`mobile/utils/config.ts`) at the backend base URL.
+Point the app at your backend with `EXPO_PUBLIC_API_URL` in `mobile/.env` (default lives in
+`mobile/utils/config.ts`). On a physical device use your LAN IP; on the Android emulator use
+`http://10.0.2.2:8000`; bind uvicorn with `--host 0.0.0.0`.
+
+Full walkthrough — local builds, EAS cloud builds, env vars, and troubleshooting — is in
+[`mobile/RUNNING.md`](mobile/RUNNING.md).
 
 ## Checks
 
