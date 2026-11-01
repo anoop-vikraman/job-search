@@ -99,15 +99,16 @@ function AppContent() {
 
 function RootLayout(): React.JSX.Element {
   return (
-    <GlobalErrorBoundary>
-      <QueryClientProvider client={queryClient}>
-        <ThemeProvider>
+    <QueryClientProvider client={queryClient}>
+      <ThemeProvider>
+        {/* Inside ThemeProvider so the error fallback's useTheme() has context. */}
+        <GlobalErrorBoundary>
           <SafeAreaProvider>
             <AppContent />
           </SafeAreaProvider>
-        </ThemeProvider>
-      </QueryClientProvider>
-    </GlobalErrorBoundary>
+        </GlobalErrorBoundary>
+      </ThemeProvider>
+    </QueryClientProvider>
   );
 }
 
