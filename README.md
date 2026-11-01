@@ -15,6 +15,9 @@ packages/theme/   @tweak/theme shared design tokens
 docker-compose.yml
 ```
 
+> **Full setup guide:** [`docs/RUNNING.md`](docs/RUNNING.md) walks through running the backend,
+> admin and mobile apps end to end. The sections below are the quick version.
+
 ## Prerequisites
 - Docker (Postgres), Python 3.11+, Node 20+.
 
